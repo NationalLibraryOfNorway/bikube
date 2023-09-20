@@ -1,0 +1,3 @@
+# BIKUBE - Katalog API for tekstmateriale på nasjonalbiblioteket
+
+Dette prosjektet er under arbeid, og mer vil komme i de nærmeste månedene...
