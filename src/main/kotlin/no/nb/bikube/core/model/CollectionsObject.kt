@@ -13,7 +13,7 @@ data class CollectionsRecordList(
 
 data class CollectionsObject(
     @JsonProperty("Title")
-    val title: List<CollectionsTitle>?,
+    val title: List<CollectionsTitle>,
 
     @JsonProperty("object_number")
     val objectNumber: String,
