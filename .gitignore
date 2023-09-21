@@ -25,3 +25,6 @@ replay_pid*
 
 # IDE
 .idea
+
+application-local.yml
+target
