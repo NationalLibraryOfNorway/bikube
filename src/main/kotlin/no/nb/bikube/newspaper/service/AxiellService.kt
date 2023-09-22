@@ -1,6 +1,6 @@
 package no.nb.bikube.newspaper.service
 
-import no.nb.bikube.core.mapper.mapCollectionsTitleToGenericTitle
+import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.config.AxiellConfig
@@ -29,7 +29,7 @@ class AxiellService  (
             .retrieve()
             .bodyToMono<CollectionsModel>()
             .flatMapIterable { it.adlibJson.recordList }
-            .map { mapCollectionsTitleToGenericTitle(it) }
+            .map { mapCollectionsObjectToGenericTitle(it) }
 
 
     }
