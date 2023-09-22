@@ -1,5 +1,7 @@
 package no.nb.bikube.newspaper.service
 
+import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.model.Title
@@ -22,7 +24,11 @@ class AxiellService  (
             .uri {
                 it
                     .queryParam("database", "texts")
-                    .queryParam("search", "record_type=WORK and work.description_type=SERIAL")
+                    .queryParam(
+                        "search", "" +
+                            "record_type=${AxiellRecordType.WORK} and " +
+                            "work.description_type=${AxiellDescriptionType.SERIAL}"
+                    )
                     .queryParam("output", "json")
                     .build()
             }
@@ -30,7 +36,6 @@ class AxiellService  (
             .bodyToMono<CollectionsModel>()
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericTitle(it) }
-
 
     }
 }
