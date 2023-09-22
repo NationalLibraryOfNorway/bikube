@@ -29,11 +29,14 @@ jobs:
       - name: Build and Test
         run: mvn ${{ env.MAVEN_INFO }} verify
 
+      - name: Extract project version
+        run: echo "JAR_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: bikube.jar
-          path: target/bikube.jar
+          path: target/bikube-${{env.JAR_VERSION}}.jar
 
       - name: Cache .m2/repository
         uses: actions/cache@v3
