@@ -1,9 +1,8 @@
-package no.nb.bikube.newspaper
+package no.nb.bikube.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
-import no.nb.bikube.newspaper.controller.TitleController
 import no.nb.bikube.newspaper.service.AxiellService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
