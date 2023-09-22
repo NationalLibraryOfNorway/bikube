@@ -10,3 +10,8 @@ enum class AxiellDescriptionType(val value: String) {
     SERIAL("SERIAL"),
     YEAR("YEAR")
 }
+
+enum class AxiellFormat(val value: String) {
+    DIGITAL("DIGITAL"),
+    PHYSICAL("PHYSICAL")
+}

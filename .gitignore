@@ -25,6 +25,7 @@ replay_pid*
 
 # IDE
 .idea
+.ipynb
 
 application-local.yml
 target
