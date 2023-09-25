@@ -76,7 +76,6 @@ jobs:
           context: .
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: Dockerfile
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
