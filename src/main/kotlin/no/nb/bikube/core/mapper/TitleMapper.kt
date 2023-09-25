@@ -6,7 +6,7 @@ import no.nb.bikube.core.model.Title
 
 fun mapCollectionsObjectToGenericTitle(model: CollectionsObject): Title {
     return Title(
-        name = model.title[0].title,
+        name = model.title?.first()?.title,
         startDate = null,
         endDate = null,
         publisher = null,
