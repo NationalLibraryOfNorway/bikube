@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
@@ -25,6 +26,7 @@ class ItemController (
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
+    @Throws(AxiellCollectionsException::class)
     fun getAllItems(): ResponseEntity<Flux<Item>> {
         return ResponseEntity.ok(axiellService.getAllItems())
     }

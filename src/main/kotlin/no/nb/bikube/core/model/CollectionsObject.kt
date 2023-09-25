@@ -19,20 +19,31 @@ data class CollectionsObject(
     val objectNumber: String,
 
     @JsonProperty("Title")
-    val title: List<CollectionsTitle>?,
+    val titleList: List<CollectionsTitle>?,
 
     @JsonProperty("record_type")
-    val recordType: List<List<CollectionsLanguageListObject>>?,
+    val recordTypeList: List<List<CollectionsLanguageListObject>>?,
 
-    val format: List<List<CollectionsLanguageListObject>>?,
+    val formatList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("Part_of")
-    val partOf: List<CollectionsPartOfObject>?,
+    val partOfList: List<CollectionsPartOfObject>?,
 
     @JsonProperty("submedium")
-    val subMedium: List<SubMedium>?,
+    val subMediumList: List<SubMedium>?,
 
-    val medium: List<Medium>?
+    val mediumList: List<Medium>?,
+
+    @JsonProperty("Dating")
+    val datingList: List<CollectionsDating>?,
+
+    val publisherList: List<String>?,
+
+    @JsonProperty("Language")
+    val languageList: List<CollectionsLanguage>?,
+
+    @JsonProperty("place_of_publication")
+    val placeOfPublicationList: List<String>?
 )
 
 data class CollectionsTitle(
@@ -79,4 +90,16 @@ data class SubMedium(
 
 data class Medium(
     val medium: String?
+)
+
+data class CollectionsDating(
+    @JsonProperty("dating.date.start")
+    val dateFrom: String?,
+
+    @JsonProperty("dating.date.end")
+    val dateTo: String?
+)
+
+data class CollectionsLanguage(
+    val language: String?
 )

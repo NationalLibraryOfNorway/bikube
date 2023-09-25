@@ -10,6 +10,7 @@ class NewspaperMockData {
             startDate = null,
             endDate = null,
             publisher = null,
+            publisherPlace = "Mo I Rana",
             language = null,
             materialType = null,
             catalogueId = "1"
