@@ -71,7 +71,6 @@ jobs:
 
       - name: Build image
         uses: docker/build-push-action@v5
-        run: "echo pwd && ls -lR"
         with:
           push: true
           context: .
