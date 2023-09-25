@@ -1,3 +1,13 @@
+server:
+  port: 8087
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  server:
+    port: 8088
+
 axiell:
   url: ${COLLECTIONS_PATH_STAGE}
  
