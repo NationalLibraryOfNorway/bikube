@@ -8,6 +8,11 @@ management:
   server:
     port: 8088
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    use-root-path: true
+
 axiell:
   url: ${COLLECTIONS_PATH_STAGE}
  
