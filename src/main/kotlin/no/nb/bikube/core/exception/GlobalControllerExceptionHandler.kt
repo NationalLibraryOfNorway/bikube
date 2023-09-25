@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 @ControllerAdvice
 class GlobalControllerExceptionHandler {
     @ExceptionHandler(AxiellCollectionsException::class)
-    fun handleNoSuchElementException(exception: AxiellCollectionsException): ProblemDetail {
+    fun handleAxiellCollectionsException(exception: AxiellCollectionsException): ProblemDetail {
         logger().error("AxiellCollectionsException occurred: ${exception.message}")
         return ProblemDetail
             .forStatusAndDetail(
