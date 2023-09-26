@@ -110,7 +110,7 @@ class AxiellService  (
                 titleName = title.titleList?.first()?.title
                 titleId = title.priRef
 
-                if(
+                if (
                     !title.partsList.isNullOrEmpty()
                 ) { title.partsList }
                 else { emptyList() }
