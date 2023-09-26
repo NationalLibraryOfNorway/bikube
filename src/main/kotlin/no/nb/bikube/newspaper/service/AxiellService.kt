@@ -99,6 +99,7 @@ class AxiellService  (
             .bodyToMono<CollectionsModel>()
     }
 
+    @Throws(AxiellCollectionsException::class)
     fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
         var titleName: String? = null
         var titleId: String? = null
