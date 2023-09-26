@@ -10,5 +10,5 @@ data class Title (
     val publisherPlace: String?,
     val language: String?,
     val materialType: String?,
-    val catalogueId: String
+    val catalogueId: String?
 )

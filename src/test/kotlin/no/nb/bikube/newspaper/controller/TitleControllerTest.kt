@@ -31,4 +31,15 @@ class TitleControllerTest {
             }
             .verifyComplete()
     }
+
+    @Test
+    fun `create title should return 200 OK with the created title`() {
+        every { axiellService.createTitle(newspaperTitleMockA) } returns just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleMockA).body!!.test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(newspaperTitleMockA, it)
+            }
+            .verifyComplete()
+    }
 }

@@ -9,9 +9,7 @@ import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 
 @RestController
@@ -29,5 +27,12 @@ class TitleController (
     @Throws(AxiellCollectionsException::class)
     fun getTitles(): ResponseEntity<Flux<Title>> {
         return ResponseEntity.ok(axiellService.getTitles())
+    }
+
+    @PostMapping("/")
+    fun createTitle(
+        @RequestBody title: Title
+    ): ResponseEntity<Flux<Title>> {
+        return ResponseEntity.ok(axiellService.createTitle(title))
     }
 }
