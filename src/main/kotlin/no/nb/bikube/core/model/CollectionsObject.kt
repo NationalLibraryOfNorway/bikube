@@ -30,10 +30,10 @@ data class CollectionsObject(
     @JsonProperty("Part_of")
     val partOfList: List<CollectionsPartOfObject>?,
 
-    @JsonProperty("submedium")
+    @JsonProperty("Submedium")
     val subMediumList: List<SubMedium>?,
 
-    @JsonProperty("medium")
+    @JsonProperty("Medium")
     val mediumList: List<Medium>?,
 
     @JsonProperty("Dating")
