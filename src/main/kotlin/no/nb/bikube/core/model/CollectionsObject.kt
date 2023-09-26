@@ -24,6 +24,7 @@ data class CollectionsObject(
     @JsonProperty("record_type")
     val recordTypeList: List<List<CollectionsLanguageListObject>>?,
 
+    @JsonProperty("format")
     val formatList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("Part_of")
@@ -32,18 +33,23 @@ data class CollectionsObject(
     @JsonProperty("submedium")
     val subMediumList: List<SubMedium>?,
 
+    @JsonProperty("medium")
     val mediumList: List<Medium>?,
 
     @JsonProperty("Dating")
     val datingList: List<CollectionsDating>?,
 
+    @JsonProperty("publisher")
     val publisherList: List<String>?,
 
     @JsonProperty("Language")
     val languageList: List<CollectionsLanguage>?,
 
     @JsonProperty("place_of_publication")
-    val placeOfPublicationList: List<String>?
+    val placeOfPublicationList: List<String>?,
+
+    @JsonProperty("Parts")
+    val partsList: List<CollectionsPartsObject>?
 )
 
 data class CollectionsTitle(
@@ -102,4 +108,32 @@ data class CollectionsDating(
 
 data class CollectionsLanguage(
     val language: String?
+)
+
+data class CollectionsPartsObject(
+    @JsonProperty("parts_reference")
+    val partsReference: CollectionsPartsReference?
+)
+
+data class CollectionsPartsReference(
+    @JsonProperty("priref")
+    val priRef: String?,
+
+    @JsonProperty("group:Title")
+    val title: List<CollectionsTitle>?,
+
+    @JsonProperty("object_number")
+    val objectNumber: String?,
+
+    @JsonProperty("record_type")
+    val recordType: List<List<CollectionsLanguageListObject>>?,
+
+    @JsonProperty("work.description_type")
+    val workTypeList: List<List<CollectionsLanguageListObject>>?,
+
+    @JsonProperty("format")
+    val formatList: List<List<CollectionsLanguageListObject>>?,
+
+    @JsonProperty("group:Parts")
+    val partsList: List<CollectionsPartsObject>?
 )
