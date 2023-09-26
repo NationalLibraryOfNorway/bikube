@@ -5,6 +5,7 @@ import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericItem
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
+import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
@@ -74,5 +75,64 @@ class AxiellService  (
             .bodyToMono<CollectionsModel>()
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericItem(it) }
+    }
+
+    @Throws(AxiellCollectionsException::class)
+    fun getSingleCollectionsModel(catalogId: String): Mono<CollectionsModel> {
+        return webClient
+            .get()
+            .uri {
+                it
+                    .queryParam("search", "priref=$catalogId")
+                    .queryParam("database", "texts")
+                    .queryParam("output", "json")
+                    .build()
+            }
+            .retrieve()
+            .onStatus(
+                { !it.is2xxSuccessful },
+                {
+                    logger().error("Could not get titles from Collections. Error code ${it.statusCode()}")
+                    Mono.error(AxiellCollectionsException("Could not get newspaper items from Collections."))
+                }
+            )
+            .bodyToMono<CollectionsModel>()
+    }
+
+    @Throws(AxiellCollectionsException::class)
+    fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
+        var titleName: String? = null
+        var titleId: String? = null
+
+        return getSingleCollectionsModel(titleCatalogId)
+            .flatMapIterable { it.adlibJson.recordList }
+            .flatMapIterable { title ->
+                titleName = title.titleList?.first()?.title
+                titleId = title.priRef
+
+                if (
+                    !title.partsList.isNullOrEmpty()
+                ) { title.partsList }
+                else { emptyList() }
+            }
+            .flatMapIterable { yearWork ->
+                if (
+                    yearWork.partsReference != null
+                    && !yearWork.partsReference.partsList.isNullOrEmpty()
+                ) { yearWork.partsReference.partsList }
+                else { emptyList() }
+            }
+            .flatMapIterable { manifestation ->
+                if (
+                    manifestation.partsReference != null
+                    && !manifestation.partsReference.partsList.isNullOrEmpty()
+                ) { manifestation.partsReference.partsList }
+                else { emptyList() }
+            }
+            .mapNotNull { item ->
+                item.partsReference?.let {
+                    mapCollectionsPartsObjectToGenericItem(item.partsReference, titleCatalogueId = titleId, titleName = titleName)
+                }
+            }
     }
 }

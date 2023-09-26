@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 
@@ -27,7 +28,11 @@ class ItemController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     @Throws(AxiellCollectionsException::class)
-    fun getAllItems(): ResponseEntity<Flux<Item>> {
-        return ResponseEntity.ok(axiellService.getAllItems())
+    fun getAllItems(
+        @RequestParam(required = false) titleCatalogueId: String?,
+    ): ResponseEntity<Flux<Item>> {
+        return titleCatalogueId?.let {
+            ResponseEntity.ok(axiellService.getItemsForTitle(it))
+        } ?: ResponseEntity.ok(axiellService.getAllItems())
     }
 }
