@@ -8,6 +8,10 @@ management:
   server:
     port: 8088
 
+spring:
+  webflux:
+    base-path: /bikube
+
 springdoc:
   swagger-ui:
     enabled: true
@@ -15,4 +19,3 @@ springdoc:
 
 axiell:
   url: ${COLLECTIONS_PATH_STAGE}
- 
