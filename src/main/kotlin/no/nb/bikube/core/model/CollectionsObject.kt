@@ -120,7 +120,7 @@ data class CollectionsPartsReference(
     val priRef: String?,
 
     @JsonProperty("group:Title")
-    val title: List<CollectionsTitle>?,
+    val titleList: List<CollectionsTitle>?,
 
     @JsonProperty("object_number")
     val objectNumber: String?,

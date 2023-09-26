@@ -19,12 +19,19 @@ class DateUtilsTests {
     fun`parseYearOrDate should parse dates like 2020-01-08`() {
         Assertions.assertEquals(LocalDate.parse("2020-01-08"), parseYearOrDate("2020-01-08"))
     }
+    @Test
+    fun`parseYearOrDate should parse dates like 2020dot01dot09`() {
+        Assertions.assertEquals(LocalDate.parse("2020-01-09"), parseYearOrDate("2020.01.09"))
+    }
 
     @Test
     fun`parseYearOrDate should return null for other kinds of dates`() {
         Assertions.assertEquals(null, parseYearOrDate("2020/01/01"))
+        Assertions.assertEquals(null, parseYearOrDate("01-01-2020"))
         Assertions.assertEquals(null, parseYearOrDate("01.01.2020"))
         Assertions.assertEquals(null, parseYearOrDate("01012020"))
+        Assertions.assertEquals(null, parseYearOrDate(null))
+        Assertions.assertEquals(null, parseYearOrDate(""))
     }
 
 }
