@@ -15,9 +15,6 @@ data class CollectionsObject(
     @JsonProperty("@priref")
     val priRef: String,
 
-    @JsonProperty("object_number")
-    val objectNumber: String,
-
     @JsonProperty("Title")
     val titleList: List<CollectionsTitle>?,
 
@@ -123,9 +120,6 @@ data class CollectionsPartsReference(
 
     @JsonProperty("group:Title")
     val titleList: List<CollectionsTitle>?,
-
-    @JsonProperty("object_number")
-    val objectNumber: String?,
 
     @JsonProperty("record_type")
     val recordType: List<List<CollectionsLanguageListObject>>?,
