@@ -1,0 +1,228 @@
+{
+  "adlibJSON": {
+    "recordList": [
+      {
+        "@priref": 3,
+        "@created": "2023-09-20T08:38:07",
+        "@modification": "2023-09-26T12:10:00",
+        "@selected": false,
+        "Submedium": [
+          {
+            "submedium": "Avis"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubeavisen"
+          }
+        ],
+        "object_number": "3",
+        "priref": "3",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Verk"
+            }
+          ]
+        ],
+        "work.description_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "SERIAL"
+            },
+            {
+              "@lang": 0,
+              "#text": "Serial"
+            },
+            {
+              "@lang": 1,
+              "#text": "Tijdschrift"
+            },
+            {
+              "@lang": 3,
+              "#text": "Zeitschrift"
+            },
+            {
+              "@lang": 9,
+              "#text": "Serie"
+            },
+            {
+              "@lang": 12,
+              "#text": "Serie"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 7,
+        "@created": "2023-09-20T09:19:26",
+        "@modification": "2023-09-26T12:09:48",
+        "@selected": false,
+        "Submedium": [
+          {
+            "submedium": "Avis"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubeposten"
+          }
+        ],
+        "object_number": "7",
+        "priref": "7",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Verk"
+            }
+          ]
+        ],
+        "work.description_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "SERIAL"
+            },
+            {
+              "@lang": 0,
+              "#text": "Serial"
+            },
+            {
+              "@lang": 1,
+              "#text": "Tijdschrift"
+            },
+            {
+              "@lang": 3,
+              "#text": "Zeitschrift"
+            },
+            {
+              "@lang": 9,
+              "#text": "Serie"
+            },
+            {
+              "@lang": 12,
+              "#text": "Serie"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 9,
+        "@created": "2023-09-20T10:27:23",
+        "@modification": "2023-09-20T10:33:13",
+        "@selected": false,
+        "Submedium": [
+          {
+            "submedium": "Avis"
+          }
+        ],
+        "Title": [
+          {
+            "title": "The Bikube"
+          }
+        ],
+        "object_number": "9",
+        "priref": "9",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Verk"
+            }
+          ]
+        ],
+        "work.description_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "SERIAL"
+            },
+            {
+              "@lang": 0,
+              "#text": "Serial"
+            },
+            {
+              "@lang": 1,
+              "#text": "Tijdschrift"
+            },
+            {
+              "@lang": 3,
+              "#text": "Zeitschrift"
+            },
+            {
+              "@lang": 9,
+              "#text": "Serie"
+            },
+            {
+              "@lang": 12,
+              "#text": "Serie"
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}
