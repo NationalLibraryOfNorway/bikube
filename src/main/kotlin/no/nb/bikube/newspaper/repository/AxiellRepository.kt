@@ -24,7 +24,7 @@ class AxiellRepository(
                 it
                     .queryParam("database", "texts")
                     .queryParam(
-                    "search", "" +
+                        "search", "" +
                         "record_type=${AxiellRecordType.WORK} and " +
                         "work.description_type=${AxiellDescriptionType.SERIAL}"
                     )
