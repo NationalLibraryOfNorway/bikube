@@ -12,7 +12,7 @@ data class CollectionsRecordList(
 )
 
 data class CollectionsObject(
-    @JsonProperty("priref")
+    @JsonProperty("@priref")
     val priRef: String,
 
     @JsonProperty("object_number")
@@ -49,8 +49,10 @@ data class CollectionsObject(
     val placeOfPublicationList: List<String>?,
 
     @JsonProperty("Parts")
-    val partsList: List<CollectionsPartsObject>?
-)
+    val partsList: List<CollectionsPartsObject>?,
+
+    @JsonProperty("work.description_type")
+    val workTypeList: List<List<CollectionsLanguageListObject>>?)
 
 data class CollectionsTitle(
     val title: String?
@@ -79,14 +81,14 @@ data class CollectionsPartOfReference(
     @JsonProperty("group:Title")
     val title: List<CollectionsTitle>?,
 
-    @JsonProperty("object_number")
-    val objectNumber: String?,
-
     @JsonProperty("record_type")
     val recordType: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("group:Submedium")
     val subMedium: List<SubMedium>?,
+
+    @JsonProperty("work.description_type")
+    val workTypeList: List<List<CollectionsLanguageListObject>>?
 )
 
 data class SubMedium(

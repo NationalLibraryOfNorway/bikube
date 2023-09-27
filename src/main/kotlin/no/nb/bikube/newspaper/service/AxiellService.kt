@@ -103,12 +103,14 @@ class AxiellService  (
     fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
         var titleName: String? = null
         var titleId: String? = null
+        var materialType: String? = null
 
         return getSingleCollectionsModel(titleCatalogId)
             .flatMapIterable { it.adlibJson.recordList }
             .flatMapIterable { title ->
                 titleName = title.titleList?.first()?.title
                 titleId = title.priRef
+                materialType = title.subMediumList?.first()?.subMedium
 
                 if (
                     !title.partsList.isNullOrEmpty()
@@ -131,7 +133,12 @@ class AxiellService  (
             }
             .mapNotNull { item ->
                 item.partsReference?.let {
-                    mapCollectionsPartsObjectToGenericItem(item.partsReference, titleCatalogueId = titleId, titleName = titleName)
+                    mapCollectionsPartsObjectToGenericItem(
+                        item.partsReference,
+                        titleCatalogueId = titleId,
+                        titleName = titleName,
+                        materialType = materialType
+                    )
                 }
             }
     }
