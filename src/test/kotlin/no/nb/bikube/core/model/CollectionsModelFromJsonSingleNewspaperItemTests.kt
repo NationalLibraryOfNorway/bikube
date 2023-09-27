@@ -30,27 +30,55 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     fun `Item object should extract priRef`() { Assertions.assertEquals("5", singleItem.priRef) }
 
     @Test
-    fun `Item object should extract format`() { Assertions.assertEquals(AxiellFormat.DIGITAL.value, singleItem.formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text) }
+    fun `Item object should extract format`() {
+        Assertions.assertEquals(
+            AxiellFormat.DIGITAL.value,
+            singleItem.formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text
+        )
+    }
 
     @Test
-    fun `Item object should extract medium`() { Assertions.assertEquals("Tekst", singleItem.mediumList!!.first().medium) }
+    fun `Item object should extract medium`() {
+        Assertions.assertEquals(
+            "Tekst",
+            singleItem.mediumList!!.first().medium
+        )
+    }
 
     @Test
-    fun `Item object should extract submedium`() { Assertions.assertEquals("Avis", singleItem.subMediumList!!.first().subMedium) }
+    fun `Item object should extract submedium`() {
+        Assertions.assertEquals(
+            "Avis",
+            singleItem.subMediumList!!.first().subMedium
+        )
+    }
 
     @Test
-    fun `Item object should extract title`() { Assertions.assertEquals("Bikubeavisen 2012.01.02", singleItem.titleList!!.first().title) }
+    fun `Item object should extract title`() {
+        Assertions.assertEquals(
+            "Bikubeavisen 2012.01.02",
+            singleItem.titleList!!.first().title
+        )
+    }
 
     @Test
-    fun `Item object should extract recordtype`() { Assertions.assertEquals(AxiellRecordType.ITEM.value, singleItem.recordTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text) }
+    fun `Item object should extract recordtype`() {
+        Assertions.assertEquals(
+            AxiellRecordType.ITEM.value,
+            singleItem.recordTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text
+        )
+    }
 
     @Test
     fun `Item object should extract parent manifestation`() {
         val manifestation = singleItem.partOfList!!.first().partOfReference!!
         Assertions.assertEquals("10", manifestation.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, manifestation.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
         Assertions.assertEquals("Avis", manifestation.subMedium!!.first().subMedium)
+        Assertions.assertEquals(
+            AxiellRecordType.MANIFESTATION.value,
+            manifestation.recordType!!.first().first { langObj -> langObj.lang == "neutral"}.text
+        )
     }
 
     @Test

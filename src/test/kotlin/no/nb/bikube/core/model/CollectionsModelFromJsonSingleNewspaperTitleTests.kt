@@ -51,7 +51,12 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     fun `Title object should extract publisher`() { Assertions.assertEquals("Amedia", singleTitle.publisherList!!.first()) }
 
     @Test
-    fun `Title object should extract work type`() { Assertions.assertEquals(AxiellDescriptionType.SERIAL.value, singleTitle.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text) }
+    fun `Title object should extract work type`() {
+        Assertions.assertEquals(
+            AxiellDescriptionType.SERIAL.value,
+            singleTitle.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text
+        )
+    }
 
     @Test
     fun `Title object should extract child year works`() {
@@ -107,7 +112,11 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     @Test
     fun `Title object should extract child items`() {
         val items = mutableListOf<CollectionsPartsObject>()
-        singleTitle.partsList!!.forEach { yearWorks -> yearWorks.partsReference!!.partsList?.forEach { manifestations -> manifestations.partsReference!!.partsList?.forEach { items.add(it) } } }
+        singleTitle.partsList!!.forEach { yearWorks ->
+            yearWorks.partsReference!!.partsList?.forEach { manifestations ->
+                manifestations.partsReference!!.partsList?.forEach { items.add(it) }
+            }
+        }
         Assertions.assertEquals(4, items.size)
 
         val item1 = items.first().partsReference!!
