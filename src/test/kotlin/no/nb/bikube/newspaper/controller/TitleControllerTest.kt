@@ -31,4 +31,25 @@ class TitleControllerTest {
             }
             .verifyComplete()
     }
+
+    @Test
+    fun `create title should return 200 OK with the created title`() {
+        every { axiellService.createTitle(newspaperTitleMockA) } returns just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleMockA).body!!.test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(newspaperTitleMockA, it)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `create title should return 400 bad request if request body object title is null or empty`() {
+        Assertions.assertEquals(
+            400, titleController.createTitle(newspaperTitleMockA.copy(name = null)).statusCode.value()
+        )
+        Assertions.assertEquals(
+            400, titleController.createTitle(newspaperTitleMockA.copy(name = "")).statusCode.value()
+        )
+    }
 }

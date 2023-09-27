@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<kotlin.version>1.8.22</kotlin.version>
+		<serialization.version>1.6.0</serialization.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,7 +69,15 @@
 			<version>4.0.2</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jetbrains.kotlinx</groupId>
+			<artifactId>kotlinx-serialization-json</artifactId>
+			<version>${serialization.version}</version>
+		</dependency>
 	</dependencies>
+
+
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -82,18 +91,34 @@
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<args>
 						<arg>-Xjsr305=strict</arg>
 					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
+						<plugin>kotlinx-serialization</plugin>
 					</compilerPlugins>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-maven-allopen</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-serialization</artifactId>
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
