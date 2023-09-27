@@ -2,8 +2,6 @@ package no.nb.bikube.core.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonTransformingSerializer
-import kotlinx.serialization.json.jsonObject
 
 @Serializable
 class TitleDto(

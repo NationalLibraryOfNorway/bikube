@@ -29,10 +29,19 @@ class TitleController (
         return ResponseEntity.ok(axiellService.getTitles())
     }
 
-    @PostMapping("/")
+    @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create a newspaper title")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
     fun createTitle(
         @RequestBody title: Title
     ): ResponseEntity<Flux<Title>> {
+        if (title.name.isNullOrEmpty()) {
+            return ResponseEntity.badRequest().build()
+        }
         return ResponseEntity.ok(axiellService.createTitle(title))
     }
 }

@@ -10,24 +10,21 @@ import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.config.AxiellConfig
+import no.nb.bikube.newspaper.config.WebClientConfig
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
 class AxiellService  (
-    axiellConfig: AxiellConfig
+    private val webClient: WebClientConfig
 ) {
-
-    private val webClient = WebClient.builder().baseUrl(axiellConfig.url).build()
 
     @Throws(AxiellCollectionsException::class)
     fun getTitles(): Flux<Title> {
-        return webClient
+        return webClient.webClient()
             .get()
             .uri {
                 it
@@ -62,7 +59,7 @@ class AxiellService  (
             descriptionType = AxiellDescriptionType.SERIAL.value,
             subMedium = title.materialType
         ))
-        return webClient
+        return webClient.webClient()
             .post()
             .uri {
                 it
@@ -84,7 +81,7 @@ class AxiellService  (
     }
 
     fun getAllItems(): Flux<Item> {
-        return webClient
+        return webClient.webClient()
             .get()
             .uri {
                 it
@@ -108,7 +105,7 @@ class AxiellService  (
 
     @Throws(AxiellCollectionsException::class)
     fun getSingleCollectionsModel(catalogId: String): Mono<CollectionsModel> {
-        return webClient
+        return webClient.webClient()
             .get()
             .uri {
                 it
