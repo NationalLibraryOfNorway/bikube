@@ -1,6 +1,7 @@
 package no.nb.bikube.newspaper
 
-import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.Title
 
 class NewspaperMockData {
     companion object {
@@ -25,24 +26,5 @@ class NewspaperMockData {
             digital = true
         )
 
-        val collectionsModelMockA = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(CollectionsObject(
-                    priRef = "1",
-                    titleList = null,
-                    recordTypeList = null,
-                    formatList = null,
-                    partOfList = null,
-                    subMediumList = null,
-                    mediumList = null,
-                    datingList = null,
-                    publisherList = null,
-                    languageList = null,
-                    placeOfPublicationList = null,
-                    partsList = null,
-                    workTypeList = null
-                ))
-            )
-        )
     }
 }
