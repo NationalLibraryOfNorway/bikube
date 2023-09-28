@@ -2,11 +2,20 @@ package no.nb.bikube.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleD
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleE
+import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.TitleDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +27,7 @@ import reactor.kotlin.test.test
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AxiellServiceTests {
+class AxiellServiceTest {
     @Autowired
     private lateinit var axiellService: AxiellService
 
@@ -28,6 +37,55 @@ class AxiellServiceTests {
     @BeforeEach
     fun beforeEach() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+    }
+
+    @Test
+    fun `getTitle should fetch data as CollectionModel from repo and convert to title`() {
+        every { axiellRepository.getTitles() } returns Mono.just(collectionsModelMockTitleE)
+
+        axiellService.getTitles()
+            .test()
+            .expectNextMatches { it == newspaperTitleMockB }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createTitle should return Title object with default values from Title with only name and materialType`() {
+        every { axiellRepository.createTitle(any()) } returns Mono.just(collectionsModelMockTitleE)
+
+        val body = Title(
+            newspaperTitleMockB.name,
+            null,
+            null,
+            null,
+            null,
+            null,
+            newspaperTitleMockB.materialType,
+            null
+        )
+        val encodedValue = Json.encodeToString(TitleDto(
+            title = newspaperTitleMockB.name!!,
+            recordType = AxiellRecordType.WORK.value,
+            descriptionType = AxiellDescriptionType.SERIAL.value,
+            subMedium = newspaperTitleMockB.materialType
+        ))
+
+        axiellService.createTitle(body)
+            .test()
+            .expectNextMatches { it == newspaperTitleMockB }
+            .verifyComplete()
+
+        verify { axiellRepository.createTitle(encodedValue) }
+    }
+
+    @Test
+    fun `createTitle should throw exception with error message from repository method`() {
+        every { axiellRepository.createTitle(any()) } returns Mono.error(RuntimeException("Error creating title"))
+
+        axiellService.createTitle(newspaperTitleMockB)
+            .test()
+            .expectErrorMatches { it is RuntimeException && it.message == "Error creating title" }
+            .verify()
     }
 
     @Test

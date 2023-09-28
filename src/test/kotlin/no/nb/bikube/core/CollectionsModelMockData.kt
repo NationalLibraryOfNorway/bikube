@@ -214,6 +214,26 @@ class CollectionsModelMockData {
             )
         )
 
+        val collectionsModelMockTitleE = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(CollectionsObject(
+                    priRef = "2",
+                    titleList = listOf(CollectionsTitle("Avis B")),
+                    recordTypeList = listOf(listOf(CollectionsLanguageListObject("neutral", "WORK"))),
+                    formatList = null,
+                    partOfList = null,
+                    subMediumList = listOf(SubMedium("Avis")),
+                    mediumList = null,
+                    datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
+                    publisherList = listOf("B-Forlaget"),
+                    languageList = null,
+                    placeOfPublicationList = listOf("Brakka"),
+                    partsList = null,
+                    workTypeList = null
+                ))
+            )
+        )
+
         val collectionsModelEmptyRecordListMock = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = emptyList()

@@ -9,12 +9,8 @@ import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericItem
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.core.model.*
-import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.config.WebClientConfig
 import no.nb.bikube.newspaper.repository.AxiellRepository
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
