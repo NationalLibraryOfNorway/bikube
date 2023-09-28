@@ -40,7 +40,7 @@ class AxiellServiceTest {
     }
 
     @Test
-    fun `should get all titles as collection model from repo and convert to title`() {
+    fun `getTitle should fetch data as CollectionModel from repo and convert to title`() {
         every { axiellRepository.getTitles() } returns Mono.just(collectionsModelMockTitleE)
 
         axiellService.getTitles()
