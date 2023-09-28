@@ -12,7 +12,6 @@ import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @Service
 class AxiellService  (
@@ -21,7 +20,10 @@ class AxiellService  (
 
     @Throws(AxiellCollectionsException::class)
     fun getTitles(): Flux<Title> {
-        return axiellRepository.getTitles()
+        return axiellRepository.searchTexts(
+            "record_type=${AxiellRecordType.WORK} and " +
+            "work.description_type=${AxiellDescriptionType.SERIAL}"
+        )
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -40,27 +42,20 @@ class AxiellService  (
     }
 
     fun getAllItems(): Flux<Item> {
-        return axiellRepository.getAllItems()
+        return axiellRepository.searchTexts("record_type=${AxiellRecordType.ITEM}")
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun getSingleCollectionsModel(catalogId: String): Mono<CollectionsModel> {
-        return axiellRepository.getSingleCollectionsModel(catalogId)
-    }
-
-    @Throws(AxiellCollectionsException::class)
     fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
         var titleName: String? = null
-        var titleId: String? = null
         var materialType: String? = null
 
-        return getSingleCollectionsModel(titleCatalogId)
+        return axiellRepository.searchTexts("priref=${titleCatalogId}")
             .flatMapIterable { it.adlibJson.recordList }
             .flatMapIterable { title ->
                 titleName = title.titleList?.first()?.title
-                titleId = title.priRef
                 materialType = title.subMediumList?.first()?.subMedium
 
                 if (
@@ -86,11 +81,12 @@ class AxiellService  (
                 item.partsReference?.let {
                     mapCollectionsPartsObjectToGenericItem(
                         item.partsReference,
-                        titleCatalogueId = titleId,
+                        titleCatalogueId = titleCatalogId,
                         titleName = titleName,
                         materialType = materialType
                     )
                 }
             }
     }
+
 }

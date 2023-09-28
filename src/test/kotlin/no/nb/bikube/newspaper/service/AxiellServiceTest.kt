@@ -36,7 +36,7 @@ class AxiellServiceTest {
 
     @BeforeEach
     fun beforeEach() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { axiellRepository.searchTexts(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
     }
 
     @Test
@@ -129,7 +129,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when serial work has no year works`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { axiellRepository.searchTexts(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleB.adlibJson.recordList.first().priRef)
             .test()
@@ -140,7 +140,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { axiellRepository.searchTexts(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleC.adlibJson.recordList.first().priRef)
             .test()
@@ -151,7 +151,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when manifestation has no items`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
+        every { axiellRepository.searchTexts(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleD.adlibJson.recordList.first().priRef)
             .test()
@@ -162,7 +162,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux if title does not exist`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { axiellRepository.searchTexts(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         axiellService.getItemsForTitle("123")
             .test()

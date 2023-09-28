@@ -1,7 +1,5 @@
 package no.nb.bikube.newspaper.repository
 
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.util.logger
@@ -17,31 +15,7 @@ class AxiellRepository(
 ) {
     fun webClient() = webClientConfig.webClient()
 
-    fun getTitles(): Mono<CollectionsModel> {
-        return webClient()
-            .get()
-            .uri {
-                it
-                    .queryParam("database", "texts")
-                    .queryParam(
-                        "search", "" +
-                        "record_type=${AxiellRecordType.WORK} and " +
-                        "work.description_type=${AxiellDescriptionType.SERIAL}"
-                    )
-                    .queryParam("output", "json")
-                    .build()
-            }
-            .retrieve()
-            .onStatus(
-                {!it.is2xxSuccessful},
-                {
-                    logger().error("Could not get titles from Collections. Error code ${it.statusCode()}")
-                    Mono.error(AxiellCollectionsException("Could not get newspaper titles from Collections."))
-                }
-            )
-            .bodyToMono<CollectionsModel>()
-    }
-
+    @Throws(AxiellCollectionsException::class)
     fun createTitle(serializedBody: String): Mono<CollectionsModel> {
         return webClient()
             .post()
@@ -57,52 +31,35 @@ class AxiellRepository(
             .retrieve()
             .onStatus(
                 { it.is4xxClientError || it.is5xxServerError },
-                { Mono.error(RuntimeException("Error creating title")) }
+                { Mono.error(AxiellCollectionsException("Error creating title")) }
             )
             .bodyToMono<CollectionsModel>()
     }
 
-    fun getAllItems(): Mono<CollectionsModel> {
+    @Throws(AxiellCollectionsException::class)
+    fun searchTexts(searchQuery: String): Mono<CollectionsModel> {
         return webClient()
             .get()
             .uri {
                 it
                     .queryParam("database", "texts")
-                    .queryParam("search", "record_type=${AxiellRecordType.ITEM}")
                     .queryParam("output", "json")
-                    .build()
-            }
-            .retrieve()
-            .onStatus(
-                {!it.is2xxSuccessful},
-                {
-                    logger().error("Could not get titles from Collections. Error code ${it.statusCode()}")
-                    Mono.error(AxiellCollectionsException("Could not get newspaper items from Collections."))
-                }
-            )
-            .bodyToMono<CollectionsModel>()
-    }
-
-    fun getSingleCollectionsModel(catalogId: String): Mono<CollectionsModel> {
-        return webClient()
-            .get()
-            .uri {
-                it
-                    .queryParam("search", "priref=$catalogId")
-                    .queryParam("database", "texts")
-                    .queryParam("output", "json")
+                    .queryParam("search", searchQuery)
                     .build()
             }
             .retrieve()
             .onStatus(
                 { !it.is2xxSuccessful },
                 {
-                    logger().error("Could not get titles from Collections. Error code ${it.statusCode()}")
-                    Mono.error(AxiellCollectionsException("Could not get newspaper items from Collections."))
+                    logger().error(
+                        "Could not search in Collections catalogue. Error code ${it.statusCode()}"
+                    )
+                    Mono.error(AxiellCollectionsException(
+                        "Could not search in Collections catalogue. Try again later or contact Team Text if the problem persists."
+                    ))
                 }
             )
             .bodyToMono<CollectionsModel>()
     }
-
 
 }
