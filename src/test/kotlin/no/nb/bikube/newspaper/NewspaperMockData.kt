@@ -1,7 +1,7 @@
 package no.nb.bikube.newspaper
 
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
+import java.time.LocalDate
 
 class NewspaperMockData {
     companion object {
@@ -16,6 +16,28 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
+        val newspaperTitleMockB = Title(
+            name = "Avis B",
+            startDate = LocalDate.parse("2020-01-01"),
+            endDate = LocalDate.parse("2020-01-31"),
+            publisher = "B-Forlaget",
+            publisherPlace = "Brakka",
+            language = null,
+            materialType = "Avis",
+            catalogueId = "2"
+        )
+
+        val newspaperTitleMockC = Title(
+            name = "Avis C",
+            startDate = null,
+            endDate = null,
+            publisher = null,
+            publisherPlace = null,
+            language = null,
+            materialType = "Avis",
+            catalogueId = "3"
+        )
+
         val newspaperItemMockA = Item(
             catalogueId = "2",
             name = "Avis A 2020.01.01",
@@ -25,6 +47,5 @@ class NewspaperMockData {
             titleName = newspaperTitleMockA.name,
             digital = true
         )
-
     }
 }
