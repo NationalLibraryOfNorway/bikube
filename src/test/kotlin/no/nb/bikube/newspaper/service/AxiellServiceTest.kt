@@ -85,7 +85,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return all items for title`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
@@ -96,7 +96,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return title information on items`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
@@ -114,7 +114,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return material type on items`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
@@ -130,7 +130,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when serial work has no year works`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleB.adlibJson.recordList.first().priRef)
             .test()
@@ -141,7 +141,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleC.adlibJson.recordList.first().priRef)
             .test()
@@ -152,7 +152,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux when manifestation has no items`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
 
         axiellService.getItemsForTitle(collectionsModelMockTitleD.adlibJson.recordList.first().priRef)
             .test()
@@ -163,7 +163,7 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return empty flux if title does not exist`() {
-        every { axiellRepository.getItemsForTitle(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         axiellService.getItemsForTitle("123")
             .test()

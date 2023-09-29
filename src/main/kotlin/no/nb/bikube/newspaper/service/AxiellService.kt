@@ -49,7 +49,7 @@ class AxiellService  (
         var titleName: String? = null
         var materialType: String? = null
 
-        return axiellRepository.getItemsForTitle(titleCatalogId)
+        return axiellRepository.getSingleCollectionsModel(titleCatalogId)
             .flatMapIterable { it.adlibJson.recordList }
             .flatMapIterable { title ->
                 titleName = title.titleList?.first()?.title

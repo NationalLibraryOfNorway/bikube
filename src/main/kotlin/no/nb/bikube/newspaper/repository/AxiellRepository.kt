@@ -31,7 +31,7 @@ class AxiellRepository(
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun getItemsForTitle(titleCatalogId: String): Mono<CollectionsModel> {
+    fun getSingleCollectionsModel(titleCatalogId: String): Mono<CollectionsModel> {
         return searchTexts("priref=${titleCatalogId}")
     }
 
