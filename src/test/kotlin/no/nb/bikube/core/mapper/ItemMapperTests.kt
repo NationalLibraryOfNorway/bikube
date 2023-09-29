@@ -23,7 +23,7 @@ class ItemMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList.first()
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList!!.first()
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
 
     @Test

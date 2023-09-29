@@ -14,6 +14,8 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
+import no.nb.bikube.core.exception.AxiellTitleNotFound
+import no.nb.bikube.core.exception.GlobalControllerExceptionHandler
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
@@ -27,7 +29,9 @@ import reactor.kotlin.test.test
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AxiellServiceTest {
+class AxiellServiceTest(
+    @Autowired private val globalControllerExceptionHandler: GlobalControllerExceptionHandler
+) {
     @Autowired
     private lateinit var axiellService: AxiellService
 
@@ -87,7 +91,7 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return all items for title`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList!!.first().priRef)
             .test()
             .expectSubscription()
             .expectNextCount(2)
@@ -98,16 +102,17 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return title information on items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
+        val record = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+        axiellService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
-                it.titleCatalogueId == collectionsModelMockTitleA.adlibJson.recordList.first().priRef
-                        && it.titleName == collectionsModelMockTitleA.adlibJson.recordList.first().titleList!!.first().title
+                it.titleCatalogueId == record.priRef
+                        && it.titleName == record.titleList!!.first().title
             }
             .expectNextMatches {
-                it.titleCatalogueId == collectionsModelMockTitleA.adlibJson.recordList.first().priRef
-                        && it.titleName == collectionsModelMockTitleA.adlibJson.recordList.first().titleList!!.first().title
+                it.titleCatalogueId == record.priRef
+                        && it.titleName == record.titleList!!.first().title
             }
             .verifyComplete()
     }
@@ -116,14 +121,15 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return material type on items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
+        val record = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+        axiellService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
-                it.materialType == collectionsModelMockTitleA.adlibJson.recordList.first().subMediumList!!.first().subMedium
+                it.materialType == record.subMediumList!!.first().subMedium
             }
             .expectNextMatches {
-                it.materialType == collectionsModelMockTitleA.adlibJson.recordList.first().subMediumList!!.first().subMedium
+                it.materialType == record.subMediumList!!.first().subMedium
             }
             .verifyComplete()
     }
@@ -132,7 +138,7 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return empty flux when serial work has no year works`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleB.adlibJson.recordList.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleB.adlibJson.recordList!!.first().priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -143,7 +149,7 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleC.adlibJson.recordList.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleC.adlibJson.recordList!!.first().priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -154,7 +160,7 @@ class AxiellServiceTest {
     fun `getItemsForTitle should return empty flux when manifestation has no items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleD.adlibJson.recordList.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleD.adlibJson.recordList!!.first().priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -162,14 +168,16 @@ class AxiellServiceTest {
     }
 
     @Test
-    fun `getItemsForTitle should return empty flux if title does not exist`() {
+    fun `getItemsForTitle should return an error if title does not exist`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         axiellService.getItemsForTitle("123")
             .test()
             .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
+            .expectErrorMatches { it is AxiellTitleNotFound &&
+                    globalControllerExceptionHandler.handleAxiellTitleNotFoundException(it).status == 404
+            }
+            .verify()
     }
 
 }

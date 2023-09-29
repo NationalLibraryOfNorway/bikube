@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @Tag(name="Newspaper items", description="Endpoints related to newspaper items.")
@@ -25,14 +25,19 @@ class ItemController (
     @Operation(summary = "Get all newspaper items")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "404", description = "Title not found"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     @Throws(AxiellCollectionsException::class)
     fun getAllItems(
         @RequestParam(required = false) titleCatalogueId: String?,
-    ): ResponseEntity<Flux<Item>> {
-        return titleCatalogueId?.let {
-            ResponseEntity.ok(axiellService.getItemsForTitle(it))
-        } ?: ResponseEntity.ok(axiellService.getAllItems())
+    ): Mono<ResponseEntity<List<Item>>> {
+        val results = titleCatalogueId?.let {
+            axiellService.getItemsForTitle(it)
+        } ?: axiellService.getAllItems()
+
+        return results
+            .collectList()
+            .map { ResponseEntity.ok(it) }
     }
 }

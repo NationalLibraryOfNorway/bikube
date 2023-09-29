@@ -24,7 +24,7 @@ class TitleMapperTests {
     }
 
     private val singleTitleJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).adlibJson.recordList.first()
+    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).adlibJson.recordList!!.first()
     private val genericTitle = mapCollectionsObjectToGenericTitle(singleTitle)
 
     @Test

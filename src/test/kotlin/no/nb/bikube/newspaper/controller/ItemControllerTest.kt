@@ -24,10 +24,10 @@ class ItemControllerTest {
     @Test
     fun `get items should return 200 OK with list of items`() {
         every { axiellService.getAllItems() } returns Flux.just(newspaperItemMockA.copy())
-        itemController.getAllItems(null).body!!.test()
+        itemController.getAllItems(null).test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(newspaperItemMockA, it)
+                Assertions.assertEquals(listOf(newspaperItemMockA), it.body)
             }
             .verifyComplete()
     }
