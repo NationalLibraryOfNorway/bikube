@@ -12,7 +12,6 @@ import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @Service
 class AxiellService  (
