@@ -20,10 +20,7 @@ class AxiellService  (
 
     @Throws(AxiellCollectionsException::class)
     fun getTitles(): Flux<Title> {
-        return axiellRepository.searchTexts(
-            "record_type=${AxiellRecordType.WORK} and " +
-            "work.description_type=${AxiellDescriptionType.SERIAL}"
-        )
+        return axiellRepository.getAllTitles()
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -42,7 +39,7 @@ class AxiellService  (
     }
 
     fun getAllItems(): Flux<Item> {
-        return axiellRepository.searchTexts("record_type=${AxiellRecordType.ITEM}")
+        return axiellRepository.getAllItems()
             .flatMapIterable { it.adlibJson.recordList }
             .map { mapCollectionsObjectToGenericItem(it) }
     }
@@ -52,7 +49,7 @@ class AxiellService  (
         var titleName: String? = null
         var materialType: String? = null
 
-        return axiellRepository.searchTexts("priref=${titleCatalogId}")
+        return axiellRepository.getItemsForTitle(titleCatalogId)
             .flatMapIterable { it.adlibJson.recordList }
             .flatMapIterable { title ->
                 titleName = title.titleList?.first()?.title

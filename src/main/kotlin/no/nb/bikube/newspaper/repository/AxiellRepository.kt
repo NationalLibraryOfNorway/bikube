@@ -1,5 +1,7 @@
 package no.nb.bikube.newspaper.repository
 
+import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.util.logger
@@ -14,6 +16,24 @@ class AxiellRepository(
     private val webClientConfig: WebClientConfig
 ) {
     fun webClient() = webClientConfig.webClient()
+
+    @Throws(AxiellCollectionsException::class)
+    fun getAllTitles(): Mono<CollectionsModel> {
+        return searchTexts(
+            "record_type=${AxiellRecordType.WORK} and " +
+            "work.description_type=${AxiellDescriptionType.SERIAL}"
+        )
+    }
+
+    @Throws(AxiellCollectionsException::class)
+    fun getAllItems(): Mono<CollectionsModel> {
+        return searchTexts("record_type=${AxiellRecordType.ITEM}")
+    }
+
+    @Throws(AxiellCollectionsException::class)
+    fun getItemsForTitle(titleCatalogId: String): Mono<CollectionsModel> {
+        return searchTexts("priref=${titleCatalogId}")
+    }
 
     @Throws(AxiellCollectionsException::class)
     fun createTitle(serializedBody: String): Mono<CollectionsModel> {
@@ -37,7 +57,7 @@ class AxiellRepository(
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun searchTexts(searchQuery: String): Mono<CollectionsModel> {
+    private fun searchTexts(searchQuery: String): Mono<CollectionsModel> {
         return webClient()
             .get()
             .uri {
