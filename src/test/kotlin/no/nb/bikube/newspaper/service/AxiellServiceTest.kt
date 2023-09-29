@@ -13,11 +13,11 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleE
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,14 +34,9 @@ class AxiellServiceTest {
     @MockkBean
     private lateinit var axiellRepository: AxiellRepository
 
-    @BeforeEach
-    fun beforeEach() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-    }
-
     @Test
     fun `getTitle should fetch data as CollectionModel from repo and convert to title`() {
-        every { axiellRepository.getTitles() } returns Mono.just(collectionsModelMockTitleE)
+        every { axiellRepository.getAllTitles() } returns Mono.just(collectionsModelMockTitleE)
 
         axiellService.getTitles()
             .test()
@@ -80,16 +75,18 @@ class AxiellServiceTest {
 
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
-        every { axiellRepository.createTitle(any()) } returns Mono.error(RuntimeException("Error creating title"))
+        every { axiellRepository.createTitle(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
 
         axiellService.createTitle(newspaperTitleMockB)
             .test()
-            .expectErrorMatches { it is RuntimeException && it.message == "Error creating title" }
+            .expectErrorMatches { it is AxiellCollectionsException && it.message == "Error creating title" }
             .verify()
     }
 
     @Test
     fun `getItemsForTitle should return all items for title`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
             .expectSubscription()
@@ -99,6 +96,8 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return title information on items`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
             .expectSubscription()
@@ -115,6 +114,8 @@ class AxiellServiceTest {
 
     @Test
     fun `getItemsForTitle should return material type on items`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+
         axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList.first().priRef)
             .test()
             .expectSubscription()
