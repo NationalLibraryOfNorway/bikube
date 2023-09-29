@@ -12,6 +12,7 @@ import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Service
 class AxiellService  (
@@ -29,6 +30,11 @@ class AxiellService  (
     fun createTitle(title: Title): Flux<Title> {
         val encodedBody = Json.encodeToString(TitleDto(
             title = title.name!!,
+            dateStart = title.startDate.toString(),
+            dateEnd = title.endDate.toString(),
+            publisher = title.publisher,
+            placeOfPublication = title.publisherPlace,
+            language = title.language,
             recordType = AxiellRecordType.WORK.value,
             descriptionType = AxiellDescriptionType.SERIAL.value,
             subMedium = title.materialType
