@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
+import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericItem
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
@@ -12,6 +13,7 @@ import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.SynchronousSink
 
 @Service
 class AxiellService  (
@@ -21,7 +23,7 @@ class AxiellService  (
     @Throws(AxiellCollectionsException::class)
     fun getTitles(): Flux<Title> {
         return axiellRepository.getAllTitles()
-            .flatMapIterable { it.adlibJson.recordList }
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
@@ -34,55 +36,57 @@ class AxiellService  (
             subMedium = title.materialType
         ))
         return axiellRepository.createTitle(encodedBody)
-            .flatMapIterable { it.adlibJson.recordList }
+            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
+                collectionsModel.adlibJson.recordList
+                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
+                    ?: sink.error(AxiellTitleNotFound("New title not found"))
+            }
+            .flatMapIterable { it }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
     fun getAllItems(): Flux<Item> {
         return axiellRepository.getAllItems()
-            .flatMapIterable { it.adlibJson.recordList }
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
             .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(AxiellCollectionsException::class)
     fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
-        var titleName: String? = null
-        var materialType: String? = null
 
         return axiellRepository.getSingleCollectionsModel(titleCatalogId)
-            .flatMapIterable { it.adlibJson.recordList }
-            .flatMapIterable { title ->
-                titleName = title.titleList?.first()?.title
-                materialType = title.subMediumList?.first()?.subMedium
-
-                if (
-                    !title.partsList.isNullOrEmpty()
-                ) { title.partsList }
-                else { emptyList() }
+            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
+                collectionsModel.adlibJson.recordList
+                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
+                    ?: sink.error(AxiellTitleNotFound("Title $titleCatalogId not found"))
             }
-            .flatMapIterable { yearWork ->
-                if (
-                    yearWork.partsReference != null
-                    && !yearWork.partsReference.partsList.isNullOrEmpty()
-                ) { yearWork.partsReference.partsList }
-                else { emptyList() }
+            .map { it.first() }
+            .handle { collectionsObject, sink ->
+                if (collectionsObject.isSerial())
+                    sink.next(collectionsObject)
+                else
+                    sink.error(AxiellTitleNotFound("Title $titleCatalogId not found"))
             }
-            .flatMapIterable { manifestation ->
-                if (
-                    manifestation.partsReference != null
-                    && !manifestation.partsReference.partsList.isNullOrEmpty()
-                ) { manifestation.partsReference.partsList }
-                else { emptyList() }
-            }
-            .mapNotNull { item ->
-                item.partsReference?.let {
-                    mapCollectionsPartsObjectToGenericItem(
-                        item.partsReference,
-                        titleCatalogueId = titleCatalogId,
-                        titleName = titleName,
-                        materialType = materialType
-                    )
-                }
+            .flatMapMany { title ->
+                val titleName = title.titleList?.first()?.title
+                val materialType = title.subMediumList?.first()?.subMedium
+                Flux.fromIterable(title.partsList ?: emptyList())
+                    .flatMapIterable { yearWork ->
+                        yearWork.partsReference?.partsList ?: emptyList()
+                    }
+                    .flatMapIterable { manifestation ->
+                        manifestation.partsReference?.partsList ?: emptyList()
+                    }
+                    .mapNotNull { item ->
+                        item.partsReference?.let {
+                            mapCollectionsPartsObjectToGenericItem(
+                                item.partsReference,
+                                titleCatalogueId = titleCatalogId,
+                                titleName = titleName,
+                                materialType = materialType
+                            )
+                        }
+                    }
             }
     }
 

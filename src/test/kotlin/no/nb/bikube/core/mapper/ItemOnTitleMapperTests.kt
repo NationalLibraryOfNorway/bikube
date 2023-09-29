@@ -25,7 +25,7 @@ class ItemOnTitleMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList.first()
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList!!.first()
 
     private fun itemList(): List<Item> {
         val list = mutableListOf<Item>()

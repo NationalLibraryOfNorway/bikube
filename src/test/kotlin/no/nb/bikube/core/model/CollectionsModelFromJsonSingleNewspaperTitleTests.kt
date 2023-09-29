@@ -24,7 +24,7 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     }
 
     private val singleTitleJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).adlibJson.recordList.first()
+    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).adlibJson.recordList!!.first()
 
     @Test
     fun `Title object should extract priRef`() { Assertions.assertEquals("3", singleTitle.priRef) }

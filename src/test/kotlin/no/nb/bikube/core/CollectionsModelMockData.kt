@@ -236,7 +236,7 @@ class CollectionsModelMockData {
 
         val collectionsModelEmptyRecordListMock = CollectionsModel(
             adlibJson = CollectionsRecordList(
-                recordList = emptyList()
+                recordList = null
             )
         )
     }

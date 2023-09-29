@@ -17,4 +17,14 @@ class GlobalControllerExceptionHandler {
                 exception.message ?: "Error occurred when trying to contact Collection."
             )
     }
+
+    @ExceptionHandler(AxiellTitleNotFound::class)
+    fun handleAxiellTitleNotFoundException(exception: AxiellTitleNotFound): ProblemDetail {
+        logger().error("AxiellTitleNotFound occurred: ${exception.message}")
+        return ProblemDetail
+            .forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                "Collections title not found: ${exception.message}"
+            )
+    }
 }

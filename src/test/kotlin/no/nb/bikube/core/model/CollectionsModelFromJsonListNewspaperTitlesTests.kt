@@ -21,7 +21,7 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
     }
 
     private val titleListJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleList.json")
-    private val titles = mapper().readValue<CollectionsModel>(titleListJson).adlibJson.recordList
+    private val titles = mapper().readValue<CollectionsModel>(titleListJson).adlibJson.recordList!!
 
     @Test
     fun `Title object should extract all items`() {
