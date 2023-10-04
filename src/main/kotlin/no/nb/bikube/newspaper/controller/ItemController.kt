@@ -29,6 +29,7 @@ class ItemController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     @Throws(AxiellCollectionsException::class)
+    @Deprecated("Will be removed in a future version as getting all items will have too much data.")
     fun getAllItems(
         @RequestParam(required = false) titleCatalogueId: String?,
     ): Mono<ResponseEntity<List<Item>>> {
