@@ -25,6 +25,7 @@ class TitleController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     @Throws(AxiellCollectionsException::class)
+    @Deprecated("Will be removed in a future version as getting all titles will have too much data.")
     fun getTitles(): ResponseEntity<Flux<Title>> {
         return ResponseEntity.ok(axiellService.getTitles())
     }

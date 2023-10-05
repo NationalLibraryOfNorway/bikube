@@ -13,6 +13,7 @@ import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
 
 @Service
@@ -88,6 +89,43 @@ class AxiellService  (
                         }
                     }
             }
+    }
+
+    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
+    fun getSingleItem(catalogId: String): Mono<Item> {
+        return axiellRepository.getSingleCollectionsModel(catalogId)
+            .map {
+                validateSingleCollectionsModel(it, AxiellRecordType.ITEM, null)
+                mapCollectionsObjectToGenericItem(it.adlibJson.recordList!!.first())
+            }
+    }
+
+    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
+    fun getSingleTitle(catalogId: String): Mono<Title> {
+        return axiellRepository.getSingleCollectionsModel(catalogId)
+            .map {
+                validateSingleCollectionsModel(it, AxiellRecordType.WORK, AxiellDescriptionType.SERIAL)
+                mapCollectionsObjectToGenericTitle(it.adlibJson.recordList!!.first())
+            }
+    }
+
+    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
+    private fun validateSingleCollectionsModel(model: CollectionsModel, recordType: AxiellRecordType?, workType: AxiellDescriptionType?) {
+        val records = model.adlibJson.recordList
+        if (records.isNullOrEmpty()) throw AxiellTitleNotFound("Could not find object in Collections")
+        if (records.size > 1) throw AxiellCollectionsException("More than one object found in Collections (Should be exactly 1)")
+
+        val record = records.first()
+        recordType?.let {
+            if (record.recordTypeList!!.first().first{ it.lang == "neutral" }.text != recordType.value) {
+                throw AxiellTitleNotFound("Could not find fitting object in Collections - Found object is not of type $recordType")
+            }
+        }
+        workType?.let {
+            if (record.workTypeList!!.first().first{ it.lang == "neutral" }.text != workType.value) {
+                throw AxiellTitleNotFound("Could not find fitting object in Collections - Found object is not of type $workType")
+            }
+        }
     }
 
 }

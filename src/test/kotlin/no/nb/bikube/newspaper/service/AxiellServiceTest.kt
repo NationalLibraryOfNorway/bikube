@@ -6,26 +6,31 @@ import io.mockk.verify
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockItemA
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleD
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleE
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.exception.GlobalControllerExceptionHandler
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.model.TitleDto
+import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
+import java.time.LocalDate
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -180,4 +185,168 @@ class AxiellServiceTest(
             .verify()
     }
 
+    @Test
+    fun `getSingleItem should return correctly mapped item`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
+        val testRecord = collectionsModelMockItemA.adlibJson.recordList!!.first()
+        val testSerialWork = collectionsPartOfObjectMockSerialWorkA.partOfReference!!
+
+        axiellService.getSingleItem("1")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(
+                    Item(
+                        catalogueId = testRecord.priRef,
+                        name = testRecord.titleList!!.first().title,
+                        date = LocalDate.parse(testRecord.titleList!!.first().title!!.takeLast(10).replace(".", "-")),
+                        materialType = testSerialWork.subMedium!!.first().subMedium,
+                        titleCatalogueId = testSerialWork.priRef,
+                        titleName = testSerialWork.title!!.first().title,
+                        digital = true
+                    ),
+                    it
+                )
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getSingleItem should throw AxiellTitleNotFound if object is a manifestation`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+
+        axiellService.getSingleItem("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleItem should throw AxiellTitleNotFound if object is a work`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+
+        axiellService.getSingleItem("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleItem should throw AxiellTitleNotFound if no items are received`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+
+        axiellService.getSingleItem("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleItem should throw AxiellCollectionsException if multiple items are received`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(
+            CollectionsModel(adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    collectionsModelMockItemA.adlibJson.recordList!!.first().copy(),
+                    collectionsModelMockItemA.adlibJson.recordList!!.first().copy()
+                )
+            ))
+        )
+
+        axiellService.getSingleItem("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellCollectionsException::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleTitle should return correctly mapped title`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        val testRecord = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(
+                    Title(
+                        name = testRecord.titleList!!.first().title,
+                        startDate = LocalDate.parse(testRecord.datingList!!.first().dateFrom),
+                        endDate = null,
+                        publisher = testRecord.publisherList!!.first(),
+                        publisherPlace = testRecord.placeOfPublicationList!!.first(),
+                        language = testRecord.languageList!!.first().language,
+                        materialType = testRecord.subMediumList!!.first().subMedium,
+                        catalogueId = testRecord.priRef
+                    ),
+                    it
+                )
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getSingleTitle should throw AxiellTitleNotFound if object is a manifestation`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleTitle should throw AxiellTitleNotFound if object is an item`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleTitle should throw AxiellTitleNotFound if object is a year work`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleTitle should throw AxiellTitleNotFound if no items are received`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `getSingleTitle should throw AxiellCollectionsException if multiple items are received`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(
+            CollectionsModel(adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    collectionsModelMockTitleA.adlibJson.recordList!!.first().copy(),
+                    collectionsModelMockTitleB.adlibJson.recordList!!.first().copy()
+                )
+            ))
+        )
+
+        axiellService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(AxiellCollectionsException::class.java)
+            .verify()
+    }
 }
