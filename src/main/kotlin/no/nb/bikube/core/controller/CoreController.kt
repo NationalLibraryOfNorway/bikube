@@ -69,7 +69,6 @@ class CoreController (
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "400", description = "Bad request"),
-        ApiResponse(responseCode = "404", description = "Found no titles matching search string."),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     @Throws(NotSupportedException::class)
