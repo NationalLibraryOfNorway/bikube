@@ -349,4 +349,29 @@ class AxiellServiceTest(
             .expectError(AxiellCollectionsException::class.java)
             .verify()
     }
+
+    @Test
+    fun `getTitleByName should return correctly mapped title`() {
+        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleA)
+
+        axiellService.getTitleByName("1")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(
+                    Title(
+                        name = collectionsModelMockTitleA.adlibJson.recordList!!.first().titleList!!.first().title,
+                        startDate = LocalDate.parse(collectionsModelMockTitleA.adlibJson.recordList!!.first().datingList!!.first().dateFrom),
+                        endDate = null,
+                        publisher = collectionsModelMockTitleA.adlibJson.recordList!!.first().publisherList!!.first(),
+                        publisherPlace = collectionsModelMockTitleA.adlibJson.recordList!!.first().placeOfPublicationList!!.first(),
+                        language = collectionsModelMockTitleA.adlibJson.recordList!!.first().languageList!!.first().language,
+                        materialType = collectionsModelMockTitleA.adlibJson.recordList!!.first().subMediumList!!.first().subMedium,
+                        catalogueId = collectionsModelMockTitleA.adlibJson.recordList!!.first().priRef
+                    ),
+                    it
+                )
+            }
+            .verifyComplete()
+    }
 }
