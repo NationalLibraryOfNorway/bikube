@@ -38,8 +38,8 @@ class AxiellRepository(
     fun getTitleByName(name: String): Mono<CollectionsModel> {
         return searchTexts(
             "record_type=${AxiellRecordType.WORK} and " +
-                    "work.description_type=${AxiellDescriptionType.SERIAL} and " +
-                    "title=\"${name}\""
+            "work.description_type=${AxiellDescriptionType.SERIAL} and " +
+            "title=\"${name}\""
         )
     }
 
