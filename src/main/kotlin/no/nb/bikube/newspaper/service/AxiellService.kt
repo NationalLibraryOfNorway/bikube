@@ -109,7 +109,6 @@ class AxiellService  (
             }
     }
 
-    @Throws(AxiellTitleNotFound::class)
     fun getTitleByName(name: String): Flux<Title> {
         return axiellRepository.getTitleByName(name)
             .flatMapIterable { it.adlibJson.recordList ?: emptyList() }

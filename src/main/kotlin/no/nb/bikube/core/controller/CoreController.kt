@@ -71,7 +71,6 @@ class CoreController (
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
-    @Throws(NotSupportedException::class)
     fun getTitleByName(
         @PathVariable name: String,
         @RequestParam materialType: MaterialType,
