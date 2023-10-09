@@ -35,6 +35,14 @@ class AxiellRepository(
         return searchTexts("priref=${titleCatalogId}")
     }
 
+    fun getTitleByName(name: String): Mono<CollectionsModel> {
+        return searchTexts(
+            "record_type=${AxiellRecordType.WORK} and " +
+            "work.description_type=${AxiellDescriptionType.SERIAL} and " +
+            "title=\"${name}\""
+        )
+    }
+
     @Throws(AxiellCollectionsException::class)
     fun createTitle(serializedBody: String): Mono<CollectionsModel> {
         return webClient()

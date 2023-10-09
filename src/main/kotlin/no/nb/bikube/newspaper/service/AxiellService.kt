@@ -109,6 +109,12 @@ class AxiellService  (
             }
     }
 
+    fun getTitleByName(name: String): Flux<Title> {
+        return axiellRepository.getTitleByName(name)
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
+            .map { mapCollectionsObjectToGenericTitle(it) }
+    }
+
     @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
     private fun validateSingleCollectionsModel(model: CollectionsModel, recordType: AxiellRecordType?, workType: AxiellDescriptionType?) {
         val records = model.adlibJson.recordList

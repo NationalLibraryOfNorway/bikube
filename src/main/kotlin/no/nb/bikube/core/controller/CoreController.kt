@@ -15,10 +15,8 @@ import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
@@ -57,6 +55,28 @@ class CoreController (
     ): ResponseEntity<Mono<Title>> {
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.getSingleTitle(catalogueId))
+            else -> throw NotSupportedException("Material type $materialType is not supported.")
+        }
+    }
+
+    @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(
+        summary = "Search for title by name",
+        description =
+            "Case insensitive search producing a list of titles matching the search string. " +
+            "Supports wildcard operator * for partial matches."
+    )
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun getTitleByName(
+        @RequestParam name: String,
+        @RequestParam materialType: MaterialType,
+    ): ResponseEntity<Flux<Title>> {
+        return when(materialTypeToCatalogueName(materialType)) {
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.getTitleByName(name))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
