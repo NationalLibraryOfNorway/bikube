@@ -59,7 +59,7 @@ class CoreController (
         }
     }
 
-    @GetMapping("/search/{name}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Search for title by name",
         description =
@@ -72,7 +72,7 @@ class CoreController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun getTitleByName(
-        @PathVariable name: String,
+        @RequestParam name: String,
         @RequestParam materialType: MaterialType,
     ): ResponseEntity<Flux<Title>> {
         return when(materialTypeToCatalogueName(materialType)) {
