@@ -57,18 +57,14 @@ class AxiellServiceTest(
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
         every { axiellRepository.createTitle(any()) } returns Mono.just(collectionsModelMockTitleE)
 
-        val body = Title(
-            newspaperTitleMockB.name,
-            null,
-            null,
-            null,
-            null,
-            null,
-            newspaperTitleMockB.materialType,
-            null
-        )
+        val body = newspaperTitleMockB.copy()
         val encodedValue = Json.encodeToString(TitleDto(
             title = newspaperTitleMockB.name!!,
+            dateStart = newspaperTitleMockB.startDate.toString(),
+            dateEnd = newspaperTitleMockB.endDate.toString(),
+            publisher = newspaperTitleMockB.publisher,
+            placeOfPublication = newspaperTitleMockB.publisherPlace,
+            language = newspaperTitleMockB.language,
             recordType = AxiellRecordType.WORK.value,
             descriptionType = AxiellDescriptionType.SERIAL.value,
             subMedium = newspaperTitleMockB.materialType

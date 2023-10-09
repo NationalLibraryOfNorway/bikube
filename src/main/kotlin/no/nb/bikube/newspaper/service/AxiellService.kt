@@ -32,6 +32,11 @@ class AxiellService  (
     fun createTitle(title: Title): Flux<Title> {
         val encodedBody = Json.encodeToString(TitleDto(
             title = title.name!!,
+            dateStart = title.startDate.toString(),
+            dateEnd = title.endDate.toString(),
+            publisher = title.publisher,
+            placeOfPublication = title.publisherPlace,
+            language = title.language,
             recordType = AxiellRecordType.WORK.value,
             descriptionType = AxiellDescriptionType.SERIAL.value,
             subMedium = title.materialType
