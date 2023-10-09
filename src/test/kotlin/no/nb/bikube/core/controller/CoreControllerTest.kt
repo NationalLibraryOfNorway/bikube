@@ -85,11 +85,11 @@ class CoreControllerTest {
 
     @Test
     fun `search title should return a list of titles matching name`() {
-        every { axiellService.getTitleByName(any()) } returns Flux.just(
+        every { axiellService.searchTitleByName(any()) } returns Flux.just(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
-        coreController.getTitleByName("Avis", MaterialType.NEWSPAPER).body!!
+        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
@@ -103,16 +103,16 @@ class CoreControllerTest {
 
     @Test
     fun `search title should throw error when trying to get manuscripts`() {
-        assertThrows<NotSupportedException> { coreController.getTitleByName("Avis", MaterialType.MANUSCRIPT) }
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MANUSCRIPT) }
     }
 
     @Test
     fun `search title should throw error when trying to get periodicals`() {
-        assertThrows<NotSupportedException> { coreController.getTitleByName("Avis", MaterialType.PERIODICAL) }
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.PERIODICAL) }
     }
 
     @Test
     fun `search title should throw error when trying to get monographs`() {
-        assertThrows<NotSupportedException> { coreController.getTitleByName("Avis", MaterialType.MONOGRAPH) }
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MONOGRAPH) }
     }
 }

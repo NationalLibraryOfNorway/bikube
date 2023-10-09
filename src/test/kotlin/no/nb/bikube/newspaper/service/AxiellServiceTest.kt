@@ -350,7 +350,7 @@ class AxiellServiceTest(
     fun `getTitleByName should return correctly mapped title`() {
         every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleA)
 
-        axiellService.getTitleByName("1")
+        axiellService.searchTitleByName("1")
             .test()
             .expectSubscription()
             .assertNext {

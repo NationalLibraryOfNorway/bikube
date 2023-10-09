@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nb.bikube.core.enum.CatalogueName
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.enum.materialTypeToCatalogueName
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
@@ -61,9 +60,9 @@ class CoreController (
 
     @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
-        summary = "Search for title by name",
+        summary = "Search catalogue",
         description =
-            "Case insensitive search producing a list of titles matching the search string. " +
+            "Case insensitive search on various types (titles, publishers, items etc.) and various material types. " +
             "Supports wildcard operator * for partial matches."
     )
     @ApiResponses(value = [
@@ -71,13 +70,27 @@ class CoreController (
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
-    fun getTitleByName(
-        @RequestParam name: String,
-        @RequestParam materialType: MaterialType,
-    ): ResponseEntity<Flux<Title>> {
-        return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.getTitleByName(name))
-            else -> throw NotSupportedException("Material type $materialType is not supported.")
+    fun search(
+        @RequestParam searchTerm: String,
+        @RequestParam searchType: SearchType,
+        @RequestParam materialType: MaterialType
+    ): ResponseEntity<Flux<CatalogueRecord>> {
+        return when (getSearchType(searchType.value)) {
+            SearchType.TITLE -> {
+                when(materialTypeToCatalogueName(materialType)) {
+                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchTitleByName(searchTerm))
+                    else -> throw NotSupportedException("Material type $materialType is not supported.")
+                }
+            }
+
+            SearchType.PUBLISHER -> {
+                when(materialTypeToCatalogueName(materialType)) {
+                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchPublisherByName(searchTerm))
+                    else -> throw NotSupportedException("Material type $materialType is not supported.")
+                }
+            }
+
+            else -> throw NotSupportedException("Search type $searchType is not supported.")
         }
     }
 }

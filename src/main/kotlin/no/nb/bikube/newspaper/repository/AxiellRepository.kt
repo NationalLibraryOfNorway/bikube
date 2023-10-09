@@ -1,6 +1,8 @@
 package no.nb.bikube.newspaper.repository
 
+import no.nb.bikube.core.enum.AxiellDatabase
 import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellNameType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.CollectionsModel
@@ -43,6 +45,13 @@ class AxiellRepository(
         )
     }
 
+    fun searchPublisher(name: String): Mono<CollectionsModel> {
+        return searchTexts(
+            "name.type=${AxiellNameType.PUBLISHER} and name=\"${name}\"",
+            AxiellDatabase.PEOPLE
+        )
+    }
+
     @Throws(AxiellCollectionsException::class)
     fun createTitle(serializedBody: String): Mono<CollectionsModel> {
         return webClient()
@@ -65,12 +74,15 @@ class AxiellRepository(
     }
 
     @Throws(AxiellCollectionsException::class)
-    private fun searchTexts(searchQuery: String): Mono<CollectionsModel> {
+    private fun searchTexts(
+        searchQuery: String,
+        database: AxiellDatabase? = AxiellDatabase.TEXTS
+    ): Mono<CollectionsModel> {
         return webClient()
             .get()
             .uri {
                 it
-                    .queryParam("database", "texts")
+                    .queryParam("database", database)
                     .queryParam("output", "json")
                     .queryParam("search", searchQuery)
                     .build()

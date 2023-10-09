@@ -16,6 +16,8 @@ data class CollectionsObject(
     @JsonProperty("@priref")
     val priRef: String,
 
+    val name: String?,
+
     @JsonProperty("Title")
     val titleList: List<CollectionsTitle>?,
 

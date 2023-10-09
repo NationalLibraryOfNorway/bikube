@@ -15,3 +15,11 @@ enum class AxiellFormat(val value: String) {
     DIGITAL("DIGITAL"),
     PHYSICAL("PHYSICAL")
 }
+
+enum class AxiellNameType(val value: String) {
+    PUBLISHER("PUBLISHER")
+}
+
+enum class AxiellTermType(val value: String) {
+    LANGUAGE("LANGUAGE")
+}

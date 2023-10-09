@@ -7,6 +7,7 @@ import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericItem
+import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericPublisher
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.core.model.*
@@ -114,10 +115,16 @@ class AxiellService  (
             }
     }
 
-    fun getTitleByName(name: String): Flux<Title> {
+    fun searchTitleByName(name: String): Flux<CatalogueRecord> {
         return axiellRepository.getTitleByName(name)
             .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
             .map { mapCollectionsObjectToGenericTitle(it) }
+    }
+
+    fun searchPublisherByName(name: String): Flux<CatalogueRecord> {
+        return axiellRepository.searchPublisher(name)
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
+            .map { mapCollectionsObjectToGenericPublisher(it) }
     }
 
     @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
