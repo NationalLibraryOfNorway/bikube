@@ -2,7 +2,10 @@ package no.nb.bikube.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.core.enum.SearchType
+import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
@@ -84,12 +87,12 @@ class CoreControllerTest {
     }
 
     @Test
-    fun `search title should return a list of titles matching name`() {
+    fun `search should return a list of titles matching name`() {
         every { axiellService.searchTitleByName(any()) } returns Flux.just(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
-        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
+        coreController.search("Avis", SearchType.TITLE, MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
@@ -102,17 +105,59 @@ class CoreControllerTest {
     }
 
     @Test
-    fun `search title should throw error when trying to get manuscripts`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MANUSCRIPT) }
+    fun `search should call correct service method when searchType is TITLE and materialType is NEWSPAPER`() {
+        every { axiellService.searchTitleByName(any()) } returns Flux.empty()
+        val searchTerm = "Hello world"
+        coreController.search(searchTerm, SearchType.TITLE, MaterialType.NEWSPAPER)
+        verify { axiellService.searchTitleByName(searchTerm) }
     }
 
     @Test
-    fun `search title should throw error when trying to get periodicals`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.PERIODICAL) }
+    fun `search should call correct service method when searchType is PUBLISHER and materialType is NEWSPAPER`() {
+        every { axiellService.searchPublisherByName(any()) } returns Flux.empty()
+        val searchTerm = "Hello world"
+        coreController.search(searchTerm, SearchType.PUBLISHER, MaterialType.NEWSPAPER)
+        verify { axiellService.searchPublisherByName(searchTerm) }
     }
 
     @Test
-    fun `search title should throw error when trying to get monographs`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MONOGRAPH) }
+    fun `search should call correct service method when searchType is LANGUAGE and materialType is NEWSPAPER`() {
+        every { axiellService.searchLanguageByName(any()) } returns Flux.empty()
+        val searchTerm = "Hello world"
+        coreController.search(searchTerm, SearchType.LANGUAGE, MaterialType.NEWSPAPER)
+        verify { axiellService.searchLanguageByName(searchTerm) }
+    }
+
+    @Test
+    fun `search should call correct service method when searchType is LOCATION and materialType is NEWSPAPER`() {
+        every { axiellService.searchPublisherPlace(any()) } returns Flux.empty()
+        val searchTerm = "Hello world"
+        coreController.search(searchTerm, SearchType.LOCATION, MaterialType.NEWSPAPER)
+        verify { axiellService.searchPublisherPlace(searchTerm) }
+    }
+
+    @Test
+    fun `search should throw NotSupportedException when trying to get manuscripts`() {
+        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.MANUSCRIPT) }
+    }
+
+    @Test
+    fun `search should throw NotSupportedException when trying to get periodicals`() {
+        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.PERIODICAL) }
+    }
+
+    @Test
+    fun `search should throw NotSupportedException when trying to get monographs`() {
+        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.MONOGRAPH) }
+    }
+
+    @Test
+    fun `search should throw BadRequestBodyException when search term is empty`() {
+        assertThrows<BadRequestBodyException> { coreController.search("", SearchType.TITLE, MaterialType.NEWSPAPER) }
+    }
+
+    @Test
+    fun `search should throw NotSupportedException when search type is item`() {
+        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.ITEM, MaterialType.NEWSPAPER) }
     }
 }

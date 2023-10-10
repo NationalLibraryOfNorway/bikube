@@ -7,10 +7,9 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
+import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
-import no.nb.bikube.core.model.CatalogueRecord
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -58,6 +57,7 @@ class CoreController (
         }
     }
 
+
     @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Search catalogue",
@@ -75,22 +75,76 @@ class CoreController (
         @RequestParam searchType: SearchType,
         @RequestParam materialType: MaterialType
     ): ResponseEntity<Flux<CatalogueRecord>> {
-        return when (getSearchType(searchType.value)) {
+        if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
+
+        return when (searchType) {
             SearchType.TITLE -> {
                 when(materialTypeToCatalogueName(materialType)) {
                     CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchTitleByName(searchTerm))
                     else -> throw NotSupportedException("Material type $materialType is not supported.")
                 }
             }
-
             SearchType.PUBLISHER -> {
                 when(materialTypeToCatalogueName(materialType)) {
                     CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchPublisherByName(searchTerm))
                     else -> throw NotSupportedException("Material type $materialType is not supported.")
                 }
             }
-
+            SearchType.LANGUAGE -> {
+                when(materialTypeToCatalogueName(materialType)) {
+                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchLanguageByName(searchTerm))
+                    else -> throw NotSupportedException("Material type $materialType is not supported.")
+                }
+            }
+            SearchType.LOCATION -> {
+                when(materialTypeToCatalogueName(materialType)) {
+                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchPublisherPlace(searchTerm))
+                    else -> throw NotSupportedException("Material type $materialType is not supported.")
+                }
+            }
             else -> throw NotSupportedException("Search type $searchType is not supported.")
         }
+    }
+
+    @PostMapping("/publisher", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create new publisher")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun createPublisher(
+        @RequestBody publisher: String
+    ): ResponseEntity<Mono<Publisher>> {
+        return ResponseEntity.ok(axiellService.createPublisher(publisher))
+    }
+
+    @PostMapping("/publisher-place", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create new publisher place (location)")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun createPublisherPlace(
+        @RequestBody location: String
+    ): ResponseEntity<Mono<PublisherPlace>> {
+        return ResponseEntity.ok(axiellService.createPublisherPlace(location))
+    }
+
+    @PostMapping("/language", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create new ISO-639-2 language code")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun createLanguage(
+        @RequestBody language: String
+    ): ResponseEntity<Mono<PublisherPlace>> {
+        if (!Regex("^[a-z]{3}$").matches(language)) {
+            throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
+        }
+        return ResponseEntity.ok(axiellService.createLanguage(language))
     }
 }

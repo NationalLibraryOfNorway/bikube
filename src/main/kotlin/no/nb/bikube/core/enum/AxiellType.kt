@@ -17,9 +17,10 @@ enum class AxiellFormat(val value: String) {
 }
 
 enum class AxiellNameType(val value: String) {
-    PUBLISHER("PUBLISHER")
+    PUBLISHER("PUBL")
 }
 
 enum class AxiellTermType(val value: String) {
-    LANGUAGE("LANGUAGE")
+    LANGUAGE("LANGUAGE"),
+    LOCATION("PLACE")
 }

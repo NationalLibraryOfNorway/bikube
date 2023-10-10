@@ -43,6 +43,12 @@ class TitleController (
         if (title.name.isNullOrEmpty()) {
             return ResponseEntity.badRequest().build()
         }
+
+        if (!title.publisher.isNullOrEmpty()) {
+            axiellService.searchPublisherByName(title.publisher)
+            // TODO: Search for publisher and create if not found
+        }
+
         return ResponseEntity.ok(axiellService.createTitle(title))
     }
 }

@@ -1,9 +1,6 @@
 package no.nb.bikube.newspaper.repository
 
-import no.nb.bikube.core.enum.AxiellDatabase
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellNameType
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.CollectionsModel
 import no.nb.bikube.core.util.logger
@@ -48,17 +45,31 @@ class AxiellRepository(
     fun searchPublisher(name: String): Mono<CollectionsModel> {
         return searchTexts(
             "name.type=${AxiellNameType.PUBLISHER} and name=\"${name}\"",
-            AxiellDatabase.PEOPLE
+            AxiellDatabase.PEOPLE.value
         )
     }
 
+    fun searchLanguage(name: String): Mono<CollectionsModel> {
+        return searchTexts(
+            "term.type=${AxiellTermType.LANGUAGE} and term=\"${name}\"",
+            AxiellDatabase.LANGUAGES.value
+        )
+    }
+
+    fun searchPublisherPlace(name: String): Mono<CollectionsModel> {
+        return searchTexts("term=\"${name}\"", AxiellDatabase.LOCATIONS.value)
+    }
+
     @Throws(AxiellCollectionsException::class)
-    fun createTitle(serializedBody: String): Mono<CollectionsModel> {
+    fun createRecord(
+        serializedBody: String,
+        database: String? = AxiellDatabase.TEXTS.value
+    ): Mono<CollectionsModel> {
         return webClient()
             .post()
             .uri {
                 it
-                    .queryParam("database", "texts")
+                    .queryParam("database", database)
                     .queryParam("command", "insertrecord")
                     .queryParam("output", "json")
                     .build()
@@ -76,7 +87,7 @@ class AxiellRepository(
     @Throws(AxiellCollectionsException::class)
     private fun searchTexts(
         searchQuery: String,
-        database: AxiellDatabase? = AxiellDatabase.TEXTS
+        database: String? = AxiellDatabase.TEXTS.value
     ): Mono<CollectionsModel> {
         return webClient()
             .get()

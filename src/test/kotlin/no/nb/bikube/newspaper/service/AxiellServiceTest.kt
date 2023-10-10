@@ -21,6 +21,7 @@ import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.exception.GlobalControllerExceptionHandler
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
@@ -55,10 +56,11 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        every { axiellRepository.createTitle(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         val body = newspaperTitleMockB.copy()
-        val encodedValue = Json.encodeToString(TitleDto(
+        val encodedValue = Json.encodeToString(
+            TitleDto(
             title = newspaperTitleMockB.name!!,
             dateStart = newspaperTitleMockB.startDate.toString(),
             dateEnd = newspaperTitleMockB.endDate.toString(),
@@ -68,19 +70,20 @@ class AxiellServiceTest(
             recordType = AxiellRecordType.WORK.value,
             descriptionType = AxiellDescriptionType.SERIAL.value,
             subMedium = newspaperTitleMockB.materialType
-        ))
+        )
+        )
 
         axiellService.createTitle(body)
             .test()
             .expectNextMatches { it == newspaperTitleMockB }
             .verifyComplete()
 
-        verify { axiellRepository.createTitle(encodedValue) }
+        verify { axiellRepository.createRecord(encodedValue) }
     }
 
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
-        every { axiellRepository.createTitle(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
+        every { axiellRepository.createRecord(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
 
         axiellService.createTitle(newspaperTitleMockB)
             .test()

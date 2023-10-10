@@ -47,5 +47,10 @@ class NewspaperMockData {
             titleName = newspaperTitleMockA.name,
             digital = true
         )
+
+        val language: Language = Language(
+            name = "nob",
+            catalogueId = "1"
+        )
     }
 }

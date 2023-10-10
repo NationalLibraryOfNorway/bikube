@@ -2,15 +2,12 @@ package no.nb.bikube.newspaper.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
-import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericItem
-import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericPublisher
-import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
-import no.nb.bikube.core.mapper.mapCollectionsPartsObjectToGenericItem
+import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.dto.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -31,18 +28,20 @@ class AxiellService  (
 
     @Throws(AxiellCollectionsException::class)
     fun createTitle(title: Title): Flux<Title> {
-        val encodedBody = Json.encodeToString(TitleDto(
-            title = title.name!!,
-            dateStart = title.startDate.toString(),
-            dateEnd = title.endDate.toString(),
-            publisher = title.publisher,
-            placeOfPublication = title.publisherPlace,
-            language = title.language,
-            recordType = AxiellRecordType.WORK.value,
-            descriptionType = AxiellDescriptionType.SERIAL.value,
-            subMedium = title.materialType
-        ))
-        return axiellRepository.createTitle(encodedBody)
+        val encodedBody = Json.encodeToString(
+            TitleDto(
+                title = title.name!!,
+                dateStart = title.startDate.toString(),
+                dateEnd = title.endDate.toString(),
+                publisher = title.publisher,
+                placeOfPublication = title.publisherPlace,
+                language = title.language,
+                recordType = AxiellRecordType.WORK.value,
+                descriptionType = AxiellDescriptionType.SERIAL.value,
+                subMedium = title.materialType
+            )
+        )
+        return axiellRepository.createRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
@@ -125,6 +124,36 @@ class AxiellService  (
         return axiellRepository.searchPublisher(name)
             .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
             .map { mapCollectionsObjectToGenericPublisher(it) }
+    }
+
+    fun searchLanguageByName(name: String): Flux<CatalogueRecord> {
+        return axiellRepository.searchLanguage(name)
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
+            .map { mapCollectionsObjectToGenericLanguage(it) }
+    }
+
+    fun searchPublisherPlace(name: String): Flux<CatalogueRecord> {
+        return axiellRepository.searchPublisherPlace(name)
+            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
+            .map { mapCollectionsObjectToGenericPublisherPlace(it) }
+    }
+
+    fun createPublisher(publisher: String): Mono<Publisher> {
+        val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
+        return axiellRepository.createRecord(serializedBody, AxiellDatabase.PEOPLE.value)
+            .map { mapCollectionsObjectToGenericPublisher(it.adlibJson.recordList!!.first()) }
+    }
+
+    fun createPublisherPlace(publisherPlace: String): Mono<PublisherPlace> {
+        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace))
+        return axiellRepository.createRecord(serializedBody, AxiellDatabase.LOCATIONS.value)
+            .map { mapCollectionsObjectToGenericPublisherPlace(it.adlibJson.recordList!!.first()) }
+    }
+
+    fun createLanguage(language: String): Mono<PublisherPlace> {
+        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language))
+        return axiellRepository.createRecord(serializedBody, AxiellDatabase.LANGUAGES.value)
+            .map { mapCollectionsObjectToGenericPublisherPlace(it.adlibJson.recordList!!.first()) }
     }
 
     @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)

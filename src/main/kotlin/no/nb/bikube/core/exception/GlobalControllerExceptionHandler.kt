@@ -42,6 +42,17 @@ class GlobalControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(BadRequestBodyException::class)
+    fun handleBadRequestBodyException(exception: BadRequestBodyException): ProblemDetail {
+        logger().warn("BadRequestBodyException occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST)
+        problemDetail.detail = exception.message ?: "The request body is malformed."
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }
 
 fun ProblemDetail.addDefaultProperties() {

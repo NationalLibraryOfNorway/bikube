@@ -7,14 +7,3 @@ enum class SearchType (val value: String) {
     LANGUAGE("language"),
     LOCATION("location")
 }
-
-fun getSearchType(searchType: String): SearchType {
-    return when (searchType) {
-        "title" -> SearchType.TITLE
-        "item" -> SearchType.ITEM
-        "publisher" -> SearchType.PUBLISHER
-        "language" -> SearchType.LANGUAGE
-        "location" -> SearchType.LOCATION
-        else -> throw Exception("Search type $searchType is not supported.")
-    }
-}
