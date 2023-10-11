@@ -117,7 +117,9 @@ class CoreController (
     fun createPublisher(
         @RequestBody publisher: String
     ): Mono<ResponseEntity<Publisher>> {
-        return axiellService.createPublisher(publisher).map { created ->
+        return if (publisher.isEmpty()) {
+            throw BadRequestBodyException("Publisher cannot be empty.")
+        } else axiellService.createPublisher(publisher).map { created ->
             ResponseEntity.ok(created)
         }
     }
@@ -132,7 +134,9 @@ class CoreController (
     fun createPublisherPlace(
         @RequestBody location: String
     ): Mono<ResponseEntity<PublisherPlace>> {
-        return axiellService.createPublisherPlace(location).map { created ->
+        return if (location.isEmpty()) {
+            throw BadRequestBodyException("Publisher place (location) cannot be empty.")
+        } else axiellService.createPublisherPlace(location).map { created ->
             ResponseEntity.ok(created)
         }
     }
@@ -146,7 +150,7 @@ class CoreController (
     ])
     fun createLanguage(
         @RequestBody language: String
-    ): Mono<ResponseEntity<PublisherPlace>> {
+    ): Mono<ResponseEntity<Language>> {
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }

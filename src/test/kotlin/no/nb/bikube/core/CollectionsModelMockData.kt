@@ -214,6 +214,7 @@ class CollectionsModelMockData {
             )
         )
 
+        // Equal to newspaperTitleMockB
         val collectionsModelMockTitleE = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(CollectionsObject(
@@ -321,6 +322,28 @@ class CollectionsModelMockData {
                 recordList = listOf(
                     CollectionsObject(
                         priRef = "25",
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
+                        recordTypeList = collectionsRecordTypeListWorkMock,
+                        formatList = null,
+                        partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(collectionsPartsObjectMockManifestationA),
+                        workTypeList = collectionsWorkTypeListYearMock
+                    )
+                )
+            )
+        )
+        val collectionsModelMockWithNameA = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "26",
+                        name = "Bikubeavisen 1999",
                         titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
                         recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,

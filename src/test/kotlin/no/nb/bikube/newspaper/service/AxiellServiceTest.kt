@@ -13,6 +13,7 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleD
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleE
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockWithNameA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.core.enum.AxiellDescriptionType
@@ -20,8 +21,10 @@ import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
 import no.nb.bikube.core.exception.GlobalControllerExceptionHandler
+import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.dto.TitleDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
@@ -372,5 +375,181 @@ class AxiellServiceTest(
                 )
             }
             .verifyComplete()
+    }
+
+    @Test
+    fun `getTitleByName should return empty Mono if no titles are found`() {
+        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        axiellService.searchTitleByName("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createTitle should return correctly mapped record`() {
+        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.createTitle(newspaperTitleMockB.copy())
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createTitle should correctly encode the title object sent to json string`() {
+        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        val encodedValue = Json.encodeToString(
+            TitleDto(
+                title = newspaperTitleMockB.name!!,
+                dateStart = newspaperTitleMockB.startDate.toString(),
+                dateEnd = newspaperTitleMockB.endDate.toString(),
+                publisher = newspaperTitleMockB.publisher,
+                placeOfPublication = newspaperTitleMockB.publisherPlace,
+                language = newspaperTitleMockB.language,
+                recordType = AxiellRecordType.WORK.value,
+                descriptionType = AxiellDescriptionType.SERIAL.value,
+                subMedium = newspaperTitleMockB.materialType
+            )
+        )
+
+        axiellService.createTitle(newspaperTitleMockB.copy())
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
+            .verifyComplete()
+
+        verify { axiellRepository.createRecord(encodedValue) }
+    }
+
+    @Test
+    fun `searchTitleByName should return a correctly mapped catalogue record`() {
+        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.searchTitleByName("1")
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `searchTitleByName should return a flux of an empty list if no titles are found`() {
+        every { axiellRepository.getTitleByName(any()) } returns Mono.empty()
+        axiellService.searchTitleByName("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `searchPublisherByName should return a correctly mapped catalogue record`() {
+        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsModelMockWithNameA)
+        axiellService.searchPublisherByName("1")
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(Publisher("Bikubeavisen 1999", "26"), it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `searchPublisherByName should return a flux of an empty list if no publishers are found`() {
+        every { axiellRepository.searchPublisher(any()) } returns Mono.empty()
+        axiellService.searchPublisherByName("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `searchLanguageByName should return a correctly mapped catalogue record`() {
+        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsModelMockWithNameA)
+        axiellService.searchLanguageByName("26")
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(Language(null, "26"), it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `searchLanguageByName should return a flux of an empty list if no languages are found`() {
+        every { axiellRepository.searchLanguage(any()) } returns Mono.empty()
+        axiellService.searchLanguageByName("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createPublisher should return RecordAlreadyExistsException if searchPublisher returns non-empty list`() {
+        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.createPublisher("1")
+            .test()
+            .expectSubscription()
+            .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Publisher '1' already exists" }
+            .verify()
+    }
+
+    @Test
+    fun `createPublisher should call createRecord if search returns empty recordList`() {
+        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { axiellRepository.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleE)
+
+        axiellService.createPublisher("2")
+            .test()
+            .expectNext(Publisher(null, "2"))
+            .verifyComplete()
+
+        verify { axiellRepository.createRecord(any(), any()) }
+    }
+
+    @Test
+    fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
+        every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.createPublisherPlace("1")
+            .test()
+            .expectSubscription()
+            .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Publisher place '1' already exists" }
+            .verify()
+    }
+
+    @Test
+    fun `createPublisherPlace should call createRecord if search returns empty recordList`() {
+        every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { axiellRepository.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleE)
+
+        axiellService.createPublisherPlace("2")
+            .test()
+            .expectNext(PublisherPlace(null, "2"))
+            .verifyComplete()
+
+        verify { axiellRepository.createRecord(any(), any()) }
+    }
+
+    @Test
+    fun `createLanguage should return RecordAlreadyExistsException if searchLanguage returns non-empty list`() {
+        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.createLanguage("1")
+            .test()
+            .expectSubscription()
+            .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Language '1' already exists" }
+            .verify()
+    }
+
+    @Test
+    fun `createLanguage should call createRecord if search returns empty recordList`() {
+        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { axiellRepository.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleE)
+
+        axiellService.createLanguage("2")
+            .test()
+            .expectNext(Language(null, "2"))
+            .verifyComplete()
+
+        verify { axiellRepository.createRecord(any(), any()) }
     }
 }

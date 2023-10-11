@@ -43,7 +43,6 @@ class AxiellService  (
             )
         )
         return axiellRepository.createRecord(encodedBody)
-            .doOnNext{println(it)}
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
@@ -165,7 +164,7 @@ class AxiellService  (
             }
     }
 
-    fun createLanguage(language: String): Mono<PublisherPlace> {
+    fun createLanguage(language: String): Mono<Language> {
         val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, AxiellTermType.LANGUAGE))
         return axiellRepository.searchLanguage(language)
             .flatMap { collectionsModel ->
@@ -173,7 +172,7 @@ class AxiellService  (
                     Mono.error(RecordAlreadyExistsException("Language '$language' already exists"))
                 } else {
                     axiellRepository.createRecord(serializedBody, AxiellDatabase.LANGUAGES.value)
-                        .map { mapCollectionsObjectToGenericPublisherPlace(it.adlibJson.recordList!!.first()) }
+                        .map { mapCollectionsObjectToGenericLanguage(it.adlibJson.recordList!!.first()) }
                 }
             }
     }

@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.reactive.collect
 import no.nb.bikube.core.exception.AxiellCollectionsException
+import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
@@ -46,7 +48,9 @@ class TitleController (
         @RequestBody title: Title
     ): Mono<ResponseEntity<Title>> {
         return if (title.name.isNullOrEmpty()) {
-            Mono.just(ResponseEntity.badRequest().build())
+            Mono.error(BadRequestBodyException("Title name cannot be null or empty"))
+        } else if (title.startDate != null && title.endDate != null && title.startDate.isAfter(title.endDate)) {
+            Mono.error(BadRequestBodyException("Start date cannot be after end date"))
         } else {
             val publisherMono: Mono<Publisher> = title.publisher?.let {
                 axiellService.createPublisher(it).onErrorResume { Mono.empty() }
@@ -56,7 +60,7 @@ class TitleController (
                 axiellService.createPublisherPlace(it).onErrorResume { Mono.empty() }
             } ?: Mono.empty()
 
-            val languageMono: Mono<PublisherPlace> = title.language?.let {
+            val languageMono: Mono<Language> = title.language?.let {
                 axiellService.createLanguage(it).onErrorResume { Mono.empty() }
             } ?: Mono.empty()
 

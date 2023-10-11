@@ -24,6 +24,6 @@ class PublisherMapperTests {
 
     @Test
     fun `Publisher mapper should map name`() {
-        Assertions.assertEquals("nob", mapCollectionsObjectToGenericLanguage(publisherPlaceMock).name)
+        Assertions.assertEquals("Schibsted", mapCollectionsObjectToGenericLanguage(publisherPlaceMock).name)
     }
 }

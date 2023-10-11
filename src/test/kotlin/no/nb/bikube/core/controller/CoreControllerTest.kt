@@ -8,6 +8,9 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.SearchType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.core.model.Language
+import no.nb.bikube.core.model.Publisher
+import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
@@ -163,16 +166,63 @@ class CoreControllerTest {
     }
 
     @Test
-    fun `createLanguage should search for the given language code before attempting to create`() {
-        every { axiellService.searchLanguageByName(any()) } returns Flux.empty()
-        val languageCode = "eng"
-        coreController.createLanguage(languageCode)
-        verify { axiellService.searchLanguageByName(languageCode) }
-        verify { axiellService.createLanguage(languageCode) wasNot Called }
+    fun `createPublisher should return created publisher in body`() {
+        val publisher = Publisher("Amedia", "1")
+        every { axiellService.createPublisher(any()) } returns Mono.just(publisher)
+
+        coreController.createPublisher("Amedia")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(200, it.statusCode.value())
+                Assertions.assertEquals(publisher, it.body)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createPublisher should throw BadRequestBodyException if publisher name is empty`() {
+        assertThrows<BadRequestBodyException> { coreController.createPublisher("") }
+    }
+
+    @Test
+    fun `createPublisherPlace should return created publisher place in body`() {
+        val publisherPlace = PublisherPlace("Oslo", "1")
+        every { axiellService.createPublisherPlace(any()) } returns Mono.just(publisherPlace)
+
+        coreController.createPublisherPlace("Oslo")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(200, it.statusCode.value())
+                Assertions.assertEquals(publisherPlace, it.body)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createPublisherPlace should throw BadRequestBodyException if publisher place name is empty`() {
+        assertThrows<BadRequestBodyException> { coreController.createPublisherPlace("") }
+    }
+
+    @Test
+    fun `createLanguage should return created language in body`() {
+        val language = Language("eng", "1")
+        every { axiellService.createLanguage(any()) } returns Mono.just(language)
+
+        coreController.createLanguage("eng")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(200, it.statusCode.value())
+                Assertions.assertEquals(language, it.body)
+            }
+            .verifyComplete()
     }
 
     @Test
     fun `createLanguage should throw BadRequestBodyException if language code is not in ISO-639-2 format`() {
+        assertThrows<BadRequestBodyException> { coreController.createLanguage("") }
         assertThrows<BadRequestBodyException> { coreController.createLanguage("en") }
         assertThrows<BadRequestBodyException> { coreController.createLanguage("english") }
     }
