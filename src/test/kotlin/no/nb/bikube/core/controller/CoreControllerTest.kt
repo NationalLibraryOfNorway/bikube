@@ -96,7 +96,7 @@ class CoreControllerTest {
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
-        coreController.search("Avis", SearchType.TITLE, MaterialType.NEWSPAPER).body!!
+        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
@@ -106,124 +106,5 @@ class CoreControllerTest {
                 Assertions.assertEquals(newspaperTitleMockB, it)
             }
             .verifyComplete()
-    }
-
-    @Test
-    fun `search should call correct service method when searchType is TITLE and materialType is NEWSPAPER`() {
-        every { axiellService.searchTitleByName(any()) } returns Flux.empty()
-        val searchTerm = "Hello world"
-        coreController.search(searchTerm, SearchType.TITLE, MaterialType.NEWSPAPER)
-        verify { axiellService.searchTitleByName(searchTerm) }
-    }
-
-    @Test
-    fun `search should call correct service method when searchType is PUBLISHER and materialType is NEWSPAPER`() {
-        every { axiellService.searchPublisherByName(any()) } returns Flux.empty()
-        val searchTerm = "Hello world"
-        coreController.search(searchTerm, SearchType.PUBLISHER, MaterialType.NEWSPAPER)
-        verify { axiellService.searchPublisherByName(searchTerm) }
-    }
-
-    @Test
-    fun `search should call correct service method when searchType is LANGUAGE and materialType is NEWSPAPER`() {
-        every { axiellService.searchLanguageByName(any()) } returns Flux.empty()
-        val searchTerm = "Hello world"
-        coreController.search(searchTerm, SearchType.LANGUAGE, MaterialType.NEWSPAPER)
-        verify { axiellService.searchLanguageByName(searchTerm) }
-    }
-
-    @Test
-    fun `search should call correct service method when searchType is LOCATION and materialType is NEWSPAPER`() {
-        every { axiellService.searchPublisherPlaceByName(any()) } returns Flux.empty()
-        val searchTerm = "Hello world"
-        coreController.search(searchTerm, SearchType.LOCATION, MaterialType.NEWSPAPER)
-        verify { axiellService.searchPublisherPlaceByName(searchTerm) }
-    }
-
-    @Test
-    fun `search should throw NotSupportedException when trying to get manuscripts`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.MANUSCRIPT) }
-    }
-
-    @Test
-    fun `search should throw NotSupportedException when trying to get periodicals`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.PERIODICAL) }
-    }
-
-    @Test
-    fun `search should throw NotSupportedException when trying to get monographs`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.TITLE, MaterialType.MONOGRAPH) }
-    }
-
-    @Test
-    fun `search should throw BadRequestBodyException when search term is empty`() {
-        assertThrows<BadRequestBodyException> { coreController.search("", SearchType.TITLE, MaterialType.NEWSPAPER) }
-    }
-
-    @Test
-    fun `search should throw NotSupportedException when search type is item`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.ITEM, MaterialType.NEWSPAPER) }
-    }
-
-    @Test
-    fun `createPublisher should return created publisher in body`() {
-        val publisher = Publisher("Amedia", "1")
-        every { axiellService.createPublisher(any()) } returns Mono.just(publisher)
-
-        coreController.createPublisher("Amedia")
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(200, it.statusCode.value())
-                Assertions.assertEquals(publisher, it.body)
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `createPublisher should throw BadRequestBodyException if publisher name is empty`() {
-        assertThrows<BadRequestBodyException> { coreController.createPublisher("") }
-    }
-
-    @Test
-    fun `createPublisherPlace should return created publisher place in body`() {
-        val publisherPlace = PublisherPlace("Oslo", "1")
-        every { axiellService.createPublisherPlace(any()) } returns Mono.just(publisherPlace)
-
-        coreController.createPublisherPlace("Oslo")
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(200, it.statusCode.value())
-                Assertions.assertEquals(publisherPlace, it.body)
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `createPublisherPlace should throw BadRequestBodyException if publisher place name is empty`() {
-        assertThrows<BadRequestBodyException> { coreController.createPublisherPlace("") }
-    }
-
-    @Test
-    fun `createLanguage should return created language in body`() {
-        val language = Language("eng", "1")
-        every { axiellService.createLanguage(any()) } returns Mono.just(language)
-
-        coreController.createLanguage("eng")
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(200, it.statusCode.value())
-                Assertions.assertEquals(language, it.body)
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `createLanguage should throw BadRequestBodyException if language code is not in ISO-639-2 format`() {
-        assertThrows<BadRequestBodyException> { coreController.createLanguage("") }
-        assertThrows<BadRequestBodyException> { coreController.createLanguage("en") }
-        assertThrows<BadRequestBodyException> { coreController.createLanguage("english") }
     }
 }

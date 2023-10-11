@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
+import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
@@ -139,6 +140,7 @@ class AxiellService  (
     }
 
     fun createPublisher(publisher: String): Mono<Publisher> {
+        if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
         return axiellRepository.searchPublisher(publisher)
             .flatMap { collectionsModel ->
@@ -152,6 +154,7 @@ class AxiellService  (
     }
 
     fun createPublisherPlace(publisherPlace: String): Mono<PublisherPlace> {
+        if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
         val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, AxiellTermType.LOCATION))
         return axiellRepository.searchPublisherPlace(publisherPlace)
             .flatMap { collectionsModel ->
@@ -165,6 +168,9 @@ class AxiellService  (
     }
 
     fun createLanguage(language: String): Mono<Language> {
+        if (!Regex("^[a-z]{3}$").matches(language)) {
+            throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
+        }
         val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, AxiellTermType.LANGUAGE))
         return axiellRepository.searchLanguage(language)
             .flatMap { collectionsModel ->

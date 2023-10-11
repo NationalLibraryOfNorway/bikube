@@ -18,10 +18,7 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
-import no.nb.bikube.core.exception.AxiellCollectionsException
-import no.nb.bikube.core.exception.AxiellTitleNotFound
-import no.nb.bikube.core.exception.GlobalControllerExceptionHandler
-import no.nb.bikube.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
@@ -29,6 +26,7 @@ import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -508,6 +506,11 @@ class AxiellServiceTest(
     }
 
     @Test
+    fun `createPublisher should throw BadRequestBodyException if publisher is empty`() {
+        assertThrows<BadRequestBodyException> { axiellService.createPublisher("") }
+    }
+
+    @Test
     fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
         every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsModelMockTitleE)
         axiellService.createPublisherPlace("1")
@@ -531,12 +534,17 @@ class AxiellServiceTest(
     }
 
     @Test
+    fun `createPublisherPlace should throw BadRequestBodyException if publisher place is empty`() {
+        assertThrows<BadRequestBodyException> { axiellService.createPublisherPlace("") }
+    }
+
+    @Test
     fun `createLanguage should return RecordAlreadyExistsException if searchLanguage returns non-empty list`() {
         every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsModelMockTitleE)
-        axiellService.createLanguage("1")
+        axiellService.createLanguage("nob")
             .test()
             .expectSubscription()
-            .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Language '1' already exists" }
+            .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Language 'nob' already exists" }
             .verify()
     }
 
@@ -545,11 +553,18 @@ class AxiellServiceTest(
         every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { axiellRepository.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleE)
 
-        axiellService.createLanguage("2")
+        axiellService.createLanguage("nob")
             .test()
             .expectNext(Language(null, "2"))
             .verifyComplete()
 
         verify { axiellRepository.createRecord(any(), any()) }
+    }
+
+    @Test
+    fun `createLanguage should throw BadRequestBodyException if language code is not a valid ISO-639-2 language code`() {
+        assertThrows<BadRequestBodyException> { axiellService.createLanguage("") }
+        assertThrows<BadRequestBodyException> { axiellService.createLanguage("en") }
+        assertThrows<BadRequestBodyException> { axiellService.createLanguage("english") }
     }
 }
