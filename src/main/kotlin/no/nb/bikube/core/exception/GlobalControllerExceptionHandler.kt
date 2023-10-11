@@ -53,6 +53,17 @@ class GlobalControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(RecordAlreadyExistsException::class)
+    fun handleRecordAlreadyExistsException(exception: RecordAlreadyExistsException): ProblemDetail {
+        logger().warn("RecordAlreadyExistsException occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)
+        problemDetail.detail = exception.message ?: "The record already exists."
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }
 
 fun ProblemDetail.addDefaultProperties() {

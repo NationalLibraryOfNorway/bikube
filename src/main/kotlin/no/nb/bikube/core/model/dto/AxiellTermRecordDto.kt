@@ -31,10 +31,10 @@ class AxiellTermRecordDto(
     val priRef: String? = null
 )
 
-fun createTermRecordDtoFromString(termName: String): AxiellTermRecordDto {
+fun createTermRecordDtoFromString(termName: String, termType: AxiellTermType): AxiellTermRecordDto {
     return AxiellTermRecordDto(
         term = termName,
-        termType = AxiellTermType.LANGUAGE.value,
+        termType = termType.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         inputName = "Bikube API" // TODO: Change when we have authentication in place

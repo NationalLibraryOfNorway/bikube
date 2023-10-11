@@ -65,6 +65,8 @@ class AxiellRepository(
         serializedBody: String,
         database: String? = AxiellDatabase.TEXTS.value
     ): Mono<CollectionsModel> {
+        println("serializedBody: $serializedBody")
+        println("database: $database")
         return webClient()
             .post()
             .uri {

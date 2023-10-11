@@ -11,6 +11,7 @@ import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -98,7 +99,7 @@ class CoreController (
             }
             SearchType.LOCATION -> {
                 when(materialTypeToCatalogueName(materialType)) {
-                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchPublisherPlace(searchTerm))
+                    CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchPublisherPlaceByName(searchTerm))
                     else -> throw NotSupportedException("Material type $materialType is not supported.")
                 }
             }
@@ -115,8 +116,10 @@ class CoreController (
     ])
     fun createPublisher(
         @RequestBody publisher: String
-    ): ResponseEntity<Mono<Publisher>> {
-        return ResponseEntity.ok(axiellService.createPublisher(publisher))
+    ): Mono<ResponseEntity<Publisher>> {
+        return axiellService.createPublisher(publisher).map { created ->
+            ResponseEntity.ok(created)
+        }
     }
 
     @PostMapping("/publisher-place", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -128,8 +131,10 @@ class CoreController (
     ])
     fun createPublisherPlace(
         @RequestBody location: String
-    ): ResponseEntity<Mono<PublisherPlace>> {
-        return ResponseEntity.ok(axiellService.createPublisherPlace(location))
+    ): Mono<ResponseEntity<PublisherPlace>> {
+        return axiellService.createPublisherPlace(location).map { created ->
+            ResponseEntity.ok(created)
+        }
     }
 
     @PostMapping("/language", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -141,10 +146,12 @@ class CoreController (
     ])
     fun createLanguage(
         @RequestBody language: String
-    ): ResponseEntity<Mono<PublisherPlace>> {
+    ): Mono<ResponseEntity<PublisherPlace>> {
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }
-        return ResponseEntity.ok(axiellService.createLanguage(language))
+        return axiellService.createLanguage(language).map { created ->
+            ResponseEntity.ok(created)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package no.nb.bikube.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.core.enum.MaterialType
@@ -130,10 +131,10 @@ class CoreControllerTest {
 
     @Test
     fun `search should call correct service method when searchType is LOCATION and materialType is NEWSPAPER`() {
-        every { axiellService.searchPublisherPlace(any()) } returns Flux.empty()
+        every { axiellService.searchPublisherPlaceByName(any()) } returns Flux.empty()
         val searchTerm = "Hello world"
         coreController.search(searchTerm, SearchType.LOCATION, MaterialType.NEWSPAPER)
-        verify { axiellService.searchPublisherPlace(searchTerm) }
+        verify { axiellService.searchPublisherPlaceByName(searchTerm) }
     }
 
     @Test
@@ -159,5 +160,20 @@ class CoreControllerTest {
     @Test
     fun `search should throw NotSupportedException when search type is item`() {
         assertThrows<NotSupportedException> { coreController.search("Avis", SearchType.ITEM, MaterialType.NEWSPAPER) }
+    }
+
+    @Test
+    fun `createLanguage should search for the given language code before attempting to create`() {
+        every { axiellService.searchLanguageByName(any()) } returns Flux.empty()
+        val languageCode = "eng"
+        coreController.createLanguage(languageCode)
+        verify { axiellService.searchLanguageByName(languageCode) }
+        verify { axiellService.createLanguage(languageCode) wasNot Called }
+    }
+
+    @Test
+    fun `createLanguage should throw BadRequestBodyException if language code is not in ISO-639-2 format`() {
+        assertThrows<BadRequestBodyException> { coreController.createLanguage("en") }
+        assertThrows<BadRequestBodyException> { coreController.createLanguage("english") }
     }
 }

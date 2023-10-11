@@ -28,6 +28,9 @@ class TitleDto(
     @SerialName("place_of_publication")
     val placeOfPublication: String? = null,
 
+    @SerialName("place_of_publication.lref")
+    val placeOfPublicationRef: String? = null,
+
     @SerialName("language")
     val language: String? = null
 )

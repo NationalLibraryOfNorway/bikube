@@ -4,13 +4,18 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.reactive.collect
 import no.nb.bikube.core.exception.AxiellCollectionsException
+import no.nb.bikube.core.model.Publisher
+import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
@@ -39,16 +44,25 @@ class TitleController (
     ])
     fun createTitle(
         @RequestBody title: Title
-    ): ResponseEntity<Flux<Title>> {
-        if (title.name.isNullOrEmpty()) {
-            return ResponseEntity.badRequest().build()
-        }
+    ): Mono<ResponseEntity<Title>> {
+        return if (title.name.isNullOrEmpty()) {
+            Mono.just(ResponseEntity.badRequest().build())
+        } else {
+            val publisherMono: Mono<Publisher> = title.publisher?.let {
+                axiellService.createPublisher(it).onErrorResume { Mono.empty() }
+            } ?: Mono.empty()
 
-        if (!title.publisher.isNullOrEmpty()) {
-            axiellService.searchPublisherByName(title.publisher)
-            // TODO: Search for publisher and create if not found
-        }
+            val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let {
+                axiellService.createPublisherPlace(it).onErrorResume { Mono.empty() }
+            } ?: Mono.empty()
 
-        return ResponseEntity.ok(axiellService.createTitle(title))
+            val languageMono: Mono<PublisherPlace> = title.language?.let {
+                axiellService.createLanguage(it).onErrorResume { Mono.empty() }
+            } ?: Mono.empty()
+
+            return Mono.`when`(publisherMono, locationMono, languageMono)
+                .then(axiellService.createTitle(title))
+                .map { createdTitle -> ResponseEntity.ok(createdTitle) }
+        }
     }
 }
