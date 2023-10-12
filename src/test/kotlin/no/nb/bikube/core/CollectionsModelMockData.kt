@@ -1,8 +1,6 @@
 package no.nb.bikube.core
 
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.model.*
 
 class CollectionsModelMockData {
@@ -338,27 +336,56 @@ class CollectionsModelMockData {
                 )
             )
         )
-        val collectionsModelMockWithNameA = CollectionsModel(
-            adlibJson = CollectionsRecordList(
+        val collectionsNameModelMockA = CollectionsNameModel(
+            adlibJson = CollectionsNameRecordList(
                 recordList = listOf(
-                    CollectionsObject(
-                        priRef = "26",
-                        name = "Bikubeavisen 1999",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
-                        formatList = null,
-                        partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
-                        subMediumList = null,
-                        mediumList = null,
-                        datingList = null,
-                        publisherList = null,
-                        languageList = null,
-                        placeOfPublicationList = null,
-                        partsList = listOf(collectionsPartsObjectMockManifestationA),
-                        workTypeList = collectionsWorkTypeListYearMock
+                    CollectionsNameObject(
+                        priRef = "123",
+                        name = "Schibsted",
+                        nameType = AxiellNameType.PUBLISHER.value,
+                        inputDate = "2020-01-01",
+                        inputTime = "12:00:00",
+                        inputName = "Bikube API",
+                        inputSource = "thesau>thesau"
                     )
                 )
             )
+        )
+        val collectionsTermModelMockLanguageA = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(
+                recordList = listOf(
+                    CollectionsTermObject(
+                        priRef = "123",
+                        term = "nob",
+                        termType = AxiellTermType.LANGUAGE.value,
+                        inputDate = "2020-01-01",
+                        inputTime = "12:00:00",
+                        inputName = "Bikube API",
+                        inputSource = "thesau>thesau"
+                    )
+                )
+            )
+        )
+        val collectionsTermModelMockLocationB = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(
+                recordList = listOf(
+                    CollectionsTermObject(
+                        priRef = "123",
+                        term = "Oslo",
+                        termType = AxiellTermType.LOCATION.value,
+                        inputDate = "2020-01-01",
+                        inputTime = "12:00:00",
+                        inputName = "Bikube API",
+                        inputSource = "thesaugeo>thesaugeo"
+                    )
+                )
+            )
+        )
+        val collectionsTermModelWithEmptyRecordListA = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(recordList = null)
+        )
+        val collectionsNameModelWithEmptyRecordListA = CollectionsNameModel(
+            adlibJson = CollectionsNameRecordList(recordList = null)
         )
     }
 }

@@ -1,11 +1,11 @@
 package no.nb.bikube.core.mapper
 
-import no.nb.bikube.core.model.CollectionsObject
+import no.nb.bikube.core.model.CollectionsTermObject
 import no.nb.bikube.core.model.Language
 
-fun mapCollectionsObjectToGenericLanguage(model: CollectionsObject): Language {
+fun mapCollectionsObjectToGenericLanguage(model: CollectionsTermObject): Language {
     return Language(
         name = model.term,
-        catalogueId = model.priRef
+        databaseId = model.priRef
     )
 }

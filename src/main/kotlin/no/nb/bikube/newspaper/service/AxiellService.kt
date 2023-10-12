@@ -30,19 +30,8 @@ class AxiellService  (
 
     @Throws(AxiellCollectionsException::class)
     fun createTitle(title: Title): Mono<Title> {
-        val encodedBody = Json.encodeToString(
-            TitleDto(
-                title = title.name!!,
-                dateStart = title.startDate.toString(),
-                dateEnd = title.endDate.toString(),
-                publisher = title.publisher,
-                placeOfPublication = title.publisherPlace,
-                language = title.language,
-                recordType = AxiellRecordType.WORK.value,
-                descriptionType = AxiellDescriptionType.SERIAL.value,
-                subMedium = title.materialType
-            )
-        )
+        val dto: TitleDto = createNewspaperTitleDto(title)
+        val encodedBody = Json.encodeToString(dto)
         return axiellRepository.createRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
@@ -121,24 +110,6 @@ class AxiellService  (
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
-    fun searchPublisherByName(name: String): Flux<CatalogueRecord> {
-        return axiellRepository.searchPublisher(name)
-            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
-            .map { mapCollectionsObjectToGenericPublisher(it) }
-    }
-
-    fun searchLanguageByName(name: String): Flux<CatalogueRecord> {
-        return axiellRepository.searchLanguage(name)
-            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
-            .map { mapCollectionsObjectToGenericLanguage(it) }
-    }
-
-    fun searchPublisherPlaceByName(name: String): Flux<CatalogueRecord> {
-        return axiellRepository.searchPublisherPlace(name)
-            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
-            .map { mapCollectionsObjectToGenericPublisherPlace(it) }
-    }
-
     fun createPublisher(publisher: String): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
@@ -147,7 +118,7 @@ class AxiellService  (
                 if (collectionsModel.adlibJson.recordList?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher '$publisher' already exists"))
                 } else {
-                    axiellRepository.createRecord(serializedBody, AxiellDatabase.PEOPLE.value)
+                    axiellRepository.createNameRecord(serializedBody, AxiellDatabase.PEOPLE)
                         .map { mapCollectionsObjectToGenericPublisher(it.adlibJson.recordList!!.first()) }
                 }
             }
@@ -161,7 +132,7 @@ class AxiellService  (
                 if (collectionsModel.adlibJson.recordList?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
                 } else {
-                    axiellRepository.createRecord(serializedBody, AxiellDatabase.LOCATIONS.value)
+                    axiellRepository.createTermRecord(serializedBody, AxiellDatabase.LOCATIONS)
                         .map { mapCollectionsObjectToGenericPublisherPlace(it.adlibJson.recordList!!.first()) }
                 }
             }
@@ -177,7 +148,7 @@ class AxiellService  (
                 if (collectionsModel.adlibJson.recordList?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Language '$language' already exists"))
                 } else {
-                    axiellRepository.createRecord(serializedBody, AxiellDatabase.LANGUAGES.value)
+                    axiellRepository.createTermRecord(serializedBody, AxiellDatabase.LANGUAGES)
                         .map { mapCollectionsObjectToGenericLanguage(it.adlibJson.recordList!!.first()) }
                 }
             }

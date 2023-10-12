@@ -3,10 +3,13 @@ package no.nb.bikube.newspaper.repository
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.model.CollectionsModel
+import no.nb.bikube.core.model.CollectionsNameModel
+import no.nb.bikube.core.model.CollectionsTermModel
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.config.WebClientConfig
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
+import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
@@ -42,60 +45,57 @@ class AxiellRepository(
         )
     }
 
-    fun searchPublisher(name: String): Mono<CollectionsModel> {
-        return searchTexts(
+    fun searchPublisher(name: String): Mono<CollectionsNameModel> {
+        return searchNameDatabases(
             "name.type=${AxiellNameType.PUBLISHER} and name=\"${name}\"",
-            AxiellDatabase.PEOPLE.value
+            AxiellDatabase.PEOPLE
         )
     }
 
-    fun searchLanguage(name: String): Mono<CollectionsModel> {
-        return searchTexts(
+    fun searchLanguage(name: String): Mono<CollectionsTermModel> {
+        return searchTermDatabases(
             "term.type=${AxiellTermType.LANGUAGE} and term=\"${name}\"",
-            AxiellDatabase.LANGUAGES.value
+            AxiellDatabase.LANGUAGES
         )
     }
 
-    fun searchPublisherPlace(name: String): Mono<CollectionsModel> {
-        return searchTexts("term=\"${name}\"", AxiellDatabase.LOCATIONS.value)
+    fun searchPublisherPlace(name: String): Mono<CollectionsTermModel> {
+        return searchTermDatabases("term=\"${name}\"", AxiellDatabase.LOCATIONS)
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun createRecord(
-        serializedBody: String,
-        database: String? = AxiellDatabase.TEXTS.value
-    ): Mono<CollectionsModel> {
-        return webClient()
-            .post()
-            .uri {
-                it
-                    .queryParam("database", database)
-                    .queryParam("command", "insertrecord")
-                    .queryParam("output", "json")
-                    .build()
-            }
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(serializedBody)
-            .retrieve()
-            .onStatus(
-                { it.is4xxClientError || it.is5xxServerError },
-                { Mono.error(AxiellCollectionsException("Error creating title")) }
-            )
-            .bodyToMono<CollectionsModel>()
+    fun createRecord(serializedBody: String): Mono<CollectionsModel> {
+        return createRecordWebClientRequest(serializedBody, AxiellDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
 
-    @Throws(AxiellCollectionsException::class)
-    private fun searchTexts(
-        searchQuery: String,
-        database: String? = AxiellDatabase.TEXTS.value
-    ): Mono<CollectionsModel> {
+    fun createNameRecord(serializedBody: String, db: AxiellDatabase): Mono<CollectionsNameModel> {
+        return createRecordWebClientRequest(serializedBody, db).bodyToMono<CollectionsNameModel>()
+    }
+
+    fun createTermRecord(serializedBody: String, db: AxiellDatabase): Mono<CollectionsTermModel> {
+        return createRecordWebClientRequest(serializedBody, db).bodyToMono<CollectionsTermModel>()
+    }
+
+    private fun searchTexts(query: String): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(query, AxiellDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    }
+
+    private fun searchNameDatabases(query: String, db: AxiellDatabase): Mono<CollectionsNameModel> {
+        return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsNameModel>()
+    }
+
+    private fun searchTermDatabases(query: String, db: AxiellDatabase): Mono<CollectionsTermModel> {
+        return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsTermModel>()
+    }
+
+    private fun getRecordsWebClientRequest(query: String, db: AxiellDatabase): WebClient.ResponseSpec {
         return webClient()
             .get()
             .uri {
                 it
-                    .queryParam("database", database)
+                    .queryParam("database", db.value)
                     .queryParam("output", "json")
-                    .queryParam("search", searchQuery)
+                    .queryParam("search", query)
                     .build()
             }
             .retrieve()
@@ -110,7 +110,25 @@ class AxiellRepository(
                     ))
                 }
             )
-            .bodyToMono<CollectionsModel>()
+    }
+
+    private fun createRecordWebClientRequest(serializedBody: String, db: AxiellDatabase): WebClient.ResponseSpec {
+        return webClient()
+            .post()
+            .uri {
+                it
+                    .queryParam("database", db.value)
+                    .queryParam("command", "insertrecord")
+                    .queryParam("output", "json")
+                    .build()
+            }
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(serializedBody)
+            .retrieve()
+            .onStatus(
+                { it.is4xxClientError || it.is5xxServerError },
+                { Mono.error(AxiellCollectionsException("Error creating title")) }
+            )
     }
 
 }

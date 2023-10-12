@@ -1,6 +1,6 @@
 package no.nb.bikube.core.mapper
 
-import no.nb.bikube.core.CollectionsModelMockData
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,20 +10,18 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class PublisherPlaceMapperTests {
 
-    val publisherPlaceMock = CollectionsModelMockData
-        .collectionsModelMockItemA
+    val publisherPlaceMock = collectionsTermModelMockLocationB
         .adlibJson
         .recordList!!
         .first()
-        .copy(term = "Oslo", priRef = "123")
 
     @Test
     fun `PublisherPlace mapper should map catalogueId`() {
-        Assertions.assertEquals("123", mapCollectionsObjectToGenericLanguage(publisherPlaceMock).catalogueId)
+        Assertions.assertEquals("123", mapCollectionsObjectToGenericPublisherPlace(publisherPlaceMock).databaseId)
     }
 
     @Test
     fun `PublisherPlace mapper should map name`() {
-        Assertions.assertEquals("Oslo", mapCollectionsObjectToGenericLanguage(publisherPlaceMock).name)
+        Assertions.assertEquals("Oslo", mapCollectionsObjectToGenericPublisherPlace(publisherPlaceMock).name)
     }
 }

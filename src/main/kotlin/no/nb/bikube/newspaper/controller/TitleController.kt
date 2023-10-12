@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.reactive.collect
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
@@ -52,16 +53,25 @@ class TitleController (
         } else if (title.startDate != null && title.endDate != null && title.startDate.isAfter(title.endDate)) {
             Mono.error(BadRequestBodyException("Start date cannot be after end date"))
         } else {
-            val publisherMono: Mono<Publisher> = title.publisher?.let {
-                axiellService.createPublisher(it).onErrorResume { Mono.empty() }
+            val publisherMono: Mono<Publisher> = title.publisher?.let { publisherName ->
+                axiellService.createPublisher(publisherName).onErrorResume { exception ->
+                    if (exception is RecordAlreadyExistsException) Mono.empty()
+                    else Mono.error(exception)
+                }
             } ?: Mono.empty()
 
-            val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let {
-                axiellService.createPublisherPlace(it).onErrorResume { Mono.empty() }
+            val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let { locationName ->
+                axiellService.createPublisherPlace(locationName).onErrorResume { exception ->
+                    if (exception is RecordAlreadyExistsException) Mono.empty()
+                    else Mono.error(exception)
+                }
             } ?: Mono.empty()
 
-            val languageMono: Mono<Language> = title.language?.let {
-                axiellService.createLanguage(it).onErrorResume { Mono.empty() }
+            val languageMono: Mono<Language> = title.language?.let { languageName ->
+                axiellService.createLanguage(languageName).onErrorResume { exception ->
+                    if (exception is RecordAlreadyExistsException) Mono.empty()
+                    else Mono.error(exception)
+                }
             } ?: Mono.empty()
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
