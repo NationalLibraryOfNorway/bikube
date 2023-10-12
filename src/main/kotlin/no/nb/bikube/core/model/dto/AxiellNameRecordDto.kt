@@ -4,8 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.AxiellNameType
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
-// TODO: Do we need GUID, input.source, input.name?
 @Serializable
 class AxiellNameRecordDto(
     val name: String,
@@ -16,11 +17,14 @@ class AxiellNameRecordDto(
     @SerialName("input.date")
     val inputDate: String? = null,
 
+    @SerialName("input.time")
+    val inputTime: String? = null,
+
     @SerialName("input.name")
     val inputName: String? = null,
 
     @SerialName("priref")
-    val catalogueId: String? = null
+    val priRef: String? = null
 )
 
 fun createNameRecordDtoFromString(name: String): AxiellNameRecordDto {
@@ -28,6 +32,7 @@ fun createNameRecordDtoFromString(name: String): AxiellNameRecordDto {
         name = name,
         nameType = AxiellNameType.PUBLISHER.value,
         inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         inputName = "Bikube API" // TODO: Change when we have authentication in place
     )
 }
