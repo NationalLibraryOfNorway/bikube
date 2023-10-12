@@ -64,7 +64,6 @@ class CoreController (
         }
     }
 
-
     @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Search catalogue titles")
     @ApiResponses(value = [

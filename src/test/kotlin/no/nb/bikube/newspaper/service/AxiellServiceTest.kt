@@ -65,16 +65,16 @@ class AxiellServiceTest(
         val body = newspaperTitleMockB.copy()
         val encodedValue = Json.encodeToString(
             TitleDto(
-            title = newspaperTitleMockB.name!!,
-            dateStart = newspaperTitleMockB.startDate.toString(),
-            dateEnd = newspaperTitleMockB.endDate.toString(),
-            publisher = newspaperTitleMockB.publisher,
-            placeOfPublication = newspaperTitleMockB.publisherPlace,
-            language = newspaperTitleMockB.language,
-            recordType = AxiellRecordType.WORK.value,
-            descriptionType = AxiellDescriptionType.SERIAL.value,
-            subMedium = newspaperTitleMockB.materialType
-        )
+                title = newspaperTitleMockB.name!!,
+                dateStart = newspaperTitleMockB.startDate.toString(),
+                dateEnd = newspaperTitleMockB.endDate.toString(),
+                publisher = newspaperTitleMockB.publisher,
+                placeOfPublication = newspaperTitleMockB.publisherPlace,
+                language = newspaperTitleMockB.language,
+                recordType = AxiellRecordType.WORK.value,
+                descriptionType = AxiellDescriptionType.SERIAL.value,
+                subMedium = newspaperTitleMockB.materialType
+            )
         )
 
         axiellService.createTitle(body)

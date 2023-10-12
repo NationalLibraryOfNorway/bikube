@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.reactive.collect
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
@@ -13,7 +12,6 @@ import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

@@ -40,8 +40,3 @@ fun createTermRecordDtoFromString(termName: String, termType: AxiellTermType): A
         inputName = "Bikube API" // TODO: Change when we have authentication in place
     )
 }
-
-
-
-
-

@@ -1,16 +1,9 @@
 package no.nb.bikube.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.Called
 import io.mockk.every
-import io.mockk.verify
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.enum.SearchType
-import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
-import no.nb.bikube.core.model.Language
-import no.nb.bikube.core.model.Publisher
-import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
