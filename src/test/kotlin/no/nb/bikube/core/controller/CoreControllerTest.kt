@@ -1,7 +1,9 @@
 package no.nb.bikube.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
+import io.mockk.Called
 import io.mockk.every
+import io.mockk.verify
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
@@ -99,5 +101,25 @@ class CoreControllerTest {
                 Assertions.assertEquals(newspaperTitleMockB, it)
             }
             .verifyComplete()
+    }
+
+    @Test
+    fun `search should throw NotSupportedException when trying to search for anything other than NEWSPAPER`() {
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MANUSCRIPT) }
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.PERIODICAL) }
+        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MONOGRAPH) }
+
+        verify { axiellService.searchTitleByName(any()) wasNot Called }
+    }
+
+    @Test
+    fun `search should call on axiellService function when materialType is NEWSPAPER`() {
+        every { axiellService.searchTitleByName(any()) } returns Flux.empty()
+
+        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
+            .test()
+            .verifyComplete()
+
+        verify { axiellService.searchTitleByName(any()) }
     }
 }

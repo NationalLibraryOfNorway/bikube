@@ -5,6 +5,7 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
@@ -144,4 +145,56 @@ class TitleControllerTest {
         verify { axiellService.createPublisherPlace(any()) wasNot Called }
         verify { axiellService.createLanguage(any()) wasNot Called }
     }
+
+    @Test
+    fun `createTitle should continue when createPublisher receives a 409 conflict`() {
+        every { axiellService.createPublisher(any()) } returns Mono.error(
+            RecordAlreadyExistsException("Publisher place 'Schibsted' already exists")
+        )
+        every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
+        every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleMockA.copy(publisher = "Schibsted"))
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createTitle should continue when createPublisherPlace receives a 409 conflict`() {
+        every { axiellService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
+        every { axiellService.createPublisherPlace(any()) } returns Mono.error(
+            RecordAlreadyExistsException("Publisher place 'Oslo' already exists")
+        )
+        every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleMockA.copy(publisherPlace = "Oslo"))
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createTitle should continue when createLanguage receives a 409 conflict`() {
+        every { axiellService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
+        every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
+        every { axiellService.createLanguage(any()) } returns Mono.error(
+            RecordAlreadyExistsException("Language 'nob' already exists")
+        )
+        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleMockA.copy(language = "nob"))
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
+            }
+            .verifyComplete()
+    }
+
 }
