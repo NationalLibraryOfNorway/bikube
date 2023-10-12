@@ -46,10 +46,7 @@ class AxiellRepository(
     }
 
     fun searchPublisher(name: String): Mono<CollectionsNameModel> {
-        return searchNameDatabases(
-            "name.type=${AxiellNameType.PUBLISHER} and name=\"${name}\"",
-            AxiellDatabase.PEOPLE
-        )
+        return searchNameDatabases("name.type=${AxiellNameType.PUBLISHER} and name=\"${name}\"")
     }
 
     fun searchLanguage(name: String): Mono<CollectionsTermModel> {
@@ -80,8 +77,8 @@ class AxiellRepository(
         return getRecordsWebClientRequest(query, AxiellDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
 
-    private fun searchNameDatabases(query: String, db: AxiellDatabase): Mono<CollectionsNameModel> {
-        return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsNameModel>()
+    private fun searchNameDatabases(query: String): Mono<CollectionsNameModel> {
+        return getRecordsWebClientRequest(query, AxiellDatabase.PEOPLE).bodyToMono<CollectionsNameModel>()
     }
 
     private fun searchTermDatabases(query: String, db: AxiellDatabase): Mono<CollectionsTermModel> {
@@ -103,7 +100,7 @@ class AxiellRepository(
                 { !it.is2xxSuccessful },
                 {
                     logger().error(
-                        "Could not search in Collections catalogue. Error code ${it.statusCode()}"
+                        "Could not search in Collections ${db.value} catalogue. Error code ${it.statusCode()}"
                     )
                     Mono.error(AxiellCollectionsException(
                         "Could not search in Collections catalogue. Try again later or contact Team Text if the problem persists."

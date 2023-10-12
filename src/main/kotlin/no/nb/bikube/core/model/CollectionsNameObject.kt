@@ -12,23 +12,9 @@ data class CollectionsNameRecordList(
 )
 
 data class CollectionsNameObject(
-    @JsonProperty("priref")
-    val priRef: String? = null,
+    @JsonProperty("@priref")
+    val priRef: String?,
 
+    @JsonProperty("name")
     val name: String,
-
-    @JsonProperty("name.type")
-    val nameType: String? = null,
-
-    @JsonProperty("input.date")
-    val inputDate: String? = null,
-
-    @JsonProperty("input.time")
-    val inputTime: String? = null,
-
-    @JsonProperty("input.source")
-    val inputSource: String? = null,
-
-    @JsonProperty("input.name")
-    val inputName: String? = null
 )

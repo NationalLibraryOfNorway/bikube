@@ -12,24 +12,9 @@ data class CollectionsTermRecordList(
 )
 
 data class CollectionsTermObject(
-    @JsonProperty("priref")
-    val priRef: String? = null,
+    @JsonProperty("@priref")
+    val priRef: String,
 
     @JsonProperty("term")
     val term: String,
-
-    @JsonProperty("term.type")
-    val termType: String? = null,
-
-    @JsonProperty("input.date")
-    val inputDate: String? = null,
-
-    @JsonProperty("input.time")
-    val inputTime: String? = null,
-
-    @JsonProperty("input.source")
-    val inputSource: String? = null,
-
-    @JsonProperty("input.name")
-    val inputName: String? = null
 )

@@ -110,7 +110,7 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return title information on items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        val record: CollectionsObject = collectionsModelMockTitleA.adlibJson.recordList!!.first() as CollectionsObject
+        val record: CollectionsObject = collectionsModelMockTitleA.adlibJson.recordList!!.first()
         axiellService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()

@@ -342,11 +342,6 @@ class CollectionsModelMockData {
                     CollectionsNameObject(
                         priRef = "123",
                         name = "Schibsted",
-                        nameType = AxiellNameType.PUBLISHER.value,
-                        inputDate = "2020-01-01",
-                        inputTime = "12:00:00",
-                        inputName = "Bikube API",
-                        inputSource = "thesau>thesau"
                     )
                 )
             )
@@ -357,11 +352,6 @@ class CollectionsModelMockData {
                     CollectionsTermObject(
                         priRef = "123",
                         term = "nob",
-                        termType = AxiellTermType.LANGUAGE.value,
-                        inputDate = "2020-01-01",
-                        inputTime = "12:00:00",
-                        inputName = "Bikube API",
-                        inputSource = "thesau>thesau"
                     )
                 )
             )
@@ -372,11 +362,6 @@ class CollectionsModelMockData {
                     CollectionsTermObject(
                         priRef = "123",
                         term = "Oslo",
-                        termType = AxiellTermType.LOCATION.value,
-                        inputDate = "2020-01-01",
-                        inputTime = "12:00:00",
-                        inputName = "Bikube API",
-                        inputSource = "thesaugeo>thesaugeo"
                     )
                 )
             )
