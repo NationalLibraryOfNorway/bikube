@@ -16,6 +16,9 @@ class TitleDto(
     @SerialName("work.description_type")
     val descriptionType: String?,
 
+    @SerialName("medium")
+    val medium: String? = null,
+
     @SerialName("submedium")
     val subMedium: String? = null,
 
@@ -45,6 +48,7 @@ fun createNewspaperTitleDto(title: Title): TitleDto {
         language = title.language,
         recordType = AxiellRecordType.WORK.value,
         descriptionType = AxiellDescriptionType.SERIAL.value,
+        medium = "Tekst",
         subMedium = title.materialType
     )
 }

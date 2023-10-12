@@ -73,6 +73,7 @@ class AxiellServiceTest(
                 language = newspaperTitleMockB.language,
                 recordType = AxiellRecordType.WORK.value,
                 descriptionType = AxiellDescriptionType.SERIAL.value,
+                medium = "Tekst",
                 subMedium = newspaperTitleMockB.materialType
             )
         )
@@ -412,6 +413,7 @@ class AxiellServiceTest(
                 language = newspaperTitleMockB.language,
                 recordType = AxiellRecordType.WORK.value,
                 descriptionType = AxiellDescriptionType.SERIAL.value,
+                medium = "Tekst",
                 subMedium = newspaperTitleMockB.materialType
             )
         )
