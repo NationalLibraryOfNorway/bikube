@@ -1,8 +1,6 @@
 package no.nb.bikube.core
 
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.model.*
 
 class CollectionsModelMockData {
@@ -214,6 +212,7 @@ class CollectionsModelMockData {
             )
         )
 
+        // Equal to newspaperTitleMockB
         val collectionsModelMockTitleE = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(CollectionsObject(
@@ -336,6 +335,42 @@ class CollectionsModelMockData {
                     )
                 )
             )
+        )
+        val collectionsNameModelMockA = CollectionsNameModel(
+            adlibJson = CollectionsNameRecordList(
+                recordList = listOf(
+                    CollectionsNameObject(
+                        priRef = "123",
+                        name = "Schibsted",
+                    )
+                )
+            )
+        )
+        val collectionsTermModelMockLanguageA = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(
+                recordList = listOf(
+                    CollectionsTermObject(
+                        priRef = "123",
+                        term = "nob",
+                    )
+                )
+            )
+        )
+        val collectionsTermModelMockLocationB = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(
+                recordList = listOf(
+                    CollectionsTermObject(
+                        priRef = "123",
+                        term = "Oslo",
+                    )
+                )
+            )
+        )
+        val collectionsTermModelWithEmptyRecordListA = CollectionsTermModel(
+            adlibJson = CollectionsTermRecordList(recordList = null)
+        )
+        val collectionsNameModelWithEmptyRecordListA = CollectionsNameModel(
+            adlibJson = CollectionsNameRecordList(recordList = null)
         )
     }
 }

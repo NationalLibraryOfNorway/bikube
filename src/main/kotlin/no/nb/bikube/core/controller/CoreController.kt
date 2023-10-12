@@ -9,13 +9,18 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
 import no.nb.bikube.core.exception.AxiellCollectionsException
 import no.nb.bikube.core.exception.AxiellTitleNotFound
+import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -60,23 +65,19 @@ class CoreController (
     }
 
     @GetMapping("/search", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(
-        summary = "Search for title by name",
-        description =
-            "Case insensitive search producing a list of titles matching the search string. " +
-            "Supports wildcard operator * for partial matches."
-    )
+    @Operation(summary = "Search catalogue titles")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
-    fun getTitleByName(
-        @RequestParam name: String,
-        @RequestParam materialType: MaterialType,
-    ): ResponseEntity<Flux<Title>> {
+    fun search(
+        @RequestParam searchTerm: String,
+        @RequestParam materialType: MaterialType
+    ): ResponseEntity<Flux<CatalogueRecord>> {
+        if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.getTitleByName(name))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(axiellService.searchTitleByName(searchTerm))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }

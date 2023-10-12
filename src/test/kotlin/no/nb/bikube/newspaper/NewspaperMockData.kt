@@ -16,6 +16,7 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
+        // Equal to collectionsModelMockTitleE
         val newspaperTitleMockB = Title(
             name = "Avis B",
             startDate = LocalDate.parse("2020-01-01"),
@@ -46,6 +47,11 @@ class NewspaperMockData {
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             titleName = newspaperTitleMockA.name,
             digital = true
+        )
+
+        val language: Language = Language(
+            name = "nob",
+            databaseId = "1"
         )
     }
 }

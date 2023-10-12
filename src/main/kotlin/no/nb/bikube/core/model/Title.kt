@@ -2,7 +2,7 @@ package no.nb.bikube.core.model
 
 import java.time.LocalDate
 
-data class Title (
+data class Title(
     val name: String?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
@@ -11,4 +11,4 @@ data class Title (
     val language: String?,
     val materialType: String?,
     val catalogueId: String?
-)
+) : CatalogueRecord

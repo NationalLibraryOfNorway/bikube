@@ -50,7 +50,8 @@ data class CollectionsObject(
     val partsList: List<CollectionsPartsObject>?,
 
     @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?)
+    val workTypeList: List<List<CollectionsLanguageListObject>>?
+)
 
 data class CollectionsTitle(
     val title: String?
