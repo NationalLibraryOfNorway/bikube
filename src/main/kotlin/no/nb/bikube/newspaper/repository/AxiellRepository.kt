@@ -20,19 +20,6 @@ class AxiellRepository(
     fun webClient() = webClientConfig.webClient()
 
     @Throws(AxiellCollectionsException::class)
-    fun getAllTitles(): Mono<CollectionsModel> {
-        return searchTexts(
-            "record_type=${AxiellRecordType.WORK} and " +
-            "work.description_type=${AxiellDescriptionType.SERIAL}"
-        )
-    }
-
-    @Throws(AxiellCollectionsException::class)
-    fun getAllItems(): Mono<CollectionsModel> {
-        return searchTexts("record_type=${AxiellRecordType.ITEM}")
-    }
-
-    @Throws(AxiellCollectionsException::class)
     fun getSingleCollectionsModel(titleCatalogId: String): Mono<CollectionsModel> {
         return searchTexts("priref=${titleCatalogId}")
     }
