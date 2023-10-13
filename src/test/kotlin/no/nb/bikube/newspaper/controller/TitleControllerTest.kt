@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.LocalDate
@@ -29,18 +28,6 @@ class TitleControllerTest {
 
     @MockkBean
     private lateinit var axiellService: AxiellService
-
-    @Test
-    fun `getTitles should return 200 OK with list of titles`() {
-        every { axiellService.getTitles() } returns Flux.just(newspaperTitleMockA.copy())
-        titleController.getTitles().body!!
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(newspaperTitleMockA, it)
-            }
-            .verifyComplete()
-    }
 
     @Test
     fun `createTitle should return 200 OK with the created title`() {

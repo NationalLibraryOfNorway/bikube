@@ -20,14 +20,6 @@ import reactor.core.publisher.SynchronousSink
 class AxiellService  (
     private val axiellRepository: AxiellRepository
 ) {
-
-    @Throws(AxiellCollectionsException::class)
-    fun getTitles(): Flux<Title> {
-        return axiellRepository.getAllTitles()
-            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
-            .map { mapCollectionsObjectToGenericTitle(it) }
-    }
-
     @Throws(AxiellCollectionsException::class)
     fun createNewspaperTitle(title: Title): Mono<Title> {
         val dto: TitleDto = createNewspaperTitleDto(title)
@@ -39,12 +31,6 @@ class AxiellService  (
                     ?: sink.error(AxiellTitleNotFound("New title not found"))
             }
             .map { mapCollectionsObjectToGenericTitle(it.first()) }
-    }
-
-    fun getAllItems(): Flux<Item> {
-        return axiellRepository.getAllItems()
-            .flatMapIterable { it.adlibJson.recordList ?: emptyList() }
-            .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(AxiellCollectionsException::class)

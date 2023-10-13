@@ -57,16 +57,6 @@ class AxiellServiceTest(
     private lateinit var axiellRepository: AxiellRepository
 
     @Test
-    fun `getTitle should fetch data as CollectionModel from repo and convert to title`() {
-        every { axiellRepository.getAllTitles() } returns Mono.just(collectionsModelMockTitleE)
-
-        axiellService.getTitles()
-            .test()
-            .expectNextMatches { it == newspaperTitleMockB }
-            .verifyComplete()
-    }
-
-    @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 

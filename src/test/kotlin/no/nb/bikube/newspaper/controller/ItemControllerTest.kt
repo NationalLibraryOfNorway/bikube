@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 
@@ -26,17 +25,6 @@ class ItemControllerTest {
 
     @MockkBean
     private lateinit var creationValidationService: CreationValidationService
-
-    @Test
-    fun `get items should return 200 OK with list of items`() {
-        every { axiellService.getAllItems() } returns Flux.just(newspaperItemMockA.copy())
-        itemController.getAllItems(null).test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(listOf(newspaperItemMockA), it.body)
-            }
-            .verifyComplete()
-    }
 
     @Test
     fun `create item should return 200 OK with created item`() {
