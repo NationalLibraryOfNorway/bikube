@@ -24,6 +24,10 @@ import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.CollectionsObject
+import no.nb.bikube.core.model.collections.CollectionsRecordList
+import no.nb.bikube.core.model.collections.getUrn
 import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
@@ -60,7 +64,7 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         val body = newspaperTitleMockB.copy()
         val encodedValue = Json.encodeToString(
@@ -78,19 +82,19 @@ class AxiellServiceTest(
             )
         )
 
-        axiellService.createTitle(body)
+        axiellService.createNewspaperTitle(body)
             .test()
             .expectNextMatches { it == newspaperTitleMockB }
             .verifyComplete()
 
-        verify { axiellRepository.createRecord(encodedValue) }
+        verify { axiellRepository.createTextsRecord(encodedValue) }
     }
 
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
-        every { axiellRepository.createRecord(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
 
-        axiellService.createTitle(newspaperTitleMockB)
+        axiellService.createNewspaperTitle(newspaperTitleMockB)
             .test()
             .expectErrorMatches { it is AxiellCollectionsException && it.message == "Error creating title" }
             .verify()
@@ -207,7 +211,8 @@ class AxiellServiceTest(
                         materialType = testSerialWork.subMedium!!.first().subMedium,
                         titleCatalogueId = testSerialWork.priRef,
                         titleName = testSerialWork.title!!.first().title,
-                        digital = true
+                        digital = true,
+                        urn = testRecord.getUrn()
                     ),
                     it
                 )
@@ -392,8 +397,8 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should return correctly mapped record`() {
-        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        axiellService.createTitle(newspaperTitleMockB.copy())
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -402,7 +407,7 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
-        every { axiellRepository.createRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
         val encodedValue = Json.encodeToString(
             TitleDto(
                 title = newspaperTitleMockB.name!!,
@@ -418,13 +423,13 @@ class AxiellServiceTest(
             )
         )
 
-        axiellService.createTitle(newspaperTitleMockB.copy())
+        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
             .verifyComplete()
 
-        verify { axiellRepository.createRecord(encodedValue) }
+        verify { axiellRepository.createTextsRecord(encodedValue) }
     }
 
     @Test

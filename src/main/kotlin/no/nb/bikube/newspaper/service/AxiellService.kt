@@ -9,6 +9,9 @@ import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.CollectionsObject
+import no.nb.bikube.core.model.collections.isSerial
 import no.nb.bikube.core.model.dto.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
@@ -29,10 +32,10 @@ class AxiellService  (
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun createTitle(title: Title): Mono<Title> {
+    fun createNewspaperTitle(title: Title): Mono<Title> {
         val dto: TitleDto = createNewspaperTitleDto(title)
         val encodedBody = Json.encodeToString(dto)
-        return axiellRepository.createRecord(encodedBody)
+        return axiellRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }

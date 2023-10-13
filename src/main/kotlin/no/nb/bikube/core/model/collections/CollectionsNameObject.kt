@@ -1,4 +1,4 @@
-package no.nb.bikube.core.model
+package no.nb.bikube.core.model.collections
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

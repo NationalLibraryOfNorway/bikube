@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

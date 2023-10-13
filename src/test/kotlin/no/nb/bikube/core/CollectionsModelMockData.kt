@@ -1,7 +1,7 @@
 package no.nb.bikube.core
 
 import no.nb.bikube.core.enum.*
-import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.collections.*
 
 class CollectionsModelMockData {
     companion object {
@@ -137,7 +137,8 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
                         partsList = listOf(collectionsPartsObjectMockYearWorkA),
-                        workTypeList = collectionsWorkTypeListSerialMock
+                        workTypeList = collectionsWorkTypeListSerialMock,
+                        alternativeNumberList = null
                     )
                 )
             )
@@ -160,7 +161,8 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListSerialMock
+                        workTypeList = collectionsWorkTypeListSerialMock,
+                        alternativeNumberList = null
                     )
                 )
             )
@@ -183,7 +185,8 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
                         partsList = listOf(collectionsPartsObjectMockYearWorkB),
-                        workTypeList = collectionsWorkTypeListSerialMock
+                        workTypeList = collectionsWorkTypeListSerialMock,
+                        alternativeNumberList = null
                     )
                 )
             )
@@ -206,7 +209,8 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
                         partsList = listOf(collectionsPartsObjectMockYearWorkC),
-                        workTypeList = collectionsWorkTypeListSerialMock
+                        workTypeList = collectionsWorkTypeListSerialMock,
+                        alternativeNumberList = null
                     )
                 )
             )
@@ -215,21 +219,24 @@ class CollectionsModelMockData {
         // Equal to newspaperTitleMockB
         val collectionsModelMockTitleE = CollectionsModel(
             adlibJson = CollectionsRecordList(
-                recordList = listOf(CollectionsObject(
-                    priRef = "2",
-                    titleList = listOf(CollectionsTitle("Avis B")),
-                    recordTypeList = listOf(listOf(CollectionsLanguageListObject("neutral", "WORK"))),
-                    formatList = null,
-                    partOfList = null,
-                    subMediumList = listOf(SubMedium("Avis")),
-                    mediumList = null,
-                    datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
-                    publisherList = listOf("B-Forlaget"),
-                    languageList = null,
-                    placeOfPublicationList = listOf("Brakka"),
-                    partsList = null,
-                    workTypeList = null
-                ))
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "2",
+                        titleList = listOf(CollectionsTitle("Avis B")),
+                        recordTypeList = listOf(listOf(CollectionsLanguageListObject("neutral", "WORK"))),
+                        formatList = null,
+                        partOfList = null,
+                        subMediumList = listOf(SubMedium("Avis")),
+                        mediumList = null,
+                        datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
+                        publisherList = listOf("B-Forlaget"),
+                        languageList = null,
+                        placeOfPublicationList = listOf("Brakka"),
+                        partsList = null,
+                        workTypeList = null,
+                        alternativeNumberList = null
+                    )
+                )
             )
         )
 
@@ -288,7 +295,8 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
                         partsList = null,
-                        workTypeList = null
+                        workTypeList = null,
+                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
                     )
                 )
             )
@@ -310,7 +318,8 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemA),
-                        workTypeList = null
+                        workTypeList = null,
+                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
                     )
                 )
             )
@@ -331,7 +340,8 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockManifestationA),
-                        workTypeList = collectionsWorkTypeListYearMock
+                        workTypeList = collectionsWorkTypeListYearMock,
+                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
                     )
                 )
             )

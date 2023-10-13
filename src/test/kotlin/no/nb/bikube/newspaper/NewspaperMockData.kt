@@ -46,7 +46,8 @@ class NewspaperMockData {
             materialType = "Avis",
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             titleName = newspaperTitleMockA.name,
-            digital = true
+            digital = true,
+            urn = "avisa_null_null_20200101_1_1_1"
         )
 
         val language: Language = Language(

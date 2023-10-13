@@ -1,6 +1,6 @@
 package no.nb.bikube.core.mapper
 
-import no.nb.bikube.core.model.CollectionsObject
+import no.nb.bikube.core.model.collections.CollectionsObject
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 

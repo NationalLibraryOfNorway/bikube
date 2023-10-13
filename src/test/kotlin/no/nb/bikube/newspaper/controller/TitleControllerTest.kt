@@ -47,7 +47,7 @@ class TitleControllerTest {
         every { axiellService.createPublisher(any()) } returns Mono.empty()
         every { axiellService.createPublisherPlace(any()) } returns Mono.empty()
         every { axiellService.createLanguage(any()) } returns Mono.empty()
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
         titleController.createTitle(newspaperTitleMockA)
             .test()
@@ -93,7 +93,7 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call create publisher if publisher is present on request body`() {
         every { axiellService.createPublisher(any()) } returns Mono.just(Publisher("Pub", "1"))
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(publisher = "Pub", publisherPlace = null))
             .test()
             .expectSubscription()
@@ -106,7 +106,7 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call createPublisherPlace if publisherPlace is present on request body`() {
         every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Pub", "1"))
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(publisherPlace = "Pub"))
             .test()
             .expectSubscription()
@@ -119,7 +119,7 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call createLanguage if language is present on request body`() {
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(language = "nob", publisherPlace = null))
             .test()
             .expectSubscription()
@@ -132,7 +132,7 @@ class TitleControllerTest {
     @Test
     fun `createTitle should not call on createPublisher, createPublisherPlace or createLanguage if not present on request body`() {
         val title = newspaperTitleMockA.copy(publisher = null, publisherPlace = null, language = null)
-        every { axiellService.createTitle(any()) } returns Mono.just(title)
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(title)
         titleController.createTitle(title)
             .test()
             .expectSubscription()
@@ -153,7 +153,7 @@ class TitleControllerTest {
         )
         every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(publisher = "Schibsted"))
             .test()
             .expectSubscription()
@@ -170,7 +170,7 @@ class TitleControllerTest {
             RecordAlreadyExistsException("Publisher place 'Oslo' already exists")
         )
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(publisherPlace = "Oslo"))
             .test()
             .expectSubscription()
@@ -187,7 +187,7 @@ class TitleControllerTest {
         every { axiellService.createLanguage(any()) } returns Mono.error(
             RecordAlreadyExistsException("Language 'nob' already exists")
         )
-        every { axiellService.createTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleMockA.copy(language = "nob"))
             .test()
             .expectSubscription()

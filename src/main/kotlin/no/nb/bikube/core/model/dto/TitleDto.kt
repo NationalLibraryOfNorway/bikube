@@ -49,6 +49,6 @@ fun createNewspaperTitleDto(title: Title): TitleDto {
         recordType = AxiellRecordType.WORK.value,
         descriptionType = AxiellDescriptionType.SERIAL.value,
         medium = "Tekst",
-        subMedium = title.materialType
+        subMedium = "Avis"
     )
 }
