@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -23,7 +24,7 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
     }
 
     private val titleListJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleList.json")
-    private val titles = mapper().readValue<CollectionsModel>(titleListJson).adlibJson.recordList!!
+    private val titles = mapper().readValue<CollectionsModel>(titleListJson).getObjects()!!
 
     @Test
     fun `Title object should extract all items`() {
@@ -39,19 +40,19 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
 
     @Test
     fun `Title object should extract submediums`() {
-        Assertions.assertTrue(titles.all { it.subMediumList!!.first().subMedium == MaterialType.NEWSPAPER.norwegian })
+        Assertions.assertTrue(titles.all { it.getMaterialType() == MaterialType.NEWSPAPER })
     }
 
     @Test
     fun `Title object should extract title`() {
-        Assertions.assertEquals("Bikubeavisen", titles.first().titleList!!.first().title)
-        Assertions.assertEquals("Bikubeposten", titles[1].titleList!!.first().title)
-        Assertions.assertEquals("The Bikube", titles[2].titleList!!.first().title)
+        Assertions.assertEquals("Bikubeavisen", titles.first().getName())
+        Assertions.assertEquals("Bikubeposten", titles[1].getName())
+        Assertions.assertEquals("The Bikube", titles[2].getName())
     }
 
     @Test
     fun `Title object should extract record types`() {
-        Assertions.assertTrue(titles.all { it.recordTypeList!!.first().first{ langObj -> langObj.lang == "neutral" }.text == "WORK" })
+        Assertions.assertTrue(titles.all { it.getRecordType() == AxiellRecordType.WORK })
     }
 
 }

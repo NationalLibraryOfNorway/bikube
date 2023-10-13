@@ -26,10 +26,7 @@ import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
-import no.nb.bikube.core.model.collections.CollectionsModel
-import no.nb.bikube.core.model.collections.CollectionsObject
-import no.nb.bikube.core.model.collections.CollectionsRecordList
-import no.nb.bikube.core.model.collections.getUrn
+import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.core.model.dto.ItemDto
 import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
@@ -43,7 +40,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
-import java.time.LocalDate
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -108,7 +104,7 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return all items for title`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleA.adlibJson.recordList!!.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleA.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(2)
@@ -119,17 +115,17 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return title information on items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        val record: CollectionsObject = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+        val record: CollectionsObject = collectionsModelMockTitleA.getFirstObject()!!
         axiellService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
                 it.titleCatalogueId == record.priRef
-                        && it.titleName == record.titleList!!.first().title
+                && it.titleName == record.getName()
             }
             .expectNextMatches {
                 it.titleCatalogueId == record.priRef
-                        && it.titleName == record.titleList!!.first().title
+                && it.titleName == record.getName()
             }
             .verifyComplete()
     }
@@ -138,15 +134,15 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return material type on items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        val record = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+        val record = collectionsModelMockTitleA.getFirstObject()!!
         axiellService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
-                it.materialType == record.subMediumList!!.first().subMedium
+                it.materialType == record.getMaterialType()!!.norwegian
             }
             .expectNextMatches {
-                it.materialType == record.subMediumList!!.first().subMedium
+                it.materialType == record.getMaterialType()!!.norwegian
             }
             .verifyComplete()
     }
@@ -155,7 +151,7 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return empty flux when serial work has no year works`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleB.adlibJson.recordList!!.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleB.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -166,7 +162,7 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleC.adlibJson.recordList!!.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleC.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -177,7 +173,7 @@ class AxiellServiceTest(
     fun `getItemsForTitle should return empty flux when manifestation has no items`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
 
-        axiellService.getItemsForTitle(collectionsModelMockTitleD.adlibJson.recordList!!.first().priRef)
+        axiellService.getItemsForTitle(collectionsModelMockTitleD.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -200,7 +196,7 @@ class AxiellServiceTest(
     @Test
     fun `getSingleItem should return correctly mapped item`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
-        val testRecord = collectionsModelMockItemA.adlibJson.recordList!!.first()
+        val testRecord = collectionsModelMockItemA.getFirstObject()!!
         val testSerialWork = collectionsPartOfObjectMockSerialWorkA.partOfReference!!
 
         axiellService.getSingleItem("1")
@@ -210,11 +206,11 @@ class AxiellServiceTest(
                 Assertions.assertEquals(
                     Item(
                         catalogueId = testRecord.priRef,
-                        name = testRecord.titleList!!.first().title,
-                        date = LocalDate.parse(testRecord.titleList!!.first().title!!.takeLast(10).replace(".", "-")),
-                        materialType = testSerialWork.subMedium!!.first().subMedium,
+                        name = testRecord.getName(),
+                        date = testRecord.getItemDate(),
+                        materialType = testSerialWork.getMaterialType()!!.norwegian,
                         titleCatalogueId = testSerialWork.priRef,
-                        titleName = testSerialWork.title!!.first().title,
+                        titleName = testSerialWork.getName(),
                         digital = true,
                         urn = testRecord.getUrn()
                     ),
@@ -262,8 +258,8 @@ class AxiellServiceTest(
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
-                    collectionsModelMockItemA.adlibJson.recordList!!.first().copy(),
-                    collectionsModelMockItemA.adlibJson.recordList!!.first().copy()
+                    collectionsModelMockItemA.getFirstObject()!!.copy(),
+                    collectionsModelMockItemA.getFirstObject()!!.copy()
                 )
             ))
         )
@@ -278,7 +274,7 @@ class AxiellServiceTest(
     @Test
     fun `getSingleTitle should return correctly mapped title`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-        val testRecord = collectionsModelMockTitleA.adlibJson.recordList!!.first()
+        val testRecord = collectionsModelMockTitleA.getFirstObject()!!
 
         axiellService.getSingleTitle("1")
             .test()
@@ -286,13 +282,13 @@ class AxiellServiceTest(
             .assertNext {
                 Assertions.assertEquals(
                     Title(
-                        name = testRecord.titleList!!.first().title,
-                        startDate = LocalDate.parse(testRecord.datingList!!.first().dateFrom),
+                        name = testRecord.getName(),
+                        startDate = testRecord.getStartDate(),
                         endDate = null,
-                        publisher = testRecord.publisherList!!.first(),
-                        publisherPlace = testRecord.placeOfPublicationList!!.first(),
-                        language = testRecord.languageList!!.first().language,
-                        materialType = testRecord.subMediumList!!.first().subMedium,
+                        publisher = testRecord.getPublisher(),
+                        publisherPlace = testRecord.getPublisherPlace(),
+                        language = testRecord.getLanguage(),
+                        materialType = testRecord.getMaterialType()!!.norwegian,
                         catalogueId = testRecord.priRef
                     ),
                     it
@@ -350,8 +346,8 @@ class AxiellServiceTest(
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
-                    collectionsModelMockTitleA.adlibJson.recordList!!.first().copy(),
-                    collectionsModelMockTitleB.adlibJson.recordList!!.first().copy()
+                    collectionsModelMockTitleA.getFirstObject()!!.copy(),
+                    collectionsModelMockTitleB.getFirstObject()!!.copy()
                 )
             ))
         )
@@ -373,14 +369,14 @@ class AxiellServiceTest(
             .assertNext {
                 Assertions.assertEquals(
                     Title(
-                        name = collectionsModelMockTitleA.adlibJson.recordList!!.first().titleList!!.first().title,
-                        startDate = LocalDate.parse(collectionsModelMockTitleA.adlibJson.recordList!!.first().datingList!!.first().dateFrom),
+                        name = collectionsModelMockTitleA.getFirstObject()!!.getName(),
+                        startDate = collectionsModelMockTitleA.getFirstObject()!!.getStartDate(),
                         endDate = null,
-                        publisher = collectionsModelMockTitleA.adlibJson.recordList!!.first().publisherList!!.first(),
-                        publisherPlace = collectionsModelMockTitleA.adlibJson.recordList!!.first().placeOfPublicationList!!.first(),
-                        language = collectionsModelMockTitleA.adlibJson.recordList!!.first().languageList!!.first().language,
-                        materialType = collectionsModelMockTitleA.adlibJson.recordList!!.first().subMediumList!!.first().subMedium,
-                        catalogueId = collectionsModelMockTitleA.adlibJson.recordList!!.first().priRef
+                        publisher = collectionsModelMockTitleA.getFirstObject()!!.getPublisher(),
+                        publisherPlace = collectionsModelMockTitleA.getFirstObject()!!.getPublisherPlace(),
+                        language = collectionsModelMockTitleA.getFirstObject()!!.getLanguage(),
+                        materialType = collectionsModelMockTitleA.getFirstObject()!!.getMaterialType()!!.norwegian,
+                        catalogueId = collectionsModelMockTitleA.getFirstObject()!!.priRef
                     ),
                     it
                 )
@@ -470,8 +466,8 @@ class AxiellServiceTest(
     fun `createPublisher should call createRecord if search returns empty recordList`() {
         every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA)
         every { axiellRepository.createNameRecord(any(), any()) } returns Mono.just(collectionsNameModelMockA)
-        val expectedName = collectionsNameModelMockA.adlibJson.recordList!!.first().name
-        val expectedId = collectionsNameModelMockA.adlibJson.recordList!!.first().priRef
+        val expectedName = collectionsNameModelMockA.getFirstObject()!!.name
+        val expectedId = collectionsNameModelMockA.getFirstObject()!!.priRef
         axiellService.createPublisher("Schibsted")
             .test()
             .expectNext(Publisher(expectedName, expectedId))
@@ -488,7 +484,7 @@ class AxiellServiceTest(
     @Test
     fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
         every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB)
-        val publisherPlaceName = collectionsTermModelMockLocationB.adlibJson.recordList!!.first().term
+        val publisherPlaceName = collectionsTermModelMockLocationB.getFirstObject()!!.term
         axiellService.createPublisherPlace(publisherPlaceName)
             .test()
             .expectSubscription()
@@ -503,8 +499,8 @@ class AxiellServiceTest(
     fun `createPublisherPlace should call createRecord if search returns empty recordList`() {
         every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA)
         every { axiellRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLocationB)
-        val expectedTerm = collectionsTermModelMockLocationB.adlibJson.recordList!!.first().term
-        val expectedId = collectionsTermModelMockLocationB.adlibJson.recordList!!.first().priRef
+        val expectedTerm = collectionsTermModelMockLocationB.getFirstObject()!!.term
+        val expectedId = collectionsTermModelMockLocationB.getFirstObject()!!.priRef
         axiellService.createPublisherPlace("Oslo")
             .test()
             .expectNext(PublisherPlace(expectedTerm, expectedId))
@@ -532,8 +528,8 @@ class AxiellServiceTest(
     fun `createLanguage should call createRecord if search returns empty recordList`() {
         every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA)
         every { axiellRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLanguageA)
-        val expectedTerm = collectionsTermModelMockLanguageA.adlibJson.recordList!!.first().term
-        val expectedId = collectionsTermModelMockLanguageA.adlibJson.recordList!!.first().priRef
+        val expectedTerm = collectionsTermModelMockLanguageA.getFirstObject()!!.term
+        val expectedId = collectionsTermModelMockLanguageA.getFirstObject()!!.priRef
         axiellService.createLanguage("nob")
             .test()
             .expectNext(Language(expectedTerm, expectedId))
