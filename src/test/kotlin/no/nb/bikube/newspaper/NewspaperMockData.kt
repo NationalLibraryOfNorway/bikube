@@ -1,6 +1,8 @@
 package no.nb.bikube.newspaper
 
-import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.Language
+import no.nb.bikube.core.model.Title
 import java.time.LocalDate
 
 class NewspaperMockData {
@@ -48,6 +50,18 @@ class NewspaperMockData {
             titleName = newspaperTitleMockA.name,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1"
+        )
+
+       // Equals to collectionsModelMockItemB - used for creation
+        val newspaperItemMockB = Item(
+            catalogueId = "46",
+            name = "Avis A 2020.01.05",
+            date = LocalDate.parse("2020-01-05"),
+            materialType = null,
+            titleCatalogueId = newspaperTitleMockA.catalogueId,
+            titleName = null,
+            digital = true,
+            urn = "avisa_null_null_20200105_1_1_1"
         )
 
         val language: Language = Language(

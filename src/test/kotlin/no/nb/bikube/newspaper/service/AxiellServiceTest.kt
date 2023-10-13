@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockItemA
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockItemB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleB
@@ -21,6 +22,7 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModel
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
 import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
@@ -28,7 +30,9 @@ import no.nb.bikube.core.model.collections.CollectionsModel
 import no.nb.bikube.core.model.collections.CollectionsObject
 import no.nb.bikube.core.model.collections.CollectionsRecordList
 import no.nb.bikube.core.model.collections.getUrn
+import no.nb.bikube.core.model.dto.ItemDto
 import no.nb.bikube.core.model.dto.TitleDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
@@ -543,5 +547,53 @@ class AxiellServiceTest(
         assertThrows<BadRequestBodyException> { axiellService.createLanguage("") }
         assertThrows<BadRequestBodyException> { axiellService.createLanguage("en") }
         assertThrows<BadRequestBodyException> { axiellService.createLanguage("english") }
+    }
+
+    @Test
+    fun `createNewspaperItem should return correctly mapped item record`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createNewspaperItem should correctly encode the item object sent to json string`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        val encodedValue = Json.encodeToString(
+            ItemDto(
+                name = newspaperItemMockB.name!!,
+                format = AxiellFormat.DIGITAL.value,
+                recordType = AxiellRecordType.ITEM.value,
+                altNumber = newspaperItemMockB.urn,
+                altNumberType = "URN"
+            )
+        )
+
+        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .verifyComplete()
+
+        verify { axiellRepository.createTextsRecord(encodedValue) }
+    }
+
+    @Test
+    fun `createNewspaperItem should throw AxiellItemNotFound if item could not be found`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+            .test()
+            .expectSubscription()
+            .expectErrorMatches {
+                it is AxiellItemNotFound &&
+                it.message!!.contains("New item not found")
+            }
+            .verify()
     }
 }

@@ -1,6 +1,8 @@
 package no.nb.bikube.core
 
-import no.nb.bikube.core.enum.*
+import no.nb.bikube.core.enum.AxiellDescriptionType
+import no.nb.bikube.core.enum.AxiellFormat
+import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.model.collections.*
 
 class CollectionsModelMockData {
@@ -297,6 +299,30 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
+                    )
+                )
+            )
+        )
+
+        // Equals to newspaperItemMockB, except title mapping
+        val collectionsModelMockItemB = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "46",
+                        titleList = listOf(CollectionsTitle(title = "Avis A 2020.01.05")),
+                        recordTypeList = collectionsRecordTypeListItemMock,
+                        formatList = collectionsFormatListDigitalMock,
+                        partOfList = null,
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = null,
+                        workTypeList = null,
+                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "avisa_null_null_20200105_1_1_1"))
                     )
                 )
             )

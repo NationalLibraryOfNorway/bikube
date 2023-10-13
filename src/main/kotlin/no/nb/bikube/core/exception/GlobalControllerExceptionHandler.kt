@@ -64,6 +64,17 @@ class GlobalControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(AxiellItemNotFound::class)
+    fun handleAxiellItemNotFoundException(exception: AxiellItemNotFound): ProblemDetail {
+        logger().warn("AxiellItemNotFound occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
+        problemDetail.detail = "Collections item not found: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }
 
 fun ProblemDetail.addDefaultProperties() {

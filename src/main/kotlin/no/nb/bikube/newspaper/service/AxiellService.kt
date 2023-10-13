@@ -3,10 +3,7 @@ package no.nb.bikube.newspaper.service
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.core.enum.*
-import no.nb.bikube.core.exception.AxiellCollectionsException
-import no.nb.bikube.core.exception.AxiellTitleNotFound
-import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.CollectionsModel
@@ -176,4 +173,16 @@ class AxiellService  (
         }
     }
 
+    @Throws(AxiellItemNotFound::class)
+    fun createNewspaperItem(item: Item): Mono<Item> {
+        val dto: ItemDto = createNewspaperItemDto(item)
+        val encodedBody = Json.encodeToString(dto)
+        return axiellRepository.createTextsRecord(encodedBody)
+            .handle { collectionsModel, sink ->
+                collectionsModel.adlibJson.recordList
+                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
+                    ?: sink.error(AxiellItemNotFound("New item not found"))
+            }
+            .map { mapCollectionsObjectToGenericItem(it.first()) }
+    }
 }
