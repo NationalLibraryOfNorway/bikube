@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -24,7 +25,7 @@ class ItemMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList!!.first()
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
 
     @Test

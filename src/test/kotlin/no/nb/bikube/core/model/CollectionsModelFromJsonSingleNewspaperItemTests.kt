@@ -8,7 +8,7 @@ import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,17 +26,14 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList!!.first()
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
 
     @Test
     fun `Item object should extract priRef`() { Assertions.assertEquals("5", singleItem.priRef) }
 
     @Test
     fun `Item object should extract format`() {
-        Assertions.assertEquals(
-            AxiellFormat.DIGITAL.value,
-            singleItem.formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text
-        )
+        Assertions.assertEquals(AxiellFormat.DIGITAL, singleItem.getFormat())
     }
 
     @Test
@@ -49,58 +46,46 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
 
     @Test
     fun `Item object should extract submedium`() {
-        Assertions.assertEquals(
-            MaterialType.NEWSPAPER.norwegian,
-            singleItem.subMediumList!!.first().subMedium
-        )
+        Assertions.assertEquals(MaterialType.NEWSPAPER, singleItem.getMaterialType())
     }
 
     @Test
     fun `Item object should extract title`() {
-        Assertions.assertEquals(
-            "Bikubeavisen 2012.01.02",
-            singleItem.titleList!!.first().title
-        )
+        Assertions.assertEquals("Bikubeavisen 2012.01.02", singleItem.getName())
     }
 
     @Test
     fun `Item object should extract recordtype`() {
-        Assertions.assertEquals(
-            AxiellRecordType.ITEM.value,
-            singleItem.recordTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text
-        )
+        Assertions.assertEquals(AxiellRecordType.ITEM, singleItem.getRecordType())
     }
 
     @Test
     fun `Item object should extract parent manifestation`() {
-        val manifestation = singleItem.partOfList!!.first().partOfReference!!
+        val manifestation = singleItem.getFirstPartOf()!!
         Assertions.assertEquals("10", manifestation.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.title!!.first().title)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, manifestation.subMedium!!.first().subMedium)
-        Assertions.assertEquals(
-            AxiellRecordType.MANIFESTATION.value,
-            manifestation.recordType!!.first().first { langObj -> langObj.lang == "neutral"}.text
-        )
+        Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.getName())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, manifestation.getMaterialType())
+        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifestation.getRecordType())
     }
 
     @Test
     fun `Item object should extract parent year work`() {
-        val yearWork = singleItem.partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val yearWork = singleItem.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("4", yearWork.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012", yearWork.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork.subMedium!!.first().subMedium)
-        Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals("Bikubeavisen 2012", yearWork.getName())
+        Assertions.assertEquals(AxiellRecordType.WORK, yearWork.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, yearWork.getMaterialType())
+        Assertions.assertEquals(AxiellDescriptionType.YEAR, yearWork.getWorkType())
     }
 
     @Test
     fun `Item object should extract parent title`() {
-        val title = singleItem.partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val title = singleItem.getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("3", title.priRef)
-        Assertions.assertEquals("Bikubeavisen", title.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.WORK.value, title.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, title.subMedium!!.first().subMedium)
-        Assertions.assertEquals(AxiellDescriptionType.SERIAL.value, title.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals("Bikubeavisen", title.getName())
+        Assertions.assertEquals(AxiellRecordType.WORK, title.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, title.getMaterialType())
+        Assertions.assertEquals(AxiellDescriptionType.SERIAL, title.getWorkType())
     }
 
 }

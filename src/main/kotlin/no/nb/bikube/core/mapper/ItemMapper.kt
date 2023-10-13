@@ -1,21 +1,18 @@
 package no.nb.bikube.core.mapper
 
 import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.model.collections.CollectionsObject
-import no.nb.bikube.core.model.collections.CollectionsPartsReference
 import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.collections.getUrn
-import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
+import no.nb.bikube.core.model.collections.*
 
 fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(
         catalogueId = model.priRef,
-        name = model.titleList?.first()?.title,
-        date = model.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) },
-        materialType = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.subMedium?.first()?.subMedium,
-        titleCatalogueId = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.priRef,
-        titleName = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.title?.first()?.title,
-        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value,
+        name = model.getName(),
+        date = model.getItemDate(),
+        materialType = model.getMaterialTypeFromParent()?.norwegian,
+        titleCatalogueId = model.getTitleCatalogueId(),
+        titleName = model.getTitleName(),
+        digital = model.getFormat() == AxiellFormat.DIGITAL,
         urn = model.getUrn()
     )
 }
@@ -28,12 +25,12 @@ fun mapCollectionsPartsObjectToGenericItem(
 ): Item {
     return Item(
         catalogueId = model.priRef!!,
-        name = model.titleList?.first()?.title,
-        date = model.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) },
+        name = model.getName(),
+        date = model.getItemDate(),
         materialType = materialType,
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,
-        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value,
+        digital = model.getFormat() == AxiellFormat.DIGITAL,
         urn = null
     )
 }

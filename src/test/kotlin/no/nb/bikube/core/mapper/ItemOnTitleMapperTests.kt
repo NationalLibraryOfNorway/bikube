@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,18 +26,18 @@ class ItemOnTitleMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).adlibJson.recordList!!.first()
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
 
     private fun itemList(): List<Item> {
         val list = mutableListOf<Item>()
         singleItem.partsList!!.forEach { yearWork ->
-            yearWork.partsReference!!.partsList?.forEach { manifest ->
-                manifest.partsReference!!.partsList?.forEach { item ->
+            yearWork.getPartRefs().forEach { manifest ->
+                manifest.getPartRefs().forEach { item ->
                     list.add(mapCollectionsPartsObjectToGenericItem(
                         item.partsReference!!,
                         singleItem.priRef,
-                        singleItem.titleList!!.first().title,
-                        singleItem.subMediumList!!.first().subMedium
+                        singleItem.getName(),
+                        singleItem.getMaterialType()?.norwegian
                     ))
                 }
             }

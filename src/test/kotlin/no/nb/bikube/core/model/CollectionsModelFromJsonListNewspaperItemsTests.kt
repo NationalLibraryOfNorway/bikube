@@ -8,7 +8,7 @@ import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,7 +26,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
     }
 
     private val itemListJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemList.json")
-    private val items = mapper().readValue<CollectionsModel>(itemListJson).adlibJson.recordList!!
+    private val items = mapper().readValue<CollectionsModel>(itemListJson).getObjects()!!
 
     @Test
     fun `Collection object should extract all items`() {
@@ -43,96 +43,96 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
 
     @Test
     fun `Collection object should extract submediums`() {
-        Assertions.assertTrue(items.all { it.subMediumList!!.first().subMedium == MaterialType.NEWSPAPER.norwegian })
+        Assertions.assertTrue(items.all { it.getMaterialType() == MaterialType.NEWSPAPER })
     }
 
     @Test
     fun `Collection object should extract names`() {
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", items.first().titleList!!.first().title)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", items[1].titleList!!.first().title)
-        Assertions.assertEquals("Bikubeavisen 2011.01.24", items[2].titleList!!.first().title)
-        Assertions.assertEquals("Bikubeavisen 2012.01.09", items[3].titleList!!.first().title)
+        Assertions.assertEquals("Bikubeavisen 2012.01.02", items.first().getName())
+        Assertions.assertEquals("Bikubeavisen 2012.01.02", items[1].getName())
+        Assertions.assertEquals("Bikubeavisen 2011.01.24", items[2].getName())
+        Assertions.assertEquals("Bikubeavisen 2012.01.09", items[3].getName())
     }
 
     @Test
     fun `Collection object should extract record types`() {
-        Assertions.assertTrue(items.all { it.recordTypeList!!.first().first{ langObj -> langObj.lang == "neutral" }.text == "ITEM" })
+        Assertions.assertTrue(items.all { it.getRecordType() == AxiellRecordType.ITEM })
     }
 
     @Test
     fun `Collection object should extract formats`() {
-        Assertions.assertEquals(AxiellFormat.DIGITAL.value, items.first().formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(AxiellFormat.PHYSICAL.value, items[1].formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(AxiellFormat.PHYSICAL.value, items[2].formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(AxiellFormat.DIGITAL.value, items[3].formatList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals(AxiellFormat.DIGITAL, items.first().getFormat())
+        Assertions.assertEquals(AxiellFormat.PHYSICAL, items[1].getFormat())
+        Assertions.assertEquals(AxiellFormat.PHYSICAL, items[2].getFormat())
+        Assertions.assertEquals(AxiellFormat.DIGITAL, items[3].getFormat())
     }
 
     @Test
     fun `Collection object should extract parent manifestations`() {
-        val mani1 = items.first().partOfList!!.first().partOfReference!!
+        val mani1 = items.first().getFirstPartOf()!!
         Assertions.assertEquals("10", mani1.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", mani1.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani1.subMedium!!.first().subMedium)
+        Assertions.assertEquals("Bikubeavisen 2012.01.02", mani1.getName())
+        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, mani1.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, mani1.getMaterialType())
 
         // Manifestation 1 and 2 should be the same
-        val mani2 = items[1].partOfList!!.first().partOfReference!!
+        val mani2 = items[1].getFirstPartOf()!!
         Assertions.assertEquals(mani1, mani2)
 
-        val mani3 = items[2].partOfList!!.first().partOfReference!!
+        val mani3 = items[2].getFirstPartOf()!!
         Assertions.assertEquals("18", mani3.priRef)
-        Assertions.assertEquals("Bikubeavisen 2011.01.24", mani3.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani3.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani3.subMedium!!.first().subMedium)
+        Assertions.assertEquals("Bikubeavisen 2011.01.24", mani3.getName())
+        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, mani3.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, mani3.getMaterialType())
 
-        val mani4 = items[3].partOfList!!.first().partOfReference!!
+        val mani4 = items[3].getFirstPartOf()!!
         Assertions.assertEquals("20", mani4.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.09", mani4.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani4.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani4.subMedium!!.first().subMedium)
+        Assertions.assertEquals("Bikubeavisen 2012.01.09", mani4.getName())
+        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, mani4.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, mani4.getMaterialType())
     }
 
     @Test
     fun `Collection object should extract parent year works`() {
-        val yearWork1 = items.first().partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val yearWork1 = items.first().getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("4", yearWork1.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012", yearWork1.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork1.subMedium!!.first().subMedium)
-        Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork1.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals("Bikubeavisen 2012", yearWork1.getName())
+        Assertions.assertEquals(AxiellRecordType.WORK, yearWork1.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, yearWork1.getMaterialType())
+        Assertions.assertEquals(AxiellDescriptionType.YEAR, yearWork1.getWorkType())
 
         // Year work 1, 2 and 4 should be the same
-        val yearWork2 = items[1].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val yearWork2 = items[1].getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals(yearWork1, yearWork2)
 
-        val yearWork3 = items[2].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val yearWork3 = items[2].getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("11", yearWork3.priRef)
-        Assertions.assertEquals("Bikubeavisen 2011", yearWork3.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork3.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork3.subMedium!!.first().subMedium)
-        Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork3.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals("Bikubeavisen 2011", yearWork3.getName())
+        Assertions.assertEquals(AxiellRecordType.WORK, yearWork3.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, yearWork3.getMaterialType())
+        Assertions.assertEquals(AxiellDescriptionType.YEAR, yearWork3.getWorkType())
 
-        val yearWork4 = items[3].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val yearWork4 = items[3].getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals(yearWork1, yearWork4)
     }
 
     @Test
     fun `Collection object should extract parent serial works`() {
         // All items are connected to the same title
-        val title1 = items.first().partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val title1 = items.first().getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("3", title1.priRef)
-        Assertions.assertEquals("Bikubeavisen", title1.title!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.WORK.value, title1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, title1.subMedium!!.first().subMedium)
-        Assertions.assertEquals(AxiellDescriptionType.SERIAL.value, title1.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
+        Assertions.assertEquals("Bikubeavisen", title1.getName())
+        Assertions.assertEquals(AxiellRecordType.WORK, title1.getRecordType())
+        Assertions.assertEquals(MaterialType.NEWSPAPER, title1.getMaterialType())
+        Assertions.assertEquals(AxiellDescriptionType.SERIAL, title1.getWorkType())
 
-        val title2 = items[1].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val title2 = items[1].getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals(title1, title2)
 
-        val title3 = items[2].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val title3 = items[2].getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals(title1, title3)
 
-        val title4 = items[3].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
+        val title4 = items[3].getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals(title1, title4)
     }
 }
