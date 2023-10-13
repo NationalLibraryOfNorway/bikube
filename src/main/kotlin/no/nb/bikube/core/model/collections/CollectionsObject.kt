@@ -1,7 +1,6 @@
-package no.nb.bikube.core.model
+package no.nb.bikube.core.model.collections
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import no.nb.bikube.core.enum.AxiellDescriptionType
 
 data class CollectionsModel(
     @JsonProperty("adlibJSON")
@@ -50,7 +49,10 @@ data class CollectionsObject(
     val partsList: List<CollectionsPartsObject>?,
 
     @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?
+    val workTypeList: List<List<CollectionsLanguageListObject>>?,
+
+    @JsonProperty("Alternative_number")
+    val alternativeNumberList: List<CollectionsAlternativeNumber>?
 )
 
 data class CollectionsTitle(
@@ -136,6 +138,11 @@ data class CollectionsPartsReference(
     val partsList: List<CollectionsPartsObject>?
 )
 
-fun CollectionsObject.isSerial(): Boolean {
-    return this.workTypeList?.first()?.first()?.text == AxiellDescriptionType.SERIAL.value
-}
+data class CollectionsAlternativeNumber(
+    @JsonProperty("alternative_number.type")
+    val type: String?,
+
+    @JsonProperty("alternative_number")
+    val value: String?
+)
+

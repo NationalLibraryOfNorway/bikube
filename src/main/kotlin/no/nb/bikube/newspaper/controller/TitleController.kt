@@ -73,7 +73,7 @@ class TitleController (
             } ?: Mono.empty()
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
-                .then(axiellService.createTitle(title))
+                .then(axiellService.createNewspaperTitle(title))
                 .map { createdTitle -> ResponseEntity.ok(createdTitle) }
         }
     }

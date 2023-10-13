@@ -2,9 +2,9 @@ package no.nb.bikube.newspaper.repository
 
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.AxiellCollectionsException
-import no.nb.bikube.core.model.CollectionsModel
-import no.nb.bikube.core.model.CollectionsNameModel
-import no.nb.bikube.core.model.CollectionsTermModel
+import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.model.collections.CollectionsNameModel
+import no.nb.bikube.core.model.collections.CollectionsTermModel
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.config.WebClientConfig
 import org.springframework.http.MediaType
@@ -61,7 +61,7 @@ class AxiellRepository(
     }
 
     @Throws(AxiellCollectionsException::class)
-    fun createRecord(serializedBody: String): Mono<CollectionsModel> {
+    fun createTextsRecord(serializedBody: String): Mono<CollectionsModel> {
         return createRecordWebClientRequest(serializedBody, AxiellDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
 

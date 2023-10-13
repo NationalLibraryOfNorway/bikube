@@ -7,6 +7,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -41,7 +43,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
 
     @Test
     fun `Collection object should extract submediums`() {
-        Assertions.assertTrue(items.all { it.subMediumList!!.first().subMedium == "Avis" })
+        Assertions.assertTrue(items.all { it.subMediumList!!.first().subMedium == MaterialType.NEWSPAPER.norwegian })
     }
 
     @Test
@@ -71,7 +73,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
         Assertions.assertEquals("10", mani1.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", mani1.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", mani1.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani1.subMedium!!.first().subMedium)
 
         // Manifestation 1 and 2 should be the same
         val mani2 = items[1].partOfList!!.first().partOfReference!!
@@ -81,13 +83,13 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
         Assertions.assertEquals("18", mani3.priRef)
         Assertions.assertEquals("Bikubeavisen 2011.01.24", mani3.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani3.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", mani3.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani3.subMedium!!.first().subMedium)
 
         val mani4 = items[3].partOfList!!.first().partOfReference!!
         Assertions.assertEquals("20", mani4.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.09", mani4.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.MANIFESTATION.value, mani4.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", mani4.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, mani4.subMedium!!.first().subMedium)
     }
 
     @Test
@@ -96,7 +98,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
         Assertions.assertEquals("4", yearWork1.priRef)
         Assertions.assertEquals("Bikubeavisen 2012", yearWork1.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", yearWork1.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork1.subMedium!!.first().subMedium)
         Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork1.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
 
         // Year work 1, 2 and 4 should be the same
@@ -107,7 +109,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
         Assertions.assertEquals("11", yearWork3.priRef)
         Assertions.assertEquals("Bikubeavisen 2011", yearWork3.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork3.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", yearWork3.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork3.subMedium!!.first().subMedium)
         Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork3.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
 
         val yearWork4 = items[3].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!
@@ -121,7 +123,7 @@ class CollectionsModelFromJsonListNewspaperItemsTests {
         Assertions.assertEquals("3", title1.priRef)
         Assertions.assertEquals("Bikubeavisen", title1.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.WORK.value, title1.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", title1.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, title1.subMedium!!.first().subMedium)
         Assertions.assertEquals(AxiellDescriptionType.SERIAL.value, title1.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
 
         val title2 = items[1].partOfList!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!.partOfGroup!!.first().partOfReference!!

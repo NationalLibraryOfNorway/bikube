@@ -1,9 +1,10 @@
 package no.nb.bikube.core.mapper
 
 import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.model.CollectionsObject
-import no.nb.bikube.core.model.CollectionsPartsReference
+import no.nb.bikube.core.model.collections.CollectionsObject
+import no.nb.bikube.core.model.collections.CollectionsPartsReference
 import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.collections.getUrn
 import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 
 fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
@@ -14,7 +15,8 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
         materialType = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.subMedium?.first()?.subMedium,
         titleCatalogueId = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.priRef,
         titleName = model.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.title?.first()?.title,
-        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value
+        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value,
+        urn = model.getUrn()
     )
 }
 
@@ -31,6 +33,7 @@ fun mapCollectionsPartsObjectToGenericItem(
         materialType = materialType,
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,
-        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value
+        digital = model.formatList?.first()?.first { it.lang == "neutral" }?.text == AxiellFormat.DIGITAL.value,
+        urn = null
     )
 }

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.model.CollectionsModel
+import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -36,7 +37,7 @@ class ItemMapperTests {
     fun `Item mapper should map date`() { Assertions.assertEquals(LocalDate.parse("2012-01-02"), genericItem.date) }
 
     @Test
-    fun `Item mapper should map material type`() { Assertions.assertEquals("Avis", genericItem.materialType) }
+    fun `Item mapper should map material type`() { Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericItem.materialType) }
 
     @Test
     fun `Item mapper should map title ID`() { Assertions.assertEquals("3", genericItem.titleCatalogueId) }
