@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.model.collections.CollectionsModel
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -77,7 +78,7 @@ class ItemOnTitleMapperTests {
     @Test
     fun `Item-on-title mapper should map material types`() {
         Assertions.assertTrue(mappedList.all {
-            it.materialType == "Avis"
+            it.materialType == MaterialType.NEWSPAPER.norwegian
         })
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.CollectionsDating
 import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
@@ -49,7 +50,7 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map material type`() {
-        Assertions.assertEquals("Avis", genericTitle.materialType)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericTitle.materialType)
     }
 
     @Test

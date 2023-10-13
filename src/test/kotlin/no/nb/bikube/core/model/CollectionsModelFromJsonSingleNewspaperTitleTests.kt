@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.CollectionsModel
 import no.nb.bikube.core.model.collections.CollectionsPartsObject
 import org.junit.jupiter.api.Assertions
@@ -41,7 +42,10 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     fun `Title object should extract language`() { Assertions.assertEquals("nob", singleTitle.languageList!!.first().language) }
 
     @Test
-    fun `Title object should extract submedium`() { Assertions.assertEquals("Avis", singleTitle.subMediumList!!.first().subMedium) }
+    fun `Title object should extract submedium`() {
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian,
+        singleTitle.subMediumList!!.first().subMedium)
+    }
 
     @Test
     fun `Title object should extract title`() { Assertions.assertEquals("Bikubeavisen", singleTitle.titleList!!.first().title) }

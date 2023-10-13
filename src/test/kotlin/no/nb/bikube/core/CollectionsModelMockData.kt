@@ -3,6 +3,7 @@ package no.nb.bikube.core
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.*
 
 class CollectionsModelMockData {
@@ -132,7 +133,7 @@ class CollectionsModelMockData {
                         recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,
                         partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = "Avis")),
+                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
                         mediumList = listOf(Medium(medium = "Tekst")),
                         datingList = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null)),
                         publisherList = listOf("NB"),
@@ -156,7 +157,7 @@ class CollectionsModelMockData {
                         recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,
                         partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = "Avis")),
+                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
                         mediumList = listOf(Medium(medium = "Tekst")),
                         datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
                         publisherList = listOf("NB"),
@@ -180,7 +181,7 @@ class CollectionsModelMockData {
                         recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,
                         partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = "Avis")),
+                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
                         mediumList = listOf(Medium(medium = "Tekst")),
                         datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
                         publisherList = listOf("NB"),
@@ -204,7 +205,7 @@ class CollectionsModelMockData {
                         recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,
                         partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = "Avis")),
+                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
                         mediumList = listOf(Medium(medium = "Tekst")),
                         datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
                         publisherList = listOf("NB"),
@@ -228,7 +229,7 @@ class CollectionsModelMockData {
                         recordTypeList = listOf(listOf(CollectionsLanguageListObject("neutral", "WORK"))),
                         formatList = null,
                         partOfList = null,
-                        subMediumList = listOf(SubMedium("Avis")),
+                        subMediumList = listOf(SubMedium(MaterialType.NEWSPAPER.norwegian)),
                         mediumList = null,
                         datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
                         publisherList = listOf("B-Forlaget"),
@@ -254,7 +255,7 @@ class CollectionsModelMockData {
                 partOfGroup = null,
                 title = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListWorkMock,
-                subMedium = listOf(SubMedium(subMedium = "Avis")),
+                subMedium = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
                 workTypeList = collectionsWorkTypeListSerialMock
             )
         )

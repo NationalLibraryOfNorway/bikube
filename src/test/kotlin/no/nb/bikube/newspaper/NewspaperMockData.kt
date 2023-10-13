@@ -1,5 +1,6 @@
 package no.nb.bikube.newspaper
 
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Title
@@ -26,7 +27,7 @@ class NewspaperMockData {
             publisher = "B-Forlaget",
             publisherPlace = "Brakka",
             language = null,
-            materialType = "Avis",
+            materialType = MaterialType.NEWSPAPER.norwegian,
             catalogueId = "2"
         )
 
@@ -37,7 +38,7 @@ class NewspaperMockData {
             publisher = null,
             publisherPlace = null,
             language = null,
-            materialType = "Avis",
+            materialType = MaterialType.NEWSPAPER.norwegian,
             catalogueId = "3"
         )
 
@@ -45,7 +46,7 @@ class NewspaperMockData {
             catalogueId = "2",
             name = "Avis A 2020.01.01",
             date = null,
-            materialType = "Avis",
+            materialType = MaterialType.NEWSPAPER.norwegian,
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             titleName = newspaperTitleMockA.name,
             digital = true,

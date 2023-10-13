@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Title
 
 @Serializable
@@ -49,6 +50,6 @@ fun createNewspaperTitleDto(title: Title): TitleDto {
         recordType = AxiellRecordType.WORK.value,
         descriptionType = AxiellDescriptionType.SERIAL.value,
         medium = "Tekst",
-        subMedium = "Avis"
+        subMedium = MaterialType.NEWSPAPER.norwegian
     )
 }

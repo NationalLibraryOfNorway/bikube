@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.CollectionsModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -49,7 +50,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     @Test
     fun `Item object should extract submedium`() {
         Assertions.assertEquals(
-            "Avis",
+            MaterialType.NEWSPAPER.norwegian,
             singleItem.subMediumList!!.first().subMedium
         )
     }
@@ -75,7 +76,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         val manifestation = singleItem.partOfList!!.first().partOfReference!!
         Assertions.assertEquals("10", manifestation.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.title!!.first().title)
-        Assertions.assertEquals("Avis", manifestation.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, manifestation.subMedium!!.first().subMedium)
         Assertions.assertEquals(
             AxiellRecordType.MANIFESTATION.value,
             manifestation.recordType!!.first().first { langObj -> langObj.lang == "neutral"}.text
@@ -88,7 +89,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         Assertions.assertEquals("4", yearWork.priRef)
         Assertions.assertEquals("Bikubeavisen 2012", yearWork.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.WORK.value, yearWork.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", yearWork.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, yearWork.subMedium!!.first().subMedium)
         Assertions.assertEquals(AxiellDescriptionType.YEAR.value, yearWork.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
     }
 
@@ -98,7 +99,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         Assertions.assertEquals("3", title.priRef)
         Assertions.assertEquals("Bikubeavisen", title.title!!.first().title)
         Assertions.assertEquals(AxiellRecordType.WORK.value, title.recordType!!.first().first { langObj -> langObj.lang == "neutral" }.text)
-        Assertions.assertEquals("Avis", title.subMedium!!.first().subMedium)
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, title.subMedium!!.first().subMedium)
         Assertions.assertEquals(AxiellDescriptionType.SERIAL.value, title.workTypeList!!.first().first { langObj -> langObj.lang == "neutral" }.text)
     }
 
