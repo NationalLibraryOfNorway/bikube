@@ -29,7 +29,9 @@ import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.core.model.dto.ItemDto
+import no.nb.bikube.core.model.dto.ManifestationDto
 import no.nb.bikube.core.model.dto.TitleDto
+import no.nb.bikube.core.model.dto.YearDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
@@ -55,6 +57,42 @@ class AxiellServiceTest(
 
     @MockkBean
     private lateinit var axiellRepository: AxiellRepository
+
+    private val yearWorkEncodedDto = Json.encodeToString(YearDto(
+        partOfReference = newspaperItemMockB.titleCatalogueId,
+        recordType = AxiellRecordType.WORK.value,
+        descriptionType = AxiellDescriptionType.YEAR.value,
+        dateStart = newspaperTitleMockB.startDate.toString().take(4),
+        title = newspaperTitleMockB.startDate.toString().take(4),
+        inputName = "Bikube API",
+        inputSource = "texts>texts",
+        inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+        dataset = "texts")
+    )
+    private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
+        partOfReference = newspaperItemMockB.catalogueId,
+        recordType = AxiellRecordType.MANIFESTATION.value,
+        dateStart = newspaperItemMockB.date.toString(),
+        inputName = "Bikube API",
+        inputSource = "texts>texts",
+        inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+        dataset = "texts")
+    )
+    private val itemEncodedDto = Json.encodeToString(ItemDto(
+        name = newspaperItemMockB.name,
+        format = AxiellFormat.DIGITAL.value,
+        recordType = AxiellRecordType.ITEM.value,
+        altNumber = newspaperItemMockB.urn,
+        altNumberType = "URN",
+        inputName = "Bikube API",
+        inputSource = "texts>texts",
+        inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+        dataset = "texts",
+        partOfReference = newspaperItemMockB.catalogueId)
+    )
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
@@ -556,6 +594,7 @@ class AxiellServiceTest(
     @Test
     fun `createNewspaperItem should return correctly mapped item record`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
         axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
             .test()
@@ -568,15 +607,79 @@ class AxiellServiceTest(
     fun `createNewspaperItem should correctly encode the item object sent to json string`() {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
-        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .verifyComplete()
+
+        verify { axiellRepository.createTextsRecord(itemEncodedDto) }
+    }
+
+    @Test
+    fun `createNewspaperItem should throw AxiellItemNotFound if item could not be found`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
+        every { axiellRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { axiellRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        axiellService.createNewspaperItem(newspaperItemMockB)
+            .test()
+            .expectSubscription()
+            .expectErrorMatches {
+                it is AxiellItemNotFound &&
+                it.message!!.contains("New item not found")
+            }
+            .verify()
+    }
+
+    @Test
+    fun `createManifestation should throw AxiellManifestationNotFound if manifestation could not be found`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        axiellService.createManifestation("1", LocalDate.now())
+            .test()
+            .expectSubscription()
+            .expectErrorMatches {
+                it is AxiellManifestationNotFound &&
+                it.message!!.contains("New manifestation not found")
+            }
+            .verify()
+    }
+
+    @Test
+    fun `createManifestation should return correctly mapped manifestation record`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
+
+        axiellService.createManifestation("1", LocalDate.now())
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject()!!, it)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createManifestation should correctly encode the manifestation object sent to json string`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
         val encodedValue = Json.encodeToString(
-            ItemDto(
-                name = newspaperItemMockB.name!!,
-                format = AxiellFormat.DIGITAL.value,
-                recordType = AxiellRecordType.ITEM.value,
-                altNumber = newspaperItemMockB.urn,
-                altNumberType = "URN",
+            ManifestationDto(
+                partOfReference = "1",
+                recordType = AxiellRecordType.MANIFESTATION.value,
+                dateStart = LocalDate.now().toString(),
                 inputName = "Bikube API",
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),
@@ -585,26 +688,74 @@ class AxiellServiceTest(
             )
         )
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createManifestation("1", LocalDate.now())
             .test()
             .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .assertNext {
+                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject()!!, it)
+            }
             .verifyComplete()
 
         verify { axiellRepository.createTextsRecord(encodedValue) }
     }
 
     @Test
-    fun `createNewspaperItem should throw AxiellItemNotFound if item could not be found`() {
+    fun `createYearWork should throw AxiellYearWorkNotFound if year work could not be found`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createYearWork("1", "2023")
             .test()
             .expectSubscription()
             .expectErrorMatches {
-                it is AxiellItemNotFound &&
-                it.message!!.contains("New item not found")
+                it is AxiellYearWorkNotFound && it.message!!.contains("New year not found")
             }
             .verify()
+    }
+
+    @Test
+    fun `createYearWork should return correctly mapped year work record`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
+
+        axiellService.createYearWork("1", "2023")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(collectionsModelMockYearWorkA.getFirstObject()!!, it)
+            }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createYearWork should correctly encode the year work object sent to json string`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
+
+        val encodedValue = Json.encodeToString(
+            YearDto(
+                partOfReference = "1",
+                recordType = AxiellRecordType.WORK.value,
+                descriptionType = AxiellDescriptionType.YEAR.value,
+                dateStart = "2023",
+                title = "2023",
+                inputName = "Bikube API",
+                inputSource = "texts>texts",
+                inputDate = LocalDate.now().toString(),
+                inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+                dataset = "texts"
+            )
+        )
+
+        axiellService.createYearWork("1", "2023")
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(collectionsModelMockYearWorkA.getFirstObject()!!, it)
+            }
+            .verifyComplete()
+
+        verify { axiellRepository.createTextsRecord(encodedValue) }
     }
 }

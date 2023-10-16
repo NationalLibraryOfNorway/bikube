@@ -75,6 +75,28 @@ class GlobalControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(AxiellManifestationNotFound::class)
+    fun handleAxiellManifestationNotFoundException(exception: AxiellManifestationNotFound): ProblemDetail {
+        logger().warn("AxiellManifestationNotFound occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
+        problemDetail.detail = "Collections manifestation not found: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
+
+    @ExceptionHandler(AxiellYearWorkNotFound::class)
+    fun handleAxiellYearWorkNotFoundException(exception: AxiellYearWorkNotFound): ProblemDetail {
+        logger().warn("AxiellYearWorkNotFound occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
+        problemDetail.detail = "Collections year work not found: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }
 
 fun ProblemDetail.addDefaultProperties() {

@@ -87,6 +87,10 @@ fun CollectionsObject.getFirstPartOf(): CollectionsPartOfReference? {
     return this.partOfList?.first()?.partOfReference
 }
 
+fun CollectionsObject.getParts(): List<CollectionsPartsObject>? {
+    return this.partsList
+}
+
 // CollectionsPartsReference
 
 fun CollectionsPartsReference.getName(): String? {
@@ -107,6 +111,10 @@ fun CollectionsPartsReference.getRecordType(): AxiellRecordType? {
 
 fun CollectionsPartsReference.getWorkType(): AxiellDescriptionType? {
     return AxiellDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
+}
+
+fun CollectionsPartsReference.getDate(): LocalDate? {
+    return this.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
 }
 
 // CollectionsPartsObject
