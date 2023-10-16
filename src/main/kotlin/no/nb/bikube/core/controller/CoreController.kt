@@ -65,7 +65,10 @@ class CoreController (
     }
 
     @GetMapping("/title/search", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Search catalogue titles")
+    @Operation(
+        summary = "Search catalogue titles",
+        description = "Searches catalogue titles by name. Supports wildcard '*' search."
+    )
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "400", description = "Bad request"),
