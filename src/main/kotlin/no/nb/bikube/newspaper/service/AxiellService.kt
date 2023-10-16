@@ -184,20 +184,20 @@ class AxiellService  (
     @Throws(AxiellItemNotFound::class)
     fun createNewspaperItem(item: Item): Mono<Item> {
         return axiellRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
-            .flatMap {
-                findOrCreateYearWorkRecord(it, item)
+            .flatMap { collectionsModel ->
+                findOrCreateYearWorkRecord(collectionsModel, item)
             }.flatMap { yearWork ->
                 findOrCreateManifestationRecord(yearWork, item)
-            }.flatMap {
-                createLinkedNewspaperItem(item, it)
+            }.flatMap { collectionsPartsObject ->
+                createLinkedNewspaperItem(item, collectionsPartsObject)
             }
     }
 
     private fun createLinkedNewspaperItem(
         item: Item,
-        it: CollectionsPartsObject
+        collectionsPartsObject: CollectionsPartsObject
     ): Mono<Item> {
-        val dto: ItemDto = createNewspaperItemDto(item, it.partsReference?.priRef!!)
+        val dto: ItemDto = createNewspaperItemDto(item, collectionsPartsObject.partsReference?.priRef!!)
         val encodedBody = Json.encodeToString(dto)
         return axiellRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
             collectionsModel.getObjects()
