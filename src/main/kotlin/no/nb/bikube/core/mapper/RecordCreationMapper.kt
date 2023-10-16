@@ -8,7 +8,7 @@ fun mapCollectionsObjectToCollectionsPartObject(collectionsObject: CollectionsOb
     return CollectionsPartsObject(
         partsReference = CollectionsPartsReference(
             priRef = collectionsObject.priRef,
-            dateStart = collectionsObject.datingList?.first()?.dateFrom,
+            dateStart = collectionsObject.datingList,
             recordType = collectionsObject.recordTypeList,
             workTypeList = collectionsObject.workTypeList,
             partsList = collectionsObject.partsList,

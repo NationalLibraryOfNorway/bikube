@@ -122,8 +122,8 @@ data class CollectionsPartsReference(
     @JsonProperty("priref")
     val priRef: String?,
 
-    @JsonProperty("dating.date.start")
-    val dateStart: String?,
+    @JsonProperty("group:Dating")
+    val dateStart: List<CollectionsDating>?,
 
     @JsonProperty("group:Title")
     val titleList: List<CollectionsTitle>?,
@@ -148,4 +148,3 @@ data class CollectionsAlternativeNumber(
     @JsonProperty("alternative_number")
     val value: String?
 )
-

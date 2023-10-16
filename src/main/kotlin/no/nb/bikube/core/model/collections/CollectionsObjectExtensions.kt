@@ -113,6 +113,10 @@ fun CollectionsPartsReference.getWorkType(): AxiellDescriptionType? {
     return AxiellDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
+fun CollectionsPartsReference.getDate(): LocalDate? {
+    return this.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
+}
+
 // CollectionsPartsObject
 fun CollectionsPartsObject.getPartRefs(): List<CollectionsPartsObject> {
     return this.partsReference?.partsList ?: emptyList()
