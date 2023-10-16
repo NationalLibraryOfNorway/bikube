@@ -1,7 +1,6 @@
 package no.nb.bikube.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.verify
