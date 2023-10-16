@@ -17,7 +17,7 @@ class RecordCreationMapperTests {
         val mappedObj = mapCollectionsObjectToCollectionsPartObject(original!!).partsReference!!
 
         Assertions.assertEquals(original.priRef, mappedObj.priRef)
-        Assertions.assertEquals(original.datingList?.first()?.dateFrom, mappedObj.dateStart)
+        Assertions.assertEquals(original.datingList, mappedObj.dateStart)
         Assertions.assertEquals(original.recordTypeList, mappedObj.recordType)
         Assertions.assertEquals(original.workTypeList, mappedObj.workTypeList)
         Assertions.assertEquals(original.partsList, mappedObj.partsList)

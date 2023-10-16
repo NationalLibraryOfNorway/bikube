@@ -189,15 +189,21 @@ class AxiellService  (
             }.flatMap { yearWork ->
                 findOrCreateManifestationRecord(yearWork, item)
             }.flatMap {
-                val dto: ItemDto = createNewspaperItemDto(item, it.partsReference?.priRef!!)
-                val encodedBody = Json.encodeToString(dto)
-                axiellRepository.createTextsRecord(encodedBody)
-            }.handle { collectionsModel, sink ->
-                collectionsModel.getObjects()
-                    ?. let { sink.next(collectionsModel.getObjects()) }
-                    ?: sink.error(AxiellItemNotFound("New item not found"))
+                createLinkedNewspaperItem(item, it)
             }
-            .map { mapCollectionsObjectToGenericItem(it!!.first()) }
+    }
+
+    private fun createLinkedNewspaperItem(
+        item: Item,
+        it: CollectionsPartsObject
+    ): Mono<Item> {
+        val dto: ItemDto = createNewspaperItemDto(item, it.partsReference?.priRef!!)
+        val encodedBody = Json.encodeToString(dto)
+        return axiellRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
+            collectionsModel.getObjects()
+                ?. let { sink.next(collectionsModel.getObjects()) }
+                ?: sink.error(AxiellItemNotFound("New item not found"))
+        }.map { mapCollectionsObjectToGenericItem(it!!.first()) }
     }
 
     private fun findOrCreateManifestationRecord(
