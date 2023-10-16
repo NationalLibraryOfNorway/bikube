@@ -44,7 +44,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 workTypeList = null,
                 formatList = collectionsFormatListDigitalMock,
-                partsList = null
+                partsList = null,
+                dateStart = null
             )
         )
 
@@ -56,7 +57,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
-                partsList = null
+                partsList = null,
+                dateStart = null
             )
         )
 
@@ -71,7 +73,8 @@ class CollectionsModelMockData {
                 partsList = listOf(
                     collectionsPartsObjectMockItemA,
                     collectionsPartsObjectMockItemB
-                )
+                ),
+                dateStart = null
             )
         )
 
@@ -83,7 +86,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListManifestMock,
                 workTypeList = null,
                 formatList = null,
-                partsList = null
+                partsList = null,
+                dateStart = null
             )
         )
 
@@ -95,7 +99,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListWorkMock,
                 workTypeList = collectionsWorkTypeListYearMock,
                 formatList = null,
-                partsList = listOf(collectionsPartsObjectMockManifestationA)
+                partsList = listOf(collectionsPartsObjectMockManifestationA),
+                dateStart = null
             )
         )
 
@@ -107,7 +112,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListWorkMock,
                 workTypeList = collectionsWorkTypeListYearMock,
                 formatList = null,
-                partsList = null
+                partsList = null,
+                dateStart = null
             )
         )
 
@@ -119,7 +125,8 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListWorkMock,
                 workTypeList = collectionsWorkTypeListYearMock,
                 formatList = null,
-                partsList = listOf(collectionsPartsObjectMockManifestationB)
+                partsList = listOf(collectionsPartsObjectMockManifestationB),
+                dateStart = null
             )
         )
 

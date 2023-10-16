@@ -87,6 +87,10 @@ fun CollectionsObject.getFirstPartOf(): CollectionsPartOfReference? {
     return this.partOfList?.first()?.partOfReference
 }
 
+fun CollectionsObject.getParts(): List<CollectionsPartsObject>? {
+    return this.partsList
+}
+
 // CollectionsPartsReference
 
 fun CollectionsPartsReference.getName(): String? {
