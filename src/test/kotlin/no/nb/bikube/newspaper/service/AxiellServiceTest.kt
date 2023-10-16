@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,6 +41,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -54,6 +58,8 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         val body = newspaperTitleMockB.copy()
@@ -68,7 +74,12 @@ class AxiellServiceTest(
                 recordType = AxiellRecordType.WORK.value,
                 descriptionType = AxiellDescriptionType.SERIAL.value,
                 medium = "Tekst",
-                subMedium = newspaperTitleMockB.materialType
+                subMedium = newspaperTitleMockB.materialType,
+                inputName = "Bikube API",
+                inputSource = "texts>texts",
+                inputDate = LocalDate.now().toString(),
+                inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+                dataset = "texts"
             )
         )
 
@@ -397,6 +408,8 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
         val encodedValue = Json.encodeToString(
             TitleDto(
@@ -409,7 +422,12 @@ class AxiellServiceTest(
                 recordType = AxiellRecordType.WORK.value,
                 descriptionType = AxiellDescriptionType.SERIAL.value,
                 medium = "Tekst",
-                subMedium = newspaperTitleMockB.materialType
+                subMedium = newspaperTitleMockB.materialType,
+                inputName = "Bikube API",
+                inputSource = "texts>texts",
+                inputDate = LocalDate.now().toString(),
+                inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+                dataset = "texts"
             )
         )
 
@@ -548,6 +566,8 @@ class AxiellServiceTest(
 
     @Test
     fun `createNewspaperItem should correctly encode the item object sent to json string`() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
 
         val encodedValue = Json.encodeToString(
@@ -556,7 +576,12 @@ class AxiellServiceTest(
                 format = AxiellFormat.DIGITAL.value,
                 recordType = AxiellRecordType.ITEM.value,
                 altNumber = newspaperItemMockB.urn,
-                altNumberType = "URN"
+                altNumberType = "URN",
+                inputName = "Bikube API",
+                inputSource = "texts>texts",
+                inputDate = LocalDate.now().toString(),
+                inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+                dataset = "texts"
             )
         )
 
