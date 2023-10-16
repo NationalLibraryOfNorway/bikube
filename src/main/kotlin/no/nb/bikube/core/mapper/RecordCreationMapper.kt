@@ -4,7 +4,7 @@ import no.nb.bikube.core.model.collections.CollectionsObject
 import no.nb.bikube.core.model.collections.CollectionsPartsObject
 import no.nb.bikube.core.model.collections.CollectionsPartsReference
 
-fun mapCollectionsObjectToCollectionsPartReference(collectionsObject: CollectionsObject): CollectionsPartsObject {
+fun mapCollectionsObjectToCollectionsPartObject(collectionsObject: CollectionsObject): CollectionsPartsObject {
     return CollectionsPartsObject(
         partsReference = CollectionsPartsReference(
             priRef = collectionsObject.priRef,

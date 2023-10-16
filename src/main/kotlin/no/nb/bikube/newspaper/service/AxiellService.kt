@@ -208,7 +208,7 @@ class AxiellService  (
             manifestation.partsReference?.dateStart == item.date?.toString()
         }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date!!)
             .map { collectionsObj ->
-                mapCollectionsObjectToCollectionsPartReference(collectionsObj)
+                mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
     }
 
@@ -220,7 +220,7 @@ class AxiellService  (
             year.partsReference?.dateStart?.take(4) == item.date?.year.toString()
         }?.toMono() ?: createYearWork(item.titleCatalogueId!!, item.date?.year.toString())
             .map { collectionsObj ->
-                mapCollectionsObjectToCollectionsPartReference(collectionsObj)
+                mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
     }
 
