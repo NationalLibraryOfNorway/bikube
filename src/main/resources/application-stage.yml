@@ -1,0 +1,8 @@
+spring:
+  security:
+    user:
+      name: ${STAGE_BIKUBE_USERNAME}
+      password: ${STAGE_BIKUBE_PASSWORD}
+
+security:
+  enabled: true

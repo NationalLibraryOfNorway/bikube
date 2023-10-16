@@ -11,10 +11,6 @@ management:
 spring:
   webflux:
     base-path: /bikube
-  security:
-    user:
-      name: ${STAGE_BIKUBE_USERNAME}
-      password: ${STAGE_BIKUBE_PASSWORD}
 
 springdoc:
   swagger-ui:
@@ -22,7 +18,7 @@ springdoc:
     use-root-path: true
 
 security:
-  enabled: true
+  enabled: false
 
 axiell:
   url: ${COLLECTIONS_PATH_STAGE}
