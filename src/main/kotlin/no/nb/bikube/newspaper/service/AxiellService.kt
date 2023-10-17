@@ -211,7 +211,7 @@ class AxiellService  (
         item: Item
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
-            manifestation.partsReference?.getDate()?.year == item.date?.year
+            manifestation.partsReference?.getDate() == item.date
         }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date!!)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
