@@ -256,6 +256,18 @@ class CollectionsModelMockData {
             )
         )
 
+        val collectionsModelMockAllTitles = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    collectionsModelMockTitleA.getFirstObject()!!,
+                    collectionsModelMockTitleB.getFirstObject()!!,
+                    collectionsModelMockTitleC.getFirstObject()!!,
+                    collectionsModelMockTitleD.getFirstObject()!!,
+                    collectionsModelMockTitleE.getFirstObject()!!
+                )
+            )
+        )
+
         val collectionsPartOfObjectMockSerialWorkA = CollectionsPartOfObject(
             partOfReference = CollectionsPartOfReference(
                 priRef = "22",
@@ -300,7 +312,7 @@ class CollectionsModelMockData {
                         partOfList = listOf(collectionsPartOfObjectMockManifestA),
                         subMediumList = null,
                         mediumList = null,
-                        datingList = null,
+                        datingList = listOf(CollectionsDating(dateFrom = "1999-12-24", dateTo = null)),
                         publisherList = listOf("NB"),
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf("Mo I Rana"),
