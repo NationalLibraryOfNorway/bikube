@@ -44,12 +44,12 @@ class CoreControllerIntegrationTest (
 
     @BeforeEach
     fun beforeEach() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA)
-        every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA)
-        every { axiellRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA)
-        every { axiellRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA)
-        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { axiellRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { axiellRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
@@ -323,7 +323,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title-search endpoint should return empty flux when no items match search term`() {
-        every { axiellRepository.getTitleByName("no match") } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { axiellRepository.getTitleByName("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         searchTitle("no match", MaterialType.NEWSPAPER)
             .returnResult<Title>()
