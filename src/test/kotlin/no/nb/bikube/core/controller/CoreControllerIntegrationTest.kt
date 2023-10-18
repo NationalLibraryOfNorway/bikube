@@ -144,34 +144,42 @@ class CoreControllerIntegrationTest (
     }
 
     @Test
-    fun `get-item endpoint should return 404 when ID belongs to title, year work or manifestation`() {
+    fun `get-item endpoint should return 404 with message when ID belongs to title, year work or manifestation`() {
         getItem(titleId, MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
-            .expectBody<ProblemDetail>()
-            .consumeWith {
-                val response = it.responseBody!!
-                Assertions.assertEquals("Not Found", response.title)
-                Assertions.assertTrue(response.detail!!.lowercase().contains("object is not of type item"))
-                Assertions.assertNotNull(response.instance)
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { problemDetail ->
+                Assertions.assertEquals("Not Found", problemDetail.title)
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type item"))
+                Assertions.assertNotNull(problemDetail.instance)
             }
+            .verifyComplete()
 
         getItem(yearWorkId, MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
-            .expectBody<ProblemDetail>().consumeWith {
-                val response = it.responseBody!!
-                Assertions.assertEquals("Not Found", response.title)
-                Assertions.assertTrue(response.detail!!.lowercase().contains("object is not of type item"))
-                Assertions.assertNotNull(response.instance)
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { problemDetail ->
+                Assertions.assertEquals("Not Found", problemDetail.title)
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type item"))
+                Assertions.assertNotNull(problemDetail.instance)
             }
+            .verifyComplete()
 
         getItem(manifestationId, MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
-            .expectBody<ProblemDetail>().consumeWith {
-                val response = it.responseBody!!
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { response ->
                 Assertions.assertEquals("Not Found", response.title)
                 Assertions.assertTrue(response.detail!!.lowercase().contains("object is not of type item"))
                 Assertions.assertNotNull(response.instance)
             }
+            .verifyComplete()
     }
 
     @Test
@@ -227,6 +235,46 @@ class CoreControllerIntegrationTest (
     fun `get-title endpoint should return 404 when title does not exist`() {
         getTitle("9903892", MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `get-title endpoint should return 404 with message when ID belongs to year work, manifestation or item`() {
+        getTitle(yearWorkId, MaterialType.NEWSPAPER)
+            .expectStatus().isNotFound
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { problemDetail ->
+                Assertions.assertEquals("Not Found", problemDetail.title)
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type serial"))
+                Assertions.assertNotNull(problemDetail.instance)
+            }
+            .verifyComplete()
+
+
+        getTitle(itemId, MaterialType.NEWSPAPER)
+            .expectStatus().isNotFound
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { problemDetail ->
+                Assertions.assertEquals("Not Found", problemDetail.title)
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type work"))
+                Assertions.assertNotNull(problemDetail.instance)
+            }
+            .verifyComplete()
+
+        getTitle(manifestationId, MaterialType.NEWSPAPER)
+            .expectStatus().isNotFound
+            .returnResult<ProblemDetail>()
+            .responseBody
+            .test()
+            .assertNext { problemDetail ->
+                Assertions.assertEquals("Not Found", problemDetail.title)
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type work"))
+                Assertions.assertNotNull(problemDetail.instance)
+            }
+            .verifyComplete()
     }
 
     @Test
