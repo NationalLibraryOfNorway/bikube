@@ -240,7 +240,7 @@ class CollectionsModelMockData {
                         mediumList = null,
                         datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
                         publisherList = listOf("B-Forlaget"),
-                        languageList = null,
+                        languageList = listOf(CollectionsLanguage("nob")),
                         placeOfPublicationList = listOf("Brakka"),
                         partsList = null,
                         workTypeList = null,
