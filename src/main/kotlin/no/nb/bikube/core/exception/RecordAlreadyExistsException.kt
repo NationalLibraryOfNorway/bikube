@@ -1,3 +1,3 @@
 package no.nb.bikube.core.exception
 
-class RecordAlreadyExistsException(message: String): Exception(message)
+class RecordAlreadyExistsException(message: String?): Exception(message)

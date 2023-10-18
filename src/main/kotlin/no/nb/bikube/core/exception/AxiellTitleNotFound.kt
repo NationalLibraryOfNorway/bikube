@@ -1,3 +1,3 @@
 package no.nb.bikube.core.exception
 
-class AxiellTitleNotFound(message: String): AxiellCollectionsException(message)
+class AxiellTitleNotFound(message: String?): AxiellCollectionsException(message)
