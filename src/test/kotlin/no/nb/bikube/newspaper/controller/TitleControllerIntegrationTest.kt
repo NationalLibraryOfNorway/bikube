@@ -25,12 +25,13 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import org.springframework.test.web.reactive.server.returnResult
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
+import java.time.Duration
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class TitleControllerIntegrationTest (
-    @Autowired private val webClient: WebTestClient
+    @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
     private lateinit var axiellRepository: AxiellRepository
@@ -47,6 +48,9 @@ class TitleControllerIntegrationTest (
 
     @BeforeEach
     fun beforeEach() {
+        // Needed to run properly in GitHub Actions
+        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(5)).build()
+
         every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE.copy())
         every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())

@@ -34,12 +34,13 @@ import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.returnResult
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
+import java.time.Duration
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class ItemControllerIntegrationTest (
-    @Autowired private val webClient: WebTestClient
+    @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
     private lateinit var axiellRepository: AxiellRepository
@@ -61,6 +62,9 @@ class ItemControllerIntegrationTest (
 
     @BeforeEach
     fun beforeEach() {
+        // Needed to run properly in GitHub Actions
+        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(5)).build()
+
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())

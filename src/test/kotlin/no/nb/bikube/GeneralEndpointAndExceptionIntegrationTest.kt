@@ -6,6 +6,7 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,12 +19,13 @@ import org.springframework.test.web.reactive.server.returnResult
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.net.URI
+import java.time.Duration
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class GeneralEndpointAndExceptionIntegrationTest (
-    @Autowired private val webClient: WebTestClient
+    @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
     private lateinit var axiellRepository: AxiellRepository
@@ -65,6 +67,12 @@ class GeneralEndpointAndExceptionIntegrationTest (
     private val type404 = URI("https://produksjon.nb.no/bikube/error/not-found")
     private val type409 = URI("https://produksjon.nb.no/bikube/error/conflict")
     private val type500 = URI("https://produksjon.nb.no/bikube/error/internal-server-error")
+
+    @BeforeEach
+    fun beforeEach( ){
+        // Needed to run properly in GitHub Actions
+        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(5)).build()
+    }
 
     @Test
     fun `AxiellCollectionsException should return 500 with proper ProblemDetail`() {
