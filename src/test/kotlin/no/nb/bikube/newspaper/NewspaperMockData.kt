@@ -65,6 +65,18 @@ class NewspaperMockData {
             urn = "avisa_null_null_20200105_1_1_1"
         )
 
+        // Minimum valid for creating digital item
+        val newspaperItemMockCValidForCreation = Item(
+            catalogueId = null,
+            name = null,
+            date = LocalDate.parse("2020-01-01"),
+            materialType = null,
+            titleCatalogueId = "1",
+            titleName = null,
+            digital = true,
+            urn = "avisa_null_null_20200101_1_1_1"
+        )
+
         val language: Language = Language(
             name = "nob",
             databaseId = "1"
