@@ -19,12 +19,13 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
+        // Minimum valid for creation
         val newspaperTitleInputDtoMockA = TitleInputDto(
             name = "Avis A",
             startDate = null,
             endDate = null,
             publisher = null,
-            publisherPlace = "Mo I Rana",
+            publisherPlace = null,
             language = null
         )
 
@@ -87,18 +88,6 @@ class NewspaperMockData {
             titleCatalogueId = "1",
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1"
-        )
-
-        // Minimum valid for creating title
-        val newspaperTitleMockDValidForCreation = Title(
-            catalogueId = "1",
-            name = "Avis D",
-            startDate = null,
-            endDate = null,
-            publisher = null,
-            publisherPlace = null,
-            language = null,
-            materialType = null
         )
 
         val language: Language = Language(
