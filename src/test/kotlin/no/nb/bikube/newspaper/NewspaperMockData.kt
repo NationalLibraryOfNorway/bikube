@@ -1,10 +1,7 @@
 package no.nb.bikube.newspaper
 
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.ItemInputDto
-import no.nb.bikube.core.model.Language
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
 import java.time.LocalDate
 
 class NewspaperMockData {
@@ -20,7 +17,16 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
-        // Equal to collectionsModelMockTitleE, valid for insert without catalogueId
+        val newspaperTitleInputDtoMockA = TitleInputDto(
+            name = "Avis A",
+            startDate = null,
+            endDate = null,
+            publisher = null,
+            publisherPlace = "Mo I Rana",
+            language = null
+        )
+
+        // Equal to collectionsModelMockTitleE, insert DTO below
         val newspaperTitleMockB = Title(
             name = "Avis B",
             startDate = LocalDate.parse("2020-01-01"),
@@ -32,15 +38,14 @@ class NewspaperMockData {
             catalogueId = "2"
         )
 
-        val newspaperTitleMockC = Title(
-            name = "Avis C",
-            startDate = null,
-            endDate = null,
-            publisher = null,
-            publisherPlace = null,
-            language = null,
-            materialType = MaterialType.NEWSPAPER.norwegian,
-            catalogueId = "3"
+        // Equal to collectionsModelMockTitleE, valid for insert
+        val newspaperTitleInputDtoMockB = TitleInputDto(
+            name = "Avis B",
+            startDate = LocalDate.parse("2020-01-01"),
+            endDate = LocalDate.parse("2020-01-31"),
+            publisher = "B-Forlaget",
+            publisherPlace = "Brakka",
+            language = "nob"
         )
 
         val newspaperItemMockA = Item(

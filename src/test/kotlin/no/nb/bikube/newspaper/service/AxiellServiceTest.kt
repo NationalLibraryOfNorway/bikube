@@ -34,6 +34,7 @@ import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.core.model.dto.YearDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
@@ -122,7 +123,7 @@ class AxiellServiceTest(
         every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
-        val body = newspaperTitleMockB.copy()
+        val body = newspaperTitleInputDtoMockB.copy()
         val encodedValue = Json.encodeToString(
             TitleDto(
                 title = newspaperTitleMockB.name!!,
@@ -155,7 +156,7 @@ class AxiellServiceTest(
     fun `createTitle should throw exception with error message from repository method`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
 
-        axiellService.createNewspaperTitle(newspaperTitleMockB)
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
             .expectErrorMatches { it is AxiellCollectionsException && it.message == "Error creating title" }
             .verify()
@@ -459,7 +460,7 @@ class AxiellServiceTest(
     @Test
     fun `createTitle should return correctly mapped record`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -491,7 +492,7 @@ class AxiellServiceTest(
             )
         )
 
-        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }

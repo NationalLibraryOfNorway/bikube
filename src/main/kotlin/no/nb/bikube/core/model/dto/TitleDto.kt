@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.TitleInputDto
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -57,7 +57,7 @@ class TitleDto(
     val dataset: String? = null
 )
 
-fun createNewspaperTitleDto(title: Title): TitleDto {
+fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
     return TitleDto(
         title = title.name!!,
         dateStart = title.startDate?.toString(),

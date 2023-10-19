@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
-import no.nb.bikube.core.model.Language
-import no.nb.bikube.core.model.Publisher
-import no.nb.bikube.core.model.PublisherPlace
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.HttpStatus
@@ -35,7 +32,7 @@ class TitleController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun createTitle(
-        @RequestBody title: Title
+        @RequestBody title: TitleInputDto
     ): Mono<ResponseEntity<Title>> {
         logger().info("Trying to create newspaper title: $title")
         return if (title.name.isNullOrEmpty()) {

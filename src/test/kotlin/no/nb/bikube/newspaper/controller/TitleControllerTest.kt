@@ -9,6 +9,7 @@ import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.service.AxiellService
 import org.junit.jupiter.api.Assertions
@@ -36,7 +37,7 @@ class TitleControllerTest {
         every { axiellService.createLanguage(any()) } returns Mono.empty()
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
-        titleController.createTitle(newspaperTitleMockA)
+        titleController.createTitle(newspaperTitleInputDtoMockA)
             .test()
             .expectSubscription()
             .assertNext {
@@ -47,7 +48,7 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should return 400 bad request if request body object title is null or empty`() {
-        titleController.createTitle(newspaperTitleMockA.copy(name = null))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(name = null))
             .test()
             .expectErrorMatches {
                 it is BadRequestBodyException &&
@@ -55,7 +56,7 @@ class TitleControllerTest {
             }
             .verify()
 
-        titleController.createTitle(newspaperTitleMockA.copy(name = ""))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(name = ""))
             .test()
             .expectErrorMatches {
                 it is BadRequestBodyException &&
@@ -68,7 +69,7 @@ class TitleControllerTest {
     fun `createTitle should return BadRequestBodyException if startDate is after endDate`() {
         val startDate = LocalDate.of(2020, 1, 1)
         val endDate = LocalDate.of(2019, 1, 1)
-        titleController.createTitle(newspaperTitleMockA.copy(startDate = startDate, endDate = endDate))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(startDate = startDate, endDate = endDate))
             .test()
             .expectErrorMatches {
                 it is BadRequestBodyException &&
@@ -81,7 +82,7 @@ class TitleControllerTest {
     fun `createTitle should call create publisher if publisher is present on request body`() {
         every { axiellService.createPublisher(any()) } returns Mono.just(Publisher("Pub", "1"))
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(publisher = "Pub", publisherPlace = null))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Pub", publisherPlace = null))
             .test()
             .expectSubscription()
             .assertNext {
@@ -94,7 +95,7 @@ class TitleControllerTest {
     fun `createTitle should call createPublisherPlace if publisherPlace is present on request body`() {
         every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Pub", "1"))
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(publisherPlace = "Pub"))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Pub"))
             .test()
             .expectSubscription()
             .assertNext {
@@ -107,7 +108,7 @@ class TitleControllerTest {
     fun `createTitle should call createLanguage if language is present on request body`() {
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(language = "nob", publisherPlace = null))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob", publisherPlace = null))
             .test()
             .expectSubscription()
             .assertNext {
@@ -118,9 +119,10 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should not call on createPublisher, createPublisherPlace or createLanguage if not present on request body`() {
+        val titleInput = newspaperTitleInputDtoMockA.copy(publisher = null, publisherPlace = null, language = null)
         val title = newspaperTitleMockA.copy(publisher = null, publisherPlace = null, language = null)
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(title)
-        titleController.createTitle(title)
+        titleController.createTitle(titleInput)
             .test()
             .expectSubscription()
             .assertNext {
@@ -141,7 +143,7 @@ class TitleControllerTest {
         every { axiellService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(publisher = "Schibsted"))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Schibsted"))
             .test()
             .expectSubscription()
             .assertNext {
@@ -158,7 +160,7 @@ class TitleControllerTest {
         )
         every { axiellService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(publisherPlace = "Oslo"))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Oslo"))
             .test()
             .expectSubscription()
             .assertNext {
@@ -175,7 +177,7 @@ class TitleControllerTest {
             RecordAlreadyExistsException("Language 'nob' already exists")
         )
         every { axiellService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        titleController.createTitle(newspaperTitleMockA.copy(language = "nob"))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .test()
             .expectSubscription()
             .assertNext {

@@ -21,7 +21,7 @@ class AxiellService  (
     private val axiellRepository: AxiellRepository
 ) {
     @Throws(AxiellCollectionsException::class)
-    fun createNewspaperTitle(title: Title): Mono<Title> {
+    fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         val dto: TitleDto = createNewspaperTitleDto(title)
         val encodedBody = Json.encodeToString(dto)
         return axiellRepository.createTextsRecord(encodedBody)
