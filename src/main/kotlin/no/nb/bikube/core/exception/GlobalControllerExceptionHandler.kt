@@ -23,7 +23,7 @@ class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(AxiellTitleNotFound::class)
     fun handleAxiellTitleNotFoundException(exception: AxiellTitleNotFound): ProblemDetail {
-        logger().error("AxiellTitleNotFound occurred: ${exception.message}")
+        logger().warn("AxiellTitleNotFound occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections title not found: ${exception.message}"
