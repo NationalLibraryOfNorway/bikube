@@ -91,7 +91,7 @@ class NewspaperMockData {
 
         // Minimum valid for creating title
         val newspaperTitleMockDValidForCreation = Title(
-            catalogueId = null,
+            catalogueId = "1",
             name = "Avis D",
             startDate = null,
             endDate = null,
