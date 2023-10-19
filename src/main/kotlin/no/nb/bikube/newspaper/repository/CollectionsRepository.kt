@@ -34,7 +34,7 @@ class CollectionsRepository(
     }
 
     fun getItemByName(name: String, isDigital: Boolean? = false): Mono<CollectionsModel> {
-        val digitalQuery = if (isDigital != null && isDigital) " and format=DIGITAL" else ""
+        val digitalQuery = if (isDigital != null && isDigital) " and format=DIGITAL" else "format=PHYSICAL"
         return searchTexts(
             "record_type=${AxiellRecordType.ITEM}" +
             " and title=\"${name}\""

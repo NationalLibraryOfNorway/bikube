@@ -103,30 +103,31 @@ class CoreController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun searchItem(
-        @RequestParam
+        @RequestParam(required = true)
         @Schema(description = "The term to search for. Supports wildcard '*' search.")
         searchTerm: String,
-        @RequestParam materialType: MaterialType,
-        @RequestParam
+        @RequestParam(required = true)
+        materialType: MaterialType,
+        @RequestParam(required = false)
         @Pattern(regexp = DATE_REGEX)
         @Schema(description = "Date must be in ISO-8601 format (YYYY-MM-DD).")
         date: String? = null,
-        @RequestParam
-        isDigital: Boolean? = null,
+        @RequestParam(required = false)
+        @Schema(description = "If 'true' returns digital items, physical items if 'false'. Default is 'false'")
+        isDigital: Boolean? = false,
     ): ResponseEntity<Flux<CatalogueRecord>> {
         if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
-        validateDate(date ?: "")
+
+        var parsedDate: LocalDate? = null
+        if (!date.isNullOrEmpty()) parsedDate = runCatching { LocalDate.parse(date) }
+            .getOrElse { throw BadRequestBodyException("Date must valid ISO-8601 format") }
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                axiellService.searchItemByName(searchTerm, LocalDate.parse(date), isDigital)
+                axiellService.searchItemByName(searchTerm, parsedDate, isDigital)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
 
-    private fun validateDate(date: String) {
-        runCatching { LocalDate.parse(date) }
-            .getOrElse { throw BadRequestBodyException("Date must valid ISO-8601 format") }
-    }
 }

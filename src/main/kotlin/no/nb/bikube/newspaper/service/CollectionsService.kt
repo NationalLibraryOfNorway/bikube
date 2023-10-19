@@ -105,11 +105,8 @@ class CollectionsService  (
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .map { mapCollectionsObjectToGenericItem(it) }
             .filter { item ->
-                if (date == null) true
-                else {
-                    item.date != null &&
-                    item.date.isEqual(date)
-                }
+                if (date == null && item.date == null) true
+                else item.date != null && item.date.isEqual(date)
             }
             .map { it as CatalogueRecord }
     }
