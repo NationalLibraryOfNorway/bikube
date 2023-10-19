@@ -71,7 +71,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
     @BeforeEach
     fun beforeEach( ){
         // Needed to run properly in GitHub Actions
-        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(5)).build()
+        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
     }
 
     @Test
