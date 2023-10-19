@@ -98,6 +98,22 @@ class CollectionsService  (
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
+    fun searchItemByName(
+        name: String, date: LocalDate? = null, isDigital: Boolean? = false
+    ): Flux<CatalogueRecord> {
+        return axiellRepository.getItemByName(name, isDigital)
+            .flatMapIterable { it.getObjects() ?: emptyList() }
+            .map { mapCollectionsObjectToGenericItem(it) }
+            .filter { item ->
+                if (date == null) true
+                else {
+                    item.date != null &&
+                    item.date.isEqual(date)
+                }
+            }
+            .map { it as CatalogueRecord }
+    }
+
     fun createPublisher(publisher: String): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))

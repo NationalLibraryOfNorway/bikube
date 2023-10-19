@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import java.time.LocalDate
 
 @Repository
 class CollectionsRepository(
@@ -29,6 +30,15 @@ class CollectionsRepository(
             "record_type=${CollectionsRecordType.WORK} and " +
             "work.description_type=${CollectionsDescriptionType.SERIAL} and " +
             "title=\"${name}\""
+        )
+    }
+
+    fun getItemByName(name: String, isDigital: Boolean? = false): Mono<CollectionsModel> {
+        val digitalQuery = if (isDigital != null && isDigital) " and format=DIGITAL" else ""
+        return searchTexts(
+            "record_type=${AxiellRecordType.ITEM}" +
+            " and title=\"${name}\""
+            + digitalQuery
         )
     }
 

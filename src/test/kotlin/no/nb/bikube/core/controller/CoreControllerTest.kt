@@ -91,7 +91,7 @@ class CoreControllerTest {
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
-        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
+        coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
@@ -105,9 +105,9 @@ class CoreControllerTest {
 
     @Test
     fun `search should throw NotSupportedException when trying to search for anything other than NEWSPAPER`() {
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MANUSCRIPT) }
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.PERIODICAL) }
-        assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MONOGRAPH) }
+        assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.MANUSCRIPT) }
+        assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.PERIODICAL) }
+        assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.MONOGRAPH) }
 
         verify { collectionsService.searchTitleByName(any()) wasNot Called }
     }
@@ -116,7 +116,7 @@ class CoreControllerTest {
     fun `search should call on collectionsService function when materialType is NEWSPAPER`() {
         every { collectionsService.searchTitleByName(any()) } returns Flux.empty()
 
-        coreController.search("Avis", MaterialType.NEWSPAPER).body!!
+        coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .verifyComplete()
 

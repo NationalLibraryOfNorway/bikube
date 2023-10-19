@@ -11,4 +11,4 @@ data class Item(
     val titleName: String?,
     val digital: Boolean?,
     val urn: String?,
-)
+) : CatalogueRecord
