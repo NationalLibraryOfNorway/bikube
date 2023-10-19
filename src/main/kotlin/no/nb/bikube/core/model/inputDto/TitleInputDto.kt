@@ -1,14 +1,12 @@
-package no.nb.bikube.core.model
+package no.nb.bikube.core.model.inputDto
 
 import java.time.LocalDate
 
-data class Title(
-    val catalogueId: String,
+data class TitleInputDto (
     val name: String?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
     val publisher: String?,
     val publisherPlace: String?,
-    val language: String?,
-    val materialType: String?
-) : CatalogueRecord
+    val language: String?
+)

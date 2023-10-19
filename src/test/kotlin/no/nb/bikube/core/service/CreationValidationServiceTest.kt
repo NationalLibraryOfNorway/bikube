@@ -1,7 +1,7 @@
 package no.nb.bikube.core.service
 
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -16,24 +16,16 @@ class CreationValidationServiceTest {
     @Autowired
     private lateinit var creationValidationService: CreationValidationService
 
-    private val validDigitalItem = Item(
-        catalogueId = null,
-        name = "Test",
+    private val validDigitalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
-        materialType = null,
         titleCatalogueId = "1",
-        titleName = null,
         digital = true,
         urn = "avis_null_null_20200101_1_1_1"
     )
 
-    private val validPhysicalItem = Item(
-        catalogueId = null,
-        name = "Test",
+    private val validPhysicalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
-        materialType = null,
         titleCatalogueId = "1",
-        titleName = null,
         digital = false,
         urn = null
     )

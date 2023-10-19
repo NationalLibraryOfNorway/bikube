@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.service.AxiellService
 import org.junit.jupiter.api.Assertions
@@ -32,7 +33,7 @@ class ItemControllerTest {
         every { axiellService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
         every { creationValidationService.validateItem(any()) } returns Unit
 
-        itemController.createItem(newspaperItemMockA.copy())
+        itemController.createItem(newspaperItemMockCValidForCreation.copy())
             .test()
             .expectSubscription()
             .assertNext {

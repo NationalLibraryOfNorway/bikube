@@ -4,11 +4,12 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nb.bikube.core.exception.AxiellManifestationNotFound
 import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,7 +33,7 @@ class ItemController (
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun createItem(
-        @RequestBody item: Item
+        @RequestBody item: ItemInputDto
     ): Mono<ResponseEntity<Item>> {
         logger().info("Trying to create newspaper item: $item")
         creationValidationService.validateItem(item)
@@ -40,7 +41,7 @@ class ItemController (
         // Checks that title exists before creating item. Will throw exception if not found.
         return axiellService.getSingleTitle(item.titleCatalogueId!!)
             .flatMap { axiellService.createNewspaperItem(item) }
-            .map { ResponseEntity.ok(it) }
+            .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
                 logger().info("Newspaper item created: ${responseEntity.body?.titleCatalogueId}")
             }

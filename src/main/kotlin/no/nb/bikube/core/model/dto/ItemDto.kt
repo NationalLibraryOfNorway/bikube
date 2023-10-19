@@ -4,16 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
-import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
 class ItemDto (
-    @SerialName("title")
-    val name: String?,
-
     @SerialName("format")
     val format: String,
 
@@ -45,13 +42,14 @@ class ItemDto (
     val partOfReference: String? = null
 )
 
-fun createNewspaperItemDto(item: Item, manifestationCatalogueId: String): ItemDto {
+fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String): ItemDto {
+    val useUrn = item.digital == true && !item.urn.isNullOrBlank()
+
     return ItemDto(
-        name = item.name,
         format = if (item.digital == true) AxiellFormat.DIGITAL.value else AxiellFormat.PHYSICAL.value,
         recordType = AxiellRecordType.ITEM.value,
-        altNumber = item.urn,
-        altNumberType = if (!item.urn.isNullOrBlank()) "URN" else null,
+        altNumber = if (useUrn) item.urn else null,
+        altNumberType = if (useUrn) "URN" else null,
         inputName = "Bikube API", // TODO: Change when we have authentication in place
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),

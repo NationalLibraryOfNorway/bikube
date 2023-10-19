@@ -32,10 +32,13 @@ import no.nb.bikube.core.model.dto.ItemDto
 import no.nb.bikube.core.model.dto.ManifestationDto
 import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.core.model.dto.YearDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,8 +71,9 @@ class AxiellServiceTest(
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts")
-    )
+        dataset = "texts"
+    ))
+
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = AxiellRecordType.MANIFESTATION.value,
@@ -78,10 +82,10 @@ class AxiellServiceTest(
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts")
-    )
+        dataset = "texts"
+    ))
+
     private val itemEncodedDto = Json.encodeToString(ItemDto(
-        name = newspaperItemMockB.name,
         format = AxiellFormat.DIGITAL.value,
         recordType = AxiellRecordType.ITEM.value,
         altNumber = newspaperItemMockB.urn,
@@ -91,8 +95,27 @@ class AxiellServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
+        partOfReference = newspaperItemMockB.catalogueId
+    ))
+
+    private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
+        format = AxiellFormat.PHYSICAL.value,
+        recordType = AxiellRecordType.ITEM.value,
+        altNumber = null,
+        altNumberType = null,
+        inputName = "Bikube API",
+        inputSource = "texts>texts",
+        inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+        dataset = "texts",
         partOfReference = newspaperItemMockB.catalogueId)
     )
+
+    @BeforeEach
+    fun beforeEach() {
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
+    }
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
@@ -100,7 +123,7 @@ class AxiellServiceTest(
         every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
-        val body = newspaperTitleMockB.copy()
+        val body = newspaperTitleInputDtoMockB.copy()
         val encodedValue = Json.encodeToString(
             TitleDto(
                 title = newspaperTitleMockB.name!!,
@@ -133,7 +156,7 @@ class AxiellServiceTest(
     fun `createTitle should throw exception with error message from repository method`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.error(AxiellCollectionsException("Error creating title"))
 
-        axiellService.createNewspaperTitle(newspaperTitleMockB)
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
             .expectErrorMatches { it is AxiellCollectionsException && it.message == "Error creating title" }
             .verify()
@@ -437,7 +460,7 @@ class AxiellServiceTest(
     @Test
     fun `createTitle should return correctly mapped record`() {
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -469,7 +492,7 @@ class AxiellServiceTest(
             )
         )
 
-        axiellService.createNewspaperTitle(newspaperTitleMockB.copy())
+        axiellService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -596,7 +619,7 @@ class AxiellServiceTest(
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -605,14 +628,12 @@ class AxiellServiceTest(
 
     @Test
     fun `createNewspaperItem should correctly encode the item object sent to json string`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -623,14 +644,12 @@ class AxiellServiceTest(
 
     @Test
     fun `createNewspaperItem should throw AxiellItemNotFound if item could not be found`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { axiellRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB)
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -638,6 +657,20 @@ class AxiellServiceTest(
                 it.message!!.contains("New item not found")
             }
             .verify()
+    }
+
+    @Test
+    fun `createNewspaperItem should ignore URN if is is a physical item`() {
+        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify { axiellRepository.createTextsRecord(itemEncodedDtoPhysical) }
     }
 
     @Test

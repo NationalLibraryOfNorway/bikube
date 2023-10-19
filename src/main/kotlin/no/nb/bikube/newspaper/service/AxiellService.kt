@@ -8,6 +8,8 @@ import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.core.model.dto.*
+import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -21,7 +23,7 @@ class AxiellService  (
     private val axiellRepository: AxiellRepository
 ) {
     @Throws(AxiellCollectionsException::class)
-    fun createNewspaperTitle(title: Title): Mono<Title> {
+    fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         val dto: TitleDto = createNewspaperTitleDto(title)
         val encodedBody = Json.encodeToString(dto)
         return axiellRepository.createTextsRecord(encodedBody)
@@ -182,7 +184,7 @@ class AxiellService  (
     }
 
     @Throws(AxiellItemNotFound::class)
-    fun createNewspaperItem(item: Item): Mono<Item> {
+    fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
         return axiellRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
             .flatMap { title ->
                 findOrCreateYearWorkRecord(title, item)
@@ -194,7 +196,7 @@ class AxiellService  (
     }
 
     private fun createLinkedNewspaperItem(
-        item: Item,
+        item: ItemInputDto,
         manifestation: CollectionsPartsObject
     ): Mono<Item> {
         val dto: ItemDto = createNewspaperItemDto(item, manifestation.partsReference?.priRef!!)
@@ -208,7 +210,7 @@ class AxiellService  (
 
     private fun findOrCreateManifestationRecord(
         yearWork: CollectionsPartsObject,
-        item: Item
+        item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
             manifestation.partsReference?.getDate() == item.date
@@ -220,7 +222,7 @@ class AxiellService  (
 
     private fun findOrCreateYearWorkRecord(
         title: CollectionsModel,
-        item: Item
+        item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
             year.partsReference?.getDate()?.year == item.date?.year

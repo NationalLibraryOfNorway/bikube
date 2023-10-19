@@ -1,9 +1,9 @@
 package no.nb.bikube.newspaper
 
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.Language
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 
 class NewspaperMockData {
@@ -19,7 +19,17 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
-        // Equal to collectionsModelMockTitleE, valid for insert without catalogueId
+        // Minimum valid for creation
+        val newspaperTitleInputDtoMockA = TitleInputDto(
+            name = "Avis A",
+            startDate = null,
+            endDate = null,
+            publisher = null,
+            publisherPlace = null,
+            language = null
+        )
+
+        // Equal to collectionsModelMockTitleE, insert DTO below
         val newspaperTitleMockB = Title(
             name = "Avis B",
             startDate = LocalDate.parse("2020-01-01"),
@@ -31,15 +41,14 @@ class NewspaperMockData {
             catalogueId = "2"
         )
 
-        val newspaperTitleMockC = Title(
-            name = "Avis C",
-            startDate = null,
-            endDate = null,
-            publisher = null,
-            publisherPlace = null,
-            language = null,
-            materialType = MaterialType.NEWSPAPER.norwegian,
-            catalogueId = "3"
+        // Equal to collectionsModelMockTitleE, valid for insert
+        val newspaperTitleInputDtoMockB = TitleInputDto(
+            name = "Avis B",
+            startDate = LocalDate.parse("2020-01-01"),
+            endDate = LocalDate.parse("2020-01-31"),
+            publisher = "B-Forlaget",
+            publisherPlace = "Brakka",
+            language = "nob"
         )
 
         val newspaperItemMockA = Item(
@@ -53,7 +62,7 @@ class NewspaperMockData {
             urn = "avisa_null_null_20200101_1_1_1"
         )
 
-       // Equals to collectionsModelMockItemB - used for creation
+       // Equals to collectionsModelMockItemB
         val newspaperItemMockB = Item(
             catalogueId = "46",
             name = "Avis A 2020.01.05",
@@ -65,28 +74,20 @@ class NewspaperMockData {
             urn = "avisa_null_null_20200105_1_1_1"
         )
 
-        // Minimum valid for creating digital item
-        val newspaperItemMockCValidForCreation = Item(
-            catalogueId = null,
-            name = null,
-            date = LocalDate.parse("2020-01-01"),
-            materialType = null,
-            titleCatalogueId = "1",
-            titleName = null,
+        // Equals to collectionsModelMockItemB
+        val newspaperInputDtoItemMockB = ItemInputDto(
+            date = LocalDate.parse("2020-01-05"),
+            titleCatalogueId = newspaperTitleMockA.catalogueId,
             digital = true,
-            urn = "avisa_null_null_20200101_1_1_1"
+            urn = "avisa_null_null_20200105_1_1_1"
         )
 
-        // Minimum valid for creating title
-        val newspaperTitleMockDValidForCreation = Title(
-            catalogueId = null,
-            name = "Avis D",
-            startDate = null,
-            endDate = null,
-            publisher = null,
-            publisherPlace = null,
-            language = null,
-            materialType = null
+        // Minimum valid for creating digital item
+        val newspaperItemMockCValidForCreation = ItemInputDto(
+            date = LocalDate.parse("2020-01-01"),
+            titleCatalogueId = "1",
+            digital = true,
+            urn = "avisa_null_null_20200101_1_1_1"
         )
 
         val language: Language = Language(

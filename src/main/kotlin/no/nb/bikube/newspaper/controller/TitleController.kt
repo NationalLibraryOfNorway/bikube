@@ -6,12 +6,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
-import no.nb.bikube.core.model.Language
-import no.nb.bikube.core.model.Publisher
-import no.nb.bikube.core.model.PublisherPlace
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,12 +28,12 @@ class TitleController (
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")
     @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "201", description = "Title created"),
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun createTitle(
-        @RequestBody title: Title
+        @RequestBody title: TitleInputDto
     ): Mono<ResponseEntity<Title>> {
         logger().info("Trying to create newspaper title: $title")
         return if (title.name.isNullOrEmpty()) {
@@ -65,7 +64,7 @@ class TitleController (
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
                 .then(axiellService.createNewspaperTitle(title))
-                .map { createdTitle -> ResponseEntity.ok(createdTitle) }
+                .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
                 .doOnSuccess { responseEntity ->
                     logger().info("Newspaper title created: ${responseEntity.body?.catalogueId}")
                 }
