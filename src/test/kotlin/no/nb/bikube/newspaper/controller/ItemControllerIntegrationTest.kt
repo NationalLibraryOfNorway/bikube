@@ -19,7 +19,7 @@ import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellFormat
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.ItemInputDto
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.repository.AxiellRepository

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.HttpStatus

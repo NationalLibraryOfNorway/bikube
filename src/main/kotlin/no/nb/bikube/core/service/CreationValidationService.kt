@@ -1,7 +1,7 @@
 package no.nb.bikube.core.service
 
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.model.ItemInputDto
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import org.springframework.stereotype.Service
 
 @Service

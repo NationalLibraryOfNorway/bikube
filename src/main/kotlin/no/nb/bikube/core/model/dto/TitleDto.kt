@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.AxiellDescriptionType
 import no.nb.bikube.core.enum.AxiellRecordType
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.TitleInputDto
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

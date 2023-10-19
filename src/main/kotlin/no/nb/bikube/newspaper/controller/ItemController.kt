@@ -4,9 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nb.bikube.core.exception.AxiellManifestationNotFound
 import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.ItemInputDto
+import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService

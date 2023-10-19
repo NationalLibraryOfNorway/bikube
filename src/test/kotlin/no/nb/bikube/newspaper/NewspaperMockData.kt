@@ -2,6 +2,8 @@ package no.nb.bikube.newspaper
 
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 
 class NewspaperMockData {

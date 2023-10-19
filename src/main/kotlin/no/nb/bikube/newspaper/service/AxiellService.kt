@@ -8,6 +8,8 @@ import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.core.model.dto.*
+import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
