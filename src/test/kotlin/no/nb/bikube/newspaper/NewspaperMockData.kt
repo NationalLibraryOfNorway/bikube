@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper
 
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.ItemInputDto
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Title
 import java.time.LocalDate
@@ -53,7 +54,7 @@ class NewspaperMockData {
             urn = "avisa_null_null_20200101_1_1_1"
         )
 
-       // Equals to collectionsModelMockItemB - used for creation
+       // Equals to collectionsModelMockItemB
         val newspaperItemMockB = Item(
             catalogueId = "46",
             name = "Avis A 2020.01.05",
@@ -65,14 +66,18 @@ class NewspaperMockData {
             urn = "avisa_null_null_20200105_1_1_1"
         )
 
+        // Equals to collectionsModelMockItemB
+        val newspaperInputDtoItemMockB = ItemInputDto(
+            date = LocalDate.parse("2020-01-05"),
+            titleCatalogueId = newspaperTitleMockA.catalogueId,
+            digital = true,
+            urn = "avisa_null_null_20200105_1_1_1"
+        )
+
         // Minimum valid for creating digital item
-        val newspaperItemMockCValidForCreation = Item(
-            catalogueId = null,
-            name = null,
+        val newspaperItemMockCValidForCreation = ItemInputDto(
             date = LocalDate.parse("2020-01-01"),
-            materialType = null,
             titleCatalogueId = "1",
-            titleName = null,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1"
         )

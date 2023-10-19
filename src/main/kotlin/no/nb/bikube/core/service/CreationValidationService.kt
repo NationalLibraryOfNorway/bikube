@@ -1,13 +1,13 @@
 package no.nb.bikube.core.service
 
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.ItemInputDto
 import org.springframework.stereotype.Service
 
 @Service
 class CreationValidationService {
     @Throws(BadRequestBodyException::class)
-    fun validateItem(item: Item) {
+    fun validateItem(item: ItemInputDto) {
         if (item.titleCatalogueId.isNullOrBlank()) {
             throw BadRequestBodyException("Need to provide title ID")
         }

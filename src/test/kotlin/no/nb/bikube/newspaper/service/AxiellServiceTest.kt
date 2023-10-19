@@ -32,6 +32,7 @@ import no.nb.bikube.core.model.dto.ItemDto
 import no.nb.bikube.core.model.dto.ManifestationDto
 import no.nb.bikube.core.model.dto.TitleDto
 import no.nb.bikube.core.model.dto.YearDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
@@ -69,8 +70,8 @@ class AxiellServiceTest(
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts")
-    )
+        dataset = "texts"
+    ))
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
         partOfReference = newspaperItemMockB.catalogueId,
@@ -80,11 +81,10 @@ class AxiellServiceTest(
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts")
-    )
+        dataset = "texts"
+    ))
 
     private val itemEncodedDto = Json.encodeToString(ItemDto(
-        name = newspaperItemMockB.name,
         format = AxiellFormat.DIGITAL.value,
         recordType = AxiellRecordType.ITEM.value,
         altNumber = newspaperItemMockB.urn,
@@ -94,11 +94,10 @@ class AxiellServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId)
-    )
+        partOfReference = newspaperItemMockB.catalogueId
+    ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
-        name = newspaperItemMockB.name,
         format = AxiellFormat.PHYSICAL.value,
         recordType = AxiellRecordType.ITEM.value,
         altNumber = null,
@@ -619,7 +618,7 @@ class AxiellServiceTest(
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -633,7 +632,7 @@ class AxiellServiceTest(
         every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null))
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -649,7 +648,7 @@ class AxiellServiceTest(
         every { axiellRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB)
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -664,7 +663,7 @@ class AxiellServiceTest(
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        axiellService.createNewspaperItem(newspaperItemMockB.copy(catalogueId = null, digital = false))
+        axiellService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
             .test()
             .expectSubscription()
             .expectNextCount(1)

@@ -182,7 +182,7 @@ class AxiellService  (
     }
 
     @Throws(AxiellItemNotFound::class)
-    fun createNewspaperItem(item: Item): Mono<Item> {
+    fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
         return axiellRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
             .flatMap { title ->
                 findOrCreateYearWorkRecord(title, item)
@@ -194,7 +194,7 @@ class AxiellService  (
     }
 
     private fun createLinkedNewspaperItem(
-        item: Item,
+        item: ItemInputDto,
         manifestation: CollectionsPartsObject
     ): Mono<Item> {
         val dto: ItemDto = createNewspaperItemDto(item, manifestation.partsReference?.priRef!!)
@@ -208,7 +208,7 @@ class AxiellService  (
 
     private fun findOrCreateManifestationRecord(
         yearWork: CollectionsPartsObject,
-        item: Item
+        item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
             manifestation.partsReference?.getDate() == item.date
@@ -220,7 +220,7 @@ class AxiellService  (
 
     private fun findOrCreateYearWorkRecord(
         title: CollectionsModel,
-        item: Item
+        item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
             year.partsReference?.getDate()?.year == item.date?.year
