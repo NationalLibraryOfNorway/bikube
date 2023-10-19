@@ -19,14 +19,14 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
-        // Equal to collectionsModelMockTitleE
+        // Equal to collectionsModelMockTitleE, valid for insert without catalogueId
         val newspaperTitleMockB = Title(
             name = "Avis B",
             startDate = LocalDate.parse("2020-01-01"),
             endDate = LocalDate.parse("2020-01-31"),
             publisher = "B-Forlaget",
             publisherPlace = "Brakka",
-            language = null,
+            language = "nob",
             materialType = MaterialType.NEWSPAPER.norwegian,
             catalogueId = "2"
         )
@@ -63,6 +63,30 @@ class NewspaperMockData {
             titleName = null,
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1"
+        )
+
+        // Minimum valid for creating digital item
+        val newspaperItemMockCValidForCreation = Item(
+            catalogueId = null,
+            name = null,
+            date = LocalDate.parse("2020-01-01"),
+            materialType = null,
+            titleCatalogueId = "1",
+            titleName = null,
+            digital = true,
+            urn = "avisa_null_null_20200101_1_1_1"
+        )
+
+        // Minimum valid for creating title
+        val newspaperTitleMockDValidForCreation = Title(
+            catalogueId = null,
+            name = "Avis D",
+            startDate = null,
+            endDate = null,
+            publisher = null,
+            publisherPlace = null,
+            language = null,
+            materialType = null
         )
 
         val language: Language = Language(

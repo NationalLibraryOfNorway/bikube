@@ -1,3 +1,3 @@
 package no.nb.bikube.core.exception
 
-class NotSupportedException (message: String): Exception(message)
+class NotSupportedException (message: String?): Exception(message)
