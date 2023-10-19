@@ -61,17 +61,16 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
     }
 
-    // TODO: Swap to 201 Created in TT-1184
     @Test
     fun `post-newspapers-titles should return 201 created with title`() {
         createTitle(newspaperTitleMockDValidForCreation)
-            .expectStatus().isOk
+            .expectStatus().isCreated
     }
 
     @Test
     fun `post-newspapers-titles should return correctly mapped title`() {
         createTitle(newspaperTitleMockB)
-            .expectStatus().isOk
+            .expectStatus().isCreated
             .returnResult<Title>()
             .responseBody
             .test()
@@ -97,7 +96,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(publisher = "publisher"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchPublisher(any()) }
         verify(exactly = 0) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
@@ -108,7 +107,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(publisher = "publisher"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchPublisher(any()) }
         verify(exactly = 1) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
@@ -117,7 +116,7 @@ class TitleControllerIntegrationTest (
     @Test
     fun `post-newspapers-titles should ignore publisher if not present`() {
         createTitle(newspaperTitleMockDValidForCreation.copy(publisher = null))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 0) { axiellRepository.searchPublisher(any()) }
         verify(exactly = 0) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
@@ -128,7 +127,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(publisherPlace = "Mo"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchPublisherPlace(any()) }
         verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
@@ -139,7 +138,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(publisherPlace = "Mo"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchPublisherPlace(any()) }
         verify(exactly = 1) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
@@ -148,7 +147,7 @@ class TitleControllerIntegrationTest (
     @Test
     fun `post-newspapers-titles should ignore publisherPlace if not present`() {
         createTitle(newspaperTitleMockDValidForCreation.copy(publisherPlace = null))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 0) { axiellRepository.searchPublisherPlace(any()) }
         verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
@@ -159,7 +158,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(language = "nob"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchLanguage(any()) }
         verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }
@@ -170,7 +169,7 @@ class TitleControllerIntegrationTest (
         every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleMockDValidForCreation.copy(language = "nob"))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.searchLanguage(any()) }
         verify(exactly = 1) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }
@@ -179,7 +178,7 @@ class TitleControllerIntegrationTest (
     @Test
     fun `post-newspapers-titles should ignore language if not present`() {
         createTitle(newspaperTitleMockDValidForCreation.copy(language = null))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 0) { axiellRepository.searchLanguage(any()) }
         verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }

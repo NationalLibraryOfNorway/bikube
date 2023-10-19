@@ -9,6 +9,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -40,7 +41,7 @@ class ItemController (
         // Checks that title exists before creating item. Will throw exception if not found.
         return axiellService.getSingleTitle(item.titleCatalogueId!!)
             .flatMap { axiellService.createNewspaperItem(item) }
-            .map { ResponseEntity.ok(it) }
+            .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
                 logger().info("Newspaper item created: ${responseEntity.body?.titleCatalogueId}")
             }

@@ -46,12 +46,14 @@ class ItemDto (
 )
 
 fun createNewspaperItemDto(item: Item, manifestationCatalogueId: String): ItemDto {
+    val useUrn = item.digital == true && !item.urn.isNullOrBlank()
+
     return ItemDto(
         name = item.name,
         format = if (item.digital == true) AxiellFormat.DIGITAL.value else AxiellFormat.PHYSICAL.value,
         recordType = AxiellRecordType.ITEM.value,
-        altNumber = item.urn,
-        altNumberType = if (!item.urn.isNullOrBlank()) "URN" else null,
+        altNumber = if (useUrn) item.urn else null,
+        altNumberType = if (useUrn) "URN" else null,
         inputName = "Bikube API", // TODO: Change when we have authentication in place
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),

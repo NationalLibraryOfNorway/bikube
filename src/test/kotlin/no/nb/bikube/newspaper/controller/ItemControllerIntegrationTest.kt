@@ -89,11 +89,10 @@ class ItemControllerIntegrationTest (
         }
     }
 
-    // TODO: Swap to 201 Created in TT-1184
     @Test
     fun `post-newspapers-items endpoint should return 201 Created with item`() {
         createItem(newspaperItemMockCValidForCreation)
-            .expectStatus().isOk
+            .expectStatus().isCreated
             .expectBody<Item>()
     }
 
@@ -102,7 +101,7 @@ class ItemControllerIntegrationTest (
         val testReturn = collectionsModelMockItemA.getFirstObject()!!
 
         createItem(newspaperItemMockCValidForCreation)
-            .expectStatus().isOk
+            .expectStatus().isCreated
             .returnResult<Item>()
             .responseBody
             .test()
@@ -143,18 +142,6 @@ class ItemControllerIntegrationTest (
             .expectStatus().isBadRequest
     }
 
-    // TODO: uncomment in TT-1184
-    //    @Test
-    //    fun `post-newspapers-items endpoint should ignore urn for physical items`() {
-    //        createItem(newspaperItemMockCValidForCreation.copy(digital = false, urn = "digitest_123_blablabla"))
-    //            .expectStatus().isOk
-    //            .returnResult<Item>()
-    //            .responseBody
-    //            .test()
-    //            .expectNextMatches { it.urn == null }
-    //            .verifyComplete()
-    //    }
-
     @Test
     fun `post-newspapers-items endpoint should return 404 not found if title ID is not a title`() {
         createItem(newspaperItemMockCValidForCreation.copy(titleCatalogueId = itemId))
@@ -171,7 +158,7 @@ class ItemControllerIntegrationTest (
     @Test
     fun `post-newspapers-items endpoint should use year work and manifestation if it exists`() {
         createItem(newspaperItemMockCValidForCreation.copy())
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 1) { axiellRepository.createTextsRecord(any()) }
     }
@@ -182,7 +169,7 @@ class ItemControllerIntegrationTest (
         every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
 
         createItem(newspaperItemMockCValidForCreation)
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 3) { axiellRepository.createTextsRecord(any()) }
     }
@@ -192,7 +179,7 @@ class ItemControllerIntegrationTest (
         every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleC.copy())
 
         createItem(newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01")))
-            .expectStatus().isOk
+            .expectStatus().isCreated
 
         verify(exactly = 2) { axiellRepository.createTextsRecord(any()) }
     }
@@ -200,7 +187,7 @@ class ItemControllerIntegrationTest (
     @Test
     fun `post-newspapers-items endpoint should link item to manifestation and upward`() {
         createItem(newspaperItemMockCValidForCreation)
-            .expectStatus().isOk
+            .expectStatus().isCreated
             .returnResult<Item>()
             .responseBody
             .test()

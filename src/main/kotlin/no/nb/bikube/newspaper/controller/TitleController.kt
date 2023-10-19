@@ -12,6 +12,7 @@ import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -65,7 +66,7 @@ class TitleController (
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
                 .then(axiellService.createNewspaperTitle(title))
-                .map { createdTitle -> ResponseEntity.ok(createdTitle) }
+                .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
                 .doOnSuccess { responseEntity ->
                     logger().info("Newspaper title created: ${responseEntity.body?.catalogueId}")
                 }
