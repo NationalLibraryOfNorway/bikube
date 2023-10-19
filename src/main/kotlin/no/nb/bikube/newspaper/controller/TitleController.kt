@@ -27,7 +27,7 @@ class TitleController (
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")
     @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "201", description = "Title created"),
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
