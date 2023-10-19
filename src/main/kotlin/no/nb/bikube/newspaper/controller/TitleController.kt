@@ -10,6 +10,7 @@ import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.AxiellService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -35,6 +36,7 @@ class TitleController (
     fun createTitle(
         @RequestBody title: Title
     ): Mono<ResponseEntity<Title>> {
+        logger().info("Trying to create newspaper title: $title")
         return if (title.name.isNullOrEmpty()) {
             Mono.error(BadRequestBodyException("Title name cannot be null or empty"))
         } else if (title.startDate != null && title.endDate != null && title.startDate.isAfter(title.endDate)) {
@@ -64,6 +66,9 @@ class TitleController (
             return Mono.`when`(publisherMono, locationMono, languageMono)
                 .then(axiellService.createNewspaperTitle(title))
                 .map { createdTitle -> ResponseEntity.ok(createdTitle) }
+                .doOnSuccess { responseEntity ->
+                    logger().info("Newspaper title created: ${responseEntity.body?.catalogueId}")
+                }
         }
     }
 }
