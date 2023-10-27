@@ -17,16 +17,13 @@ import org.springframework.http.client.reactive.HttpComponentsClientHttpConnecto
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 
-
 @Configuration
 class WebClientConfig(private val axiellConfig: AxiellConfig) {
 
     @Bean
     @Throws(NoClassDefFoundError::class)
     fun webClient(): WebClient {
-        val connector = initHttpClientConnector()
-
-        return WebClient.builder().clientConnector(connector).baseUrl(axiellConfig.url).build()
+        return WebClient.builder().clientConnector(initHttpClientConnector()).baseUrl(axiellConfig.url).build()
     }
 
     private fun initHttpClientConnector(): HttpComponentsClientHttpConnector {
