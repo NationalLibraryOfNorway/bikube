@@ -4,5 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("axiell")
 class AxiellConfig (
-    val url: String
+    val url: String,
+    val username: String,
+    val password: String
 )
