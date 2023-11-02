@@ -15,8 +15,6 @@ class CollectionsWebClient(private val collectionsConfig: CollectionsConfig) {
     @Bean
     @Throws(NoClassDefFoundError::class)
     fun webClient(): WebClient {
-        System.setProperty("java.security.krb5.conf", "src/main/resources/krb5.conf")
-
         return WebClient.builder().baseUrl(collectionsConfig.url)
             .filter { request, next ->
                 next.exchange(ClientRequest.from(request).headers { headers ->
