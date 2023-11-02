@@ -6,7 +6,7 @@ import no.nb.bikube.core.model.collections.CollectionsModel
 import no.nb.bikube.core.model.collections.CollectionsNameModel
 import no.nb.bikube.core.model.collections.CollectionsTermModel
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.config.WebClientConfig
+import no.nb.bikube.newspaper.config.CollectionsWebClient
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
@@ -15,9 +15,9 @@ import reactor.core.publisher.Mono
 
 @Repository
 class AxiellRepository(
-    private val webClientConfig: WebClientConfig
+    private val collectionsWebClient: CollectionsWebClient
 ) {
-    fun webClient() = webClientConfig.webClient()
+    fun webClient() = collectionsWebClient.webClient()
 
     @Throws(AxiellCollectionsException::class)
     fun getSingleCollectionsModel(titleCatalogId: String): Mono<CollectionsModel> {
