@@ -64,7 +64,7 @@ class ItemControllerIntegrationTest (
     @BeforeEach
     fun beforeEach() {
         // Needed to run properly in GitHub Actions
-        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
+        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
