@@ -66,14 +66,17 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.ninja-squad</groupId>
 			<artifactId>springmockk</artifactId>
 			<version>4.0.2</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>com.kerb4j</groupId>
+			<artifactId>kerb4j-client</artifactId>
+			<version>0.2.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlinx</groupId>
 			<artifactId>kotlinx-serialization-json</artifactId>
@@ -126,6 +129,14 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<runOrder>alphabetical</runOrder>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
