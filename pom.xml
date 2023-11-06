@@ -81,14 +81,14 @@
 			<version>${serialization.version}</version>
 		</dependency>
 
-        <!-- For kerberos integration -->
-        <dependency>
-            <groupId>com.kerb4j</groupId>
-            <artifactId>kerb4j-client</artifactId>
-            <version>0.2.0</version>
-        </dependency>
+		<!-- For kerberos integration -->
+		<dependency>
+			<groupId>com.kerb4j</groupId>
+			<artifactId>kerb4j-client</artifactId>
+			<version>0.2.0</version>
+		</dependency>
 
-        <!-- Dependencies only for tests -->
+		<!-- Dependencies only for tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
