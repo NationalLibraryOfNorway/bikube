@@ -24,3 +24,7 @@ axiell:
   url: ${COLLECTIONS_PATH_STAGE}
   username: ""
   password: ""
+
+kerberos:
+  realm: ${KERBEROS_REALM}
+  kdc: ${KERBEROS_KDC}
