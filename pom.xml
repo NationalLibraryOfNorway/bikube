@@ -135,7 +135,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.1</version>
 				<configuration>
-					<runOrder>alphabetical</runOrder>
+					<runOrder>random</runOrder>
 				</configuration>
 			</plugin>
 		</plugins>

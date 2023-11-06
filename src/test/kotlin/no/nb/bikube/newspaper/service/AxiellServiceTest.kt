@@ -2,7 +2,6 @@ package no.nb.bikube.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -38,7 +37,6 @@ import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.repository.AxiellRepository
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -111,16 +109,8 @@ class AxiellServiceTest(
         partOfReference = newspaperItemMockB.catalogueId)
     )
 
-    @BeforeEach
-    fun beforeEach() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
-    }
-
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         val body = newspaperTitleInputDtoMockB.copy()
@@ -469,8 +459,6 @@ class AxiellServiceTest(
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
         val encodedValue = Json.encodeToString(
             TitleDto(
@@ -703,8 +691,6 @@ class AxiellServiceTest(
 
     @Test
     fun `createManifestation should correctly encode the manifestation object sent to json string`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
@@ -761,8 +747,6 @@ class AxiellServiceTest(
 
     @Test
     fun `createYearWork should correctly encode the year work object sent to json string`() {
-        mockkStatic(LocalTime::class)
-        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
         every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
 
