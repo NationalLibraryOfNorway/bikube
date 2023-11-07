@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.serialization.json.Json
@@ -37,6 +38,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -88,6 +90,9 @@ class ItemControllerIntegrationTest (
                 else -> Mono.just(collectionsModelEmptyRecordListMock)
             }
         }
+
+        mockkStatic(LocalTime::class)
+        every { LocalTime.now() } returns LocalTime.of(9, 30, 0)
     }
 
     @Test
