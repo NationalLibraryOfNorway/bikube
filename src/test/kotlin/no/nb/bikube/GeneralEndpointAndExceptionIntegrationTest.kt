@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
-import no.nb.bikube.newspaper.repository.AxiellRepository
+import no.nb.bikube.newspaper.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,7 +28,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var axiellRepository: AxiellRepository
+    private lateinit var collectionsRepository: CollectionsRepository
 
     private fun getItem(): ResponseSpec {
         return webClient
@@ -75,8 +75,8 @@ class GeneralEndpointAndExceptionIntegrationTest (
     }
 
     @Test
-    fun `AxiellCollectionsException should return 500 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(AxiellCollectionsException(null))
+    fun `CollectionsException should return 500 with proper ProblemDetail`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsException(null))
         getItem()
             .expectStatus().is5xxServerError
             .returnResult<ProblemDetail>()
@@ -95,8 +95,8 @@ class GeneralEndpointAndExceptionIntegrationTest (
     }
 
     @Test
-    fun `AxiellTitleNotFound should return 404 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(AxiellTitleNotFound(null))
+    fun `CollectionsTitleNotFound should return 404 with proper ProblemDetail`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsTitleNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -116,7 +116,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `NotSupportedException should return 400 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(NotSupportedException(null))
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(NotSupportedException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -135,7 +135,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `BadRequestBodyException should return 400 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(BadRequestBodyException(null))
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(BadRequestBodyException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -154,7 +154,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `RecordAlreadyExistsException should return 409 conflict with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(RecordAlreadyExistsException(null))
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(RecordAlreadyExistsException(null))
         getItem()
             .expectStatus().is4xxClientError
             .returnResult<ProblemDetail>()
@@ -172,8 +172,8 @@ class GeneralEndpointAndExceptionIntegrationTest (
     }
 
     @Test
-    fun `AxiellItemNotFound should return 404 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(AxiellItemNotFound(null))
+    fun `CollectionsItemNotFound should return 404 with proper ProblemDetail`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsItemNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -193,8 +193,8 @@ class GeneralEndpointAndExceptionIntegrationTest (
     }
 
     @Test
-    fun `AxiellManifestationNotFound should return 404 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(AxiellManifestationNotFound(null))
+    fun `CollectionsManifestationNotFound should return 404 with proper ProblemDetail`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -214,8 +214,8 @@ class GeneralEndpointAndExceptionIntegrationTest (
     }
 
     @Test
-    fun `AxiellYearWorkNotFound should return 404 with proper ProblemDetail`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.error(AxiellYearWorkNotFound(null))
+    fun `CollectionsYearWorkNotFound should return 404 with proper ProblemDetail`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsYearWorkNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()

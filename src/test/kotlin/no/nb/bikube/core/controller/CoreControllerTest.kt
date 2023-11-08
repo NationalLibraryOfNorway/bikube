@@ -9,7 +9,7 @@ import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.service.AxiellService
+import no.nb.bikube.newspaper.service.CollectionsService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -27,11 +27,11 @@ class CoreControllerTest {
     private lateinit var coreController: CoreController
 
     @MockkBean
-    private lateinit var axiellService: AxiellService
+    private lateinit var collectionsService: CollectionsService
 
     @Test
     fun `get single item for newspaper should return item in body`() {
-        every { axiellService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA.copy())
+        every { collectionsService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA.copy())
 
         coreController.getSingleItem("1", MaterialType.NEWSPAPER).body!!
             .test()
@@ -59,7 +59,7 @@ class CoreControllerTest {
 
     @Test
     fun `get single title for newspaper should return title in body`() {
-        every { axiellService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { collectionsService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
         coreController.getSingleTitle("1", MaterialType.NEWSPAPER).body!!
             .test()
@@ -87,7 +87,7 @@ class CoreControllerTest {
 
     @Test
     fun `search should return a list of titles matching name`() {
-        every { axiellService.searchTitleByName(any()) } returns Flux.just(
+        every { collectionsService.searchTitleByName(any()) } returns Flux.just(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
@@ -109,17 +109,17 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.PERIODICAL) }
         assertThrows<NotSupportedException> { coreController.search("Avis", MaterialType.MONOGRAPH) }
 
-        verify { axiellService.searchTitleByName(any()) wasNot Called }
+        verify { collectionsService.searchTitleByName(any()) wasNot Called }
     }
 
     @Test
-    fun `search should call on axiellService function when materialType is NEWSPAPER`() {
-        every { axiellService.searchTitleByName(any()) } returns Flux.empty()
+    fun `search should call on collectionsService function when materialType is NEWSPAPER`() {
+        every { collectionsService.searchTitleByName(any()) } returns Flux.empty()
 
         coreController.search("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .verifyComplete()
 
-        verify { axiellService.searchTitleByName(any()) }
+        verify { collectionsService.searchTitleByName(any()) }
     }
 }

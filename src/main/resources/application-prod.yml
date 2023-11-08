@@ -7,7 +7,7 @@ spring:
 security:
   enabled: true
 
-axiell:
+collections:
   url: ${COLLECTIONS_PATH_STAGE}
   username: ${COLLECTIONS_USERNAME_PROD}
   password: ${COLLECTIONS_PASSWORD_PROD}

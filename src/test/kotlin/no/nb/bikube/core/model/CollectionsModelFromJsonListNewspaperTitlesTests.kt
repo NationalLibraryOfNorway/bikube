@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
@@ -52,7 +52,7 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
 
     @Test
     fun `Title object should extract record types`() {
-        Assertions.assertTrue(titles.all { it.getRecordType() == AxiellRecordType.WORK })
+        Assertions.assertTrue(titles.all { it.getRecordType() == CollectionsRecordType.WORK })
     }
 
 }

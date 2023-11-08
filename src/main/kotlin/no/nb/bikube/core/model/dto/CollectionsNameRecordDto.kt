@@ -2,27 +2,23 @@ package no.nb.bikube.core.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.core.enum.AxiellTermType
+import no.nb.bikube.core.enum.CollectionsNameType
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
-class AxiellTermRecordDto(
-    @SerialName("term")
-    val term: String,
+class CollectionsNameRecordDto(
+    val name: String,
 
-    @SerialName("term.type")
-    val termType: String? = null,
+    @SerialName("name.type")
+    val nameType: String? = null,
 
     @SerialName("input.date")
     val inputDate: String? = null,
 
     @SerialName("input.time")
     val inputTime: String? = null,
-
-    @SerialName("input.source")
-    val inputSource: String? = null,
 
     @SerialName("input.name")
     val inputName: String? = null,
@@ -31,10 +27,10 @@ class AxiellTermRecordDto(
     val priRef: String? = null
 )
 
-fun createTermRecordDtoFromString(termName: String, termType: AxiellTermType): AxiellTermRecordDto {
-    return AxiellTermRecordDto(
-        term = termName,
-        termType = termType.value,
+fun createNameRecordDtoFromString(name: String): CollectionsNameRecordDto {
+    return CollectionsNameRecordDto(
+        name = name,
+        nameType = CollectionsNameType.PUBLISHER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         inputName = "Bikube API" // TODO: Change when we have authentication in place

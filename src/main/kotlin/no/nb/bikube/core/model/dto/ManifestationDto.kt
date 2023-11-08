@@ -2,7 +2,7 @@ package no.nb.bikube.core.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsRecordType
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -37,7 +37,7 @@ class ManifestationDto (
 fun createManifestationDto(yearWorkCatalogueId: String, date: LocalDate): ManifestationDto {
     return ManifestationDto(
         partOfReference = yearWorkCatalogueId,
-        recordType = AxiellRecordType.MANIFESTATION.value,
+        recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = date.toString(),
         inputName = "Bikube API", // TODO: Change when we have authentication in place
         inputSource = "texts>texts",

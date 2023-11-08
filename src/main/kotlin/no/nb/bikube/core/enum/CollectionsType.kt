@@ -1,44 +1,44 @@
 package no.nb.bikube.core.enum
 
-enum class AxiellRecordType(val value: String) {
+enum class CollectionsRecordType(val value: String) {
     WORK("WORK"),
     ITEM("ITEM"),
     MANIFESTATION("MANIFESTATION");
 
     companion object {
-        fun fromString(value: String?): AxiellRecordType? {
+        fun fromString(value: String?): CollectionsRecordType? {
             return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }
 
-enum class AxiellDescriptionType(val value: String) {
+enum class CollectionsDescriptionType(val value: String) {
     SERIAL("SERIAL"),
     YEAR("YEAR");
 
     companion object {
-        fun fromString(value: String?): AxiellDescriptionType? {
+        fun fromString(value: String?): CollectionsDescriptionType? {
             return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }
 
-enum class AxiellFormat(val value: String) {
+enum class CollectionsFormat(val value: String) {
     DIGITAL("DIGITAL"),
     PHYSICAL("PHYSICAL");
 
     companion object {
-        fun fromString(value: String?): AxiellFormat? {
+        fun fromString(value: String?): CollectionsFormat? {
             return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }
 
-enum class AxiellNameType(val value: String) {
+enum class CollectionsNameType(val value: String) {
     PUBLISHER("PUBL")
 }
 
-enum class AxiellTermType(val value: String) {
+enum class CollectionsTermType(val value: String) {
     LANGUAGE("LANGUAGE"),
     LOCATION("PLACE")
 }

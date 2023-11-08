@@ -10,7 +10,7 @@ import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.core.model.dto.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
-import no.nb.bikube.newspaper.repository.AxiellRepository
+import no.nb.bikube.newspaper.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,37 +19,37 @@ import reactor.kotlin.core.publisher.toMono
 import java.time.LocalDate
 
 @Service
-class AxiellService  (
-    private val axiellRepository: AxiellRepository
+class CollectionsService  (
+    private val collectionsRepository: CollectionsRepository
 ) {
-    @Throws(AxiellCollectionsException::class)
+    @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         val dto: TitleDto = createNewspaperTitleDto(title)
         val encodedBody = Json.encodeToString(dto)
-        return axiellRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(AxiellTitleNotFound("New title not found"))
+                    ?: sink.error(CollectionsTitleNotFound("New title not found"))
             }
             .map { mapCollectionsObjectToGenericTitle(it.first()) }
     }
 
-    @Throws(AxiellCollectionsException::class)
+    @Throws(CollectionsException::class)
     fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
 
-        return axiellRepository.getSingleCollectionsModel(titleCatalogId)
+        return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(AxiellTitleNotFound("Title $titleCatalogId not found"))
+                    ?: sink.error(CollectionsTitleNotFound("Title $titleCatalogId not found"))
             }
             .map { it.first() }
             .handle { collectionsObject, sink ->
                 if (collectionsObject.isSerial())
                     sink.next(collectionsObject)
                 else
-                    sink.error(AxiellTitleNotFound("Title $titleCatalogId not found"))
+                    sink.error(CollectionsTitleNotFound("Title $titleCatalogId not found"))
             }
             .flatMapMany { title ->
                 val titleName = title.getName()
@@ -74,26 +74,26 @@ class AxiellService  (
             }
     }
 
-    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleItem(catalogId: String): Mono<Item> {
-        return axiellRepository.getSingleCollectionsModel(catalogId)
+        return collectionsRepository.getSingleCollectionsModel(catalogId)
             .map {
-                validateSingleCollectionsModel(it, AxiellRecordType.ITEM, null)
+                validateSingleCollectionsModel(it, CollectionsRecordType.ITEM, null)
                 mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
             }
     }
 
-    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
-        return axiellRepository.getSingleCollectionsModel(catalogId)
+        return collectionsRepository.getSingleCollectionsModel(catalogId)
             .map {
-                validateSingleCollectionsModel(it, AxiellRecordType.WORK, AxiellDescriptionType.SERIAL)
+                validateSingleCollectionsModel(it, CollectionsRecordType.WORK, CollectionsDescriptionType.SERIAL)
                 mapCollectionsObjectToGenericTitle(it.getFirstObject()!!)
             }
     }
 
     fun searchTitleByName(name: String): Flux<CatalogueRecord> {
-        return axiellRepository.getTitleByName(name)
+        return collectionsRepository.getTitleByName(name)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -101,12 +101,12 @@ class AxiellService  (
     fun createPublisher(publisher: String): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
-        return axiellRepository.searchPublisher(publisher)
+        return collectionsRepository.searchPublisher(publisher)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher '$publisher' already exists"))
                 } else {
-                    axiellRepository.createNameRecord(serializedBody, AxiellDatabase.PEOPLE)
+                    collectionsRepository.createNameRecord(serializedBody, CollectionsDatabase.PEOPLE)
                         .map { mapCollectionsObjectToGenericPublisher(it.getFirstObject()!!) }
                 }
             }
@@ -114,13 +114,13 @@ class AxiellService  (
 
     fun createPublisherPlace(publisherPlace: String): Mono<PublisherPlace> {
         if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
-        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, AxiellTermType.LOCATION))
-        return axiellRepository.searchPublisherPlace(publisherPlace)
+        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION))
+        return collectionsRepository.searchPublisherPlace(publisherPlace)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
                 } else {
-                    axiellRepository.createTermRecord(serializedBody, AxiellDatabase.LOCATIONS)
+                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LOCATIONS)
                         .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()!!) }
                 }
             }
@@ -130,33 +130,33 @@ class AxiellService  (
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }
-        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, AxiellTermType.LANGUAGE))
-        return axiellRepository.searchLanguage(language)
+        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, CollectionsTermType.LANGUAGE))
+        return collectionsRepository.searchLanguage(language)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Language '$language' already exists"))
                 } else {
-                    axiellRepository.createTermRecord(serializedBody, AxiellDatabase.LANGUAGES)
+                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LANGUAGES)
                         .map { mapCollectionsObjectToGenericLanguage(it.getFirstObject()!!) }
                 }
             }
     }
 
-    @Throws(AxiellCollectionsException::class, AxiellTitleNotFound::class)
-    private fun validateSingleCollectionsModel(model: CollectionsModel, recordType: AxiellRecordType?, workType: AxiellDescriptionType?) {
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
+    private fun validateSingleCollectionsModel(model: CollectionsModel, recordType: CollectionsRecordType?, workType: CollectionsDescriptionType?) {
         val records = model.getObjects()
-        if (records.isNullOrEmpty()) throw AxiellTitleNotFound("Could not find object in Collections")
-        if (records.size > 1) throw AxiellCollectionsException("More than one object found in Collections (Should be exactly 1)")
+        if (records.isNullOrEmpty()) throw CollectionsTitleNotFound("Could not find object in Collections")
+        if (records.size > 1) throw CollectionsException("More than one object found in Collections (Should be exactly 1)")
 
         val record = records.first()
         recordType?.let {
             if (record.getRecordType() != recordType) {
-                throw AxiellTitleNotFound("Could not find fitting object in Collections - Found object is not of type $recordType")
+                throw CollectionsTitleNotFound("Could not find fitting object in Collections - Found object is not of type $recordType")
             }
         }
         workType?.let {
             if (record.getWorkType() != workType) {
-                throw AxiellTitleNotFound("Could not find fitting object in Collections - Found object is not of type $workType")
+                throw CollectionsTitleNotFound("Could not find fitting object in Collections - Found object is not of type $workType")
             }
         }
     }
@@ -164,28 +164,28 @@ class AxiellService  (
     fun createYearWork(titleCatalogueId: String, year: String): Mono<CollectionsObject> {
         val dto: YearDto = createYearDto(titleCatalogueId, year)
         val encodedBody = Json.encodeToString(dto)
-        return axiellRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(AxiellYearWorkNotFound("New year not found"))
+                    ?: sink.error(CollectionsYearWorkNotFound("New year not found"))
             }.map { it.first() }
     }
 
     fun createManifestation(titleCatalogueId: String, date: LocalDate): Mono<CollectionsObject> {
         val dto: ManifestationDto = createManifestationDto(titleCatalogueId, date)
         val encodedBody = Json.encodeToString(dto)
-        return axiellRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
                 collectionsModel.adlibJson.recordList
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(AxiellManifestationNotFound("New manifestation not found"))
+                    ?: sink.error(CollectionsManifestationNotFound("New manifestation not found"))
             }.map { it.first() }
     }
 
-    @Throws(AxiellItemNotFound::class)
+    @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
-        return axiellRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
+        return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
             .flatMap { title ->
                 findOrCreateYearWorkRecord(title, item)
             }.flatMap { yearWork ->
@@ -201,10 +201,10 @@ class AxiellService  (
     ): Mono<Item> {
         val dto: ItemDto = createNewspaperItemDto(item, manifestation.partsReference?.priRef!!)
         val encodedBody = Json.encodeToString(dto)
-        return axiellRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
+        return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
             collectionsModel.getObjects()
                 ?. let { sink.next(collectionsModel.getObjects()) }
-                ?: sink.error(AxiellItemNotFound("New item not found"))
+                ?: sink.error(CollectionsItemNotFound("New item not found"))
         }.map { mapCollectionsObjectToGenericItem(it!!.first()) }
     }
 

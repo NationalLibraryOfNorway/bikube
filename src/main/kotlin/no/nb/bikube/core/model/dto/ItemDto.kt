@@ -2,8 +2,8 @@ package no.nb.bikube.core.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import java.time.LocalDate
 import java.time.LocalTime
@@ -46,8 +46,8 @@ fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String)
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
-        format = if (item.digital == true) AxiellFormat.DIGITAL.value else AxiellFormat.PHYSICAL.value,
-        recordType = AxiellRecordType.ITEM.value,
+        format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
+        recordType = CollectionsRecordType.ITEM.value,
         altNumber = if (useUrn) item.urn else null,
         altNumberType = if (useUrn) "URN" else null,
         inputName = "Bikube API", // TODO: Change when we have authentication in place
