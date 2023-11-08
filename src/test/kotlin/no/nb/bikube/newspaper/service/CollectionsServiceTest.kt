@@ -20,6 +20,7 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
@@ -775,33 +776,79 @@ class CollectionsServiceTest(
     }
 
     @Test
-    fun `searchItemByName should return correctly mapped item`() {
+    fun `searchItemByTitle should return correctly mapped item`() {
         every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
-
-        axiellService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+        val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
+        axiellService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .assertNext {
-                print(it)
                 Assertions.assertEquals(
                     Item(
-                        catalogueId = collectionsModelMockItemA.getFirstObject()!!.priRef,
-                        name = collectionsModelMockItemA.getFirstObject()!!.getName(),
-                        date = collectionsModelMockItemA.getFirstObject()!!.getItemDate(),
-                        materialType = collectionsModelMockItemA.getFirstObject()!!.getMaterialType()!!.norwegian,
-                        titleCatalogueId = collectionsModelMockItemA.getFirstObject()!!.getTitleCatalogueId(),
-                        titleName = collectionsModelMockItemA.getFirstObject()!!.getTitleName(),
+                        catalogueId = expectedMock.priRef!!,
+                        name = expectedMock.getName(),
+                        date = expectedMock.getItemDate(),
+                        materialType = MaterialType.NEWSPAPER.value,
+                        titleCatalogueId = "1",
+                        titleName = collectionsModelMockTitleA.adlibJson.recordList?.get(0)?.titleList?.get(0)?.title,
                         digital = true,
-                        urn = collectionsModelMockItemA.getFirstObject()!!.getUrn()
+                        urn = null
                     ),
                     it
                 )
             }
             .verifyComplete()
 
+        verify { axiellRepository.getSingleCollectionsModel("1") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if no items are found`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        axiellService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
         verify { axiellRepository.getSingleCollectionsModel("19") }
     }
 
-//    @Test
-//    fun `searchItemByTitle`
+    @Test
+    fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
+
+        axiellService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
+        verify { axiellRepository.getSingleCollectionsModel("6") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
+
+        axiellService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
+        verify { axiellRepository.getSingleCollectionsModel("7") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
+
+        axiellService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
 }

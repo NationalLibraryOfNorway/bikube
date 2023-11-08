@@ -37,7 +37,7 @@ class CollectionsModelMockData {
         ))
 
         // Regular digital item
-        private val collectionsPartsObjectMockItemA = CollectionsPartsObject(
+        val collectionsPartsObjectMockItemA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "4",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),

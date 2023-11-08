@@ -99,12 +99,12 @@ class CollectionsService  (
     }
 
     fun getItemsByTitle(
-        titleCatalogueId: String,
+        titleCatalogId: String,
         date: LocalDate,
         isDigital: Boolean,
         materialType: MaterialType
     ): Flux<CatalogueRecord> {
-        return axiellRepository.getSingleCollectionsModel(titleCatalogueId)
+        return axiellRepository.getSingleCollectionsModel(titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .flatMapIterable { getPartsFromTitle(it) }
             .flatMapIterable { getYearWorksFromTitle(it) }
@@ -114,7 +114,7 @@ class CollectionsService  (
             .map { (title, itemPartReference, date) ->
                 mapCollectionsPartsObjectToGenericItem(
                     itemPartReference!!,
-                    titleCatalogueId,
+                    titleCatalogId,
                     title,
                     materialType.value,
                     date
