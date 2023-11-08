@@ -20,7 +20,7 @@ springdoc:
 security:
   enabled: false
 
-axiell:
+collections:
   url: ${COLLECTIONS_PATH_STAGE}
   username: ""
   password: ""

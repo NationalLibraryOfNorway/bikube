@@ -9,7 +9,7 @@ import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.service.AxiellService
+import no.nb.bikube.newspaper.service.CollectionsService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
 @RequestMapping("/newspapers/titles")
 class TitleController (
-    private val axiellService: AxiellService
+    private val collectionsService: CollectionsService
 ) {
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")
@@ -42,28 +42,28 @@ class TitleController (
             Mono.error(BadRequestBodyException("Start date cannot be after end date"))
         } else {
             val publisherMono: Mono<Publisher> = title.publisher?.let { publisherName ->
-                axiellService.createPublisher(publisherName).onErrorResume { exception ->
+                collectionsService.createPublisher(publisherName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let { locationName ->
-                axiellService.createPublisherPlace(locationName).onErrorResume { exception ->
+                collectionsService.createPublisherPlace(locationName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val languageMono: Mono<Language> = title.language?.let { languageName ->
-                axiellService.createLanguage(languageName).onErrorResume { exception ->
+                collectionsService.createLanguage(languageName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
-                .then(axiellService.createNewspaperTitle(title))
+                .then(collectionsService.createNewspaperTitle(title))
                 .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
                 .doOnSuccess { responseEntity ->
                     logger().info("Newspaper title created: ${responseEntity.body?.catalogueId}")

@@ -14,13 +14,13 @@ For lokal utvikling må url til Axiell Collections-APIet legges inn, og man må 
 dersom APIet er satt opp med autentisering.
 Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vil bli ignorert av gitignore).
 
-| Påkrevde variabler | Forklaring                      |
-|--------------------|---------------------------------|
-| axiell.url         | Base URL til Collections API-et | 
-| axiell.username    | AD-brukernavn til Collections   |
-| axiell.password    | AD-passord til Collections      |
-| kerberos.realm     | Kerberos realm                  |
-| kerberos.kdc       | Kerberos KDC                    |
+| Påkrevde variabler   | Forklaring                      |
+|----------------------|---------------------------------|
+| collections.url      | Base URL til Collections API-et | 
+| collections.username | AD-brukernavn til Collections   |
+| collections.password | AD-passord til Collections      |
+| kerberos.realm       | Kerberos realm                  |
+| kerberos.kdc         | Kerberos KDC                    |
 
 
 Kjør `java -jar target/bikube.jar` eller sett opp i din IDE. APIet kjører default på port 8080.

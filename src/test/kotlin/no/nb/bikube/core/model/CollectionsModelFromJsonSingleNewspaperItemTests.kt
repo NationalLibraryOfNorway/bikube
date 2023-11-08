@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
@@ -33,7 +33,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
 
     @Test
     fun `Item object should extract format`() {
-        Assertions.assertEquals(AxiellFormat.DIGITAL, singleItem.getFormat())
+        Assertions.assertEquals(CollectionsFormat.DIGITAL, singleItem.getFormat())
     }
 
     @Test
@@ -56,7 +56,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
 
     @Test
     fun `Item object should extract recordtype`() {
-        Assertions.assertEquals(AxiellRecordType.ITEM, singleItem.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.ITEM, singleItem.getRecordType())
     }
 
     @Test
@@ -65,7 +65,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         Assertions.assertEquals("10", manifestation.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.getName())
         Assertions.assertEquals(MaterialType.NEWSPAPER, manifestation.getMaterialType())
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifestation.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifestation.getRecordType())
     }
 
     @Test
@@ -73,9 +73,9 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         val yearWork = singleItem.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("4", yearWork.priRef)
         Assertions.assertEquals("Bikubeavisen 2012", yearWork.getName())
-        Assertions.assertEquals(AxiellRecordType.WORK, yearWork.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.WORK, yearWork.getRecordType())
         Assertions.assertEquals(MaterialType.NEWSPAPER, yearWork.getMaterialType())
-        Assertions.assertEquals(AxiellDescriptionType.YEAR, yearWork.getWorkType())
+        Assertions.assertEquals(CollectionsDescriptionType.YEAR, yearWork.getWorkType())
     }
 
     @Test
@@ -83,9 +83,9 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         val title = singleItem.getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
         Assertions.assertEquals("3", title.priRef)
         Assertions.assertEquals("Bikubeavisen", title.getName())
-        Assertions.assertEquals(AxiellRecordType.WORK, title.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.WORK, title.getRecordType())
         Assertions.assertEquals(MaterialType.NEWSPAPER, title.getMaterialType())
-        Assertions.assertEquals(AxiellDescriptionType.SERIAL, title.getWorkType())
+        Assertions.assertEquals(CollectionsDescriptionType.SERIAL, title.getWorkType())
     }
 
 }

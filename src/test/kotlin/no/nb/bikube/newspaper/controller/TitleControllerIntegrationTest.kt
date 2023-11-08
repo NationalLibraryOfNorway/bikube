@@ -10,13 +10,13 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModel
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
-import no.nb.bikube.core.enum.AxiellDatabase
+import no.nb.bikube.core.enum.CollectionsDatabase
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.repository.AxiellRepository
+import no.nb.bikube.newspaper.repository.CollectionsRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +36,7 @@ class TitleControllerIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var axiellRepository: AxiellRepository
+    private lateinit var collectionsRepository: CollectionsRepository
 
     private val titleId = "1"
 
@@ -53,14 +53,14 @@ class TitleControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { axiellRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE.copy())
-        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
-        every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
-        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
-        every { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
-        every { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
-        every { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE.copy())
+        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
     }
 
     @Test
@@ -95,24 +95,24 @@ class TitleControllerIntegrationTest (
 
     @Test
     fun `post-newspapers-titles should use publisher if present and in Collections`() {
-        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = "publisher"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchPublisher(any()) }
-        verify(exactly = 0) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
+        verify(exactly = 1) { collectionsRepository.searchPublisher(any()) }
+        verify(exactly = 0) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
     fun `post-newspapers-titles should create publisher if present and not in Collections`() {
-        every { axiellRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA.copy())
+        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = "publisher"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchPublisher(any()) }
-        verify(exactly = 1) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
+        verify(exactly = 1) { collectionsRepository.searchPublisher(any()) }
+        verify(exactly = 1) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
@@ -120,30 +120,30 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { axiellRepository.searchPublisher(any()) }
-        verify(exactly = 0) { axiellRepository.createNameRecord(any(), AxiellDatabase.PEOPLE) }
+        verify(exactly = 0) { collectionsRepository.searchPublisher(any()) }
+        verify(exactly = 0) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
     fun `post-newspapers-titles should use publisherPlace if present and in Collections`() {
-        every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Mo"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
+        verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
     }
 
     @Test
     fun `post-newspapers-titles should create publisherPlace if present and not in Collections`() {
-        every { axiellRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
+        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Mo"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchPublisherPlace(any()) }
-        verify(exactly = 1) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
+        verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
+        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
     }
 
     @Test
@@ -151,30 +151,30 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { axiellRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LOCATIONS) }
+        verify(exactly = 0) { collectionsRepository.searchPublisherPlace(any()) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
     }
 
     @Test
     fun `post-newspapers-titles should use language if present and in Collections`() {
-        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchLanguage(any()) }
-        verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }
+        verify(exactly = 1) { collectionsRepository.searchLanguage(any()) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test
     fun `post-newspapers-titles should create language if present and not in Collections`() {
-        every { axiellRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
+        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.searchLanguage(any()) }
-        verify(exactly = 1) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }
+        verify(exactly = 1) { collectionsRepository.searchLanguage(any()) }
+        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test
@@ -182,8 +182,8 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(language = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { axiellRepository.searchLanguage(any()) }
-        verify(exactly = 0) { axiellRepository.createTermRecord(any(), AxiellDatabase.LANGUAGES) }
+        verify(exactly = 0) { collectionsRepository.searchLanguage(any()) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test

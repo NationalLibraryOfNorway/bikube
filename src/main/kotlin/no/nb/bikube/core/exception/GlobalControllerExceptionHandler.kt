@@ -10,9 +10,9 @@ import java.time.Instant
 
 @ControllerAdvice
 class GlobalControllerExceptionHandler {
-    @ExceptionHandler(AxiellCollectionsException::class)
-    fun handleAxiellCollectionsException(exception: AxiellCollectionsException): ProblemDetail {
-        logger().error("AxiellCollectionsException occurred: ${exception.message}")
+    @ExceptionHandler(CollectionsException::class)
+    fun handleCollectionsException(exception: CollectionsException): ProblemDetail {
+        logger().error("CollectionsException occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         problemDetail.detail = exception.message ?: "Error occurred when trying to contact Collections."
@@ -21,9 +21,9 @@ class GlobalControllerExceptionHandler {
         return problemDetail
     }
 
-    @ExceptionHandler(AxiellTitleNotFound::class)
-    fun handleAxiellTitleNotFoundException(exception: AxiellTitleNotFound): ProblemDetail {
-        logger().warn("AxiellTitleNotFound occurred: ${exception.message}")
+    @ExceptionHandler(CollectionsTitleNotFound::class)
+    fun handleCollectionsTitleNotFoundException(exception: CollectionsTitleNotFound): ProblemDetail {
+        logger().warn("CollectionsTitleNotFound occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections title not found: ${exception.message}"
@@ -65,9 +65,9 @@ class GlobalControllerExceptionHandler {
         return problemDetail
     }
 
-    @ExceptionHandler(AxiellItemNotFound::class)
-    fun handleAxiellItemNotFoundException(exception: AxiellItemNotFound): ProblemDetail {
-        logger().warn("AxiellItemNotFound occurred: ${exception.message}")
+    @ExceptionHandler(CollectionsItemNotFound::class)
+    fun handleCollectionsItemNotFoundException(exception: CollectionsItemNotFound): ProblemDetail {
+        logger().warn("CollectionsItemNotFound occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections item not found: ${exception.message}"
@@ -76,9 +76,9 @@ class GlobalControllerExceptionHandler {
         return problemDetail
     }
 
-    @ExceptionHandler(AxiellManifestationNotFound::class)
-    fun handleAxiellManifestationNotFoundException(exception: AxiellManifestationNotFound): ProblemDetail {
-        logger().warn("AxiellManifestationNotFound occurred: ${exception.message}")
+    @ExceptionHandler(CollectionsManifestationNotFound::class)
+    fun handleCollectionsManifestationNotFoundException(exception: CollectionsManifestationNotFound): ProblemDetail {
+        logger().warn("CollectionsManifestationNotFound occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections manifestation not found: ${exception.message}"
@@ -87,9 +87,9 @@ class GlobalControllerExceptionHandler {
         return problemDetail
     }
 
-    @ExceptionHandler(AxiellYearWorkNotFound::class)
-    fun handleAxiellYearWorkNotFoundException(exception: AxiellYearWorkNotFound): ProblemDetail {
-        logger().warn("AxiellYearWorkNotFound occurred: ${exception.message}")
+    @ExceptionHandler(CollectionsYearWorkNotFound::class)
+    fun handleCollectionsYearWorkNotFoundException(exception: CollectionsYearWorkNotFound): ProblemDetail {
+        logger().warn("CollectionsYearWorkNotFound occurred: ${exception.message}")
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections year work not found: ${exception.message}"

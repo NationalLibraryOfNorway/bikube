@@ -1,8 +1,8 @@
 package no.nb.bikube.core.model.collections
 
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 import java.time.LocalDate
@@ -18,7 +18,7 @@ fun CollectionsModel.getFirstObject(): CollectionsObject? {
 
 // CollectionsObject
 fun CollectionsObject.isSerial(): Boolean {
-    return this.workTypeList?.first()?.first()?.text == AxiellDescriptionType.SERIAL.value
+    return this.workTypeList?.first()?.first()?.text == CollectionsDescriptionType.SERIAL.value
 }
 
 fun CollectionsObject.getUrn(): String? {
@@ -59,8 +59,8 @@ fun CollectionsObject.getTitleName(): String? {
     return this.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.title?.first()?.title
 }
 
-fun CollectionsObject.getFormat(): AxiellFormat? {
-    return AxiellFormat.fromString(this.formatList?.first()?.first { it.lang == "neutral" }?.text)
+fun CollectionsObject.getFormat(): CollectionsFormat? {
+    return CollectionsFormat.fromString(this.formatList?.first()?.first { it.lang == "neutral" }?.text)
 }
 
 fun CollectionsObject.getPublisher(): String? {
@@ -75,12 +75,12 @@ fun CollectionsObject.getLanguage(): String? {
     return this.languageList?.first()?.language
 }
 
-fun CollectionsObject.getRecordType(): AxiellRecordType? {
-    return AxiellRecordType.fromString(this.recordTypeList?.first()?.first{ it.lang == "neutral" }?.text)
+fun CollectionsObject.getRecordType(): CollectionsRecordType? {
+    return CollectionsRecordType.fromString(this.recordTypeList?.first()?.first{ it.lang == "neutral" }?.text)
 }
 
-fun CollectionsObject.getWorkType(): AxiellDescriptionType? {
-    return AxiellDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
+fun CollectionsObject.getWorkType(): CollectionsDescriptionType? {
+    return CollectionsDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
 }
 
 fun CollectionsObject.getFirstPartOf(): CollectionsPartOfReference? {
@@ -101,16 +101,16 @@ fun CollectionsPartsReference.getItemDate(): LocalDate? {
     return this.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) }
 }
 
-fun CollectionsPartsReference.getFormat(): AxiellFormat? {
-    return AxiellFormat.fromString(this.formatList?.first()?.first { it.lang == "neutral" }?.text)
+fun CollectionsPartsReference.getFormat(): CollectionsFormat? {
+    return CollectionsFormat.fromString(this.formatList?.first()?.first { it.lang == "neutral" }?.text)
 }
 
-fun CollectionsPartsReference.getRecordType(): AxiellRecordType? {
-    return AxiellRecordType.fromString(recordType?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
+fun CollectionsPartsReference.getRecordType(): CollectionsRecordType? {
+    return CollectionsRecordType.fromString(recordType?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
-fun CollectionsPartsReference.getWorkType(): AxiellDescriptionType? {
-    return AxiellDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
+fun CollectionsPartsReference.getWorkType(): CollectionsDescriptionType? {
+    return CollectionsDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
 fun CollectionsPartsReference.getDate(): LocalDate? {
@@ -127,8 +127,8 @@ fun CollectionsPartOfReference.getName(): String? {
     return this.title?.first()?.title
 }
 
-fun CollectionsPartOfReference.getRecordType(): AxiellRecordType? {
-    return AxiellRecordType.fromString(this.recordType?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
+fun CollectionsPartOfReference.getRecordType(): CollectionsRecordType? {
+    return CollectionsRecordType.fromString(this.recordType?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
 fun CollectionsPartOfReference.getMaterialType(): MaterialType? {
@@ -139,8 +139,8 @@ fun CollectionsPartOfReference.getFirstPartOf(): CollectionsPartOfReference? {
     return this.partOfGroup?.first()?.partOfReference
 }
 
-fun CollectionsPartOfReference.getWorkType(): AxiellDescriptionType? {
-    return AxiellDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
+fun CollectionsPartOfReference.getWorkType(): CollectionsDescriptionType? {
+    return CollectionsDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
 }
 
 // CollectionsNameModel

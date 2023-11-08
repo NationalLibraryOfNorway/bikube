@@ -1,39 +1,39 @@
 package no.nb.bikube.core
 
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.*
 
 class CollectionsModelMockData {
     companion object {
         private val collectionsRecordTypeListWorkMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellRecordType.WORK.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.WORK.value)
         ))
 
         private val collectionsRecordTypeListManifestMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellRecordType.MANIFESTATION.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.MANIFESTATION.value)
         ))
 
         private val collectionsRecordTypeListItemMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellRecordType.ITEM.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.ITEM.value)
         ))
 
         private val collectionsFormatListDigitalMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellFormat.DIGITAL.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsFormat.DIGITAL.value)
         ))
 
         private val collectionsFormatListPhysicalMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellFormat.PHYSICAL.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsFormat.PHYSICAL.value)
         ))
 
         private val collectionsWorkTypeListSerialMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellDescriptionType.SERIAL.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsDescriptionType.SERIAL.value)
         ))
 
         private val collectionsWorkTypeListYearMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = AxiellDescriptionType.YEAR.value)
+            CollectionsLanguageListObject(lang = "neutral", text = CollectionsDescriptionType.YEAR.value)
         ))
 
         // Regular digital item

@@ -2,8 +2,8 @@ package no.nb.bikube.core.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsRecordType
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -44,8 +44,8 @@ class YearDto(
 fun createYearDto(titleCatalogueId: String, year: String): YearDto {
     return YearDto(
         partOfReference = titleCatalogueId,
-        recordType = AxiellRecordType.WORK.value,
-        descriptionType = AxiellDescriptionType.YEAR.value,
+        recordType = CollectionsRecordType.WORK.value,
+        descriptionType = CollectionsDescriptionType.YEAR.value,
         dateStart = year,
         title = year,
         inputName = "Bikube API", // TODO: Change when we have authentication in place

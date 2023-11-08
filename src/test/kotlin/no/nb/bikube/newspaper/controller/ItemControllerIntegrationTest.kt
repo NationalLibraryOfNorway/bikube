@@ -15,14 +15,14 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockYearWorkB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.core.DtoMock
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.collections.*
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
-import no.nb.bikube.newspaper.repository.AxiellRepository
+import no.nb.bikube.newspaper.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,7 +44,7 @@ class ItemControllerIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var axiellRepository: AxiellRepository
+    private lateinit var collectionsRepository: CollectionsRepository
 
     private val titleId = "1"
     private val yearWorkId = "2"
@@ -66,20 +66,20 @@ class ItemControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
-        every { axiellRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { axiellRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
 
         val encodedBody = slot<String>()
-        every { axiellRepository.createTextsRecord(capture(encodedBody)) } answers {
+        every { collectionsRepository.createTextsRecord(capture(encodedBody)) } answers {
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
-                AxiellRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
-                AxiellRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationA)
-                AxiellRecordType.WORK.value -> {
-                    if (dto.descriptionType == AxiellDescriptionType.SERIAL.value) {
+                CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
+                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationA)
+                CollectionsRecordType.WORK.value -> {
+                    if (dto.descriptionType == CollectionsDescriptionType.SERIAL.value) {
                         Mono.just(collectionsModelMockTitleA)
                     } else {
                         Mono.just(collectionsModelMockYearWorkB)
@@ -113,7 +113,7 @@ class ItemControllerIntegrationTest (
                 materialType = "Avis",
                 titleCatalogueId = testReturn.getTitleCatalogueId(),
                 titleName = testReturn.getTitleName(),
-                digital = testReturn.getFormat() == AxiellFormat.DIGITAL,
+                digital = testReturn.getFormat() == CollectionsFormat.DIGITAL,
                 urn = testReturn.getUrn()
             ))
             .verifyComplete()
@@ -161,28 +161,28 @@ class ItemControllerIntegrationTest (
         createItem(newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
-        verify(exactly = 1) { axiellRepository.createTextsRecord(any()) }
+        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
     }
 
     @Test
     fun `post-newspapers-items endpoint should create year work and manifestation if year work is not found`() {
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
 
         createItem(newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
 
-        verify(exactly = 3) { axiellRepository.createTextsRecord(any()) }
+        verify(exactly = 3) { collectionsRepository.createTextsRecord(any()) }
     }
 
     @Test
     fun `post-newspapers-items endpoint should create correct manifestation if not found`() {
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleC.copy())
 
         createItem(newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01")))
             .expectStatus().isCreated
 
-        verify(exactly = 2) { axiellRepository.createTextsRecord(any()) }
+        verify(exactly = 2) { collectionsRepository.createTextsRecord(any()) }
     }
 
     @Test

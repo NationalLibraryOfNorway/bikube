@@ -8,13 +8,13 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
-import no.nb.bikube.core.enum.AxiellFormat
+import no.nb.bikube.core.enum.CollectionsFormat
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.collections.*
-import no.nb.bikube.newspaper.repository.AxiellRepository
+import no.nb.bikube.newspaper.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ class CoreControllerIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var axiellRepository: AxiellRepository
+    private lateinit var collectionsRepository: CollectionsRepository
 
     private val titleId = "1"
     private val yearWorkId = "2"
@@ -48,12 +48,12 @@ class CoreControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
 
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { axiellRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { axiellRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
-        every { axiellRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { axiellRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { axiellRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
@@ -134,7 +134,7 @@ class CoreControllerIntegrationTest (
                     materialType = testItem.getMaterialTypeFromParent()!!.norwegian,
                     titleCatalogueId = testItem.getTitleCatalogueId(),
                     titleName = testItem.getTitleName(),
-                    digital = testItem.getFormat() == AxiellFormat.DIGITAL,
+                    digital = testItem.getFormat() == CollectionsFormat.DIGITAL,
                     urn = testItem.getUrn()
                 )
             )
@@ -327,7 +327,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title-search endpoint should return empty flux when no items match search term`() {
-        every { axiellRepository.getTitleByName("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getTitleByName("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         searchTitle("no match", MaterialType.NEWSPAPER)
             .returnResult<Title>()

@@ -2,7 +2,7 @@ package no.nb.bikube.newspaper.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("axiell")
+@ConfigurationProperties("collections")
 class CollectionsConfig (
     val url: String,
     val username: String,

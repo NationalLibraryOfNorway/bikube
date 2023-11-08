@@ -1,6 +1,6 @@
 package no.nb.bikube.core.enum
 
-enum class AxiellDatabase (val value: String) {
+enum class CollectionsDatabase (val value: String) {
     TEXTS("texts"),
     PEOPLE("people"),
     LANGUAGES("thesau"),

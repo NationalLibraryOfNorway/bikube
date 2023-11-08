@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellFormat
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.collections.*
 import org.junit.jupiter.api.Assertions
@@ -57,7 +57,7 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
 
     @Test
     fun `Title object should extract work type`() {
-        Assertions.assertEquals(AxiellDescriptionType.SERIAL, singleTitle.getWorkType())
+        Assertions.assertEquals(CollectionsDescriptionType.SERIAL, singleTitle.getWorkType())
     }
 
     @Test
@@ -68,15 +68,15 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
         val firstYear = yearWorks.first().partsReference!!
         Assertions.assertEquals("11", firstYear.priRef)
         Assertions.assertEquals("Bikubeavisen 2011", firstYear.getName())
-        Assertions.assertEquals(AxiellRecordType.WORK, firstYear.getRecordType())
-        Assertions.assertEquals(AxiellDescriptionType.YEAR, firstYear.getWorkType())
+        Assertions.assertEquals(CollectionsRecordType.WORK, firstYear.getRecordType())
+        Assertions.assertEquals(CollectionsDescriptionType.YEAR, firstYear.getWorkType())
         Assertions.assertEquals(1, firstYear.partsList!!.size)
 
         val secondYear = yearWorks[1].partsReference!!
         Assertions.assertEquals("4", secondYear.priRef)
         Assertions.assertEquals("Bikubeavisen 2012", secondYear.getName())
-        Assertions.assertEquals(AxiellRecordType.WORK, secondYear.getRecordType())
-        Assertions.assertEquals(AxiellDescriptionType.YEAR, secondYear.getWorkType())
+        Assertions.assertEquals(CollectionsRecordType.WORK, secondYear.getRecordType())
+        Assertions.assertEquals(CollectionsDescriptionType.YEAR, secondYear.getWorkType())
         Assertions.assertEquals(3, secondYear.partsList!!.size)
     }
 
@@ -89,25 +89,25 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
         val manifest1 = manifestations.first().partsReference!!
         Assertions.assertEquals("18", manifest1.priRef)
         Assertions.assertEquals("Bikubeavisen 2011.01.24", manifest1.getName())
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifest1.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest1.getRecordType())
         Assertions.assertEquals(1, manifest1.partsList!!.size)
 
         val manifest2 = manifestations[1].partsReference!!
         Assertions.assertEquals("22", manifest2.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.10", manifest2.getName())
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifest2.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest2.getRecordType())
         Assertions.assertEquals(null, manifest2.partsList)
 
         val manifest3 = manifestations[2].partsReference!!
         Assertions.assertEquals("20", manifest3.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.09", manifest3.getName())
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifest3.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest3.getRecordType())
         Assertions.assertEquals(1, manifest3.partsList!!.size)
 
         val manifest4 = manifestations[3].partsReference!!
         Assertions.assertEquals("10", manifest4.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", manifest4.getName())
-        Assertions.assertEquals(AxiellRecordType.MANIFESTATION, manifest4.getRecordType())
+        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest4.getRecordType())
         Assertions.assertEquals(2, manifest4.partsList!!.size)
     }
 
@@ -124,26 +124,26 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
         val item1 = items.first().partsReference!!
         Assertions.assertEquals("19", item1.priRef)
         Assertions.assertEquals("Bikubeavisen 2011.01.24", item1.getName())
-        Assertions.assertEquals(AxiellRecordType.ITEM, item1.getRecordType())
-        Assertions.assertEquals(AxiellFormat.PHYSICAL, item1.getFormat())
+        Assertions.assertEquals(CollectionsRecordType.ITEM, item1.getRecordType())
+        Assertions.assertEquals(CollectionsFormat.PHYSICAL, item1.getFormat())
 
         val item2 = items[1].partsReference!!
         Assertions.assertEquals("21", item2.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.09", item2.getName())
-        Assertions.assertEquals(AxiellRecordType.ITEM, item2.getRecordType())
-        Assertions.assertEquals(AxiellFormat.DIGITAL, item2.getFormat())
+        Assertions.assertEquals(CollectionsRecordType.ITEM, item2.getRecordType())
+        Assertions.assertEquals(CollectionsFormat.DIGITAL, item2.getFormat())
 
         val item3 = items[2].partsReference!!
         Assertions.assertEquals("6", item3.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", item3.titleList!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.ITEM, item3.getRecordType())
-        Assertions.assertEquals(AxiellFormat.PHYSICAL, item3.getFormat())
+        Assertions.assertEquals(CollectionsRecordType.ITEM, item3.getRecordType())
+        Assertions.assertEquals(CollectionsFormat.PHYSICAL, item3.getFormat())
 
         val item4 = items[3].partsReference!!
         Assertions.assertEquals("5", item4.priRef)
         Assertions.assertEquals("Bikubeavisen 2012.01.02", item4.titleList!!.first().title)
-        Assertions.assertEquals(AxiellRecordType.ITEM, item4.getRecordType())
-        Assertions.assertEquals(AxiellFormat.DIGITAL, item4.getFormat())
+        Assertions.assertEquals(CollectionsRecordType.ITEM, item4.getRecordType())
+        Assertions.assertEquals(CollectionsFormat.DIGITAL, item4.getFormat())
     }
 
 }

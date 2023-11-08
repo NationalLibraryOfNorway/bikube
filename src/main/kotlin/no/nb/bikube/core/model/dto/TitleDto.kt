@@ -2,8 +2,8 @@ package no.nb.bikube.core.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.core.enum.AxiellDescriptionType
-import no.nb.bikube.core.enum.AxiellRecordType
+import no.nb.bikube.core.enum.CollectionsDescriptionType
+import no.nb.bikube.core.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
@@ -65,8 +65,8 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         publisher = title.publisher,
         placeOfPublication = title.publisherPlace,
         language = title.language,
-        recordType = AxiellRecordType.WORK.value,
-        descriptionType = AxiellDescriptionType.SERIAL.value,
+        recordType = CollectionsRecordType.WORK.value,
+        descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = MaterialType.NEWSPAPER.norwegian,
         inputName = "Bikube API", // TODO: Change when we have authentication in place
