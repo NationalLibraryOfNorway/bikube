@@ -3,6 +3,7 @@ package no.nb.bikube.core.mapper
 import no.nb.bikube.core.enum.CollectionsFormat
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.collections.*
+import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 
 fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(
@@ -21,12 +22,13 @@ fun mapCollectionsPartsObjectToGenericItem(
     model: CollectionsPartsReference,
     titleCatalogueId: String?,
     titleName: String?,
-    materialType: String?
+    materialType: String?,
+    date: String? = null
 ): Item {
     return Item(
         catalogueId = model.priRef!!,
         name = model.getName(),
-        date = model.getItemDate(),
+        date = parseYearOrDate(date) ?: model.getItemDate(),
         materialType = materialType,
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,

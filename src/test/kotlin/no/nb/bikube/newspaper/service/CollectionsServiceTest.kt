@@ -26,6 +26,7 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModel
 import no.nb.bikube.core.enum.CollectionsDescriptionType
 import no.nb.bikube.core.enum.CollectionsFormat
 import no.nb.bikube.core.enum.CollectionsRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
@@ -772,4 +773,35 @@ class CollectionsServiceTest(
 
         verify { collectionsRepository.createTextsRecord(encodedValue) }
     }
+
+    @Test
+    fun `searchItemByName should return correctly mapped item`() {
+        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
+
+        axiellService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .assertNext {
+                print(it)
+                Assertions.assertEquals(
+                    Item(
+                        catalogueId = collectionsModelMockItemA.getFirstObject()!!.priRef,
+                        name = collectionsModelMockItemA.getFirstObject()!!.getName(),
+                        date = collectionsModelMockItemA.getFirstObject()!!.getItemDate(),
+                        materialType = collectionsModelMockItemA.getFirstObject()!!.getMaterialType()!!.norwegian,
+                        titleCatalogueId = collectionsModelMockItemA.getFirstObject()!!.getTitleCatalogueId(),
+                        titleName = collectionsModelMockItemA.getFirstObject()!!.getTitleName(),
+                        digital = true,
+                        urn = collectionsModelMockItemA.getFirstObject()!!.getUrn()
+                    ),
+                    it
+                )
+            }
+            .verifyComplete()
+
+        verify { axiellRepository.getSingleCollectionsModel("19") }
+    }
+
+//    @Test
+//    fun `searchItemByTitle`
 }

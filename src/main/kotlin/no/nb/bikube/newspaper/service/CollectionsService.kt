@@ -98,17 +98,28 @@ class CollectionsService  (
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
-    fun searchItemByName(
-        name: String, date: LocalDate? = null, isDigital: Boolean? = false
+    fun getItemsByTitle(
+        titleCatalogueId: String,
+        date: LocalDate,
+        isDigital: Boolean,
+        materialType: MaterialType
     ): Flux<CatalogueRecord> {
-        return axiellRepository.getItemByName(name, isDigital)
+        return axiellRepository.getSingleCollectionsModel(titleCatalogueId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
-            .map { mapCollectionsObjectToGenericItem(it) }
-            .filter { item ->
-                if (date == null && item.date == null) true
-                else item.date != null && item.date.isEqual(date)
+            .flatMapIterable { getPartsFromTitle(it) }
+            .flatMapIterable { getYearWorksFromTitle(it) }
+            .filter { (_, manifestationPartsObject) -> filterByYear(manifestationPartsObject, date) }
+            .flatMapIterable { getItemsReferenceFromManifestation(it) }
+            .filter { (_, itemPartReference, _) -> filterByFormat(itemPartReference, isDigital) }
+            .map { (title, itemPartReference, date) ->
+                mapCollectionsPartsObjectToGenericItem(
+                    itemPartReference!!,
+                    titleCatalogueId,
+                    title,
+                    materialType.value,
+                    date
+                )
             }
-            .map { it as CatalogueRecord }
     }
 
     fun createPublisher(publisher: String): Mono<Publisher> {
@@ -244,5 +255,26 @@ class CollectionsService  (
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
     }
+
+    private fun filterByFormat(itemPartReference: CollectionsPartsReference?, isDigital: Boolean) =
+        itemPartReference?.getFormat() == if (isDigital) AxiellFormat.DIGITAL else AxiellFormat.PHYSICAL
+
+    private fun filterByYear(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
+        manifestationPartsObject.partsReference?.dateStart?.first()?.dateFrom == date.toString()
+
+    private fun getItemsReferenceFromManifestation(
+        it: Pair<String, CollectionsPartsObject>
+    ): List<Triple<String, CollectionsPartsReference?, String?>> {
+        val dateFrom = it.second.partsReference?.dateStart?.first()?.dateFrom
+        return it.second.getPartRefs().map { ref -> Triple(it.first, ref.partsReference, dateFrom) }
+    }
+
+    private fun getPartsFromTitle(title: CollectionsObject): List<Pair<String, CollectionsPartsObject>> {
+        val titleName = title.titleList?.first()?.title ?: ""
+        return title.getParts()?.map { part -> Pair(titleName, part) } ?: emptyList()
+    }
+
+    private fun getYearWorksFromTitle(it: Pair<String, CollectionsPartsObject>) =
+        it.second.getPartRefs().map { ref -> Pair(it.first, ref) }
 
 }

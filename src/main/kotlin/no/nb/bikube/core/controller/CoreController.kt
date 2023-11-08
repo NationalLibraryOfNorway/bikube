@@ -1,11 +1,12 @@
 package no.nb.bikube.core.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.validation.constraints.Pattern
 import no.nb.bikube.core.enum.CatalogueName
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
@@ -95,36 +96,34 @@ class CoreController (
     @GetMapping("/item/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Search catalogue items",
-        description = "Searches catalogue items by name. Supports wildcard '*' search."
+        description = "Search catalogue items by title id, material type, date and digital/physical."
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "400", description = "Bad request"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
+    @Parameters(
+        Parameter(name = "titleCatalogueId", description = "Catalogue ID of the title to search items for."),
+        Parameter(name = "materialType", description = "Material type of the items to search for."),
+        Parameter(name = "date", description = "Date in ISO 8601 format (YYYY-MM-DD).", schema = Schema(pattern = DATE_REGEX)),
+        Parameter(name = "isDigital", description = "If 'true' returns digital items, physical items if 'false'. Default is 'false'")
+    )
     fun searchItem(
-        @RequestParam(required = true)
-        @Schema(description = "The term to search for. Supports wildcard '*' search.")
-        searchTerm: String,
-        @RequestParam(required = true)
-        materialType: MaterialType,
-        @RequestParam(required = false)
-        @Pattern(regexp = DATE_REGEX)
-        @Schema(description = "Date must be in ISO-8601 format (YYYY-MM-DD).")
-        date: String? = null,
-        @RequestParam(required = false)
-        @Schema(description = "If 'true' returns digital items, physical items if 'false'. Default is 'false'")
-        isDigital: Boolean? = false,
+        @RequestParam(required = true) titleCatalogueId: String,
+        @RequestParam(required = true) materialType: MaterialType,
+        @RequestParam(required = true) date: String,
+        @RequestParam(required = true) isDigital: Boolean,
     ): ResponseEntity<Flux<CatalogueRecord>> {
-        if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
+        if (titleCatalogueId.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
 
         var parsedDate: LocalDate? = null
-        if (!date.isNullOrEmpty()) parsedDate = runCatching { LocalDate.parse(date) }
+        if (date.isNotEmpty()) parsedDate = runCatching { LocalDate.parse(date) }
             .getOrElse { throw BadRequestBodyException("Date must valid ISO-8601 format") }
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                axiellService.searchItemByName(searchTerm, parsedDate, isDigital)
+                axiellService.getItemsByTitle(titleCatalogueId, parsedDate!!, isDigital, materialType)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
