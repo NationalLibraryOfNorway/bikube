@@ -62,6 +62,19 @@ class CollectionsModelMockData {
             )
         )
 
+        // Regular item without date in title
+        val collectionsPartsObjectMockItemC = CollectionsPartsObject(
+            partsReference = CollectionsPartsReference(
+                priRef = "5",
+                titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
+                recordType = collectionsRecordTypeListItemMock,
+                workTypeList = null,
+                formatList = collectionsFormatListPhysicalMock,
+                partsList = null,
+                dateStart = null
+            )
+        )
+
         // Regular manifestation with 2 child items
         private val collectionsPartsObjectMockManifestationA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
