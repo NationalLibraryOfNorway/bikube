@@ -110,7 +110,7 @@ class CollectionsService  (
                 val title = titleObject.getName() ?: ""
                 Flux.fromIterable(titleObject.getParts() ?: emptyList())
                     .flatMapIterable { it.getPartRefs() }
-                    .filter { manifestationPartsObject -> filterByYear(manifestationPartsObject, date) }
+                    .filter { manifestationPartsObject -> filterByDate(manifestationPartsObject, date) }
                     .flatMapIterable { it.getPartRefs() }
                     .filter { itemPartReference -> filterByFormat(itemPartReference.partsReference, isDigital) }
                     .map { itemPartReference ->
@@ -262,6 +262,6 @@ class CollectionsService  (
     private fun filterByFormat(itemPartReference: CollectionsPartsReference?, isDigital: Boolean) =
         itemPartReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
 
-    private fun filterByYear(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
+    private fun filterByDate(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
         manifestationPartsObject.getDate().toString() == date.toString()
 }
