@@ -385,12 +385,12 @@ class CoreControllerIntegrationTest (
                     materialType = collectionsModelMockItemA.getObjects()!![0].getMaterialTypeFromParent()!!.norwegian,
                     titleCatalogueId = collectionsModelMockItemA.getObjects()!![0].getTitleCatalogueId(),
                     titleName = collectionsModelMockItemA.getObjects()!![0].getTitleName(),
-                    digital = collectionsModelMockItemA.getObjects()!![0].getFormat() == AxiellFormat.DIGITAL,
+                    digital = collectionsModelMockItemA.getObjects()!![0].getFormat() == CollectionsFormat.DIGITAL,
                     urn = collectionsModelMockItemA.getObjects()!![0].getUrn()
                 )
             )
             .expectComplete()
-        verify(exactly = 1) { axiellRepository.getSingleCollectionsModel(any()) }
+        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(any()) }
     }
 
     @Test
@@ -443,7 +443,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `search-item endpoint should return empty flux when no items match search term`() {
-        every { axiellRepository.getSingleCollectionsModel("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModel("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         webClient
             .get()

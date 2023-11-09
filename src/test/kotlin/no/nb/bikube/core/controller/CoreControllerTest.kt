@@ -127,7 +127,7 @@ class CoreControllerTest {
 
     @Test
     fun `search item should return a list of items matching criteria`() {
-        every { axiellService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.just(
+        every { collectionsService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.just(
             newspaperItemMockA.copy(), newspaperItemMockA.copy()
         )
 
@@ -149,24 +149,24 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.PERIODICAL, "2020-01-01", false) }
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.MONOGRAPH, "2020-01-01", false) }
 
-        verify { axiellService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
     }
 
     @Test
-    fun `search item should call on axiellService function when materialType is NEWSPAPER`() {
-        every { axiellService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.empty()
+    fun `search item should call on collectionsService function when materialType is NEWSPAPER`() {
+        every { collectionsService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.empty()
 
         coreController.searchItem("1", MaterialType.NEWSPAPER, "2020-01-01", true).body!!
             .test()
             .verifyComplete()
 
-        verify { axiellService.getItemsByTitle(any(), any(), any(), any()) }
+        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) }
     }
 
     @Test
     fun `search item should throw BadRequestBodyException when searchTerm is empty`() {
         assertThrows<BadRequestBodyException> { coreController.searchItem("", MaterialType.NEWSPAPER, "2020-01-01", false) }
 
-        verify { axiellService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
     }
 }

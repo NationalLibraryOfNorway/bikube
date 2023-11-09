@@ -104,21 +104,24 @@ class CollectionsService  (
         isDigital: Boolean,
         materialType: MaterialType
     ): Flux<CatalogueRecord> {
-        return axiellRepository.getSingleCollectionsModel(titleCatalogId)
+        return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
-            .flatMapIterable { getPartsFromTitle(it) }
-            .flatMapIterable { getYearWorksFromTitle(it) }
-            .filter { (_, manifestationPartsObject) -> filterByYear(manifestationPartsObject, date) }
-            .flatMapIterable { getItemsReferenceFromManifestation(it) }
-            .filter { (_, itemPartReference, _) -> filterByFormat(itemPartReference, isDigital) }
-            .map { (title, itemPartReference, date) ->
-                mapCollectionsPartsObjectToGenericItem(
-                    itemPartReference!!,
-                    titleCatalogId,
-                    title,
-                    materialType.value,
-                    date
-                )
+            .flatMap { titleObject ->
+                val title = titleObject.titleList?.first()?.title ?: ""
+                Flux.fromIterable(titleObject.getParts() ?: emptyList())
+                    .flatMapIterable { it.getPartRefs() }
+                    .filter { manifestationPartsObject -> filterByYear(manifestationPartsObject, date) }
+                    .flatMapIterable { it.getPartRefs() }
+                    .filter { itemPartReference -> filterByFormat(itemPartReference.partsReference, isDigital) }
+                    .map { itemPartReference ->
+                        mapCollectionsPartsObjectToGenericItem(
+                            itemPartReference.partsReference!!,
+                            titleCatalogId,
+                            title,
+                            materialType.value,
+                            date.toString()
+                        )
+                    }
             }
     }
 
@@ -257,24 +260,8 @@ class CollectionsService  (
     }
 
     private fun filterByFormat(itemPartReference: CollectionsPartsReference?, isDigital: Boolean) =
-        itemPartReference?.getFormat() == if (isDigital) AxiellFormat.DIGITAL else AxiellFormat.PHYSICAL
+        itemPartReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
 
     private fun filterByYear(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
         manifestationPartsObject.partsReference?.dateStart?.first()?.dateFrom == date.toString()
-
-    private fun getItemsReferenceFromManifestation(
-        it: Pair<String, CollectionsPartsObject>
-    ): List<Triple<String, CollectionsPartsReference?, String?>> {
-        val dateFrom = it.second.partsReference?.dateStart?.first()?.dateFrom
-        return it.second.getPartRefs().map { ref -> Triple(it.first, ref.partsReference, dateFrom) }
-    }
-
-    private fun getPartsFromTitle(title: CollectionsObject): List<Pair<String, CollectionsPartsObject>> {
-        val titleName = title.titleList?.first()?.title ?: ""
-        return title.getParts()?.map { part -> Pair(titleName, part) } ?: emptyList()
-    }
-
-    private fun getYearWorksFromTitle(it: Pair<String, CollectionsPartsObject>) =
-        it.second.getPartRefs().map { ref -> Pair(it.first, ref) }
-
 }

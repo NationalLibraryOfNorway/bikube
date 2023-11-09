@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.enum.CatalogueName
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
+import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.CollectionsException
 import no.nb.bikube.core.exception.CollectionsTitleNotFound
-import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
@@ -123,7 +123,7 @@ class CoreController (
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                axiellService.getItemsByTitle(titleCatalogueId, parsedDate!!, isDigital, materialType)
+                collectionsService.getItemsByTitle(titleCatalogueId, parsedDate!!, isDigital, materialType)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }

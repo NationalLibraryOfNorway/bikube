@@ -777,9 +777,9 @@ class CollectionsServiceTest(
 
     @Test
     fun `searchItemByTitle should return correctly mapped item`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
         val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
-        axiellService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
+        collectionsService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .assertNext {
@@ -799,53 +799,53 @@ class CollectionsServiceTest(
             }
             .verifyComplete()
 
-        verify { axiellRepository.getSingleCollectionsModel("1") }
+        verify { collectionsRepository.getSingleCollectionsModel("1") }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if no items are found`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        axiellService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+        collectionsService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { axiellRepository.getSingleCollectionsModel("19") }
+        verify { collectionsRepository.getSingleCollectionsModel("19") }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
 
-        axiellService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        collectionsService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { axiellRepository.getSingleCollectionsModel("6") }
+        verify { collectionsRepository.getSingleCollectionsModel("6") }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
 
-        axiellService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        collectionsService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { axiellRepository.getSingleCollectionsModel("7") }
+        verify { collectionsRepository.getSingleCollectionsModel("7") }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
-        every { axiellRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
 
-        axiellService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        collectionsService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
