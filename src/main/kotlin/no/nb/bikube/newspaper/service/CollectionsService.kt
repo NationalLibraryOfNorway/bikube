@@ -107,7 +107,7 @@ class CollectionsService  (
         return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .flatMap { titleObject ->
-                val title = titleObject.titleList?.first()?.title ?: ""
+                val title = titleObject.getName() ?: ""
                 Flux.fromIterable(titleObject.getParts() ?: emptyList())
                     .flatMapIterable { it.getPartRefs() }
                     .filter { manifestationPartsObject -> filterByYear(manifestationPartsObject, date) }
@@ -240,7 +240,7 @@ class CollectionsService  (
         item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
-            manifestation.partsReference?.getDate() == item.date
+            manifestation.getDate() == item.date
         }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date!!)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
@@ -252,7 +252,7 @@ class CollectionsService  (
         item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
-            year.partsReference?.getDate()?.year == item.date?.year
+            year.getDate()?.year == item.date?.year
         }?.toMono() ?: createYearWork(item.titleCatalogueId!!, item.date?.year.toString())
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
@@ -263,5 +263,5 @@ class CollectionsService  (
         itemPartReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
 
     private fun filterByYear(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
-        manifestationPartsObject.partsReference?.dateStart?.first()?.dateFrom == date.toString()
+        manifestationPartsObject.getDate().toString() == date.toString()
 }

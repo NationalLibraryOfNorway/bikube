@@ -117,13 +117,14 @@ class CoreController (
     ): ResponseEntity<Flux<CatalogueRecord>> {
         if (titleCatalogueId.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
 
-        var parsedDate: LocalDate? = null
-        if (date.isNotEmpty()) parsedDate = runCatching { LocalDate.parse(date) }
-            .getOrElse { throw BadRequestBodyException("Date must valid ISO-8601 format") }
+        val parsedDate: LocalDate = date.takeIf { it.isNotEmpty() }?.let {
+            runCatching { LocalDate.parse(date) }
+                .getOrElse { throw BadRequestBodyException("Date must valid ISO-8601 format") }
+        } ?: throw BadRequestBodyException("Date cannot be empty.")
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                collectionsService.getItemsByTitle(titleCatalogueId, parsedDate!!, isDigital, materialType)
+                collectionsService.getItemsByTitle(titleCatalogueId, parsedDate, isDigital, materialType)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }

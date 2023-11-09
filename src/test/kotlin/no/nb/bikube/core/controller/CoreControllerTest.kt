@@ -87,7 +87,6 @@ class CoreControllerTest {
     }
 
     @Test
-
     fun `search title should return a list of titles matching name`() {
         every { collectionsService.searchTitleByName(any()) } returns Flux.just(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()

@@ -790,7 +790,7 @@ class CollectionsServiceTest(
                         date = expectedMock.getItemDate(),
                         materialType = MaterialType.NEWSPAPER.value,
                         titleCatalogueId = "1",
-                        titleName = collectionsModelMockTitleA.adlibJson.recordList?.get(0)?.titleList?.get(0)?.title,
+                        titleName = collectionsModelMockTitleA.adlibJson.recordList?.first()?.getName(),
                         digital = true,
                         urn = null
                     ),

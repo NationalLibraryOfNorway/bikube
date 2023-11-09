@@ -113,13 +113,13 @@ fun CollectionsPartsReference.getWorkType(): CollectionsDescriptionType? {
     return CollectionsDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
-fun CollectionsPartsReference.getDate(): LocalDate? {
-    return this.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
-}
-
 // CollectionsPartsObject
 fun CollectionsPartsObject.getPartRefs(): List<CollectionsPartsObject> {
     return this.partsReference?.partsList ?: emptyList()
+}
+
+fun CollectionsPartsObject.getDate(): LocalDate? {
+    return this.partsReference?.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
 }
 
 // CollectionsPartOfReference

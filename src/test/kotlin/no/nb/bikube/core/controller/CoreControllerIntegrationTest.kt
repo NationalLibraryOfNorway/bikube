@@ -379,14 +379,14 @@ class CoreControllerIntegrationTest (
             .test()
             .expectNext(
                 Item(
-                    catalogueId = collectionsModelMockItemA.getObjects()!![0].priRef,
-                    name = collectionsModelMockItemA.getObjects()!![0].getName(),
-                    date = collectionsModelMockItemA.getObjects()!![0].getItemDate(),
-                    materialType = collectionsModelMockItemA.getObjects()!![0].getMaterialTypeFromParent()!!.norwegian,
-                    titleCatalogueId = collectionsModelMockItemA.getObjects()!![0].getTitleCatalogueId(),
-                    titleName = collectionsModelMockItemA.getObjects()!![0].getTitleName(),
-                    digital = collectionsModelMockItemA.getObjects()!![0].getFormat() == CollectionsFormat.DIGITAL,
-                    urn = collectionsModelMockItemA.getObjects()!![0].getUrn()
+                    catalogueId = collectionsModelMockItemA.getFirstObject()!!.priRef,
+                    name = collectionsModelMockItemA.getFirstObject()!!.getName(),
+                    date = collectionsModelMockItemA.getFirstObject()!!.getItemDate(),
+                    materialType = collectionsModelMockItemA.getFirstObject()!!.getMaterialTypeFromParent()!!.norwegian,
+                    titleCatalogueId = collectionsModelMockItemA.getFirstObject()!!.getTitleCatalogueId(),
+                    titleName = collectionsModelMockItemA.getFirstObject()!!.getTitleName(),
+                    digital = collectionsModelMockItemA.getFirstObject()!!.getFormat() == CollectionsFormat.DIGITAL,
+                    urn = collectionsModelMockItemA.getFirstObject()!!.getUrn()
                 )
             )
             .expectComplete()
