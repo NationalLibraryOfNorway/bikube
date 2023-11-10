@@ -43,7 +43,7 @@ class ItemController (
             .flatMap { collectionsService.createNewspaperItem(item) }
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
-                logger().info("Newspaper item created: ${responseEntity.body?.titleCatalogueId}")
+                logger().info("Newspaper item created with id: ${responseEntity.body?.catalogueId}")
             }
     }
 }
