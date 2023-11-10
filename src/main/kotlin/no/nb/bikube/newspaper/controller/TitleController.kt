@@ -66,7 +66,7 @@ class TitleController (
                 .then(collectionsService.createNewspaperTitle(title))
                 .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
                 .doOnSuccess { responseEntity ->
-                    logger().info("Newspaper title created: ${responseEntity.body?.catalogueId}")
+                    logger().info("Newspaper title created with id: ${responseEntity.body?.catalogueId}")
                 }
         }
     }
