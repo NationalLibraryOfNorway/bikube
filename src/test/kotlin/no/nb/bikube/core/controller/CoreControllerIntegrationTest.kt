@@ -2,6 +2,7 @@ package no.nb.bikube.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockAllTitles
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockItemA
@@ -336,5 +337,197 @@ class CoreControllerIntegrationTest (
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
+    }
+
+    @Test
+    fun `search-item endpoint should return 200 OK with all items`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isOk
+            .returnResult<Item>()
+            .responseBody
+            .test()
+            .expectSubscription()
+            .expectNextCount(collectionsModelMockItemA.getObjects()!!.size.toLong())
+            .verifyComplete()
+    }
+
+    @Test
+    fun `search-item endpoint should return mapped items`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .returnResult<Item>()
+            .responseBody
+            .test()
+            .expectNext(
+                Item(
+                    catalogueId = collectionsModelMockItemA.getFirstObject()!!.priRef,
+                    name = collectionsModelMockItemA.getFirstObject()!!.getName(),
+                    date = collectionsModelMockItemA.getFirstObject()!!.getItemDate(),
+                    materialType = collectionsModelMockItemA.getFirstObject()!!.getMaterialTypeFromParent()!!.norwegian,
+                    titleCatalogueId = collectionsModelMockItemA.getFirstObject()!!.getTitleCatalogueId(),
+                    titleName = collectionsModelMockItemA.getFirstObject()!!.getTitleName(),
+                    digital = collectionsModelMockItemA.getFirstObject()!!.getFormat() == CollectionsFormat.DIGITAL,
+                    urn = collectionsModelMockItemA.getFirstObject()!!.getUrn()
+                )
+            )
+            .expectComplete()
+        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(any()) }
+    }
+
+    @Test
+    fun `search-item endpoint should return 400 bad request for manuscripts`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.MANUSCRIPT)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `search-item endpoint should return 400 bad request for monographs`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.MONOGRAPH)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `search-item endpoint should return 400 bad request for periodicals`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.PERIODICAL)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `search-item endpoint should return empty flux when no items match search term`() {
+        every { collectionsRepository.getSingleCollectionsModel("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "no match")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .returnResult<Item>()
+            .responseBody
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `search-item endpoint should return 400 bad request if date is invalid`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "9999-99-99")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `search-item endpoint should return 400 bad request if required request params are omitted`() {
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "2020-01-01")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("materialType", MaterialType.NEWSPAPER)
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
+
+        webClient
+            .get()
+            .uri { uri ->
+                uri.pathSegment("item", "search")
+                    .queryParam("titleCatalogueId", "1")
+                    .queryParam("date", "2020-01-01")
+                    .queryParam("isDigital", "true")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isBadRequest
     }
 }

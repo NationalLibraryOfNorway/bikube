@@ -98,6 +98,33 @@ class CollectionsService  (
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
+    fun getItemsByTitle(
+        titleCatalogId: String,
+        date: LocalDate,
+        isDigital: Boolean,
+        materialType: MaterialType
+    ): Flux<CatalogueRecord> {
+        return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
+            .flatMapIterable { it.getObjects() ?: emptyList() }
+            .flatMap { titleObject ->
+                val title = titleObject.getName() ?: ""
+                Flux.fromIterable(titleObject.getParts() ?: emptyList())
+                    .flatMapIterable { it.getPartRefs() }
+                    .filter { manifestationPartsObject -> filterByDate(manifestationPartsObject, date) }
+                    .flatMapIterable { it.getPartRefs() }
+                    .filter { itemPartReference -> filterByFormat(itemPartReference.partsReference, isDigital) }
+                    .map { itemPartReference ->
+                        mapCollectionsPartsObjectToGenericItem(
+                            itemPartReference.partsReference!!,
+                            titleCatalogId,
+                            title,
+                            materialType.value,
+                            date.toString()
+                        )
+                    }
+            }
+    }
+
     fun createPublisher(publisher: String): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
@@ -213,7 +240,7 @@ class CollectionsService  (
         item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
-            manifestation.partsReference?.getDate() == item.date
+            manifestation.getDate() == item.date
         }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date!!)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
@@ -225,11 +252,16 @@ class CollectionsService  (
         item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
-            year.partsReference?.getDate()?.year == item.date?.year
+            year.getDate()?.year == item.date?.year
         }?.toMono() ?: createYearWork(item.titleCatalogueId!!, item.date?.year.toString())
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
     }
 
+    private fun filterByFormat(itemPartReference: CollectionsPartsReference?, isDigital: Boolean) =
+        itemPartReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
+
+    private fun filterByDate(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
+        manifestationPartsObject.getDate().toString() == date.toString()
 }

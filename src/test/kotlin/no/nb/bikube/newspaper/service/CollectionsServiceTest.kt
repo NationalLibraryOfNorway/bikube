@@ -20,12 +20,14 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
+import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
 import no.nb.bikube.core.enum.CollectionsDescriptionType
 import no.nb.bikube.core.enum.CollectionsFormat
 import no.nb.bikube.core.enum.CollectionsRecordType
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
@@ -771,5 +773,82 @@ class CollectionsServiceTest(
             .verifyComplete()
 
         verify { collectionsRepository.createTextsRecord(encodedValue) }
+    }
+
+    @Test
+    fun `searchItemByTitle should return correctly mapped item`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
+        val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
+        collectionsService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(
+                    Item(
+                        catalogueId = expectedMock.priRef!!,
+                        name = expectedMock.getName(),
+                        date = expectedMock.getItemDate(),
+                        materialType = MaterialType.NEWSPAPER.value,
+                        titleCatalogueId = "1",
+                        titleName = collectionsModelMockTitleA.adlibJson.recordList?.first()?.getName(),
+                        digital = true,
+                        urn = null
+                    ),
+                    it
+                )
+            }
+            .verifyComplete()
+
+        verify { collectionsRepository.getSingleCollectionsModel("1") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if no items are found`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        collectionsService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
+        verify { collectionsRepository.getSingleCollectionsModel("19") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
+
+        collectionsService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
+        verify { collectionsRepository.getSingleCollectionsModel("6") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
+
+        collectionsService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
+
+        verify { collectionsRepository.getSingleCollectionsModel("7") }
+    }
+
+    @Test
+    fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
+
+        collectionsService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+            .test()
+            .expectSubscription()
+            .expectNextCount(0)
+            .verifyComplete()
     }
 }

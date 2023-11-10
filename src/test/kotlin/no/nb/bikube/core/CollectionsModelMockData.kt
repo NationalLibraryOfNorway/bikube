@@ -37,7 +37,7 @@ class CollectionsModelMockData {
         ))
 
         // Regular digital item
-        private val collectionsPartsObjectMockItemA = CollectionsPartsObject(
+        val collectionsPartsObjectMockItemA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "4",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
@@ -54,6 +54,19 @@ class CollectionsModelMockData {
             partsReference = CollectionsPartsReference(
                 priRef = "5",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
+                recordType = collectionsRecordTypeListItemMock,
+                workTypeList = null,
+                formatList = collectionsFormatListPhysicalMock,
+                partsList = null,
+                dateStart = null
+            )
+        )
+
+        // Regular item without date in title
+        val collectionsPartsObjectMockItemC = CollectionsPartsObject(
+            partsReference = CollectionsPartsReference(
+                priRef = "5",
+                titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListItemMock,
                 workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
