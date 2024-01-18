@@ -8,7 +8,7 @@ enum class MaterialType (val value: String, val norwegian: String) {
 
     companion object {
         fun fromNorwegianString(value: String?): MaterialType? {
-            return values().firstOrNull { it.norwegian.lowercase() == value?.lowercase() }
+            return entries.firstOrNull { it.norwegian.lowercase() == value?.lowercase() } ?: if(value == "Aviser") return NEWSPAPER else null
         }
     }
 }

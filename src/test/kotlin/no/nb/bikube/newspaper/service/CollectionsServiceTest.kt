@@ -138,7 +138,7 @@ class CollectionsServiceTest(
         recordType = CollectionsRecordType.WORK.value,
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
-        subMedium = newspaperTitleMockB.materialType,
+        subMedium = "Aviser",
         inputName = "Bikube API",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
