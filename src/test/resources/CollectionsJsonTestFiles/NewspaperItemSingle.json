@@ -38,7 +38,7 @@
                         "part_of_reference": {
                           "group:Submedium": [
                             {
-                              "submedium": "Avis"
+                              "submedium": "Aviser"
                             }
                           ],
                           "group:Title": [
@@ -109,7 +109,7 @@
                     ],
                     "group:Submedium": [
                       {
-                        "submedium": "Avis"
+                        "submedium": "Aviser"
                       }
                     ],
                     "group:Title": [
@@ -168,7 +168,7 @@
               ],
               "group:Submedium": [
                 {
-                  "submedium": "Avis"
+                  "submedium": "Aviser"
                 }
               ],
               "group:Title": [
@@ -211,7 +211,7 @@
         ],
         "Submedium": [
           {
-            "submedium": "Avis"
+            "submedium": "Aviser"
           }
         ],
         "Title": [
