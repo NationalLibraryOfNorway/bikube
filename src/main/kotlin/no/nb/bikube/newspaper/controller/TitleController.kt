@@ -1,12 +1,16 @@
 package no.nb.bikube.newspaper.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
-import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.Language
+import no.nb.bikube.core.model.Publisher
+import no.nb.bikube.core.model.PublisherPlace
+import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.CollectionsService
@@ -29,8 +33,8 @@ class TitleController (
     @Operation(summary = "Create a newspaper title")
     @ApiResponses(value = [
         ApiResponse(responseCode = "201", description = "Title created"),
-        ApiResponse(responseCode = "400", description = "Bad request"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun createTitle(
         @RequestBody title: TitleInputDto

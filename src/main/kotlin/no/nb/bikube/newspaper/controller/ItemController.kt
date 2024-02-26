@@ -1,6 +1,7 @@
 package no.nb.bikube.newspaper.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -29,8 +30,8 @@ class ItemController (
     @Operation(summary = "Create a single newspaper item")
     @ApiResponses(value = [
         ApiResponse(responseCode = "201", description = "Newspaper created"),
-        ApiResponse(responseCode = "400", description = "Bad request"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun createItem(
         @RequestBody item: ItemInputDto
