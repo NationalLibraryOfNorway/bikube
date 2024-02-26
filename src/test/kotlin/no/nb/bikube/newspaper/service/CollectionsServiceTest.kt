@@ -31,10 +31,10 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
-import no.nb.bikube.core.model.dto.ItemDto
-import no.nb.bikube.core.model.dto.ManifestationDto
-import no.nb.bikube.core.model.dto.TitleDto
-import no.nb.bikube.core.model.dto.YearDto
+import no.nb.bikube.core.model.collectionsDto.ItemDto
+import no.nb.bikube.core.model.collectionsDto.ManifestationDto
+import no.nb.bikube.core.model.collectionsDto.TitleDto
+import no.nb.bikube.core.model.collectionsDto.YearDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
@@ -83,7 +83,7 @@ class CollectionsServiceTest(
         recordType = CollectionsRecordType.WORK.value,
         descriptionType = CollectionsDescriptionType.YEAR.value,
         dateStart = newspaperTitleMockB.startDate.toString().take(4),
-        title = newspaperTitleMockB.startDate.toString().take(4),
+        title = null,
         inputName = "Bikube API",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
@@ -755,7 +755,7 @@ class CollectionsServiceTest(
                 recordType = CollectionsRecordType.WORK.value,
                 descriptionType = CollectionsDescriptionType.YEAR.value,
                 dateStart = "2023",
-                title = "2023",
+                title = null,
                 inputName = "Bikube API",
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),

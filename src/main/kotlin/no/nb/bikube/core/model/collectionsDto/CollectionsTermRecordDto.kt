@@ -1,4 +1,4 @@
-package no.nb.bikube.core.model.dto
+package no.nb.bikube.core.model.collectionsDto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
