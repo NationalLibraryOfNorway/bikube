@@ -3,6 +3,7 @@ package no.nb.bikube.core.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -42,7 +43,7 @@ class CoreController (
     @Operation(summary = "Get single item from catalogue")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class, NotSupportedException::class)
     fun getSingleItem(
@@ -59,7 +60,7 @@ class CoreController (
     @Operation(summary = "Get single title from catalogue")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class, NotSupportedException::class)
     fun getSingleTitle(
@@ -79,8 +80,8 @@ class CoreController (
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "400", description = "Bad request"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun searchTitle(
         @RequestParam searchTerm: String,
@@ -100,8 +101,8 @@ class CoreController (
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "400", description = "Bad request"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     @Parameters(
         Parameter(name = "titleCatalogueId", description = "Catalogue ID of the title to search items for."),
