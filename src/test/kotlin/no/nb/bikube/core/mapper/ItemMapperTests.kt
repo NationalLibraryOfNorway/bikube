@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToGenericItem
+import no.nb.bikube.catalog.collections.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemC
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.collections.CollectionsModel
-import no.nb.bikube.core.model.collections.getFirstObject
+import no.nb.bikube.catalog.collections.model.CollectionsModel
+import no.nb.bikube.catalog.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

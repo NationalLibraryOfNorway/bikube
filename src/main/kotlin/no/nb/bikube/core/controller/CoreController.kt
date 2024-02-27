@@ -12,8 +12,8 @@ import no.nb.bikube.core.enum.CatalogueName
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.exception.CollectionsException
-import no.nb.bikube.core.exception.CollectionsTitleNotFound
+import no.nb.bikube.catalog.collections.exception.CollectionsException
+import no.nb.bikube.catalog.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item

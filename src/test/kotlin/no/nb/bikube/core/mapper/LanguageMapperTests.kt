@@ -1,7 +1,8 @@
 package no.nb.bikube.core.mapper
 
+import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToGenericLanguage
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
-import no.nb.bikube.core.model.collections.getFirstObject
+import no.nb.bikube.catalog.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

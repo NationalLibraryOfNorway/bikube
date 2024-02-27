@@ -9,13 +9,13 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMock
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
-import no.nb.bikube.core.enum.CollectionsFormat
+import no.nb.bikube.catalog.collections.enum.CollectionsFormat
+import no.nb.bikube.catalog.collections.model.*
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.mapper.mapCollectionsObjectToGenericTitle
+import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.model.collections.*
-import no.nb.bikube.newspaper.repository.CollectionsRepository
+import no.nb.bikube.catalog.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

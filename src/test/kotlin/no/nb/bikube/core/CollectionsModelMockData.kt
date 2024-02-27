@@ -1,10 +1,10 @@
 package no.nb.bikube.core
 
-import no.nb.bikube.core.enum.CollectionsDescriptionType
-import no.nb.bikube.core.enum.CollectionsFormat
-import no.nb.bikube.core.enum.CollectionsRecordType
+import no.nb.bikube.catalog.collections.enum.CollectionsDescriptionType
+import no.nb.bikube.catalog.collections.enum.CollectionsFormat
+import no.nb.bikube.catalog.collections.enum.CollectionsRecordType
+import no.nb.bikube.catalog.collections.model.*
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.collections.*
 
 class CollectionsModelMockData {
     companion object {

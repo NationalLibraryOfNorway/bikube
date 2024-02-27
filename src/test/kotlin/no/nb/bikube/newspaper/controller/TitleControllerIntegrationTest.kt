@@ -10,13 +10,13 @@ import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsNameModel
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
-import no.nb.bikube.core.enum.CollectionsDatabase
+import no.nb.bikube.catalog.collections.enum.CollectionsDatabase
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.repository.CollectionsRepository
+import no.nb.bikube.catalog.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

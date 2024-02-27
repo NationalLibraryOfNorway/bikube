@@ -2,15 +2,17 @@ package no.nb.bikube.newspaper.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.nb.bikube.catalog.collections.enum.*
+import no.nb.bikube.catalog.collections.exception.*
+import no.nb.bikube.catalog.collections.mapper.*
+import no.nb.bikube.catalog.collections.model.*
+import no.nb.bikube.catalog.collections.model.dto.*
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
-import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
-import no.nb.bikube.core.model.collections.*
-import no.nb.bikube.core.model.collectionsDto.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
-import no.nb.bikube.newspaper.repository.CollectionsRepository
+import no.nb.bikube.catalog.collections.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

@@ -1,7 +1,8 @@
 package no.nb.bikube.core.mapper
 
+import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToCollectionsPartObject
 import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.core.model.collections.getFirstObject
+import no.nb.bikube.catalog.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
