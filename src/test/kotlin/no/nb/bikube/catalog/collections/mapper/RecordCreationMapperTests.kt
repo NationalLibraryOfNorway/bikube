@@ -1,7 +1,6 @@
-package no.nb.bikube.core.mapper
+package no.nb.bikube.catalog.collections.mapper
 
-import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToCollectionsPartObject
-import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsModelMockTitleA
+import no.nb.bikube.catalog.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalog.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

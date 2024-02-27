@@ -1,4 +1,4 @@
-package no.nb.bikube.core
+package no.nb.bikube.catalog.collections
 
 import no.nb.bikube.catalog.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalog.collections.enum.CollectionsFormat

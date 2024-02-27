@@ -1,7 +1,6 @@
-package no.nb.bikube.core.mapper
+package no.nb.bikube.catalog.collections.mapper
 
-import no.nb.bikube.catalog.collections.mapper.mapCollectionsObjectToGenericPublisherPlace
-import no.nb.bikube.core.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
+import no.nb.bikube.catalog.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalog.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

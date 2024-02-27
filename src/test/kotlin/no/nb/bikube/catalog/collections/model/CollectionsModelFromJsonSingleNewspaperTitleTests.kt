@@ -1,4 +1,4 @@
-package no.nb.bikube.core.model
+package no.nb.bikube.catalog.collections.model
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.catalog.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalog.collections.enum.CollectionsFormat
 import no.nb.bikube.catalog.collections.enum.CollectionsRecordType
-import no.nb.bikube.catalog.collections.model.*
 import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

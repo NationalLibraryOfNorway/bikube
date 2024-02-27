@@ -1,4 +1,4 @@
-package no.nb.bikube.core
+package no.nb.bikube.catalog.collections
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
