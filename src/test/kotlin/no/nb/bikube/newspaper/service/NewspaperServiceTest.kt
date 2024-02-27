@@ -113,7 +113,8 @@ class NewspaperServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId
+        partOfReference = newspaperItemMockB.catalogueId,
+        title = "Avis A 2020.01.05"
     ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
@@ -126,8 +127,9 @@ class NewspaperServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId)
-    )
+        partOfReference = newspaperItemMockB.catalogueId,
+        title = "Avis A 2020.01.05"
+    ))
 
     private val titleEncodedDto = Json.encodeToString(TitleDto(
         title = newspaperTitleMockB.name!!,

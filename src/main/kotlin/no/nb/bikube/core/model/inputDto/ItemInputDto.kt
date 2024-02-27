@@ -7,4 +7,5 @@ data class ItemInputDto(
     val titleCatalogueId: String?,
     val digital: Boolean?,
     val urn: String?,
+    var title: String? = null
 )

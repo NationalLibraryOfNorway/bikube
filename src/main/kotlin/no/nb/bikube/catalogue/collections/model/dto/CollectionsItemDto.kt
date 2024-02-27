@@ -11,6 +11,9 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 class ItemDto (
+    @SerialName("title")
+    val title: String? = null,
+
     @SerialName("format")
     val format: String,
 
@@ -46,6 +49,7 @@ fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String)
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
+        title = item.title,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         altNumber = if (useUrn) item.urn else null,

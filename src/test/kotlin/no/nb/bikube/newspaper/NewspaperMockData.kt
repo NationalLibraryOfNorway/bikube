@@ -79,7 +79,8 @@ class NewspaperMockData {
             date = LocalDate.parse("2020-01-05"),
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             digital = true,
-            urn = "avisa_null_null_20200105_1_1_1"
+            urn = "avisa_null_null_20200105_1_1_1",
+            title = "Avis A 2020.01.05"
         )
 
         // Minimum valid for creating digital item
@@ -87,7 +88,8 @@ class NewspaperMockData {
             date = LocalDate.parse("2020-01-01"),
             titleCatalogueId = "1",
             digital = true,
-            urn = "avisa_null_null_20200101_1_1_1"
+            urn = "avisa_null_null_20200101_1_1_1",
+            title = "Avis A 2020.01.01"
         )
 
         val language: Language = Language(
