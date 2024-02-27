@@ -1,17 +1,17 @@
-package no.nb.bikube.core.model.dto
+package no.nb.bikube.core.model.collectionsDto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.core.enum.CollectionsDescriptionType
 import no.nb.bikube.core.enum.CollectionsRecordType
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
-class YearDto(
-    @SerialName("part_of_reference.lref")
-    val partOfReference: String?,
+class TitleDto(
+    val title: String,
 
     @SerialName("record_type")
     val recordType: String?,
@@ -19,11 +19,26 @@ class YearDto(
     @SerialName("work.description_type")
     val descriptionType: String?,
 
+    @SerialName("medium")
+    val medium: String? = null,
+
+    @SerialName("submedium")
+    val subMedium: String? = null,
+
     @SerialName("dating.date.start")
     val dateStart: String? = null,
 
-    @SerialName("title")
-    val title: String? = null,
+    @SerialName("dating.date.end")
+    val dateEnd: String? = null,
+
+    @SerialName("publisher")
+    val publisher: String? = null,
+
+    @SerialName("place_of_publication")
+    val placeOfPublication: String? = null,
+
+    @SerialName("language")
+    val language: String? = null,
 
     @SerialName("input.name")
     val inputName: String? = null,
@@ -41,13 +56,18 @@ class YearDto(
     val dataset: String? = null
 )
 
-fun createYearDto(titleCatalogueId: String, year: String): YearDto {
-    return YearDto(
-        partOfReference = titleCatalogueId,
+fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
+    return TitleDto(
+        title = title.name!!,
+        dateStart = title.startDate?.toString(),
+        dateEnd = title.endDate?.toString(),
+        publisher = title.publisher,
+        placeOfPublication = title.publisherPlace,
+        language = title.language,
         recordType = CollectionsRecordType.WORK.value,
-        descriptionType = CollectionsDescriptionType.YEAR.value,
-        dateStart = year,
-        title = year,
+        descriptionType = CollectionsDescriptionType.SERIAL.value,
+        medium = "Tekst",
+        subMedium = "Aviser",
         inputName = "Bikube API", // TODO: Change when we have authentication in place
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),

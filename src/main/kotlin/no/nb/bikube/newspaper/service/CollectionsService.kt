@@ -7,7 +7,7 @@ import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.mapper.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.collections.*
-import no.nb.bikube.core.model.dto.*
+import no.nb.bikube.core.model.collectionsDto.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.repository.CollectionsRepository
