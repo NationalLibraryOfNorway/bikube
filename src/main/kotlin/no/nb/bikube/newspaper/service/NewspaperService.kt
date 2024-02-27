@@ -218,7 +218,7 @@ class NewspaperService  (
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
             .flatMap { title ->
-                if (item.title.isNullOrEmpty()) {
+                if (item.title.isNullOrEmpty() && item.digital == true) {
                     item.title = createItemTitleString(title.getFirstObject()?.getName()!!, item.date!!)
                 }
                 findOrCreateYearWorkRecord(title, item)
