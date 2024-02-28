@@ -113,7 +113,8 @@ class NewspaperServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId
+        partOfReference = newspaperItemMockB.catalogueId,
+        title = "Avis A 2020.01.05"
     ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
@@ -126,8 +127,9 @@ class NewspaperServiceTest(
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId)
-    )
+        partOfReference = newspaperItemMockB.catalogueId,
+        title = "Avis A 2020.01.05"
+    ))
 
     private val titleEncodedDto = Json.encodeToString(TitleDto(
         title = newspaperTitleMockB.name!!,
@@ -851,5 +853,28 @@ class NewspaperServiceTest(
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
+    }
+
+    @Test
+    fun `createTitleString should create a title with date if the title field on the item is null`() {
+        val item = newspaperInputDtoItemMockB.copy(title = null, date = LocalDate.parse("2024-02-28"))
+        val title = "Aftenposten"
+        val result = newspaperService.createTitleString(item, title)
+        Assertions.assertEquals("$title 2024.02.28", result)
+    }
+
+    @Test
+    fun `createTitleString should create a title with date if the title field on the item is empty`() {
+        val item = newspaperInputDtoItemMockB.copy(title = "", date = LocalDate.parse("2024-02-28"))
+        val title = "Aftenposten"
+        val result = newspaperService.createTitleString(item, title)
+        Assertions.assertEquals("$title 2024.02.28", result)
+    }
+
+    @Test
+    fun `createTitleString should return the title field of the item if it is not null or empty`() {
+        val item = newspaperInputDtoItemMockB.copy(title = "Some fancy title")
+        val result = newspaperService.createTitleString(item, "")
+        Assertions.assertEquals("Some fancy title", result)
     }
 }

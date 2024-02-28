@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
 import reactor.kotlin.core.publisher.toMono
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class NewspaperService  (
@@ -216,12 +217,21 @@ class NewspaperService  (
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
             .flatMap { title ->
+                item.title = createTitleString(item, title.getFirstObject()?.getName()!!)
                 findOrCreateYearWorkRecord(title, item)
             }.flatMap { yearWork ->
                 findOrCreateManifestationRecord(yearWork, item)
             }.flatMap { manifestation ->
                 createLinkedNewspaperItem(item, manifestation)
             }
+    }
+
+    fun createTitleString(item: ItemInputDto, title: String): String {
+        return if (item.title.isNullOrEmpty() && item.digital == true) {
+            "$title ${item.date?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}"
+        } else {
+            item.title!!
+        }
     }
 
     private fun createLinkedNewspaperItem(
@@ -266,4 +276,5 @@ class NewspaperService  (
 
     private fun filterByDate(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
         manifestationPartsObject.getDate().toString() == date.toString()
+
 }
