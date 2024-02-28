@@ -6,7 +6,7 @@ import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +22,7 @@ class ItemControllerTest {
     private lateinit var itemController: ItemController
 
     @MockkBean
-    private lateinit var collectionsService: CollectionsService
+    private lateinit var collectionsService: NewspaperService
 
     @MockkBean
     private lateinit var creationValidationService: CreationValidationService

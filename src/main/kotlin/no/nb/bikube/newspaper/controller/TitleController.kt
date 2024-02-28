@@ -13,7 +13,7 @@ import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
 @RequestMapping("/newspapers/titles")
 class TitleController (
-    private val collectionsService: CollectionsService
+    private val collectionsService: NewspaperService
 ) {
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")

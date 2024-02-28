@@ -11,7 +11,7 @@ import no.nb.bikube.core.model.Publisher
 import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +28,7 @@ class TitleControllerTest {
     private lateinit var titleController: TitleController
 
     @MockkBean
-    private lateinit var collectionsService: CollectionsService
+    private lateinit var collectionsService: NewspaperService
 
     @Test
     fun `createTitle should return 200 OK with the created title`() {

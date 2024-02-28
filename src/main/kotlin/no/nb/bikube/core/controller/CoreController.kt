@@ -12,13 +12,13 @@ import no.nb.bikube.core.enum.CatalogueName
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.catalog.collections.exception.CollectionsException
-import no.nb.bikube.catalog.collections.exception.CollectionsTitleNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +33,7 @@ import java.time.LocalDate
 @Tag(name = "Catalogue objects", description = "Endpoints related to catalog data for all text material")
 @RequestMapping("")
 class CoreController (
-    private val collectionsService: CollectionsService
+    private val collectionsService: NewspaperService
 ){
     companion object {
         const val DATE_REGEX = "^(17|18|19|20)\\d{2}(-)?(0[1-9]|1[0-2])(-)?(0[1-9]|[12][0-9]|3[01])$"

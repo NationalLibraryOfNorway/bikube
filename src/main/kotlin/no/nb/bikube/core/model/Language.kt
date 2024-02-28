@@ -2,5 +2,5 @@ package no.nb.bikube.core.model
 
 data class Language(
     val name: String?,
-    val databaseId: String?
+    val catalogueId: String?
 ) : CatalogueRecord

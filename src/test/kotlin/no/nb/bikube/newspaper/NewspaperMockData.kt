@@ -92,7 +92,7 @@ class NewspaperMockData {
 
         val language: Language = Language(
             name = "nob",
-            databaseId = "1"
+            catalogueId = "1"
         )
     }
 }

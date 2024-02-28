@@ -2,10 +2,10 @@ package no.nb.bikube
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nb.bikube.catalog.collections.exception.*
+import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.*
-import no.nb.bikube.catalog.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

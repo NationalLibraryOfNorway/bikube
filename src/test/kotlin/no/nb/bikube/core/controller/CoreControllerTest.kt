@@ -10,7 +10,7 @@ import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,7 +28,7 @@ class CoreControllerTest {
     private lateinit var coreController: CoreController
 
     @MockkBean
-    private lateinit var collectionsService: CollectionsService
+    private lateinit var collectionsService: NewspaperService
 
     @Test
     fun `get single item for newspaper should return item in body`() {
