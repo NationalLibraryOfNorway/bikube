@@ -859,7 +859,7 @@ class NewspaperServiceTest(
     fun `createTitleString should create a title with date if the title field on the item is null`() {
         val item = newspaperInputDtoItemMockB.copy(title = null, date = LocalDate.parse("2024-02-28"))
         val title = "Aftenposten"
-        val result = collectionsService.createTitleString(item, title)
+        val result = newspaperService.createTitleString(item, title)
         Assertions.assertEquals("$title 2024.02.28", result)
     }
 
@@ -867,14 +867,14 @@ class NewspaperServiceTest(
     fun `createTitleString should create a title with date if the title field on the item is empty`() {
         val item = newspaperInputDtoItemMockB.copy(title = "", date = LocalDate.parse("2024-02-28"))
         val title = "Aftenposten"
-        val result = collectionsService.createTitleString(item, title)
+        val result = newspaperService.createTitleString(item, title)
         Assertions.assertEquals("$title 2024.02.28", result)
     }
 
     @Test
     fun `createTitleString should return the title field of the item if it is not null or empty`() {
         val item = newspaperInputDtoItemMockB.copy(title = "Some fancy title")
-        val result = collectionsService.createTitleString(item, "")
+        val result = newspaperService.createTitleString(item, "")
         Assertions.assertEquals("Some fancy title", result)
     }
 }
