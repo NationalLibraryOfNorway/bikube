@@ -28,11 +28,11 @@ class CoreControllerTest {
     private lateinit var coreController: CoreController
 
     @MockkBean
-    private lateinit var collectionsService: NewspaperService
+    private lateinit var newspaperService: NewspaperService
 
     @Test
     fun `get single item for newspaper should return item in body`() {
-        every { collectionsService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA.copy())
+        every { newspaperService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA.copy())
 
         coreController.getSingleItem("1", MaterialType.NEWSPAPER).body!!
             .test()
@@ -60,7 +60,7 @@ class CoreControllerTest {
 
     @Test
     fun `get single title for newspaper should return title in body`() {
-        every { collectionsService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
         coreController.getSingleTitle("1", MaterialType.NEWSPAPER).body!!
             .test()
@@ -88,7 +88,7 @@ class CoreControllerTest {
 
     @Test
     fun `search title should return a list of titles matching name`() {
-        every { collectionsService.searchTitleByName(any()) } returns Flux.just(
+        every { newspaperService.searchTitleByName(any()) } returns Flux.just(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
@@ -110,23 +110,23 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.PERIODICAL) }
         assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.MONOGRAPH) }
 
-        verify { collectionsService.searchTitleByName(any()) wasNot Called }
+        verify { newspaperService.searchTitleByName(any()) wasNot Called }
     }
 
     @Test
-    fun `search title should call on collectionsService function when materialType is NEWSPAPER`() {
-        every { collectionsService.searchTitleByName(any()) } returns Flux.empty()
+    fun `search title should call on newspaperService function when materialType is NEWSPAPER`() {
+        every { newspaperService.searchTitleByName(any()) } returns Flux.empty()
 
         coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!
             .test()
             .verifyComplete()
 
-        verify { collectionsService.searchTitleByName(any()) }
+        verify { newspaperService.searchTitleByName(any()) }
     }
 
     @Test
     fun `search item should return a list of items matching criteria`() {
-        every { collectionsService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.just(
+        every { newspaperService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.just(
             newspaperItemMockA.copy(), newspaperItemMockA.copy()
         )
 
@@ -148,24 +148,24 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.PERIODICAL, "2020-01-01", false) }
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.MONOGRAPH, "2020-01-01", false) }
 
-        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
     }
 
     @Test
-    fun `search item should call on collectionsService function when materialType is NEWSPAPER`() {
-        every { collectionsService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.empty()
+    fun `search item should call on newspaperService function when materialType is NEWSPAPER`() {
+        every { newspaperService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.empty()
 
         coreController.searchItem("1", MaterialType.NEWSPAPER, "2020-01-01", true).body!!
             .test()
             .verifyComplete()
 
-        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) }
+        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) }
     }
 
     @Test
     fun `search item should throw BadRequestBodyException when searchTerm is empty`() {
         assertThrows<BadRequestBodyException> { coreController.searchItem("", MaterialType.NEWSPAPER, "2020-01-01", false) }
 
-        verify { collectionsService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
     }
 }

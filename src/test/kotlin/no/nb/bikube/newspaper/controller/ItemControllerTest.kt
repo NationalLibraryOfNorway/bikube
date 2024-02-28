@@ -22,15 +22,15 @@ class ItemControllerTest {
     private lateinit var itemController: ItemController
 
     @MockkBean
-    private lateinit var collectionsService: NewspaperService
+    private lateinit var newspaperService: NewspaperService
 
     @MockkBean
     private lateinit var creationValidationService: CreationValidationService
 
     @Test
     fun `create item should return 200 OK with created item`() {
-        every { collectionsService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        every { collectionsService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
         every { creationValidationService.validateItem(any()) } returns Unit
 
         itemController.createItem(newspaperItemMockCValidForCreation.copy())

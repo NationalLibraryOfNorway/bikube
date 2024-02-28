@@ -66,7 +66,7 @@ class NewspaperServiceTest(
     }
 
     @Autowired
-    private lateinit var collectionsService: NewspaperService
+    private lateinit var newspaperService: NewspaperService
 
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
@@ -153,7 +153,7 @@ class NewspaperServiceTest(
 
         val body = newspaperTitleInputDtoMockB.copy()
 
-        collectionsService.createNewspaperTitle(body)
+        newspaperService.createNewspaperTitle(body)
             .test()
             .expectNextMatches { it == newspaperTitleMockB }
             .verifyComplete()
@@ -165,7 +165,7 @@ class NewspaperServiceTest(
     fun `createTitle should throw exception with error message from repository method`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.error(CollectionsException("Error creating title"))
 
-        collectionsService.createNewspaperTitle(newspaperTitleInputDtoMockB)
+        newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
             .expectErrorMatches { it is CollectionsException && it.message == "Error creating title" }
             .verify()
@@ -175,7 +175,7 @@ class NewspaperServiceTest(
     fun `getItemsForTitle should return all items for title`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
-        collectionsService.getItemsForTitle(collectionsModelMockTitleA.getFirstObject()!!.priRef)
+        newspaperService.getItemsForTitle(collectionsModelMockTitleA.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(2)
@@ -187,7 +187,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
         val record: CollectionsObject = collectionsModelMockTitleA.getFirstObject()!!
-        collectionsService.getItemsForTitle(record.priRef)
+        newspaperService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
@@ -206,7 +206,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
 
         val record = collectionsModelMockTitleA.getFirstObject()!!
-        collectionsService.getItemsForTitle(record.priRef)
+        newspaperService.getItemsForTitle(record.priRef)
             .test()
             .expectSubscription()
             .expectNextMatches {
@@ -222,7 +222,7 @@ class NewspaperServiceTest(
     fun `getItemsForTitle should return empty flux when serial work has no year works`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
 
-        collectionsService.getItemsForTitle(collectionsModelMockTitleB.getFirstObject()!!.priRef)
+        newspaperService.getItemsForTitle(collectionsModelMockTitleB.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -233,7 +233,7 @@ class NewspaperServiceTest(
     fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
 
-        collectionsService.getItemsForTitle(collectionsModelMockTitleC.getFirstObject()!!.priRef)
+        newspaperService.getItemsForTitle(collectionsModelMockTitleC.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -244,7 +244,7 @@ class NewspaperServiceTest(
     fun `getItemsForTitle should return empty flux when manifestation has no items`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
 
-        collectionsService.getItemsForTitle(collectionsModelMockTitleD.getFirstObject()!!.priRef)
+        newspaperService.getItemsForTitle(collectionsModelMockTitleD.getFirstObject()!!.priRef)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -255,7 +255,7 @@ class NewspaperServiceTest(
     fun `getItemsForTitle should return an error if title does not exist`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
-        collectionsService.getItemsForTitle("123")
+        newspaperService.getItemsForTitle("123")
             .test()
             .expectSubscription()
             .expectErrorMatches { it is CollectionsTitleNotFound &&
@@ -270,7 +270,7 @@ class NewspaperServiceTest(
         val testRecord = collectionsModelMockItemA.getFirstObject()!!
         val testSerialWork = collectionsPartOfObjectMockSerialWorkA.partOfReference!!
 
-        collectionsService.getSingleItem("1")
+        newspaperService.getSingleItem("1")
             .test()
             .expectSubscription()
             .assertNext {
@@ -295,7 +295,7 @@ class NewspaperServiceTest(
     fun `getSingleItem should throw CollectionsTitleNotFound if object is a manifestation`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
 
-        collectionsService.getSingleItem("1")
+        newspaperService.getSingleItem("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -306,7 +306,7 @@ class NewspaperServiceTest(
     fun `getSingleItem should throw CollectionsTitleNotFound if object is a work`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
 
-        collectionsService.getSingleItem("1")
+        newspaperService.getSingleItem("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -317,7 +317,7 @@ class NewspaperServiceTest(
     fun `getSingleItem should throw CollectionsTitleNotFound if no items are received`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
-        collectionsService.getSingleItem("1")
+        newspaperService.getSingleItem("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -335,7 +335,7 @@ class NewspaperServiceTest(
             ))
         )
 
-        collectionsService.getSingleItem("1")
+        newspaperService.getSingleItem("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsException::class.java)
@@ -347,7 +347,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
         val testRecord = collectionsModelMockTitleA.getFirstObject()!!
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .assertNext {
@@ -372,7 +372,7 @@ class NewspaperServiceTest(
     fun `getSingleTitle should throw CollectionsTitleNotFound if object is a manifestation`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -383,7 +383,7 @@ class NewspaperServiceTest(
     fun `getSingleTitle should throw CollectionsTitleNotFound if object is an item`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -394,7 +394,7 @@ class NewspaperServiceTest(
     fun `getSingleTitle should throw CollectionsTitleNotFound if object is a year work`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -405,7 +405,7 @@ class NewspaperServiceTest(
     fun `getSingleTitle should throw CollectionsTitleNotFound if no items are received`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsTitleNotFound::class.java)
@@ -423,7 +423,7 @@ class NewspaperServiceTest(
             ))
         )
 
-        collectionsService.getSingleTitle("1")
+        newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
             .expectError(CollectionsException::class.java)
@@ -434,7 +434,7 @@ class NewspaperServiceTest(
     fun `getTitleByName should return correctly mapped title`() {
         every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleA)
 
-        collectionsService.searchTitleByName("1")
+        newspaperService.searchTitleByName("1")
             .test()
             .expectSubscription()
             .assertNext {
@@ -459,7 +459,7 @@ class NewspaperServiceTest(
     fun `getTitleByName should return empty Mono if no titles are found`() {
         every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        collectionsService.searchTitleByName("1")
+        newspaperService.searchTitleByName("1")
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -469,7 +469,7 @@ class NewspaperServiceTest(
     @Test
     fun `createTitle should return correctly mapped record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        collectionsService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
+        newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -480,7 +480,7 @@ class NewspaperServiceTest(
     fun `createTitle should correctly encode the title object sent to json string`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
 
-        collectionsService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
+        newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -492,7 +492,7 @@ class NewspaperServiceTest(
     @Test
     fun `searchTitleByName should return a correctly mapped catalogue record`() {
         every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleE)
-        collectionsService.searchTitleByName("1")
+        newspaperService.searchTitleByName("1")
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
@@ -502,7 +502,7 @@ class NewspaperServiceTest(
     @Test
     fun `searchTitleByName should return a flux of an empty list if no titles are found`() {
         every { collectionsRepository.getTitleByName(any()) } returns Mono.empty()
-        collectionsService.searchTitleByName("1")
+        newspaperService.searchTitleByName("1")
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -512,7 +512,7 @@ class NewspaperServiceTest(
     @Test
     fun `createPublisher should return RecordAlreadyExistsException if searchPublisher returns non-empty list`() {
         every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA)
-        collectionsService.createPublisher("1")
+        newspaperService.createPublisher("1")
             .test()
             .expectSubscription()
             .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Publisher '1' already exists" }
@@ -525,7 +525,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createNameRecord(any(), any()) } returns Mono.just(collectionsNameModelMockA)
         val expectedName = collectionsNameModelMockA.getFirstObject()!!.name
         val expectedId = collectionsNameModelMockA.getFirstObject()!!.priRef
-        collectionsService.createPublisher("Schibsted")
+        newspaperService.createPublisher("Schibsted")
             .test()
             .expectNext(Publisher(expectedName, expectedId))
             .verifyComplete()
@@ -535,14 +535,14 @@ class NewspaperServiceTest(
 
     @Test
     fun `createPublisher should throw BadRequestBodyException if publisher is empty`() {
-        assertThrows<BadRequestBodyException> { collectionsService.createPublisher("") }
+        assertThrows<BadRequestBodyException> { newspaperService.createPublisher("") }
     }
 
     @Test
     fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB)
         val publisherPlaceName = collectionsTermModelMockLocationB.getFirstObject()!!.term
-        collectionsService.createPublisherPlace(publisherPlaceName)
+        newspaperService.createPublisherPlace(publisherPlaceName)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -558,7 +558,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLocationB)
         val expectedTerm = collectionsTermModelMockLocationB.getFirstObject()!!.term
         val expectedId = collectionsTermModelMockLocationB.getFirstObject()!!.priRef
-        collectionsService.createPublisherPlace("Oslo")
+        newspaperService.createPublisherPlace("Oslo")
             .test()
             .expectNext(PublisherPlace(expectedTerm, expectedId))
             .verifyComplete()
@@ -568,13 +568,13 @@ class NewspaperServiceTest(
 
     @Test
     fun `createPublisherPlace should throw BadRequestBodyException if publisher place is empty`() {
-        assertThrows<BadRequestBodyException> { collectionsService.createPublisherPlace("") }
+        assertThrows<BadRequestBodyException> { newspaperService.createPublisherPlace("") }
     }
 
     @Test
     fun `createLanguage should return RecordAlreadyExistsException if searchLanguage returns non-empty list`() {
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA)
-        collectionsService.createLanguage("nob")
+        newspaperService.createLanguage("nob")
             .test()
             .expectSubscription()
             .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Language 'nob' already exists" }
@@ -587,7 +587,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLanguageA)
         val expectedTerm = collectionsTermModelMockLanguageA.getFirstObject()!!.term
         val expectedId = collectionsTermModelMockLanguageA.getFirstObject()!!.priRef
-        collectionsService.createLanguage("nob")
+        newspaperService.createLanguage("nob")
             .test()
             .expectNext(Language(expectedTerm, expectedId))
             .verifyComplete()
@@ -597,9 +597,9 @@ class NewspaperServiceTest(
 
     @Test
     fun `createLanguage should throw BadRequestBodyException if language code is not a valid ISO-639-2 language code`() {
-        assertThrows<BadRequestBodyException> { collectionsService.createLanguage("") }
-        assertThrows<BadRequestBodyException> { collectionsService.createLanguage("en") }
-        assertThrows<BadRequestBodyException> { collectionsService.createLanguage("english") }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("") }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("en") }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("english") }
     }
 
     @Test
@@ -607,7 +607,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        collectionsService.createNewspaperItem(newspaperInputDtoItemMockB)
+        newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -621,7 +621,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        collectionsService.createNewspaperItem(newspaperInputDtoItemMockB)
+        newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
@@ -637,7 +637,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        collectionsService.createNewspaperItem(newspaperInputDtoItemMockB)
+        newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -652,7 +652,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
-        collectionsService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
+        newspaperService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
             .test()
             .expectSubscription()
             .expectNextCount(1)
@@ -665,7 +665,7 @@ class NewspaperServiceTest(
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        collectionsService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now())
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -680,7 +680,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        collectionsService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now())
             .test()
             .expectSubscription()
             .assertNext {
@@ -707,7 +707,7 @@ class NewspaperServiceTest(
             )
         )
 
-        collectionsService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now())
             .test()
             .expectSubscription()
             .assertNext {
@@ -722,7 +722,7 @@ class NewspaperServiceTest(
     fun `createYearWork should throw CollectionsYearWorkNotFound if year work could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        collectionsService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023")
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -736,7 +736,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
 
-        collectionsService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023")
             .test()
             .expectSubscription()
             .assertNext {
@@ -765,7 +765,7 @@ class NewspaperServiceTest(
             )
         )
 
-        collectionsService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023")
             .test()
             .expectSubscription()
             .assertNext {
@@ -780,7 +780,7 @@ class NewspaperServiceTest(
     fun `searchItemByTitle should return correctly mapped item`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
         val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
-        collectionsService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .assertNext {
@@ -807,7 +807,7 @@ class NewspaperServiceTest(
     fun `searchItemByTitle should return an empty flux if no items are found`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        collectionsService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -820,7 +820,7 @@ class NewspaperServiceTest(
     fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
 
-        collectionsService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -833,7 +833,7 @@ class NewspaperServiceTest(
     fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
 
-        collectionsService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)
@@ -846,7 +846,7 @@ class NewspaperServiceTest(
     fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
 
-        collectionsService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
             .expectNextCount(0)

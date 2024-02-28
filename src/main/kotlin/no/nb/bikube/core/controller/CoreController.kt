@@ -33,7 +33,7 @@ import java.time.LocalDate
 @Tag(name = "Catalogue objects", description = "Endpoints related to catalog data for all text material")
 @RequestMapping("")
 class CoreController (
-    private val collectionsService: NewspaperService
+    private val newspaperService: NewspaperService
 ){
     companion object {
         const val DATE_REGEX = "^(17|18|19|20)\\d{2}(-)?(0[1-9]|1[0-2])(-)?(0[1-9]|[12][0-9]|3[01])$"
@@ -51,7 +51,7 @@ class CoreController (
         @RequestParam materialType: MaterialType,
     ): ResponseEntity<Mono<Item>> {
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(collectionsService.getSingleItem(catalogueId))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getSingleItem(catalogueId))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
@@ -68,7 +68,7 @@ class CoreController (
         @RequestParam materialType: MaterialType,
     ): ResponseEntity<Mono<Title>> {
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(collectionsService.getSingleTitle(catalogueId))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getSingleTitle(catalogueId))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
@@ -89,7 +89,7 @@ class CoreController (
     ): ResponseEntity<Flux<CatalogueRecord>> {
         if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(collectionsService.searchTitleByName(searchTerm))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.searchTitleByName(searchTerm))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
@@ -125,7 +125,7 @@ class CoreController (
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                collectionsService.getItemsByTitle(titleCatalogueId, parsedDate, isDigital, materialType)
+                newspaperService.getItemsByTitle(titleCatalogueId, parsedDate, isDigital, materialType)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }

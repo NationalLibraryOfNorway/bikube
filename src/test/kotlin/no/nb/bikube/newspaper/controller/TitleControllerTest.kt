@@ -28,14 +28,14 @@ class TitleControllerTest {
     private lateinit var titleController: TitleController
 
     @MockkBean
-    private lateinit var collectionsService: NewspaperService
+    private lateinit var newspaperService: NewspaperService
 
     @Test
     fun `createTitle should return 200 OK with the created title`() {
-        every { collectionsService.createPublisher(any()) } returns Mono.empty()
-        every { collectionsService.createPublisherPlace(any()) } returns Mono.empty()
-        every { collectionsService.createLanguage(any()) } returns Mono.empty()
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createPublisher(any()) } returns Mono.empty()
+        every { newspaperService.createPublisherPlace(any()) } returns Mono.empty()
+        every { newspaperService.createLanguage(any()) } returns Mono.empty()
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
         titleController.createTitle(newspaperTitleInputDtoMockA)
             .test()
@@ -80,8 +80,8 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should call create publisher if publisher is present on request body`() {
-        every { collectionsService.createPublisher(any()) } returns Mono.just(Publisher("Pub", "1"))
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createPublisher(any()) } returns Mono.just(Publisher("Pub", "1"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Pub", publisherPlace = null))
             .test()
             .expectSubscription()
@@ -93,8 +93,8 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should call createPublisherPlace if publisherPlace is present on request body`() {
-        every { collectionsService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Pub", "1"))
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Pub", "1"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Pub"))
             .test()
             .expectSubscription()
@@ -106,8 +106,8 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should call createLanguage if language is present on request body`() {
-        every { collectionsService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob", publisherPlace = null))
             .test()
             .expectSubscription()
@@ -121,7 +121,7 @@ class TitleControllerTest {
     fun `createTitle should not call on createPublisher, createPublisherPlace or createLanguage if not present on request body`() {
         val titleInput = newspaperTitleInputDtoMockA.copy(publisher = null, publisherPlace = null, language = null)
         val title = newspaperTitleMockA.copy(publisher = null, publisherPlace = null, language = null)
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(title)
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(title)
         titleController.createTitle(titleInput)
             .test()
             .expectSubscription()
@@ -130,19 +130,19 @@ class TitleControllerTest {
             }
             .verifyComplete()
 
-        verify { collectionsService.createPublisher(any()) wasNot Called }
-        verify { collectionsService.createPublisherPlace(any()) wasNot Called }
-        verify { collectionsService.createLanguage(any()) wasNot Called }
+        verify { newspaperService.createPublisher(any()) wasNot Called }
+        verify { newspaperService.createPublisherPlace(any()) wasNot Called }
+        verify { newspaperService.createLanguage(any()) wasNot Called }
     }
 
     @Test
     fun `createTitle should continue when createPublisher receives a 409 conflict`() {
-        every { collectionsService.createPublisher(any()) } returns Mono.error(
+        every { newspaperService.createPublisher(any()) } returns Mono.error(
             RecordAlreadyExistsException("Publisher place 'Schibsted' already exists")
         )
-        every { collectionsService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
-        every { collectionsService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
+        every { newspaperService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Schibsted"))
             .test()
             .expectSubscription()
@@ -154,12 +154,12 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should continue when createPublisherPlace receives a 409 conflict`() {
-        every { collectionsService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
-        every { collectionsService.createPublisherPlace(any()) } returns Mono.error(
+        every { newspaperService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
+        every { newspaperService.createPublisherPlace(any()) } returns Mono.error(
             RecordAlreadyExistsException("Publisher place 'Oslo' already exists")
         )
-        every { collectionsService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Oslo"))
             .test()
             .expectSubscription()
@@ -171,12 +171,12 @@ class TitleControllerTest {
 
     @Test
     fun `createTitle should continue when createLanguage receives a 409 conflict`() {
-        every { collectionsService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
-        every { collectionsService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
-        every { collectionsService.createLanguage(any()) } returns Mono.error(
+        every { newspaperService.createPublisher(any()) } returns Mono.just(Publisher("Schibsted", "1"))
+        every { newspaperService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
+        every { newspaperService.createLanguage(any()) } returns Mono.error(
             RecordAlreadyExistsException("Language 'nob' already exists")
         )
-        every { collectionsService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .test()
             .expectSubscription()
