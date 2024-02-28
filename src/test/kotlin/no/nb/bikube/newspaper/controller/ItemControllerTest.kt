@@ -6,7 +6,7 @@ import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,15 +22,15 @@ class ItemControllerTest {
     private lateinit var itemController: ItemController
 
     @MockkBean
-    private lateinit var collectionsService: CollectionsService
+    private lateinit var newspaperService: NewspaperService
 
     @MockkBean
     private lateinit var creationValidationService: CreationValidationService
 
     @Test
     fun `create item should return 200 OK with created item`() {
-        every { collectionsService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        every { collectionsService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
         every { creationValidationService.validateItem(any()) } returns Unit
 
         itemController.createItem(newspaperItemMockCValidForCreation.copy())

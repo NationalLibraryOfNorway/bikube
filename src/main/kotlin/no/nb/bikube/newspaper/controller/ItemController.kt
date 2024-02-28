@@ -9,7 +9,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono
 @Tag(name="Newspaper items", description="Endpoints related to newspaper items.")
 @RequestMapping("/newspapers/items")
 class ItemController (
-    private val collectionsService: CollectionsService,
+    private val newspaperService: NewspaperService,
     private val creationValidationService: CreationValidationService
 ){
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -40,8 +40,8 @@ class ItemController (
         creationValidationService.validateItem(item)
 
         // Checks that title exists before creating item. Will throw exception if not found.
-        return collectionsService.getSingleTitle(item.titleCatalogueId!!)
-            .flatMap { collectionsService.createNewspaperItem(item) }
+        return newspaperService.getSingleTitle(item.titleCatalogueId!!)
+            .flatMap { newspaperService.createNewspaperItem(item) }
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
                 logger().info("Newspaper item created with id: ${responseEntity.body?.catalogueId}")

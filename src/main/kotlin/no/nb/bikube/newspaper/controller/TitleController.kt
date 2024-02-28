@@ -13,7 +13,7 @@ import no.nb.bikube.core.model.PublisherPlace
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.service.CollectionsService
+import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
 @RequestMapping("/newspapers/titles")
 class TitleController (
-    private val collectionsService: CollectionsService
+    private val newspaperService: NewspaperService
 ) {
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")
@@ -46,28 +46,28 @@ class TitleController (
             Mono.error(BadRequestBodyException("Start date cannot be after end date"))
         } else {
             val publisherMono: Mono<Publisher> = title.publisher?.let { publisherName ->
-                collectionsService.createPublisher(publisherName).onErrorResume { exception ->
+                newspaperService.createPublisher(publisherName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let { locationName ->
-                collectionsService.createPublisherPlace(locationName).onErrorResume { exception ->
+                newspaperService.createPublisherPlace(locationName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val languageMono: Mono<Language> = title.language?.let { languageName ->
-                collectionsService.createLanguage(languageName).onErrorResume { exception ->
+                newspaperService.createLanguage(languageName).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
-                .then(collectionsService.createNewspaperTitle(title))
+                .then(newspaperService.createNewspaperTitle(title))
                 .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
                 .doOnSuccess { responseEntity ->
                     logger().info("Newspaper title created with id: ${responseEntity.body?.catalogueId}")
