@@ -25,6 +25,14 @@ class CollectionsRepository(
         return searchTexts("priref=${titleCatalogId}")
     }
 
+    fun getWorkYearForTitle(titleCatalogId: String, year: Int): Mono<CollectionsModel> {
+        return searchTexts(
+            "part_of_reference.lref=${titleCatalogId} and" +
+            "dating.date.start=${year} and" +
+            "work.description_type=${CollectionsDescriptionType.YEAR}"
+        )
+    }
+
     fun getTitleByName(name: String): Mono<CollectionsModel> {
         return searchTexts(
             "record_type=${CollectionsRecordType.WORK} and " +

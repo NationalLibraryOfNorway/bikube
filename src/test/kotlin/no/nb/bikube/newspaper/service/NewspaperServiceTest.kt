@@ -785,6 +785,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `searchItemByTitle should return correctly mapped item`() {
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
         val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
         newspaperService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
@@ -812,7 +813,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `searchItemByTitle should return an empty flux if no items are found`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         newspaperService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
             .test()
@@ -820,12 +821,12 @@ class NewspaperServiceTest(
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { collectionsRepository.getSingleCollectionsModel("19") }
+        verify { collectionsRepository.getWorkYearForTitle("19", 1999) }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB)
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockTitleB)
 
         newspaperService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
@@ -833,7 +834,7 @@ class NewspaperServiceTest(
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { collectionsRepository.getSingleCollectionsModel("6") }
+        verify { collectionsRepository.getWorkYearForTitle("6", 2000) }
     }
 
     @Test

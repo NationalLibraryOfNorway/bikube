@@ -107,15 +107,16 @@ class NewspaperService  (
         isDigital: Boolean,
         materialType: MaterialType
     ): Flux<CatalogueRecord> {
-        return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
+        return collectionsRepository.getWorkYearForTitle(titleCatalogId, date.year)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .flatMap { titleObject ->
                 val title = titleObject.getName() ?: ""
                 Flux.fromIterable(titleObject.getParts() ?: emptyList())
-                    .flatMapIterable { it.getPartRefs() }
-                    .filter { manifestationPartsObject -> filterByDate(manifestationPartsObject, date) }
-                    .flatMapIterable { it.getPartRefs() }
-                    .filter { itemPartReference -> filterByFormat(itemPartReference.partsReference, isDigital) }
+                    .filter { manifestation -> filterByDate(manifestation, date) }
+                    .flatMap { manifestation -> collectionsRepository.getSingleCollectionsModel(manifestation.partsReference?.priRef!!) }
+                    .flatMapIterable { it.getObjects() ?: emptyList() }
+                    .flatMapIterable { it.getParts() ?: emptyList() }
+                    .filter { itemPartReference -> filterByFormat(itemPartReference, isDigital) }
                     .map { itemPartReference ->
                         mapCollectionsPartsObjectToGenericItem(
                             itemPartReference.partsReference!!,
@@ -271,8 +272,8 @@ class NewspaperService  (
             }
     }
 
-    private fun filterByFormat(itemPartReference: CollectionsPartsReference?, isDigital: Boolean) =
-        itemPartReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
+    private fun filterByFormat(itemPartReference: CollectionsPartsObject?, isDigital: Boolean) =
+        itemPartReference?.partsReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
 
     private fun filterByDate(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
         manifestationPartsObject.getDate().toString() == date.toString()

@@ -55,6 +55,7 @@ class CoreControllerIntegrationTest (
         every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
@@ -443,7 +444,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `search-item endpoint should return empty flux when no items match search term`() {
-        every { collectionsRepository.getSingleCollectionsModel("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getWorkYearForTitle("no match", any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         webClient
             .get()
