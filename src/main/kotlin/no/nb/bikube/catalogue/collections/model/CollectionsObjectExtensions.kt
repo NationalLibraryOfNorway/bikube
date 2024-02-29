@@ -16,6 +16,10 @@ fun CollectionsModel.getFirstObject(): CollectionsObject? {
     return this.getObjects()?.first()
 }
 
+fun CollectionsModel.getFirstId(): String? {
+    return this.getObjects()?.first()?.priRef
+}
+
 // CollectionsObject
 fun CollectionsObject.isSerial(): Boolean {
     return this.workTypeList?.first()?.first()?.text == CollectionsDescriptionType.SERIAL.value

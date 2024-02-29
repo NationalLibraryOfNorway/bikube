@@ -256,7 +256,7 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage("nob")),
                         placeOfPublicationList = listOf("Brakka"),
                         partsList = null,
-                        workTypeList = null,
+                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null
                     )
                 )
@@ -377,6 +377,30 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemA),
+                        workTypeList = null,
+                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
+                    )
+                )
+            )
+        )
+
+        // As A Without parts
+        val collectionsModelMockManifestationB = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "24",
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
+                        recordTypeList = collectionsRecordTypeListManifestMock,
+                        formatList = null,
+                        partOfList = listOf(collectionsPartOfObjectMockYearWorkA),
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = null,
                         workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
                     )
