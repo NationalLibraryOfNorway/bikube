@@ -11,6 +11,11 @@ management:
 spring:
   webflux:
     base-path: /bikube
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
 
 springdoc:
   swagger-ui:

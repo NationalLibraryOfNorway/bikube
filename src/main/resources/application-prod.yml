@@ -1,9 +1,3 @@
-spring:
-  security:
-    user:
-      name: ${PROD_BIKUBE_USERNAME}
-      password: ${PROD_BIKUBE_PASSWORD}
-
 security:
   enabled: true
 
