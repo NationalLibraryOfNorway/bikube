@@ -59,7 +59,7 @@ class TitleControllerIntegrationTest (
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
         every { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
-        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
     }
 
@@ -132,7 +132,7 @@ class TitleControllerIntegrationTest (
             .expectStatus().isCreated
 
         verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
@@ -143,7 +143,7 @@ class TitleControllerIntegrationTest (
             .expectStatus().isCreated
 
         verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
+        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
@@ -152,7 +152,7 @@ class TitleControllerIntegrationTest (
             .expectStatus().isCreated
 
         verify(exactly = 0) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LOCATIONS) }
+        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
