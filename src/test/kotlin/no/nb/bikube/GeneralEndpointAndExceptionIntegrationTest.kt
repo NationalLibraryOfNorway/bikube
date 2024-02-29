@@ -3,9 +3,11 @@ package no.nb.bikube
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.catalogue.collections.exception.*
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.exception.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -233,5 +235,24 @@ class GeneralEndpointAndExceptionIntegrationTest (
                 Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
             }
             .verifyComplete()
+    }
+
+    @Test
+    fun `should redirect from base path to swagger without login`() {
+        webClient
+            .get()
+            .uri("/")
+            .exchange()
+            .expectStatus().is3xxRedirection
+            .expectBody()
+            .consumeWith { Assertions.assertEquals("/bikube/swagger-ui.html", it.responseHeaders.location.toString()) }
+
+        webClient
+            .get()
+            .uri("/swagger-ui.html")
+            .exchange()
+            .expectStatus().is3xxRedirection
+            .expectBody()
+            .consumeWith { Assertions.assertEquals("/bikube/webjars/swagger-ui/index.html", it.responseHeaders.location.toString()) }
     }
 }
