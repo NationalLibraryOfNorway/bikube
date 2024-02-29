@@ -33,3 +33,7 @@ collections:
 kerberos:
   realm: ${KERBEROS_REALM}
   kdc: ${KERBEROS_KDC}
+
+alma:
+  almaws-url: ${ALMAWS_URL}
+  api-key: ${ALMA_API_KEY}

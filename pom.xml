@@ -86,6 +86,12 @@
 			<version>2.15.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.15.3</version>
+		</dependency>
+
 		<!-- For serialization of the weird attribute names of Collection models -->
 		<dependency>
 			<groupId>org.jetbrains.kotlinx</groupId>
