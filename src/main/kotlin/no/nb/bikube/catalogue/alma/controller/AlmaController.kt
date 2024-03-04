@@ -33,6 +33,7 @@ class AlmaController(
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
         ApiResponse(responseCode = "400", description = "Invalid MMS"),
+        ApiResponse(responseCode = "404", description = "MMS not found"),
         ApiResponse(responseCode = "500", description = "Server error")
     ])
     fun getAlmaItemByMMS(

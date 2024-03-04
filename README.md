@@ -21,6 +21,8 @@ Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vi
 | collections.password | AD-passord til Collections      |
 | kerberos.realm       | Kerberos realm                  |
 | kerberos.kdc         | Kerberos KDC                    |
+| alma.almaws-url      | Base URL til AlmaWS API-et      |
+| alma.api-key         | API-nøkkel til AlmaWS API-et    |
 
 
 Kjør `java -jar target/bikube.jar` eller sett opp i din IDE. APIet kjører default på port 8080.

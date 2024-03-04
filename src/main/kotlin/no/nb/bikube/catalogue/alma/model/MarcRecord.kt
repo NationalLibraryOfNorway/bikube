@@ -18,13 +18,13 @@ data class MarcRecord(
     val type: String = "Bibliographic"
 
     @JacksonXmlProperty(isAttribute = true, localName = "xmlns")
-    val marcNamespace: String = "http://www.loc.gov/MARC21/slim"
+    val marcNamespace: String = "info:lc/xmlns/marcxchange-v1"
 
     @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsi")
     val xsiNamespace: String = "http://www.w3.org/2001/XMLSchema-instance"
 
     @JacksonXmlProperty(isAttribute = true, localName = "xsi:schemaLocation")
-    val xsiSchemaLocation: String = "http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+    val xsiSchemaLocation: String = "info:lc/xmlns/marcxchange-v1 http://www.loc.gov/standards/iso25577/marcxchange-1-1.xsd"
 }
 
 data class ControlField(

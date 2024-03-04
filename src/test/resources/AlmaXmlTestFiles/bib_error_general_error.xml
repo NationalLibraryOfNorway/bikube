@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<web_service_result xmlns="http://com/exlibris/urm/general/xmlbeans">
+    <errorsExist>true</errorsExist>
+    <errorList>
+        <error>
+            <errorCode>401652</errorCode>
+            <errorMessage>General Error - An error has occurred while processing the request.</errorMessage>
+            <trackingId>AlmaWS tracking id</trackingId>
+        </error>
+    </errorList>
+</web_service_result>
