@@ -7,6 +7,7 @@ import no.nb.bikube.catalogue.alma.util.DocumentMapper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -59,10 +61,14 @@ class AlmaControllerTests(
     fun shouldValidateMMS(mms: String) {
         webClient.get().uri("/alma/mms/$mms")
             .exchange()
-            .expectStatus()
-            .isBadRequest
-            .expectBody(String::class.java)
-            .isEqualTo(AlmaController.MMS_MESSAGE)
+            .expectStatus().isBadRequest
+            .expectBody(ProblemDetail::class.java)
+            .consumeWith { problemDetail ->
+                Assertions.assertEquals(
+                    problemDetail.responseBody!!.detail,
+                    "getAlmaItemByMMS.mms: ${AlmaController.MMS_MESSAGE}"
+                )
+            }
     }
 
     @Test
