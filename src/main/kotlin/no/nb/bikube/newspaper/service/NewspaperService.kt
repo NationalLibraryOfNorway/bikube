@@ -144,13 +144,13 @@ class NewspaperService  (
 
     fun createPublisherPlace(publisherPlace: String): Mono<PublisherPlace> {
         if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
-        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION))
         return collectionsRepository.searchPublisherPlace(publisherPlace)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
                 } else {
-                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LOCATIONS)
+                    val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION))
+                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
                         .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()!!) }
                 }
             }

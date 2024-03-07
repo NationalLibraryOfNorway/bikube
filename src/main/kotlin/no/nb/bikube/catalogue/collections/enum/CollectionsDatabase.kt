@@ -4,5 +4,5 @@ enum class CollectionsDatabase (val value: String) {
     TEXTS("texts"),
     PEOPLE("people"),
     LANGUAGES("thesau"),
-    LOCATIONS("thesaugeo")
+    GEO_LOCATIONS("thesaugeo"),
 }

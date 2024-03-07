@@ -45,7 +45,7 @@ class CollectionsRepository(
     }
 
     fun searchPublisherPlace(name: String): Mono<CollectionsTermModel> {
-        return searchTermDatabases("term=\"${name}\"", CollectionsDatabase.LOCATIONS)
+        return searchTermDatabases("term=\"${name}\" and term.type=\"place\"", CollectionsDatabase.GEO_LOCATIONS)
     }
 
     @Throws(CollectionsException::class)
