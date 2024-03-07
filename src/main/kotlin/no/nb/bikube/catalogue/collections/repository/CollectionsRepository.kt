@@ -27,8 +27,8 @@ class CollectionsRepository(
 
     fun getWorkYearForTitle(titleCatalogId: String, year: Int): Mono<CollectionsModel> {
         return searchTexts(
-            "part_of_reference.lref=${titleCatalogId} and" +
-            "dating.date.start=${year} and" +
+            "part_of_reference.lref=${titleCatalogId} and " +
+            "dating.date.start=${year} and " +
             "work.description_type=${CollectionsDescriptionType.YEAR}"
         )
     }
