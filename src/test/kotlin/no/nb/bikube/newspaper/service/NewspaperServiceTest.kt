@@ -1,47 +1,47 @@
 package no.nb.bikube.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import io.mockk.verify
+import io.mockk.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleD
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleE
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.yearWorkNoManifestationA
 import no.nb.bikube.catalogue.collections.controller.CollectionsControllerExceptionHandler
 import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.exception.*
-import no.nb.bikube.core.model.*
 import no.nb.bikube.catalogue.collections.model.dto.ItemDto
 import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
 import no.nb.bikube.catalogue.collections.model.dto.TitleDto
 import no.nb.bikube.catalogue.collections.model.dto.YearDto
+import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.core.model.*
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -785,30 +785,28 @@ class NewspaperServiceTest(
 
     @Test
     fun `searchItemByTitle should return correctly mapped item`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
-        val expectedMock = collectionsPartsObjectMockItemA.copy().partsReference!!
-        newspaperService.getItemsByTitle("1", LocalDate.parse("2020-01-01"), true, MaterialType.NEWSPAPER)
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkC)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationC)
+
+        val date = LocalDate.parse("2020-01-01")
+        val expected = Item(
+            catalogueId = "32",
+            name = "Aftenposten",
+            date = date,
+            materialType = MaterialType.NEWSPAPER.value,
+            titleCatalogueId = "1",
+            titleName = "Aftenposten",
+            digital = true,
+            urn = null
+        )
+
+        newspaperService.getItemsByTitle("1", date, true, MaterialType.NEWSPAPER)
             .test()
             .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(
-                    Item(
-                        catalogueId = expectedMock.priRef!!,
-                        name = expectedMock.getName(),
-                        date = expectedMock.getItemDate(),
-                        materialType = MaterialType.NEWSPAPER.value,
-                        titleCatalogueId = "1",
-                        titleName = collectionsModelMockTitleA.adlibJson.recordList?.first()?.getName(),
-                        digital = true,
-                        urn = null
-                    ),
-                    it
-                )
+            .assertNext { actual ->
+                Assertions.assertEquals(expected, actual)
             }
             .verifyComplete()
-
-        verify { collectionsRepository.getSingleCollectionsModel("1") }
     }
 
     @Test
@@ -839,7 +837,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(yearWorkNoManifestationA)
 
         newspaperService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
             .test()
@@ -847,11 +845,13 @@ class NewspaperServiceTest(
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { collectionsRepository.getSingleCollectionsModel("7") }
+        verify (exactly = 1) { collectionsRepository.getWorkYearForTitle("7", 2000) }
+        verify { collectionsRepository.getSingleCollectionsModel(any()) wasNot Called }
     }
 
     @Test
     fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
+        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
 
         newspaperService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
