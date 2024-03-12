@@ -152,6 +152,7 @@ class NewspaperServiceTest(
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         val body = newspaperTitleInputDtoMockB.copy()
 
@@ -471,6 +472,8 @@ class NewspaperServiceTest(
     @Test
     fun `createTitle should return correctly mapped record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
+
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
             .expectSubscription()
@@ -481,6 +484,7 @@ class NewspaperServiceTest(
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()

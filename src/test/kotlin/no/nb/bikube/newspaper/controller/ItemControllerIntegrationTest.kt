@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
@@ -19,10 +20,10 @@ import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.model.*
+import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,10 +47,10 @@ class ItemControllerIntegrationTest (
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
 
-    private val titleId = "1"
-    private val yearWorkId = "2"
-    private val manifestationId = "3"
-    private val itemId = "4"
+    private val titleId = collectionsModelMockTitleA.getFirstId()!!
+    private val yearWorkId = collectionsModelMockYearWorkA.getFirstId()!!
+    private val manifestationId = collectionsModelMockManifestationB.getFirstId()!!
+    private val itemId = collectionsModelMockItemA.getFirstId()!!
 
     private fun createItem(item: ItemInputDto): ResponseSpec {
         return webClient
@@ -77,7 +78,7 @@ class ItemControllerIntegrationTest (
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
-                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationA)
+                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationB)
                 CollectionsRecordType.WORK.value -> {
                     if (dto.descriptionType == CollectionsDescriptionType.SERIAL.value) {
                         Mono.just(collectionsModelMockTitleA)
@@ -166,8 +167,8 @@ class ItemControllerIntegrationTest (
 
     @Test
     fun `post-newspapers-items endpoint should create year work and manifestation if year work is not found`() {
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        val mockTitle = Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returnsMany listOf(mockTitle, mockTitle, Mono.just(collectionsModelMockItemA.copy()))
 
         createItem(newspaperItemMockCValidForCreation)
             .expectStatus().isCreated

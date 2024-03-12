@@ -7,12 +7,12 @@ import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.catalogue.collections.mapper.*
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
+import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -35,7 +35,7 @@ class NewspaperService  (
                     ?. let { sink.next(collectionsModel.adlibJson.recordList) }
                     ?: sink.error(CollectionsTitleNotFound("New title not found"))
             }
-            .map { mapCollectionsObjectToGenericTitle(it.first()) }
+            .flatMap { getSingleTitle(it.first().priRef) }
     }
 
     @Throws(CollectionsException::class)
@@ -244,7 +244,7 @@ class NewspaperService  (
             collectionsModel.getObjects()
                 ?. let { sink.next(collectionsModel.getObjects()) }
                 ?: sink.error(CollectionsItemNotFound("New item not found"))
-        }.map { mapCollectionsObjectToGenericItem(it!!.first()) }
+        }.flatMap { getSingleItem(it!!.first().priRef) }
     }
 
     private fun findOrCreateManifestationRecord(
