@@ -35,6 +35,11 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
 		<!-- Kotlin dependencies -->
 		<dependency>
@@ -86,6 +91,12 @@
 			<version>2.15.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.15.3</version>
+		</dependency>
+
 		<!-- For serialization of the weird attribute names of Collection models -->
 		<dependency>
 			<groupId>org.jetbrains.kotlinx</groupId>
@@ -122,6 +133,18 @@
 			<groupId>com.ninja-squad</groupId>
 			<artifactId>springmockk</artifactId>
 			<version>4.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.12.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>mockwebserver</artifactId>
+			<version>4.12.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

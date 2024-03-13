@@ -24,6 +24,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
+import no.nb.bikube.catalogue.collections.controller.CollectionsControllerExceptionHandler
 import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
@@ -54,7 +55,7 @@ import java.time.format.DateTimeFormatter
 @SpringBootTest
 @ActiveProfiles("test")
 class NewspaperServiceTest(
-    @Autowired private val globalControllerExceptionHandler: GlobalControllerExceptionHandler
+    @Autowired private val collectionsControllerExceptionHandler: CollectionsControllerExceptionHandler
 ) {
 
     companion object {
@@ -262,7 +263,7 @@ class NewspaperServiceTest(
             .test()
             .expectSubscription()
             .expectErrorMatches { it is CollectionsTitleNotFound &&
-                    globalControllerExceptionHandler.handleCollectionsTitleNotFoundException(it).status == 404
+                    collectionsControllerExceptionHandler.handleCollectionsTitleNotFoundException(it).status == 404
             }
             .verify()
     }

@@ -1,16 +1,16 @@
-package no.nb.bikube.core.exception
+package no.nb.bikube.catalogue.collections.controller
 
 import no.nb.bikube.catalogue.collections.exception.*
+import no.nb.bikube.core.controller.addDefaultProperties
 import no.nb.bikube.core.util.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.net.URI
-import java.time.Instant
 
 @ControllerAdvice
-class GlobalControllerExceptionHandler {
+class CollectionsControllerExceptionHandler {
+
     @ExceptionHandler(CollectionsException::class)
     fun handleCollectionsException(exception: CollectionsException): ProblemDetail {
         logger().error("CollectionsException occurred: ${exception.message}")
@@ -28,39 +28,6 @@ class GlobalControllerExceptionHandler {
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections title not found: ${exception.message}"
-        problemDetail.addDefaultProperties()
-
-        return problemDetail
-    }
-
-    @ExceptionHandler(NotSupportedException::class)
-    fun handleNotSupportedException(exception: NotSupportedException): ProblemDetail {
-        logger().warn("NotSupportedException occurred: ${exception.message}")
-
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST)
-        problemDetail.detail = exception.message ?: "What you are trying to do is not supported."
-        problemDetail.addDefaultProperties()
-
-        return problemDetail
-    }
-
-    @ExceptionHandler(BadRequestBodyException::class)
-    fun handleBadRequestBodyException(exception: BadRequestBodyException): ProblemDetail {
-        logger().warn("BadRequestBodyException occurred: ${exception.message}")
-
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST)
-        problemDetail.detail = exception.message ?: "The request body is malformed."
-        problemDetail.addDefaultProperties()
-
-        return problemDetail
-    }
-
-    @ExceptionHandler(RecordAlreadyExistsException::class)
-    fun handleRecordAlreadyExistsException(exception: RecordAlreadyExistsException): ProblemDetail {
-        logger().warn("RecordAlreadyExistsException occurred: ${exception.message}")
-
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)
-        problemDetail.detail = exception.message ?: "The record already exists."
         problemDetail.addDefaultProperties()
 
         return problemDetail
@@ -98,12 +65,5 @@ class GlobalControllerExceptionHandler {
 
         return problemDetail
     }
-}
 
-fun ProblemDetail.addDefaultProperties() {
-    this.type = URI(
-        "https://produksjon.nb.no/bikube/error/" +
-        "${HttpStatus.resolve(this.status)?.name?.lowercase()?.replace("_", "-")}"
-    )
-    this.setProperty("timestamp", Instant.now())
 }
