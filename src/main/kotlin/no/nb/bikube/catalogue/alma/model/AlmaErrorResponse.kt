@@ -16,7 +16,8 @@ data class AlmaError (
 )
 
 enum class AlmaErrorCode(val value: String) {
-    NOT_FOUND("402203"),
+    MMS_NOT_FOUND("402203"),
+    BARCODE_NOT_FOUND("401689"),
     ILLEGAL_ARG("402204"),
     SERVER_ERROR("401652")
 }

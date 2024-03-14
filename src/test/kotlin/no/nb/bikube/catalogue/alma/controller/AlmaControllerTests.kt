@@ -3,6 +3,7 @@ package no.nb.bikube.catalogue.alma.controller
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import no.nb.bikube.catalogue.alma.repository.AlmaRepository
+import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import no.nb.bikube.catalogue.alma.util.DocumentMapper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -30,7 +31,8 @@ import reactor.test.StepVerifier
 class AlmaControllerTests(
     @Autowired private var webClient: WebTestClient,
     @Autowired private val almaRepository: AlmaRepository,
-    @Autowired private val documentMapper: DocumentMapper
+    @Autowired private val documentMapper: DocumentMapper,
+    @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
     companion object {
@@ -88,10 +90,13 @@ class AlmaControllerTests(
                 .addHeader("Content-type", "application/xml")
         )
 
-        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402", prolog = false)
+        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402")
 
         StepVerifier.create(almaResponse)
-            .expectNextMatches { documentMapper.parseDocument(it) == documentMapper.parseDocument(marcRecord) }
+            .expectNextMatches {
+                val mappedRecord = marcXChangeService.writeAsByteArray(it.record, false)
+                documentMapper.parseDocument(mappedRecord) == documentMapper.parseDocument(marcRecord)
+            }
             .verifyComplete()
     }
 
@@ -109,7 +114,7 @@ class AlmaControllerTests(
                 .addHeader("Content-type", "application/xml")
         )
 
-        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402", prolog = false)
+        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402")
 
         StepVerifier.create(almaResponse)
             .expectErrorMatches {
@@ -133,7 +138,7 @@ class AlmaControllerTests(
                 .addHeader("Content-type", "application/xml")
         )
 
-        val almaResponse = almaRepository.getRecordByMMS(mms = "ABCDEF12345", prolog = false)
+        val almaResponse = almaRepository.getRecordByMMS(mms = "ABCDEF12345")
 
         StepVerifier.create(almaResponse)
             .expectErrorMatches {
@@ -157,7 +162,7 @@ class AlmaControllerTests(
                 .addHeader("Content-type", "application/xml")
         )
 
-        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402", prolog = false)
+        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402")
 
         StepVerifier.create(almaResponse)
             .expectErrorMatches {
@@ -176,7 +181,7 @@ class AlmaControllerTests(
                 .addHeader("Content-type", "application/xml")
         )
 
-        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402", prolog = false)
+        val almaResponse = almaRepository.getRecordByMMS(mms = "987654321098765402")
 
         StepVerifier.create(almaResponse)
             .expectErrorMatches { it is AlmaException && it.message == "Server error" }

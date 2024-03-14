@@ -25,10 +25,11 @@ class MarcXChangeServiceTest(
 
     @Test
     fun `Alma bib response should be mapped to MarcRecord`() {
-        val mapped = marcXChangeService.parseBibResult(bibResponse, false)
+        val bibResponse = marcXChangeService.parseBibResult(bibResponse)
+        val recordBytes = marcXChangeService.writeAsByteArray(bibResponse.record, false)
 
         Assertions.assertEquals(
-            documentMapper.parseDocument(mapped),
+            documentMapper.parseDocument(recordBytes),
             documentMapper.parseDocument(marcRecord)
         )
     }

@@ -3,14 +3,18 @@ package no.nb.bikube.catalogue.alma.repository
 import no.nb.bikube.catalogue.alma.config.AlmaConfig
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.catalogue.alma.model.AlmaBibResult
 import no.nb.bikube.catalogue.alma.model.AlmaErrorCode
+import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.ClientResponse
 import reactor.core.publisher.Mono
+import reactor.netty.http.client.HttpClient
 
 @Repository
 class AlmaRepository(
@@ -18,10 +22,15 @@ class AlmaRepository(
     private val marcXChangeService: MarcXChangeService
 ) {
     private val webClient = WebClient.builder()
+        .clientConnector(
+            ReactorClientHttpConnector(
+                HttpClient.create().followRedirect(true)
+            )
+        )
         .baseUrl(almaConfig.almawsUrl)
         .build()
 
-    fun getRecordByMMS(mms: String, prolog: Boolean): Mono<ByteArray> {
+    fun getRecordByMMS(mms: String): Mono<AlmaBibResult> {
         return webClient.get()
             .uri { builder ->
                 builder.path("/bibs/$mms")
@@ -36,7 +45,33 @@ class AlmaRepository(
                 { response -> mapHttpError(response) }
             )
             .bodyToMono(String::class.java)
-            .map { marcXChangeService.parseBibResult(it, prolog) }
+            .map { marcXChangeService.parseBibResult(it) }
+    }
+
+    fun getRecordByBarcode(barcode: String): Mono<MarcRecord> {
+        return webClient.get()
+            .uri { builder ->
+                builder.path("/items")
+                    .queryParam("item_barcode", barcode)
+                    .queryParam("expand", "None")
+                    .queryParam("apiKey", almaConfig.apiKey)
+                    .build()
+            }
+            .accept(MediaType.APPLICATION_XML, MediaType.TEXT_XML)
+            .retrieve()
+            .onStatus(
+                { it != HttpStatus.OK },
+                { response -> mapHttpError(response) }
+            )
+            .bodyToMono(String::class.java)
+            .flatMap { res ->
+                val item = marcXChangeService.parseItemResult(res)
+                // TODO: error if MMSID empty
+                getRecordByMMS(item.bibData.mmsId)
+                    .map { bib ->
+                        marcXChangeService.addEnumChron(item.itemData, bib.record)
+                    }
+            }
     }
 
     private fun mapHttpError(response: ClientResponse): Mono<Throwable> {
@@ -45,7 +80,7 @@ class AlmaRepository(
                 .map(marcXChangeService::parseErrorResponse)
                 .map { errorResponse ->
                     errorResponse.errorList
-                        .find { it.errorCode == AlmaErrorCode.NOT_FOUND.value }
+                        .find { it.errorCode == AlmaErrorCode.MMS_NOT_FOUND.value || it.errorCode == AlmaErrorCode.BARCODE_NOT_FOUND.value }
                         ?. let { AlmaRecordNotFoundException(it.errorMessage) }
                         ?: errorResponse.errorList
                         .find { it.errorCode == AlmaErrorCode.ILLEGAL_ARG.value }
