@@ -47,7 +47,10 @@ class AlmaRepository(
             .bodyToMono(String::class.java)
             .map { marcXChangeService.parseBibResult(it) }
             .onErrorMap { throwable ->
-                AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
+                if (throwable is AlmaException || throwable is IllegalArgumentException)
+                    throwable
+                else
+                    AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
             }
     }
 
@@ -81,25 +84,33 @@ class AlmaRepository(
                     }
             }
             .onErrorMap { throwable ->
-                AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
+                if (throwable is AlmaException || throwable is IllegalArgumentException)
+                    throwable
+                else
+                    AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
             }
     }
 
     private fun mapHttpError(response: ClientResponse): Mono<Throwable> {
-        return when (response.statusCode()) {
-            HttpStatus.BAD_REQUEST -> response.bodyToMono(String::class.java)
-                .map(marcXChangeService::parseErrorResponse)
-                .map { errorResponse ->
-                    errorResponse.errorList
-                        .find { it.errorCode == AlmaErrorCode.MMS_NOT_FOUND.value || it.errorCode == AlmaErrorCode.BARCODE_NOT_FOUND.value }
-                        ?. let { AlmaRecordNotFoundException(it.errorMessage) }
-                        ?: errorResponse.errorList
-                        .find { it.errorCode == AlmaErrorCode.ILLEGAL_ARG.value }
-                        ?. let { IllegalArgumentException(it.errorMessage) }
-                        ?: AlmaException(errorResponse.errorList.map { it.errorMessage }.toString())
-                }
-            else -> response.bodyToMono(String::class.java)
+        if (response.statusCode() != HttpStatus.BAD_REQUEST)
+            return response.bodyToMono(String::class.java)
                 .map { AlmaException(it) }
-        }
+
+        return response.bodyToMono(String::class.java)
+            .map(marcXChangeService::parseErrorResponse)
+            .handle { errorResponse, sink ->
+                val notFoundError = errorResponse.errorList.firstOrNull {
+                    it.errorCode == AlmaErrorCode.MMS_NOT_FOUND.value || it.errorCode == AlmaErrorCode.BARCODE_NOT_FOUND.value
+                }
+                val illegalArgError = errorResponse.errorList.firstOrNull {
+                    it.errorCode == AlmaErrorCode.ILLEGAL_ARG.value
+                }
+                if (notFoundError != null)
+                    sink.next(AlmaRecordNotFoundException(notFoundError.errorMessage))
+                else if (illegalArgError != null)
+                    sink.next(IllegalArgumentException(illegalArgError.errorMessage))
+                else
+                    sink.next(AlmaException(errorResponse.errorList.map { it.errorMessage }.toString()))
+            }
     }
 }
