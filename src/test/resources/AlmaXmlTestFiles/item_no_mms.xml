@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<item link="https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/987654321098765402/holdings/12345/items/67890">
+    <bib_data link="https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/987654321098765402">
+        <mms_id></mms_id>
+        <bib_suppress_from_publishing>false</bib_suppress_from_publishing>
+        <title>Book title</title>
+        <author>Ola Nordmann</author>
+        <complete_edition></complete_edition>
+        <network_numbers>
+            <network_number>987654321-47bibsys_network</network_number>
+            <network_number>(EXLNZ-47BIBSYS_NETWORK)987654321098765401</network_number>
+        </network_numbers>
+        <place_of_publication>Oslo</place_of_publication>
+        <date_of_publication>2024</date_of_publication>
+        <publisher_const></publisher_const>
+    </bib_data>
+    <item_data>
+        <enumeration_a>Vol. 1</enumeration_a>
+        <enumeration_b>n. 2</enumeration_b>
+        <enumeration_c>cn. 3</enumeration_c>
+        <enumeration_d></enumeration_d>
+        <enumeration_e></enumeration_e>
+        <enumeration_f></enumeration_f>
+        <enumeration_g></enumeration_g>
+        <enumeration_h></enumeration_h>
+        <chronology_i>2024</chronology_i>
+        <chronology_j>03</chronology_j>
+        <chronology_k>14</chronology_k>
+    </item_data>
+</item>

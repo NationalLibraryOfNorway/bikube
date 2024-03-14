@@ -64,9 +64,14 @@ class AlmaRepository(
                 { response -> mapHttpError(response) }
             )
             .bodyToMono(String::class.java)
-            .flatMap { res ->
-                val item = marcXChangeService.parseItemResult(res)
-                // TODO: error if MMSID empty
+            .handle { s, sink ->
+                val item = marcXChangeService.parseItemResult(s)
+                if (item.bibData.mmsId.isNotEmpty())
+                    sink.next(item)
+                else
+                    sink.error(AlmaException("No MMS-id found in Alma item result"))
+            }
+            .flatMap { item ->
                 getRecordByMMS(item.bibData.mmsId)
                     .map { bib ->
                         marcXChangeService.addEnumChron(item.itemData, bib.record)

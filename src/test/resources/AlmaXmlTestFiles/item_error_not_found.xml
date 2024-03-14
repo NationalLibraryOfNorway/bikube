@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<web_service_result xmlns="http://com/exlibris/urm/general/xmlbeans">
+    <errorsExist>true</errorsExist>
+    <errorList>
+        <error>
+            <errorCode>401689</errorCode>
+            <errorMessage>No items found for barcode 1111.</errorMessage>
+            <trackingId>AlmaWS tracking id</trackingId>
+        </error>
+    </errorList>
+</web_service_result>
