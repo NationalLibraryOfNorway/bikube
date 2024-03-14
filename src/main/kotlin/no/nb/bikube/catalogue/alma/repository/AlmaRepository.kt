@@ -46,6 +46,9 @@ class AlmaRepository(
             )
             .bodyToMono(String::class.java)
             .map { marcXChangeService.parseBibResult(it) }
+            .onErrorMap { throwable ->
+                AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
+            }
     }
 
     fun getRecordByBarcode(barcode: String): Mono<MarcRecord> {
@@ -76,6 +79,9 @@ class AlmaRepository(
                     .map { bib ->
                         marcXChangeService.addEnumChron(item.itemData, bib.record)
                     }
+            }
+            .onErrorMap { throwable ->
+                AlmaException("Encountered an error [${throwable.message}]").initCause(throwable)
             }
     }
 
