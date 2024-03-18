@@ -100,7 +100,7 @@ class CollectionsModelMockData {
                 workTypeList = null,
                 formatList = null,
                 partsList = null,
-                dateStart = null
+                dateStart = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null))
             )
         )
 
@@ -494,6 +494,87 @@ class CollectionsModelMockData {
 
         val collectionsNameModelWithEmptyRecordListA = CollectionsNameModel(
             adlibJson = CollectionsNameRecordList(recordList = null)
+        )
+
+        val collectionsModelMockYearWorkC = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "30",
+                        titleList = listOf(CollectionsTitle(title = "Aftenposten")),
+                        recordTypeList = collectionsRecordTypeListWorkMock,
+                        formatList = null,
+                        partOfList = null,
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null)),
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(collectionsPartsObjectMockManifestationB),
+                        workTypeList = collectionsWorkTypeListYearMock,
+                        alternativeNumberList = null
+                    )
+                )
+            )
+        )
+
+        val collectionsPartsObjectMockItemD = CollectionsPartsObject(
+            partsReference = CollectionsPartsReference(
+                priRef = "32",
+                titleList = listOf(CollectionsTitle(title = "Aftenposten")),
+                recordType = collectionsRecordTypeListItemMock,
+                workTypeList = null,
+                formatList = collectionsFormatListDigitalMock,
+                partsList = null,
+                dateStart = null
+            )
+        )
+
+        val collectionsModelMockManifestationC = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "31",
+                        titleList = listOf(CollectionsTitle(title = "Aftenposten")),
+                        recordTypeList = collectionsRecordTypeListManifestMock,
+                        formatList = null,
+                        partOfList = null,
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(collectionsPartsObjectMockItemD),
+                        workTypeList = null,
+                        alternativeNumberList = null
+                    )
+                )
+            )
+        )
+
+        val yearWorkNoManifestationA = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "100",
+                        titleList = listOf(CollectionsTitle(title = "Aftenposten")),
+                        recordTypeList = collectionsRecordTypeListWorkMock,
+                        formatList = null,
+                        partOfList = null,
+                        subMediumList = listOf(SubMedium(subMedium = "Aviser")),
+                        mediumList = null,
+                        datingList = listOf(CollectionsDating(dateFrom = "2024", dateTo = null)),
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(),
+                        workTypeList = collectionsWorkTypeListYearMock,
+                        alternativeNumberList = null,
+                    )
+                )
+            )
         )
     }
 }

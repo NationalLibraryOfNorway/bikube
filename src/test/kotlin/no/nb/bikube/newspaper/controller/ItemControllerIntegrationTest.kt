@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
@@ -49,7 +49,7 @@ class ItemControllerIntegrationTest (
 
     private val titleId = collectionsModelMockTitleA.getFirstId()!!
     private val yearWorkId = collectionsModelMockYearWorkA.getFirstId()!!
-    private val manifestationId = collectionsModelMockManifestationB.getFirstId()!!
+    private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
     private val itemId = collectionsModelMockItemA.getFirstId()!!
 
     private fun createItem(item: ItemInputDto): ResponseSpec {
@@ -78,7 +78,7 @@ class ItemControllerIntegrationTest (
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
-                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationB)
+                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationC)
                 CollectionsRecordType.WORK.value -> {
                     if (dto.descriptionType == CollectionsDescriptionType.SERIAL.value) {
                         Mono.just(collectionsModelMockTitleA)
