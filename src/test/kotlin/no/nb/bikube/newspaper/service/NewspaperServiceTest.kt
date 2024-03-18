@@ -42,6 +42,7 @@ import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemM
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.urnMock
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -107,22 +108,21 @@ class NewspaperServiceTest(
     private val itemEncodedDto = Json.encodeToString(ItemDto(
         format = CollectionsFormat.DIGITAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        altNumber = newspaperItemMockB.urn,
-        altNumberType = "URN",
+        alternativeNumberList = listOf(urnMock),
         inputName = "Bikube API",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
         partOfReference = newspaperItemMockB.catalogueId,
-        title = "Avis A 2020.01.05"
+        title = "Avis A 2020.01.05",
+        urn = urnMock.name
     ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
         format = CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        altNumber = null,
-        altNumberType = null,
+        alternativeNumberList = null,
         inputName = "Bikube API",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),

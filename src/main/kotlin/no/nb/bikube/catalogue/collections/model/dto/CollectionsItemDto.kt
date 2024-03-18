@@ -20,12 +20,6 @@ class ItemDto (
     @SerialName("record_type")
     val recordType: String?,
 
-    @SerialName("alternative_number")
-    val altNumber: String?,
-
-    @SerialName("alternative_number.type")
-    val altNumberType: String?,
-
     @SerialName("input.name")
     val inputName: String? = null,
 
@@ -42,7 +36,22 @@ class ItemDto (
     val dataset: String? = null,
 
     @SerialName("part_of_reference.lref")
-    val partOfReference: String? = null
+    val partOfReference: String? = null,
+
+    @SerialName("Alternative_number")
+    val alternativeNumberList: List<AlternativeNumberInput>? = null,
+
+    @SerialName("PID_data_URN")
+    val urn: String? = null
+)
+
+@Serializable
+data class AlternativeNumberInput (
+    @SerialName("alternative_number")
+    val name: String,
+
+    @SerialName("alternative_number.type")
+    val type: String
 )
 
 fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String): ItemDto {
@@ -52,13 +61,13 @@ fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String)
         title = item.title,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        altNumber = if (useUrn) item.urn else null,
-        altNumberType = if (useUrn) "URN" else null,
         inputName = "Bikube API", // TODO: Change when we have authentication in place
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = manifestationCatalogueId
+        partOfReference = manifestationCatalogueId,
+        alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
+        urn = if (useUrn) item.urn else null
     )
 }

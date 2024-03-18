@@ -1,5 +1,6 @@
 package no.nb.bikube.newspaper
 
+import no.nb.bikube.catalogue.collections.model.dto.AlternativeNumberInput
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
@@ -95,6 +96,11 @@ class NewspaperMockData {
         val language: Language = Language(
             name = "nob",
             catalogueId = "1"
+        )
+
+        val urnMock = AlternativeNumberInput(
+            name = newspaperItemMockB.urn!!,
+            type = "URN"
         )
     }
 }
