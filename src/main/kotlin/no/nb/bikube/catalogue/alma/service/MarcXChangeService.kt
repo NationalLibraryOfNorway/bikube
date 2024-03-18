@@ -8,8 +8,7 @@ import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nb.bikube.catalogue.alma.model.AlmaBibResult
-import no.nb.bikube.catalogue.alma.model.AlmaErrorResponse
+import no.nb.bikube.catalogue.alma.model.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,11 +28,42 @@ class MarcXChangeService {
         .registerKotlinModule()
 
     @Throws(JacksonException::class)
-    fun parseBibResult(res: String, prolog: Boolean): ByteArray {
-        val bib = mapper.readValue(res, AlmaBibResult::class.java)
+    fun parseBibResult(res: String): AlmaBibResult {
+        return mapper.readValue(res, AlmaBibResult::class.java)
+    }
+
+    @Throws(JacksonException::class)
+    fun parseItemResult(res: String): AlmaItemResult {
+        return mapper.readValue(res, AlmaItemResult::class.java)
+    }
+
+    @Throws(JacksonException::class)
+    fun writeAsByteArray(record: MarcRecord, prolog: Boolean): ByteArray {
         return (mapper as XmlMapper)
             .configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, prolog)
-            .writeValueAsBytes(bib.record)
+            .writeValueAsBytes(record)
+    }
+
+    fun addEnumChron(data: ItemData, record: MarcRecord): MarcRecord {
+        val enumChronMap = data.asMap()
+        if (enumChronMap.isEmpty())
+            return record
+        val captionDataField = DataField(
+            tag = "853", ind1 = "3", ind2 = "0",
+            subfield = enumChronMap.keys.map {
+                SubField(code = it.code, content = it.caption)
+            }
+        )
+        val valueDataField = DataField(
+            tag = "863", ind1 = " ", ind2 = " ",
+            subfield = enumChronMap.entries.map {
+                SubField(code = it.key.code, content = it.value)
+            }
+        )
+        return record.copy(
+            datafield = (record.datafield + captionDataField + valueDataField)
+                .sortedBy { it.tag }
+        )
     }
 
     @Throws(JacksonException::class)

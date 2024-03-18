@@ -1,0 +1,50 @@
+<record format="MARC21"
+        type="Bibliographic"
+        xmlns="info:lc/xmlns/marcxchange-v1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="info:lc/xmlns/marcxchange-v1 http://www.loc.gov/standards/iso25577/marcxchange-1-1.xsd">
+    <leader>01190cam a2200337 c 4500</leader>
+    <controlfield tag="001">987654321098765402</controlfield>
+    <controlfield tag="005">20210416031323.0</controlfield>
+    <controlfield tag="007">ta</controlfield>
+    <datafield ind1=" " ind2=" " tag="020">
+        <subfield code="a">9789876543210</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="035">
+        <subfield code="a">987654321-47bibsys_network</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="035">
+        <subfield code="a">(EXLNZ-47BIBSYS_NETWORK)987654321098765401</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="040">
+        <subfield code="a">NO-OsNB</subfield>
+        <subfield code="b">nob</subfield>
+        <subfield code="e">katreg</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="044">
+        <subfield code="c">no</subfield>
+    </datafield>
+    <datafield ind1="0" ind2="0" tag="245">
+        <subfield code="a">Book title</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="260">
+        <subfield code="a">Oslo</subfield>
+        <subfield code="c">2024</subfield>
+    </datafield>
+    <datafield ind1="3" ind2="0" tag="853">
+        <subfield code="a">volume</subfield>
+        <subfield code="b">number</subfield>
+        <subfield code="c">consecutive_number</subfield>
+        <subfield code="i">year</subfield>
+        <subfield code="j">month_season</subfield>
+        <subfield code="k">date_in_month</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="863">
+        <subfield code="a">Vol. 1</subfield>
+        <subfield code="b">n. 2</subfield>
+        <subfield code="c">cn. 3</subfield>
+        <subfield code="i">2024</subfield>
+        <subfield code="j">03</subfield>
+        <subfield code="k">14</subfield>
+    </datafield>
+</record>
