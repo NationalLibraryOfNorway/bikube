@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.2.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
@@ -15,8 +15,10 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
-		<kotlin.version>1.9.20</kotlin.version>
-		<serialization.version>1.6.0</serialization.version>
+		<kotlin.version>1.9.23</kotlin.version>
+		<serialization.version>1.6.3</serialization.version>
+		<fasterxml.version>2.15.4</fasterxml.version>
+		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 	<dependencies>
 		<!-- Spring dependencies -->
@@ -62,7 +64,7 @@
 		<dependency>
 			<groupId>org.jetbrains.kotlinx</groupId>
 			<artifactId>kotlinx-coroutines-reactor</artifactId>
-			<version>1.7.3</version>
+			<version>1.8.0</version>
 		</dependency>
 
 		<!-- Dependencies for keycloak ouath2 -->
@@ -81,20 +83,20 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-			<version>2.2.0</version>
+			<version>2.4.0</version>
 		</dependency>
 
 		<!-- For deserialization of the weird attribute names of Collection models -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
-			<version>2.15.3</version>
+			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.15.3</version>
+			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<!-- For serialization of the weird attribute names of Collection models -->
@@ -127,7 +129,7 @@
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
-			<version>3.5.10</version>
+			<version>3.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ninja-squad</groupId>
