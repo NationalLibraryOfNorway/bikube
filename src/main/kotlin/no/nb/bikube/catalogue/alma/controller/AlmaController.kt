@@ -6,9 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.Pattern
-import no.nb.bikube.catalogue.alma.repository.AlmaRepository
-import no.nb.bikube.catalogue.alma.repository.AlmaSruRepository
-import no.nb.bikube.catalogue.alma.service.MarcXChangeService
+import no.nb.bikube.catalogue.alma.service.*
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,8 +24,8 @@ import reactor.core.publisher.Mono
 )
 @RequestMapping("/alma")
 class AlmaController(
-    private val almaRepository: AlmaRepository,
-    private val almaSruRepository: AlmaSruRepository,
+    private val almaService: AlmaService,
+    private val almaSruService: AlmaSruService,
     private val marcXChangeService: MarcXChangeService
 ) {
 
@@ -46,7 +44,7 @@ class AlmaController(
         @Parameter(description = "Include XML declaration/prolog in XML output.")
         @RequestParam(required = false, defaultValue = "true") prolog: Boolean
     ): Mono<ByteArray> {
-        return almaRepository.getRecordByMMS(mms)
+        return almaService.getRecordByMMS(mms)
             .map { marcXChangeService.writeAsByteArray(it.record, prolog) }
     }
 
@@ -65,7 +63,7 @@ class AlmaController(
         @Parameter(description = "Include XML declaration/prolog in XML output.")
         @RequestParam(required = false, defaultValue = "true") prolog: Boolean
     ): Mono<ByteArray> {
-        return almaRepository.getRecordByBarcode(barcode)
+        return almaService.getRecordByBarcode(barcode)
             .map { marcXChangeService.writeAsByteArray(it, prolog) }
     }
 
@@ -82,7 +80,7 @@ class AlmaController(
         @Pattern(regexp = ISSN_REGEX, message = ISSN_MESSAGE)
         @PathVariable issn: String
     ): Mono<ByteArray> {
-        return almaSruRepository.getRecordsByISSN(issn)
+        return almaSruService.getRecordsByISSN(issn)
             .map { marcXChangeService.writeAsByteArray(it) }
     }
 

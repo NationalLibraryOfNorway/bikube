@@ -1,17 +1,16 @@
-package no.nb.bikube.catalogue.alma.repository
+package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.config.AlmaConfig
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.model.RecordList
-import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
-@Repository
-class AlmaSruRepository(
+@Service
+class AlmaSruService(
     private val almaConfig: AlmaConfig,
     private val marcXChangeService: MarcXChangeService
 ) {
