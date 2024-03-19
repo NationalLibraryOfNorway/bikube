@@ -38,10 +38,20 @@ class MarcXChangeService {
     }
 
     @Throws(JacksonException::class)
+    fun parseSruResult(res: String): AlmaSruResult {
+        return mapper.readValue(res, AlmaSruResult::class.java)
+    }
+
+    @Throws(JacksonException::class)
     fun writeAsByteArray(record: MarcRecord, prolog: Boolean): ByteArray {
         return (mapper as XmlMapper)
             .configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, prolog)
             .writeValueAsBytes(record)
+    }
+
+    @Throws(JacksonException::class)
+    fun writeAsByteArray(recordList: RecordList): ByteArray {
+        return mapper.writeValueAsBytes(recordList)
     }
 
     fun addEnumChron(data: ItemData, record: MarcRecord): MarcRecord {

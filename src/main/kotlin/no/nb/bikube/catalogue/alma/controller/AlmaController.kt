@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.Pattern
 import no.nb.bikube.catalogue.alma.repository.AlmaRepository
+import no.nb.bikube.catalogue.alma.repository.AlmaSruRepository
 import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
@@ -26,6 +27,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("/alma")
 class AlmaController(
     private val almaRepository: AlmaRepository,
+    private val almaSruRepository: AlmaSruRepository,
     private val marcXChangeService: MarcXChangeService
 ) {
 
@@ -67,10 +69,29 @@ class AlmaController(
             .map { marcXChangeService.writeAsByteArray(it, prolog) }
     }
 
+    @GetMapping("/issn/{issn}", produces = [MediaType.APPLICATION_XML_VALUE])
+    @Operation(summary = "Get bibliographic records by ISSN.")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Invalid ISSN"),
+        ApiResponse(responseCode = "404", description = "ISSN not found"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun getMarcRecordsByISSN(
+        @Parameter(description = "ISSN")
+        @Pattern(regexp = ISSN_REGEX, message = ISSN_MESSAGE)
+        @PathVariable issn: String
+    ): Mono<ByteArray> {
+        return almaSruRepository.getRecordsByISSN(issn)
+            .map { marcXChangeService.writeAsByteArray(it) }
+    }
+
     companion object {
         const val MMS_REGEX = "[0-9]{8,19}"
         const val MMS_MESSAGE = "MMS-ID kan kun inneholde tall, og må være mellom 8 og 19 tegn."
         const val BARCODE_REGEX = "[a-zA-Z0-9]{4,13}"
         const val BARCODE_MESSAGE = "Strekkode kan kun inneholde tall og bokstaver, og må være mellom 4 og 13 tegn."
+        const val ISSN_REGEX = "[0-9]{4}-?[0-9]{3}[0-9Xx]"
+        const val ISSN_MESSAGE = "Invalid ISSN pattern"
     }
 }
