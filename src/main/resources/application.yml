@@ -35,7 +35,8 @@ kerberos:
   kdc: ${KERBEROS_KDC}
 
 alma:
-  almaws-url: ${ALMAWS_URL}
+  alma-sru-url: ${ALMA_SRU_URL}
+  alma-ws-url: ${ALMA_WS_URL}
   api-key: ${ALMA_API_KEY}
 
 # Keep default values to run Bikube without proxy

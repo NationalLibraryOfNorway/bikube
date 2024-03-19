@@ -8,7 +8,6 @@ import no.nb.bikube.catalogue.alma.model.AlmaBibResult
 import no.nb.bikube.catalogue.alma.model.AlmaErrorCode
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.service.MarcXChangeService
-import no.nb.bikube.core.configuration.ProxyConfig
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
@@ -25,7 +24,7 @@ class AlmaRepository(
 
     private val webClient = WebClient.builder()
         .clientConnector(almaHttpConnector.httpConnector())
-        .baseUrl(almaConfig.almawsUrl)
+        .baseUrl(almaConfig.almaWsUrl)
         .build()
 
     fun getRecordByMMS(mms: String): Mono<AlmaBibResult> {
