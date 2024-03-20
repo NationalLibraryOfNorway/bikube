@@ -26,7 +26,7 @@ fun CollectionsObject.isSerial(): Boolean {
 }
 
 fun CollectionsObject.getUrn(): String? {
-    return this.alternativeNumberList?.find { it.type == "URN" }?.value
+    return this.urn ?: this.alternativeNumberList?.find { it.type == "URN" }?.value
 }
 
 fun CollectionsObject.getName(): String? {

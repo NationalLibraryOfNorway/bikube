@@ -52,7 +52,10 @@ data class CollectionsObject(
     val workTypeList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("Alternative_number")
-    val alternativeNumberList: List<CollectionsAlternativeNumber>?
+    val alternativeNumberList: List<CollectionsAlternativeNumber>?,
+
+    @JsonProperty("PID_data_URN")
+    val urn: String? = null
 )
 
 data class CollectionsTitle(
