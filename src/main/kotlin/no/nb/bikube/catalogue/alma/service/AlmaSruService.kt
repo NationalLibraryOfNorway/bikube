@@ -1,6 +1,7 @@
 package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.config.AlmaConfig
+import no.nb.bikube.catalogue.alma.config.AlmaHttpConnector
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.model.RecordList
@@ -11,11 +12,13 @@ import reactor.core.publisher.Mono
 
 @Service
 class AlmaSruService(
+    private val almaHttpConnector: AlmaHttpConnector,
     private val almaConfig: AlmaConfig,
     private val marcXChangeService: MarcXChangeService
 ) {
 
     private val webClient = WebClient.builder()
+        .clientConnector(almaHttpConnector.httpConnector())
         .baseUrl(almaConfig.almaSruUrl)
         .build()
 
