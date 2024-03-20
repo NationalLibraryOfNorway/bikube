@@ -1,9 +1,7 @@
-package no.nb.bikube.catalogue.alma.controller
+package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import no.nb.bikube.catalogue.alma.service.AlmaService
-import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
@@ -36,7 +34,7 @@ class AlmaServiceTests(
         @JvmStatic
         @DynamicPropertySource
         fun properties(r: DynamicPropertyRegistry) {
-            r.add("alma.almaws-url") { "http://localhost:" + mockBackEnd.port }
+            r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
         }
 
         @JvmStatic
