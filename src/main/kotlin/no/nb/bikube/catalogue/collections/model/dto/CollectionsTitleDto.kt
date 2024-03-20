@@ -68,7 +68,7 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
-        inputName = "Bikube API", // TODO: Change when we have authentication in place
+        inputName = "${title.username} (Bikube)",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

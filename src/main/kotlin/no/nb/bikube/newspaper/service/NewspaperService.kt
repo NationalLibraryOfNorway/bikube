@@ -129,9 +129,12 @@ class NewspaperService  (
             }
     }
 
-    fun createPublisher(publisher: String): Mono<Publisher> {
+    fun createPublisher(
+        publisher: String,
+        username: String
+    ): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
-        val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher))
+        val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher, username))
         return collectionsRepository.searchPublisher(publisher)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
@@ -143,25 +146,31 @@ class NewspaperService  (
             }
     }
 
-    fun createPublisherPlace(publisherPlace: String): Mono<PublisherPlace> {
+    fun createPublisherPlace(
+        publisherPlace: String,
+        username: String
+    ): Mono<PublisherPlace> {
         if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
         return collectionsRepository.searchPublisherPlace(publisherPlace)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
                     Mono.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
                 } else {
-                    val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION))
+                    val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION, username))
                     collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
                         .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()!!) }
                 }
             }
     }
 
-    fun createLanguage(language: String): Mono<Language> {
+    fun createLanguage(
+        language: String,
+        username: String
+    ): Mono<Language> {
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }
-        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, CollectionsTermType.LANGUAGE))
+        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, CollectionsTermType.LANGUAGE, username))
         return collectionsRepository.searchLanguage(language)
             .flatMap { collectionsModel ->
                 if (collectionsModel.getObjects()?.isNotEmpty() == true) {
@@ -192,8 +201,12 @@ class NewspaperService  (
         }
     }
 
-    fun createYearWork(titleCatalogueId: String, year: String): Mono<CollectionsObject> {
-        val dto: YearDto = createYearDto(titleCatalogueId, year)
+    fun createYearWork(
+        titleCatalogueId: String,
+        year: String,
+        username: String
+    ): Mono<CollectionsObject> {
+        val dto: YearDto = createYearDto(titleCatalogueId, year, username)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -203,8 +216,12 @@ class NewspaperService  (
             }.map { it.first() }
     }
 
-    fun createManifestation(titleCatalogueId: String, date: LocalDate): Mono<CollectionsObject> {
-        val dto: ManifestationDto = createManifestationDto(titleCatalogueId, date)
+    fun createManifestation(
+        titleCatalogueId: String,
+        date: LocalDate,
+        username: String
+    ): Mono<CollectionsObject> {
+        val dto: ManifestationDto = createManifestationDto(titleCatalogueId, date, username)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -254,7 +271,7 @@ class NewspaperService  (
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
             manifestation.getDate() == item.date
-        }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date)
+        }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date, item.username)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
@@ -266,7 +283,7 @@ class NewspaperService  (
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
             year.getDate()?.year == item.date.year
-        }?.toMono() ?: createYearWork(item.titleCatalogueId, item.date.year.toString())
+        }?.toMono() ?: createYearWork(item.titleCatalogueId, item.date.year.toString(), item.username)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }

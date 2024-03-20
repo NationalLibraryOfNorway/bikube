@@ -31,12 +31,16 @@ class CollectionsTermRecordDto(
     val priRef: String? = null
 )
 
-fun createTermRecordDtoFromString(termName: String, termType: CollectionsTermType): CollectionsTermRecordDto {
+fun createTermRecordDtoFromString(
+    termName: String,
+    termType: CollectionsTermType,
+    username: String
+): CollectionsTermRecordDto {
     return CollectionsTermRecordDto(
         term = termName,
         termType = termType.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        inputName = "Bikube API" // TODO: Change when we have authentication in place
+        inputName = "$username (Bikube)"
     )
 }

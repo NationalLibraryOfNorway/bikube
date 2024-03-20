@@ -34,12 +34,16 @@ class ManifestationDto (
     val dataset: String? = null
 )
 
-fun createManifestationDto(yearWorkCatalogueId: String, date: LocalDate): ManifestationDto {
+fun createManifestationDto(
+    yearWorkCatalogueId: String,
+    date: LocalDate,
+    username: String
+): ManifestationDto {
     return ManifestationDto(
         partOfReference = yearWorkCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = date.toString(),
-        inputName = "Bikube API", // TODO: Change when we have authentication in place
+        inputName = "$username (Bikube)",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

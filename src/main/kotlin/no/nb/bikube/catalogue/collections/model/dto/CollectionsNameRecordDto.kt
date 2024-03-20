@@ -27,12 +27,15 @@ class CollectionsNameRecordDto(
     val priRef: String? = null
 )
 
-fun createNameRecordDtoFromString(name: String): CollectionsNameRecordDto {
+fun createNameRecordDtoFromString(
+    name: String,
+    username: String
+): CollectionsNameRecordDto {
     return CollectionsNameRecordDto(
         name = name,
         nameType = CollectionsNameType.PUBLISHER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        inputName = "Bikube API" // TODO: Change when we have authentication in place
+        inputName = "$username (Bikube)"
     )
 }

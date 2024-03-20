@@ -46,21 +46,21 @@ class TitleController (
             Mono.error(BadRequestBodyException("Start date cannot be after end date"))
         } else {
             val publisherMono: Mono<Publisher> = title.publisher?.let { publisherName ->
-                newspaperService.createPublisher(publisherName).onErrorResume { exception ->
+                newspaperService.createPublisher(publisherName, title.username).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val locationMono: Mono<PublisherPlace> = title.publisherPlace?.let { locationName ->
-                newspaperService.createPublisherPlace(locationName).onErrorResume { exception ->
+                newspaperService.createPublisherPlace(locationName, title.username).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
             } ?: Mono.empty()
 
             val languageMono: Mono<Language> = title.language?.let { languageName ->
-                newspaperService.createLanguage(languageName).onErrorResume { exception ->
+                newspaperService.createLanguage(languageName, title.username).onErrorResume { exception ->
                     if (exception is RecordAlreadyExistsException) Mono.empty()
                     else Mono.error(exception)
                 }
