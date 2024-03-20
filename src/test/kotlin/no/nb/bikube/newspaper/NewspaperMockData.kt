@@ -23,11 +23,12 @@ class NewspaperMockData {
         // Minimum valid for creation
         val newspaperTitleInputDtoMockA = TitleInputDto(
             name = "Avis A",
+            username = "bikube-test",
             startDate = null,
             endDate = null,
             publisher = null,
             publisherPlace = null,
-            language = null
+            language = "nob"
         )
 
         // Equal to collectionsModelMockTitleE, insert DTO below
@@ -45,6 +46,7 @@ class NewspaperMockData {
         // Equal to collectionsModelMockTitleE, valid for insert
         val newspaperTitleInputDtoMockB = TitleInputDto(
             name = "Avis B",
+            username = "bikube-test",
             startDate = LocalDate.parse("2020-01-01"),
             endDate = LocalDate.parse("2020-01-31"),
             publisher = "B-Forlaget",
@@ -79,18 +81,20 @@ class NewspaperMockData {
         val newspaperInputDtoItemMockB = ItemInputDto(
             date = LocalDate.parse("2020-01-05"),
             titleCatalogueId = newspaperTitleMockA.catalogueId,
+            username = "bikube-test",
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1",
-            title = "Avis A 2020.01.05"
+            name = "Avis A 2020.01.05"
         )
 
         // Minimum valid for creating digital item
         val newspaperItemMockCValidForCreation = ItemInputDto(
             date = LocalDate.parse("2020-01-01"),
             titleCatalogueId = "1",
+            username = "bikube-test",
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
-            title = "Avis A 2020.01.01"
+            name = "Avis A 2020.01.01"
         )
 
         val language: Language = Language(

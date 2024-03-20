@@ -83,12 +83,6 @@ class TitleControllerIntegrationTest (
     }
 
     @Test
-    fun `post-newspapers-titles should return 400 bad request if title is missing`() {
-        createTitle(newspaperTitleInputDtoMockA.copy(name = null))
-            .expectStatus().isBadRequest
-    }
-
-    @Test
     fun `post-newspapers-titles should return 400 bad request if title is empty`() {
         createTitle(newspaperTitleInputDtoMockA.copy(name = ""))
             .expectStatus().isBadRequest

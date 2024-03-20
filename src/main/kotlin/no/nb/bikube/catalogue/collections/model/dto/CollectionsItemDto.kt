@@ -58,7 +58,7 @@ fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String)
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
-        title = item.title,
+        title = item.name,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         inputName = "Bikube API", // TODO: Change when we have authentication in place

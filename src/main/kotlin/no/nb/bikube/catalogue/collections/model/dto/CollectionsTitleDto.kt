@@ -58,7 +58,7 @@ class TitleDto(
 
 fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
     return TitleDto(
-        title = title.name!!,
+        title = title.name,
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),
         publisher = title.publisher,

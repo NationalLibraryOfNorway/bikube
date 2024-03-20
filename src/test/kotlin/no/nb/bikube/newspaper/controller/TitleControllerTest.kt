@@ -47,15 +47,7 @@ class TitleControllerTest {
     }
 
     @Test
-    fun `createTitle should return 400 bad request if request body object title is null or empty`() {
-        titleController.createTitle(newspaperTitleInputDtoMockA.copy(name = null))
-            .test()
-            .expectErrorMatches {
-                it is BadRequestBodyException &&
-                it.message == "Title name cannot be null or empty"
-            }
-            .verify()
-
+    fun `createTitle should return 400 bad request if request body object title is empty`() {
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(name = ""))
             .test()
             .expectErrorMatches {
@@ -82,6 +74,8 @@ class TitleControllerTest {
     fun `createTitle should call create publisher if publisher is present on request body`() {
         every { newspaperService.createPublisher(any()) } returns Mono.just(Publisher("Pub", "1"))
         every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Pub", publisherPlace = null))
             .test()
             .expectSubscription()
@@ -95,6 +89,8 @@ class TitleControllerTest {
     fun `createTitle should call createPublisherPlace if publisherPlace is present on request body`() {
         every { newspaperService.createPublisherPlace(any()) } returns Mono.just(PublisherPlace("Pub", "1"))
         every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createLanguage(any()) } returns Mono.just(Language("nob", "1"))
+
         titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Pub"))
             .test()
             .expectSubscription()

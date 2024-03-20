@@ -216,9 +216,9 @@ class NewspaperService  (
 
     @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId!!)
+        return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId)
             .flatMap { title ->
-                item.title = createTitleString(item, title.getFirstObject()?.getName()!!)
+                item.name = createTitleString(item, title.getFirstObject()?.getName()!!)
                 findOrCreateYearWorkRecord(title, item)
             }.flatMap { yearWork ->
                 findOrCreateManifestationRecord(yearWork, item)
@@ -228,10 +228,10 @@ class NewspaperService  (
     }
 
     fun createTitleString(item: ItemInputDto, title: String): String {
-        return if (item.title.isNullOrEmpty() && item.digital == true) {
-            "$title ${item.date?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}"
+        return if (item.name.isNullOrEmpty() && item.digital == true) {
+            "$title ${item.date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}"
         } else {
-            item.title!!
+            item.name!!
         }
     }
 
@@ -254,7 +254,7 @@ class NewspaperService  (
     ): Mono<CollectionsPartsObject> {
         return yearWork.getPartRefs().find { manifestation ->
             manifestation.getDate() == item.date
-        }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date!!)
+        }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date)
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }
@@ -265,8 +265,8 @@ class NewspaperService  (
         item: ItemInputDto
     ): Mono<CollectionsPartsObject> {
         return title.getFirstObject()?.getParts()?.find { year ->
-            year.getDate()?.year == item.date?.year
-        }?.toMono() ?: createYearWork(item.titleCatalogueId!!, item.date?.year.toString())
+            year.getDate()?.year == item.date.year
+        }?.toMono() ?: createYearWork(item.titleCatalogueId, item.date.year.toString())
             .map { collectionsObj ->
                 mapCollectionsObjectToCollectionsPartObject(collectionsObj)
             }

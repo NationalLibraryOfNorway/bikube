@@ -40,7 +40,7 @@ class ItemController (
         creationValidationService.validateItem(item)
 
         // Checks that title exists before creating item. Will throw exception if not found.
-        return newspaperService.getSingleTitle(item.titleCatalogueId!!)
+        return newspaperService.getSingleTitle(item.titleCatalogueId)
             .flatMap { newspaperService.createNewspaperItem(item) }
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->

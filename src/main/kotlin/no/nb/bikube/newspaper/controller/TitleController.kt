@@ -40,7 +40,7 @@ class TitleController (
         @RequestBody title: TitleInputDto
     ): Mono<ResponseEntity<Title>> {
         logger().info("Trying to create newspaper title: $title")
-        return if (title.name.isNullOrEmpty()) {
+        return if (title.name.isEmpty()) {
             Mono.error(BadRequestBodyException("Title name cannot be null or empty"))
         } else if (title.startDate != null && title.endDate != null && title.startDate.isAfter(title.endDate)) {
             Mono.error(BadRequestBodyException("Start date cannot be after end date"))
