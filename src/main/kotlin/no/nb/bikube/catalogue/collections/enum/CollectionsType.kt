@@ -7,7 +7,7 @@ enum class CollectionsRecordType(val value: String) {
 
     companion object {
         fun fromString(value: String?): CollectionsRecordType? {
-            return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
+            return entries.firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }
@@ -18,7 +18,7 @@ enum class CollectionsDescriptionType(val value: String) {
 
     companion object {
         fun fromString(value: String?): CollectionsDescriptionType? {
-            return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
+            return entries.firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }
@@ -29,7 +29,7 @@ enum class CollectionsFormat(val value: String) {
 
     companion object {
         fun fromString(value: String?): CollectionsFormat? {
-            return values().firstOrNull { it.value.lowercase() == value?.lowercase() }
+            return entries.firstOrNull { it.value.lowercase() == value?.lowercase() }
         }
     }
 }

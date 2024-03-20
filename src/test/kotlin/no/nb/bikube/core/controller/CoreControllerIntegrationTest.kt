@@ -9,13 +9,15 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
+import no.nb.bikube.catalogue.collections.model.*
+import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.core.util.DateUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -364,6 +366,19 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `search-item endpoint should return mapped items`() {
+        val expectedItem = Item(
+            catalogueId = collectionsPartsObjectMockItemA.partsReference!!.priRef!!,
+            name = collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
+            date = DateUtils.parseYearOrDate(
+                collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)
+            )!!,
+            materialType = MaterialType.NEWSPAPER.value,
+            titleCatalogueId = collectionsModelMockTitleA.getFirstId(),
+            titleName = collectionsModelMockYearWorkA.getFirstObject()!!.getName(),
+            digital = collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
+            urn = null
+        )
+
         webClient
             .get()
             .uri { uri ->
@@ -378,19 +393,9 @@ class CoreControllerIntegrationTest (
             .returnResult<Item>()
             .responseBody
             .test()
-            .expectNext(
-                Item(
-                    catalogueId = collectionsModelMockItemA.getFirstObject()!!.priRef,
-                    name = collectionsModelMockItemA.getFirstObject()!!.getName(),
-                    date = collectionsModelMockItemA.getFirstObject()!!.getItemDate(),
-                    materialType = collectionsModelMockItemA.getFirstObject()!!.getMaterialTypeFromParent()!!.norwegian,
-                    titleCatalogueId = collectionsModelMockItemA.getFirstObject()!!.getTitleCatalogueId(),
-                    titleName = collectionsModelMockItemA.getFirstObject()!!.getTitleName(),
-                    digital = collectionsModelMockItemA.getFirstObject()!!.getFormat() == CollectionsFormat.DIGITAL,
-                    urn = collectionsModelMockItemA.getFirstObject()!!.getUrn()
-                )
-            )
-            .expectComplete()
+            .expectNext(expectedItem)
+            .verifyComplete()
+
         verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(any()) }
     }
 
