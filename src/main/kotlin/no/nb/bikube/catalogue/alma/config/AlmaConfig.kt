@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("alma")
 class AlmaConfig(
-    var almawsUrl: String,
-    var apiKey: String
+    val almawsUrl: String,
+    val apiKey: String
 )

@@ -37,3 +37,8 @@ kerberos:
 alma:
   almaws-url: ${ALMAWS_URL}
   api-key: ${ALMA_API_KEY}
+
+# Keep default values to run Bikube without proxy
+http-proxy:
+  host: ""
+  port: 0

@@ -1,32 +1,30 @@
 package no.nb.bikube.catalogue.alma.repository
 
 import no.nb.bikube.catalogue.alma.config.AlmaConfig
+import no.nb.bikube.catalogue.alma.config.AlmaHttpConnector
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import no.nb.bikube.catalogue.alma.model.AlmaBibResult
 import no.nb.bikube.catalogue.alma.model.AlmaErrorCode
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.service.MarcXChangeService
+import no.nb.bikube.core.configuration.ProxyConfig
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.ClientResponse
 import reactor.core.publisher.Mono
-import reactor.netty.http.client.HttpClient
 
 @Repository
 class AlmaRepository(
+    private val almaHttpConnector: AlmaHttpConnector,
     private val almaConfig: AlmaConfig,
     private val marcXChangeService: MarcXChangeService
 ) {
+
     private val webClient = WebClient.builder()
-        .clientConnector(
-            ReactorClientHttpConnector(
-                HttpClient.create().followRedirect(true)
-            )
-        )
+        .clientConnector(almaHttpConnector.httpConnector())
         .baseUrl(almaConfig.almawsUrl)
         .build()
 
