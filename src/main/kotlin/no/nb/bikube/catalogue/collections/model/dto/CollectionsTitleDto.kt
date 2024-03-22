@@ -52,13 +52,16 @@ class TitleDto(
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null
 )
 
 fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
     return TitleDto(
-        title = title.name!!,
+        title = title.name,
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),
         publisher = title.publisher,
@@ -68,7 +71,8 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
-        inputName = "Bikube API", // TODO: Change when we have authentication in place
+        inputName = title.username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

@@ -55,7 +55,31 @@ data class CollectionsObject(
     val alternativeNumberList: List<CollectionsAlternativeNumber>?,
 
     @JsonProperty("PID_data_URN")
-    val urn: String? = null
+    val urn: String? = null,
+
+    @JsonProperty("input.name")
+    val inputName: String? = null,
+
+    @JsonProperty("input.date")
+    val inputDate: String? = null,
+
+    @JsonProperty("input.time")
+    val inputTime: String? = null,
+
+    @JsonProperty("input.notes")
+    val inputNotes: String? = null,
+
+    @JsonProperty("edit.name")
+    val modifiedName: String? = null,
+
+    @JsonProperty("edit.date")
+    val modifiedDate: String? = null,
+
+    @JsonProperty("edit.time")
+    val modifiedTime: String? = null,
+
+    @JsonProperty("edit.notes")
+    val modifiedNotes: String? = null,
 )
 
 data class CollectionsTitle(

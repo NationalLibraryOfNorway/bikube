@@ -1,5 +1,6 @@
 package no.nb.bikube.core.service
 
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import org.junit.jupiter.api.Assertions
@@ -19,6 +20,7 @@ class CreationValidationServiceTest {
     private val validDigitalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
         titleCatalogueId = "1",
+        username = TEST_USERNAME,
         digital = true,
         urn = "avis_null_null_20200101_1_1_1"
     )
@@ -26,6 +28,7 @@ class CreationValidationServiceTest {
     private val validPhysicalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
         titleCatalogueId = "1",
+        username = TEST_USERNAME,
         digital = false,
         urn = null
     )
@@ -37,14 +40,8 @@ class CreationValidationServiceTest {
     }
 
     @Test
-    fun `validateItem should throw exception if titleCatalogueId is null or blank`() {
-        assertThrows<BadRequestBodyException> { creationValidationService.validateItem(validPhysicalItem.copy(titleCatalogueId = null)) }
+    fun `validateItem should throw exception if titleCatalogueId is blank`() {
         assertThrows<BadRequestBodyException> { creationValidationService.validateItem(validDigitalItem.copy(titleCatalogueId = "")) }
-    }
-
-    @Test
-    fun `validateItem should throw exception if date is null`() {
-        assertThrows<BadRequestBodyException> { creationValidationService.validateItem(validPhysicalItem.copy(date = null)) }
     }
 
     @Test

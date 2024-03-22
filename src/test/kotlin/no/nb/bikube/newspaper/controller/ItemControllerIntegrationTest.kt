@@ -121,18 +121,6 @@ class ItemControllerIntegrationTest (
     }
 
     @Test
-    fun `post-newspapers-items endpoint should return 400 bad request if title is missing`() {
-        createItem(newspaperItemMockCValidForCreation.copy(titleCatalogueId = null))
-            .expectStatus().isBadRequest
-    }
-
-    @Test
-    fun `post-newspapers-items endpoint should return 400 bad request if date is missing`() {
-        createItem(newspaperItemMockCValidForCreation.copy(date = null))
-            .expectStatus().isBadRequest
-    }
-
-    @Test
     fun `post-newspapers-items endpoint should return 400 bad request if digital is missing`() {
         createItem(newspaperItemMockCValidForCreation.copy(digital = null))
             .expectStatus().isBadRequest

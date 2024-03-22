@@ -8,12 +8,11 @@ import no.nb.bikube.catalogue.alma.model.AlmaBibResult
 import no.nb.bikube.catalogue.alma.model.AlmaErrorCode
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.service.MarcXChangeService
-import no.nb.bikube.core.configuration.ProxyConfig
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 @Repository

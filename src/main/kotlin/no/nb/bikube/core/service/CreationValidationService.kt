@@ -8,12 +8,8 @@ import org.springframework.stereotype.Service
 class CreationValidationService {
     @Throws(BadRequestBodyException::class)
     fun validateItem(item: ItemInputDto) {
-        if (item.titleCatalogueId.isNullOrBlank()) {
+        if (item.titleCatalogueId.isBlank()) {
             throw BadRequestBodyException("Need to provide title ID")
-        }
-
-        if (item.date == null) {
-            throw BadRequestBodyException("Need to provide date")
         }
 
         if (item.digital == null) {

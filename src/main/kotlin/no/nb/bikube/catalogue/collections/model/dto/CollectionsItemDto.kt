@@ -32,6 +32,9 @@ class ItemDto (
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null,
 
@@ -54,14 +57,18 @@ data class AlternativeNumberInput (
     val type: String
 )
 
-fun createNewspaperItemDto(item: ItemInputDto, manifestationCatalogueId: String): ItemDto {
+fun createNewspaperItemDto(
+    item: ItemInputDto,
+    manifestationCatalogueId: String
+): ItemDto {
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
-        title = item.title,
+        title = item.name,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        inputName = "Bikube API", // TODO: Change when we have authentication in place
+        inputName = item.username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

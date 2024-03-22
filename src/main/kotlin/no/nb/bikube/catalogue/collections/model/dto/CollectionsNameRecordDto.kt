@@ -23,16 +23,23 @@ class CollectionsNameRecordDto(
     @SerialName("input.name")
     val inputName: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("priref")
     val priRef: String? = null
 )
 
-fun createNameRecordDtoFromString(name: String): CollectionsNameRecordDto {
+fun createNameRecordDtoFromString(
+    name: String,
+    username: String
+): CollectionsNameRecordDto {
     return CollectionsNameRecordDto(
         name = name,
         nameType = CollectionsNameType.PUBLISHER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        inputName = "Bikube API" // TODO: Change when we have authentication in place
+        inputName = username,
+        inputNotes = "Registrert i Bikube"
     )
 }

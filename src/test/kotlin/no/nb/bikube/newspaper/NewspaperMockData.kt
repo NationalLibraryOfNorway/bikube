@@ -1,8 +1,11 @@
 package no.nb.bikube.newspaper
 
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.catalogue.collections.model.dto.AlternativeNumberInput
 import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.*
+import no.nb.bikube.core.model.Item
+import no.nb.bikube.core.model.Language
+import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
@@ -23,11 +26,12 @@ class NewspaperMockData {
         // Minimum valid for creation
         val newspaperTitleInputDtoMockA = TitleInputDto(
             name = "Avis A",
+            username = TEST_USERNAME,
             startDate = null,
             endDate = null,
             publisher = null,
             publisherPlace = null,
-            language = null
+            language = "nob"
         )
 
         // Equal to collectionsModelMockTitleE, insert DTO below
@@ -45,6 +49,7 @@ class NewspaperMockData {
         // Equal to collectionsModelMockTitleE, valid for insert
         val newspaperTitleInputDtoMockB = TitleInputDto(
             name = "Avis B",
+            username = TEST_USERNAME,
             startDate = LocalDate.parse("2020-01-01"),
             endDate = LocalDate.parse("2020-01-31"),
             publisher = "B-Forlaget",
@@ -79,18 +84,20 @@ class NewspaperMockData {
         val newspaperInputDtoItemMockB = ItemInputDto(
             date = LocalDate.parse("2020-01-05"),
             titleCatalogueId = newspaperTitleMockA.catalogueId,
+            username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1",
-            title = "Avis A 2020.01.05"
+            name = "Avis A 2020.01.05"
         )
 
         // Minimum valid for creating digital item
         val newspaperItemMockCValidForCreation = ItemInputDto(
             date = LocalDate.parse("2020-01-01"),
             titleCatalogueId = "1",
+            username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
-            title = "Avis A 2020.01.01"
+            name = "Avis A 2020.01.01"
         )
 
         val language: Language = Language(

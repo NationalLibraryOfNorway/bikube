@@ -4,6 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.INPUT_NOTES
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemB
@@ -87,7 +89,8 @@ class NewspaperServiceTest(
         descriptionType = CollectionsDescriptionType.YEAR.value,
         dateStart = newspaperTitleMockB.startDate.toString().take(4),
         title = null,
-        inputName = "Bikube API",
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -98,7 +101,8 @@ class NewspaperServiceTest(
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = newspaperItemMockB.date.toString(),
-        inputName = "Bikube API",
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -109,7 +113,8 @@ class NewspaperServiceTest(
         format = CollectionsFormat.DIGITAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = listOf(urnMock),
-        inputName = "Bikube API",
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -123,7 +128,8 @@ class NewspaperServiceTest(
         format = CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = null,
-        inputName = "Bikube API",
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -143,7 +149,8 @@ class NewspaperServiceTest(
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
-        inputName = "Bikube API",
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -519,7 +526,7 @@ class NewspaperServiceTest(
     @Test
     fun `createPublisher should return RecordAlreadyExistsException if searchPublisher returns non-empty list`() {
         every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA)
-        newspaperService.createPublisher("1")
+        newspaperService.createPublisher("1", TEST_USERNAME)
             .test()
             .expectSubscription()
             .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Publisher '1' already exists" }
@@ -532,7 +539,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createNameRecord(any(), any()) } returns Mono.just(collectionsNameModelMockA)
         val expectedName = collectionsNameModelMockA.getFirstObject()!!.name
         val expectedId = collectionsNameModelMockA.getFirstObject()!!.priRef
-        newspaperService.createPublisher("Schibsted")
+        newspaperService.createPublisher("Schibsted", TEST_USERNAME)
             .test()
             .expectNext(Publisher(expectedName, expectedId))
             .verifyComplete()
@@ -542,14 +549,14 @@ class NewspaperServiceTest(
 
     @Test
     fun `createPublisher should throw BadRequestBodyException if publisher is empty`() {
-        assertThrows<BadRequestBodyException> { newspaperService.createPublisher("") }
+        assertThrows<BadRequestBodyException> { newspaperService.createPublisher("", TEST_USERNAME) }
     }
 
     @Test
     fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB)
         val publisherPlaceName = collectionsTermModelMockLocationB.getFirstObject()!!.term
-        newspaperService.createPublisherPlace(publisherPlaceName)
+        newspaperService.createPublisherPlace(publisherPlaceName, TEST_USERNAME)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -565,7 +572,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLocationB)
         val expectedTerm = collectionsTermModelMockLocationB.getFirstObject()!!.term
         val expectedId = collectionsTermModelMockLocationB.getFirstObject()!!.priRef
-        newspaperService.createPublisherPlace("Oslo")
+        newspaperService.createPublisherPlace("Oslo", TEST_USERNAME)
             .test()
             .expectNext(PublisherPlace(expectedTerm, expectedId))
             .verifyComplete()
@@ -575,13 +582,13 @@ class NewspaperServiceTest(
 
     @Test
     fun `createPublisherPlace should throw BadRequestBodyException if publisher place is empty`() {
-        assertThrows<BadRequestBodyException> { newspaperService.createPublisherPlace("") }
+        assertThrows<BadRequestBodyException> { newspaperService.createPublisherPlace("", TEST_USERNAME) }
     }
 
     @Test
     fun `createLanguage should return RecordAlreadyExistsException if searchLanguage returns non-empty list`() {
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA)
-        newspaperService.createLanguage("nob")
+        newspaperService.createLanguage("nob", TEST_USERNAME)
             .test()
             .expectSubscription()
             .expectErrorMatches { it is RecordAlreadyExistsException && it.message == "Language 'nob' already exists" }
@@ -594,7 +601,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLanguageA)
         val expectedTerm = collectionsTermModelMockLanguageA.getFirstObject()!!.term
         val expectedId = collectionsTermModelMockLanguageA.getFirstObject()!!.priRef
-        newspaperService.createLanguage("nob")
+        newspaperService.createLanguage("nob", TEST_USERNAME)
             .test()
             .expectNext(Language(expectedTerm, expectedId))
             .verifyComplete()
@@ -604,9 +611,9 @@ class NewspaperServiceTest(
 
     @Test
     fun `createLanguage should throw BadRequestBodyException if language code is not a valid ISO-639-2 language code`() {
-        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("") }
-        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("en") }
-        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("english") }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("", TEST_USERNAME) }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("en", TEST_USERNAME) }
+        assertThrows<BadRequestBodyException> { newspaperService.createLanguage("english", TEST_USERNAME) }
     }
 
     @Test
@@ -672,7 +679,7 @@ class NewspaperServiceTest(
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        newspaperService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -687,7 +694,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        newspaperService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
             .test()
             .expectSubscription()
             .assertNext {
@@ -706,7 +713,8 @@ class NewspaperServiceTest(
                 partOfReference = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
                 dateStart = LocalDate.now().toString(),
-                inputName = "Bikube API",
+                inputName = TEST_USERNAME,
+                inputNotes = INPUT_NOTES,
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -714,7 +722,7 @@ class NewspaperServiceTest(
             )
         )
 
-        newspaperService.createManifestation("1", LocalDate.now())
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
             .test()
             .expectSubscription()
             .assertNext {
@@ -729,7 +737,7 @@ class NewspaperServiceTest(
     fun `createYearWork should throw CollectionsYearWorkNotFound if year work could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        newspaperService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -743,7 +751,7 @@ class NewspaperServiceTest(
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
 
-        newspaperService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
             .test()
             .expectSubscription()
             .assertNext {
@@ -764,7 +772,8 @@ class NewspaperServiceTest(
                 descriptionType = CollectionsDescriptionType.YEAR.value,
                 dateStart = "2023",
                 title = null,
-                inputName = "Bikube API",
+                inputName = TEST_USERNAME,
+                inputNotes = INPUT_NOTES,
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -772,7 +781,7 @@ class NewspaperServiceTest(
             )
         )
 
-        newspaperService.createYearWork("1", "2023")
+        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
             .test()
             .expectSubscription()
             .assertNext {
@@ -863,7 +872,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitleString should create a title with date if the title field on the item is null`() {
-        val item = newspaperInputDtoItemMockB.copy(title = null, date = LocalDate.parse("2024-02-28"))
+        val item = newspaperInputDtoItemMockB.copy(name = null, date = LocalDate.parse("2024-02-28"))
         val title = "Aftenposten"
         val result = newspaperService.createTitleString(item, title)
         Assertions.assertEquals("$title 2024.02.28", result)
@@ -871,7 +880,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitleString should create a title with date if the title field on the item is empty`() {
-        val item = newspaperInputDtoItemMockB.copy(title = "", date = LocalDate.parse("2024-02-28"))
+        val item = newspaperInputDtoItemMockB.copy(name = "", date = LocalDate.parse("2024-02-28"))
         val title = "Aftenposten"
         val result = newspaperService.createTitleString(item, title)
         Assertions.assertEquals("$title 2024.02.28", result)
@@ -879,7 +888,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitleString should return the title field of the item if it is not null or empty`() {
-        val item = newspaperInputDtoItemMockB.copy(title = "Some fancy title")
+        val item = newspaperInputDtoItemMockB.copy(name = "Some fancy title")
         val result = newspaperService.createTitleString(item, "")
         Assertions.assertEquals("Some fancy title", result)
     }
