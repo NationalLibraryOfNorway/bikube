@@ -76,7 +76,10 @@ data class CollectionsObject(
     val modifiedDate: String? = null,
 
     @JsonProperty("edit.time")
-    val modifiedTime: String? = null
+    val modifiedTime: String? = null,
+
+    @JsonProperty("edit.notes")
+    val modifiedNotes: String? = null,
 )
 
 data class CollectionsTitle(
