@@ -4,8 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.INPUT_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME_COLLECTIONS
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemB
@@ -89,7 +89,8 @@ class NewspaperServiceTest(
         descriptionType = CollectionsDescriptionType.YEAR.value,
         dateStart = newspaperTitleMockB.startDate.toString().take(4),
         title = null,
-        inputName = TEST_USERNAME_COLLECTIONS,
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -100,7 +101,8 @@ class NewspaperServiceTest(
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = newspaperItemMockB.date.toString(),
-        inputName = TEST_USERNAME_COLLECTIONS,
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -111,7 +113,8 @@ class NewspaperServiceTest(
         format = CollectionsFormat.DIGITAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = listOf(urnMock),
-        inputName = TEST_USERNAME_COLLECTIONS,
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -125,7 +128,8 @@ class NewspaperServiceTest(
         format = CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = null,
-        inputName = TEST_USERNAME_COLLECTIONS,
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -145,7 +149,8 @@ class NewspaperServiceTest(
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
-        inputName = TEST_USERNAME_COLLECTIONS,
+        inputName = TEST_USERNAME,
+        inputNotes = INPUT_NOTES,
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -708,7 +713,8 @@ class NewspaperServiceTest(
                 partOfReference = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
                 dateStart = LocalDate.now().toString(),
-                inputName = TEST_USERNAME_COLLECTIONS,
+                inputName = TEST_USERNAME,
+                inputNotes = INPUT_NOTES,
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
@@ -766,7 +772,8 @@ class NewspaperServiceTest(
                 descriptionType = CollectionsDescriptionType.YEAR.value,
                 dateStart = "2023",
                 title = null,
-                inputName = TEST_USERNAME_COLLECTIONS,
+                inputName = TEST_USERNAME,
+                inputNotes = INPUT_NOTES,
                 inputSource = "texts>texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

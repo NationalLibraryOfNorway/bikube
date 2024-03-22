@@ -27,6 +27,9 @@ class CollectionsTermRecordDto(
     @SerialName("input.name")
     val inputName: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("priref")
     val priRef: String? = null
 )
@@ -41,6 +44,7 @@ fun createTermRecordDtoFromString(
         termType = termType.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        inputName = "$username (Bikube)"
+        inputName = username,
+        inputNotes = "Registrert i Bikube"
     )
 }

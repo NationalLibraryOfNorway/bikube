@@ -9,7 +9,7 @@ import no.nb.bikube.core.enum.MaterialType
 class CollectionsModelMockData {
     companion object {
         const val TEST_USERNAME = "bikube-test"
-        const val TEST_USERNAME_COLLECTIONS = "$TEST_USERNAME (Bikube)"
+        const val INPUT_NOTES = "Registrert i Bikube"
 
         private val collectionsRecordTypeListWorkMock = listOf(listOf(
             CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.WORK.value)

@@ -66,6 +66,9 @@ data class CollectionsObject(
     @JsonProperty("input.time")
     val inputTime: String? = null,
 
+    @JsonProperty("input.notes")
+    val inputNotes: String? = null,
+
     @JsonProperty("edit.name")
     val modifiedName: String? = null,
 

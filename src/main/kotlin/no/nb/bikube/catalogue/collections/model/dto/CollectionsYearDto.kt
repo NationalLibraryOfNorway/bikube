@@ -37,6 +37,9 @@ class YearDto(
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null
 )
@@ -52,7 +55,8 @@ fun createYearDto(
         descriptionType = CollectionsDescriptionType.YEAR.value,
         dateStart = year,
         title = null,
-        inputName = "$username (Bikube)",
+        inputName = username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

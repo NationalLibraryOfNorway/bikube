@@ -32,6 +32,9 @@ class ItemDto (
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null,
 
@@ -64,7 +67,8 @@ fun createNewspaperItemDto(
         title = item.name,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        inputName = "${item.username} (Bikube)",
+        inputName = item.username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

@@ -52,6 +52,9 @@ class TitleDto(
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null
 )
@@ -68,7 +71,8 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
-        inputName = "${title.username} (Bikube)",
+        inputName = title.username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

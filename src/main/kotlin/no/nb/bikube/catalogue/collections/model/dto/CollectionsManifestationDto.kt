@@ -30,6 +30,9 @@ class ManifestationDto (
     @SerialName("input.time")
     val inputTime: String? = null,
 
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
     @SerialName("dataset_name")
     val dataset: String? = null
 )
@@ -43,7 +46,8 @@ fun createManifestationDto(
         partOfReference = yearWorkCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = date.toString(),
-        inputName = "$username (Bikube)",
+        inputName = username,
+        inputNotes = "Registrert i Bikube",
         inputSource = "texts>texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
