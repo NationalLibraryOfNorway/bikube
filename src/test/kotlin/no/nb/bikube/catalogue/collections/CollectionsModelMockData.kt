@@ -384,30 +384,6 @@ class CollectionsModelMockData {
             )
         )
 
-        // As A Without parts
-        val collectionsModelMockManifestationB = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "24",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
-                        recordTypeList = collectionsRecordTypeListManifestMock,
-                        formatList = null,
-                        partOfList = listOf(collectionsPartOfObjectMockYearWorkA),
-                        subMediumList = null,
-                        mediumList = null,
-                        datingList = null,
-                        publisherList = null,
-                        languageList = null,
-                        placeOfPublicationList = null,
-                        partsList = null,
-                        workTypeList = null,
-                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1"))
-                    )
-                )
-            )
-        )
-
         val collectionsModelMockYearWorkA = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
@@ -519,7 +495,7 @@ class CollectionsModelMockData {
             )
         )
 
-        val collectionsPartsObjectMockItemD = CollectionsPartsObject(
+        private val collectionsPartsObjectMockItemD = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "32",
                 titleList = listOf(CollectionsTitle(title = "Aftenposten")),
