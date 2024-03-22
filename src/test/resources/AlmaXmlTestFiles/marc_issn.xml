@@ -1,0 +1,32 @@
+<records>
+    <record format="MARC21"
+            type="Bibliographic"
+            xmlns="info:lc/xmlns/marcxchange-v1"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="info:lc/xmlns/marcxchange-v1 http://www.loc.gov/standards/iso25577/marcxchange-1-1.xsd">
+        <leader>01190cam a2200337 c 4500</leader>
+        <controlfield tag="001">999922222222222202</controlfield>
+        <controlfield tag="007">cr#|||||||||||</controlfield>
+        <datafield ind1="0" ind2=" " tag="022">
+            <subfield code="a">1234-5678</subfield>
+            <subfield code="2">r</subfield>
+        </datafield>
+        <datafield ind1=" " ind2=" " tag="040">
+            <subfield code="a">NO-OsNB</subfield>
+            <subfield code="b">nob</subfield>
+            <subfield code="e">katreg</subfield>
+        </datafield>
+        <datafield ind1=" " ind2=" " tag="044">
+            <subfield code="c">no</subfield>
+        </datafield>
+        <datafield ind1="1" ind2="0" tag="245">
+            <subfield code="a">Tidsskrift</subfield>
+            <subfield code="h">[elektronisk ressurs]</subfield>
+        </datafield>
+        <datafield ind1="3" ind2=" " tag="260">
+            <subfield code="a">Oslo</subfield>
+            <subfield code="b">Forlaget</subfield>
+            <subfield code="3">1970-</subfield>
+        </datafield>
+    </record>
+</records>

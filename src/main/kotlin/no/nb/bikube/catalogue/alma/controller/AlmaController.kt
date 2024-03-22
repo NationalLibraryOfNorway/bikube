@@ -6,8 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.Pattern
-import no.nb.bikube.catalogue.alma.repository.AlmaRepository
-import no.nb.bikube.catalogue.alma.service.MarcXChangeService
+import no.nb.bikube.catalogue.alma.service.*
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,7 +24,8 @@ import reactor.core.publisher.Mono
 )
 @RequestMapping("/alma")
 class AlmaController(
-    private val almaRepository: AlmaRepository,
+    private val almaService: AlmaService,
+    private val almaSruService: AlmaSruService,
     private val marcXChangeService: MarcXChangeService
 ) {
 
@@ -44,7 +44,7 @@ class AlmaController(
         @Parameter(description = "Include XML declaration/prolog in XML output.")
         @RequestParam(required = false, defaultValue = "true") prolog: Boolean
     ): Mono<ByteArray> {
-        return almaRepository.getRecordByMMS(mms)
+        return almaService.getRecordByMMS(mms)
             .map { marcXChangeService.writeAsByteArray(it.record, prolog) }
     }
 
@@ -63,8 +63,25 @@ class AlmaController(
         @Parameter(description = "Include XML declaration/prolog in XML output.")
         @RequestParam(required = false, defaultValue = "true") prolog: Boolean
     ): Mono<ByteArray> {
-        return almaRepository.getRecordByBarcode(barcode)
+        return almaService.getRecordByBarcode(barcode)
             .map { marcXChangeService.writeAsByteArray(it, prolog) }
+    }
+
+    @GetMapping("/issn/{issn}", produces = [MediaType.APPLICATION_XML_VALUE])
+    @Operation(summary = "Get bibliographic records by ISSN.")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Invalid ISSN"),
+        ApiResponse(responseCode = "404", description = "ISSN not found"),
+        ApiResponse(responseCode = "500", description = "Server error")
+    ])
+    fun getMarcRecordsByISSN(
+        @Parameter(description = "ISSN")
+        @Pattern(regexp = ISSN_REGEX, message = ISSN_MESSAGE)
+        @PathVariable issn: String
+    ): Mono<ByteArray> {
+        return almaSruService.getRecordsByISSN(issn)
+            .map { marcXChangeService.writeAsByteArray(it) }
     }
 
     companion object {
@@ -72,5 +89,7 @@ class AlmaController(
         const val MMS_MESSAGE = "MMS-ID kan kun inneholde tall, og må være mellom 8 og 19 tegn."
         const val BARCODE_REGEX = "[a-zA-Z0-9]{4,13}"
         const val BARCODE_MESSAGE = "Strekkode kan kun inneholde tall og bokstaver, og må være mellom 4 og 13 tegn."
+        const val ISSN_REGEX = "[0-9]{4}-?[0-9]{3}[0-9Xx]"
+        const val ISSN_MESSAGE = "Invalid ISSN pattern"
     }
 }
