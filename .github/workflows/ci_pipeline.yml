@@ -1,10 +1,10 @@
 name: CI/CD Pipeline
 
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
-
+  APP_VERSION: ${{ github.ref_name }}
 jobs:
   build-and-test:
     name: Build and Test
@@ -46,7 +46,7 @@ jobs:
     needs: build-and-test
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -91,3 +91,43 @@ jobs:
           repository: nationallibraryofnorway/bikube
           short-description: ${{ github.event.repository.description }}
           readme-filepath: ./README.md
+
+  deploy-to-k8s-stage:
+    name: Deploy to kubernetes stage environment
+    needs: build-and-publish-docker-image
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: [self-hosted, Linux]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Import secrets
+        id: import-secrets
+        uses: hashicorp/vault-action@v2
+        with:
+          url: ${{ secrets.VAULT_URL }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          secrets: |
+            kv/team/text/data/k8s-text-stage *
+
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.26.5'
+
+      - name: Deploy to stage cluster
+        run: |
+          echo "Deploying to stage version ${{ env.APP_VERSION }}"
+          sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/stage/bikube.yml
+          sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
+          kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
+          kubectl config set clusters.stagecl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_CA }}
+          kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --token=${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_TOKEN }}
+          kubectl config set-context tekst --cluster=stagecl --user=${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --namespace=tekst-stage
+          kubectl config use-context tekst
+          kubectl config view
+          kubectl version
+          kubectl apply -f k8s/stage/bikube.yml
+          kubectl rollout restart deploy/bikube
