@@ -70,7 +70,12 @@ class CollectionsRepository(
     }
 
     private fun searchTexts(query: String): Mono<CollectionsModel> {
-        return getRecordsWebClientRequest(query, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+        val fields = "priref and title and work.description_type and record_type " +
+                "and dating.date.start and dating.date.end and publisher " +
+                "and place_of_publication and language and submedium " +
+                "and format and alternative_number and alternative_number.type " +
+                "and part_of_reference"
+        return getRecordsWebClientRequest(query, CollectionsDatabase.TEXTS, fields).bodyToMono<CollectionsModel>()
     }
 
     private fun searchNameDatabases(query: String): Mono<CollectionsNameModel> {
@@ -81,7 +86,7 @@ class CollectionsRepository(
         return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsTermModel>()
     }
 
-    private fun getRecordsWebClientRequest(query: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+    private fun getRecordsWebClientRequest(query: String, db: CollectionsDatabase, fields: String = ""): WebClient.ResponseSpec {
         return webClient()
             .get()
             .uri {
@@ -89,6 +94,7 @@ class CollectionsRepository(
                     .queryParam("database", db.value)
                     .queryParam("output", "json")
                     .queryParam("search", query)
+                    .queryParam("fields", fields)
                     .build()
             }
             .retrieve()
