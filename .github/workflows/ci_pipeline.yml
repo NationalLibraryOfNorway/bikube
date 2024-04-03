@@ -6,44 +6,44 @@ env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
   APP_VERSION: ${{ github.ref_name }}
 jobs:
-  build-and-test:
-    name: Build and Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Build and Test
-        run: mvn ${{ env.MAVEN_INFO }} verify
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: bikube.jar
-          path: target/bikube.jar
-
-      - name: Cache .m2/repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+#  build-and-test:
+#    name: Build and Test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#
+#      - name: Cache Maven packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2
+#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-m2
+#
+#      - name: Build and Test
+#        run: mvn ${{ env.MAVEN_INFO }} verify
+#
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: bikube.jar
+#          path: target/bikube.jar
+#
+#      - name: Cache .m2/repository
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2/repository
+#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-m2
 
   build-and-publish-docker-image:
-    needs: build-and-test
+#    needs: build-and-test
 #    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
     runs-on: [self-hosted, Linux]
@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: debug
-        run: nslookup registry-1.docker.io
+        run: cat /.docker/config.json
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -63,74 +63,74 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: nationallibraryofnorway/bikube
-          tags: |
-            type=semver,pattern={{version}}
-            type=ref,event=branch
-            type=ref,event=pr
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@v5
+#        with:
+#          images: nationallibraryofnorway/bikube
+#          tags: |
+#            type=semver,pattern={{version}}
+#            type=ref,event=branch
+#            type=ref,event=pr
+#
+#      - name: Download artifact
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: bikube.jar
+#
+#      - name: Build image
+#        uses: docker/build-push-action@v5
+#        with:
+#          push: true
+#          context: .
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
+#
+#      - name: Docker Hub Description
+#        uses: peter-evans/dockerhub-description@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#          repository: nationallibraryofnorway/bikube
+#          short-description: ${{ github.event.repository.description }}
+#          readme-filepath: ./README.md
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: bikube.jar
-
-      - name: Build image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          context: .
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: nationallibraryofnorway/bikube
-          short-description: ${{ github.event.repository.description }}
-          readme-filepath: ./README.md
-
-  deploy-to-k8s-stage:
-    name: Deploy to kubernetes stage environment
-    needs: build-and-publish-docker-image
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: [self-hosted, Linux]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Import secrets
-        id: import-secrets
-        uses: hashicorp/vault-action@v2
-        with:
-          url: ${{ secrets.VAULT_URL }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID }}
-          secrets: |
-            kv/team/text/data/k8s-text-stage *
-
-      - name: Setup Kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'v1.26.5'
-
-      - name: Deploy to stage cluster
-        run: |
-          echo "Deploying to stage version ${{ env.APP_VERSION }}"
-          sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/stage/bikube.yml
-          sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
-          kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
-          kubectl config set clusters.stagecl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_CA }}
-          kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --token=${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_TOKEN }}
-          kubectl config set-context tekst --cluster=stagecl --user=${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --namespace=tekst-stage
-          kubectl config use-context tekst
-          kubectl config view
-          kubectl version
-          kubectl apply -f k8s/stage/bikube.yml
-          kubectl rollout restart deploy/bikube
+#  deploy-to-k8s-stage:
+#    name: Deploy to kubernetes stage environment
+#    needs: build-and-publish-docker-image
+#    if: startsWith(github.ref, 'refs/tags/v')
+#    runs-on: [self-hosted, Linux]
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Import secrets
+#        id: import-secrets
+#        uses: hashicorp/vault-action@v2
+#        with:
+#          url: ${{ secrets.VAULT_URL }}
+#          method: approle
+#          roleId: ${{ secrets.VAULT_ROLE_ID }}
+#          secretId: ${{ secrets.VAULT_SECRET_ID }}
+#          secrets: |
+#            kv/team/text/data/k8s-text-stage *
+#
+#      - name: Setup Kubectl
+#        uses: azure/setup-kubectl@v4
+#        with:
+#          version: 'v1.26.5'
+#
+#      - name: Deploy to stage cluster
+#        run: |
+#          echo "Deploying to stage version ${{ env.APP_VERSION }}"
+#          sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/stage/bikube.yml
+#          sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
+#          kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
+#          kubectl config set clusters.stagecl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_CA }}
+#          kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --token=${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_TOKEN }}
+#          kubectl config set-context tekst --cluster=stagecl --user=${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --namespace=tekst-stage
+#          kubectl config use-context tekst
+#          kubectl config view
+#          kubectl version
+#          kubectl apply -f k8s/stage/bikube.yml
+#          kubectl rollout restart deploy/bikube
