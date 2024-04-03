@@ -48,12 +48,13 @@ jobs:
     name: Create and push Docker image
     runs-on: [self-hosted, Linux]
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+      - name: Test harbor login
+        run: |
+          docker login ${{ secrets.HARBOR_URL }} -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: debug
-        run: cat /etc/default/docker
-
+#      - name: Check out the repo
+#        uses: actions/checkout@v4
+#
 #      - name: Set up Docker Buildx
 #        uses: docker/setup-buildx-action@v3
 #
