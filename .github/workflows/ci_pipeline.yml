@@ -55,7 +55,7 @@ jobs:
       - name: Setup Docker proxy
         run: |
           sudo mkdir -p /.config/docker
-          echo '{"proxies": {"default": {"httpProxy": "${{ secrets.HTTPS_PROXY }}", "httpsProxy": "${{ secrets.HTTPS_PROXY }}", "noProxy": "localhost,127.0.0.1"}}}' > /.config/docker/daemon.json
+          sudo echo '{"proxies": {"default": {"httpProxy": "${{ secrets.HTTPS_PROXY }}", "httpsProxy": "${{ secrets.HTTPS_PROXY }}", "noProxy": "localhost,127.0.0.1"}}}' > /.config/docker/daemon.json
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
