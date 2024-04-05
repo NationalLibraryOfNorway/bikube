@@ -13,6 +13,7 @@ on:
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
   APP_VERSION: ${{ github.ref_name }}
+  NO_PROXY: ${{ secrets.NO_PROXY }}
 jobs:
 #  build-and-test:
 #    name: Build and Test
