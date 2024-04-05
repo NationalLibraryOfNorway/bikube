@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/">
+    <version>1.2</version>
+    <numberOfRecords>3</numberOfRecords>
+    <records>
+        <record>
+            <recordSchema>marcxml</recordSchema>
+            <recordPacking>xml</recordPacking>
+            <recordData>
+                <record xmlns="http://www.loc.gov/MARC21/slim">
+                    <leader>01190cam a2200337 c 4500</leader>
+                    <controlfield tag="001">990000000000002202</controlfield>
+                    <controlfield tag="007">ta</controlfield>
+                    <controlfield tag="007">cr||||||||||||</controlfield>
+                    <datafield ind1="0" ind2=" " tag="022">
+                        <subfield code="a">0123-4567</subfield>
+                        <subfield code="2">r</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="035">
+                        <subfield code="a">123456789-47bibsys_network</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="040">
+                        <subfield code="a">NO-OsNB</subfield>
+                        <subfield code="b">nob</subfield>
+                        <subfield code="e">katreg</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="044">
+                        <subfield code="c">no</subfield>
+                    </datafield>
+                    <datafield ind1="1" ind2="0" tag="245">
+                        <subfield code="a">Tidsskrift</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="260">
+                        <subfield code="a">Oslo</subfield>
+                        <subfield code="b">Forlag</subfield>
+                        <subfield code="c">1970-2024</subfield>
+                    </datafield>
+                    <datafield ind1="0" ind2=" " tag="776">
+                        <subfield code="t">Tidsskrift (online)</subfield>
+                        <subfield code="x">1234-5678</subfield>
+                        <subfield code="h">elektronisk ressurs</subfield>
+                        <subfield code="w">999922222222222202</subfield>
+                    </datafield>
+                </record>
+            </recordData>
+            <recordIdentifier>990000000000002202</recordIdentifier>
+            <recordPosition>1</recordPosition>
+        </record>
+        <record>
+            <recordSchema>marcxml</recordSchema>
+            <recordPacking>xml</recordPacking>
+            <recordData>
+                <record xmlns="http://www.loc.gov/MARC21/slim">
+                    <leader>01190cam a2200337 c 4500</leader>
+                    <controlfield tag="001">999911111111112202</controlfield>
+                    <datafield ind1=" " ind2=" " tag="022">
+                        <subfield code="a">1234-5678</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="035">
+                        <subfield code="a">(CKB)11223344556677889900</subfield>
+                    </datafield>
+                    <datafield ind1="0" ind2="0" tag="245">
+                        <subfield code="a">Tidsskrift.</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="260">
+                        <subfield code="a">Oslo</subfield>
+                        <subfield code="b">Forlag.</subfield>
+                    </datafield>
+                </record>
+            </recordData>
+            <recordIdentifier>999911111111112202</recordIdentifier>
+            <recordPosition>2</recordPosition>
+        </record>
+        <record>
+            <recordSchema>marcxml</recordSchema>
+            <recordPacking>xml</recordPacking>
+            <recordData>
+                <record xmlns="http://www.loc.gov/MARC21/slim">
+                    <leader>01190cam a2200337 c 4500</leader>
+                    <controlfield tag="001">999922222222222202</controlfield>
+                    <controlfield tag="007">cr#|||||||||||</controlfield>
+                    <datafield ind1="0" ind2=" " tag="022">
+                        <subfield code="a">1234-5678</subfield>
+                        <subfield code="2">r</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="040">
+                        <subfield code="a">NO-OsNB</subfield>
+                        <subfield code="b">nob</subfield>
+                        <subfield code="e">katreg</subfield>
+                    </datafield>
+                    <datafield ind1=" " ind2=" " tag="044">
+                        <subfield code="c">no</subfield>
+                    </datafield>
+                    <datafield ind1="1" ind2="0" tag="245">
+                        <subfield code="a">Tidsskrift</subfield>
+                        <subfield code="h">[elektronisk ressurs]</subfield>
+                    </datafield>
+                    <datafield ind1="3" ind2=" " tag="260">
+                        <subfield code="a">Oslo</subfield>
+                        <subfield code="b">Forlaget</subfield>
+                        <subfield code="3">1970-</subfield>
+                    </datafield>
+                </record>
+            </recordData>
+            <recordIdentifier>999922222222222202</recordIdentifier>
+            <recordPosition>3</recordPosition>
+        </record>
+    </records>
+    <extraResponseData xmlns:xb="http://www.exlibris.com/repository/search/xmlbeans/">
+        <xb:exact>true</xb:exact>
+        <xb:responseDate>2024-03-20T13:51:43+0100</xb:responseDate>
+    </extraResponseData>
+</searchRetrieveResponse>

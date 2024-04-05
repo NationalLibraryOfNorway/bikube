@@ -62,11 +62,16 @@ spec:
                 secretKeyRef:
                   name: bikube-secrets
                   key: kerb_kdc
-            - name: ALMAWS_URL
+            - name: ALMA_SRU_URL
               valueFrom:
                 secretKeyRef:
                   name: bikube-secrets
-                  key: alma_url
+                  key: alma_sru_url
+            - name: ALMA_WS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: alma_ws_url
             - name: ALMA_API_KEY
               valueFrom:
                 secretKeyRef:
