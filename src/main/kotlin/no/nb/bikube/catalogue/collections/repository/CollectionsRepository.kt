@@ -31,7 +31,7 @@ class CollectionsRepository(
     fun getSingleCollectionsModelWithoutChildren(titleCatalogId: String): Mono<CollectionsModel> {
         val fields = "priref and title and work.description_type and record_type " +
                 "and dating.date.start and dating.date.end and publisher " +
-                "and place_of_publication and language and submedium " +
+                "and association.geographical_keyword and language and submedium " +
                 "and format and alternative_number and alternative_number.type " +
                 "and part_of_reference and PID_data_URN"
 

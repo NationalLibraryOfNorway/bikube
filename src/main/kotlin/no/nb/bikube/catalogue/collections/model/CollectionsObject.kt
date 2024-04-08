@@ -150,6 +150,11 @@ data class CollectionsLanguage(
     val language: String?
 )
 
+data class CollectionsAssociationGeo(
+    @JsonProperty("association.geographical_keyword")
+    val name: String?
+)
+
 data class CollectionsPartsObject(
     @JsonProperty("parts_reference")
     val partsReference: CollectionsPartsReference?

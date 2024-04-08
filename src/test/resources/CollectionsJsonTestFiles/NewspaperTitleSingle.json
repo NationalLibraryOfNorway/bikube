@@ -171,8 +171,10 @@
         "input.notes": "Registrert i Bikube",
         "input.time": "11:55:15",
         "object_number": "120531",
-        "place_of_publication": [
-          "Brakka"
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Brakka"
+          }
         ],
         "priref": "39977",
         "publisher": [
