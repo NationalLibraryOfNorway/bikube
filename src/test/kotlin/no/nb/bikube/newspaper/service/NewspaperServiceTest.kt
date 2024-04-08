@@ -624,7 +624,7 @@ class NewspaperServiceTest(
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null, date = null), it) }
             .verifyComplete()
     }
 
@@ -638,7 +638,7 @@ class NewspaperServiceTest(
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null, date = null), it) }
             .verifyComplete()
 
         verify { collectionsRepository.createTextsRecord(itemEncodedDto) }

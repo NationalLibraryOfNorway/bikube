@@ -537,8 +537,10 @@
           }
         ],
         "priref": "3",
-        "publisher": [
-          "Amedia"
+        "Publisher": [
+          {
+            "publisher": "Amedia"
+          }
         ],
         "record_type": [
           [

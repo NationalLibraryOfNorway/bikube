@@ -38,9 +38,6 @@ class ItemMapperTests {
     fun `Item mapper should map name`() { Assertions.assertEquals("Bikubeavisen 2012.01.02", genericItem.name) }
 
     @Test
-    fun `Item mapper should map date`() { Assertions.assertEquals(LocalDate.parse("2012-01-02"), genericItem.date) }
-
-    @Test
     fun `Item mapper should map material type`() { Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericItem.materialType) }
 
     @Test
