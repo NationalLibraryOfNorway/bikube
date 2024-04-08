@@ -134,7 +134,7 @@ class CoreControllerIntegrationTest (
                 Item(
                     catalogueId = testItem.priRef,
                     name = testItem.getName(),
-                    date = testItem.getItemDate(),
+                    date = testItem.getStartDate(),
                     materialType = testItem.getMaterialTypeFromParent()!!.norwegian,
                     titleCatalogueId = testItem.getTitleCatalogueId(),
                     titleName = testItem.getTitleName(),

@@ -33,10 +33,6 @@ fun CollectionsObject.getName(): String? {
     return this.titleList?.first()?.title
 }
 
-fun CollectionsObject.getItemDate(): LocalDate? {
-    return this.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) }
-}
-
 fun CollectionsObject.getStartDate(): LocalDate? {
     return this.datingList?.first()?.dateFrom?.let { parseYearOrDate(it) }
 }

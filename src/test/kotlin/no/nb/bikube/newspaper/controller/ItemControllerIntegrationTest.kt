@@ -110,7 +110,7 @@ class ItemControllerIntegrationTest (
             .expectNext(Item(
                 catalogueId = testReturn.priRef,
                 name = testReturn.getName(),
-                date = testReturn.getItemDate(),
+                date = testReturn.getStartDate(),
                 materialType = "Avis",
                 titleCatalogueId = testReturn.getTitleCatalogueId(),
                 titleName = testReturn.getTitleName(),

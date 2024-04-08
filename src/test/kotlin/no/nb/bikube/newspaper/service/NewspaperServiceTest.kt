@@ -289,7 +289,7 @@ class NewspaperServiceTest(
                     Item(
                         catalogueId = testRecord.priRef,
                         name = testRecord.getName(),
-                        date = testRecord.getItemDate(),
+                        date = testRecord.getStartDate(),
                         materialType = testSerialWork.getMaterialType()!!.norwegian,
                         titleCatalogueId = testSerialWork.priRef,
                         titleName = testSerialWork.getName(),
