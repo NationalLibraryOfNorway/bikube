@@ -11,12 +11,8 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.catalogue.collections.DtoMock
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.model.*
@@ -48,7 +44,6 @@ class ItemControllerIntegrationTest (
     private lateinit var collectionsRepository: CollectionsRepository
 
     private val titleId = collectionsModelMockTitleA.getFirstId()!!
-    private val yearWorkId = collectionsModelMockYearWorkA.getFirstId()!!
     private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
     private val itemId = collectionsModelMockItemA.getFirstId()!!
 
@@ -69,9 +64,13 @@ class ItemControllerIntegrationTest (
 
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
         every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
 
         val encodedBody = slot<String>()
         every { collectionsRepository.createTextsRecord(capture(encodedBody)) } answers {
@@ -79,13 +78,7 @@ class ItemControllerIntegrationTest (
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
                 CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationC)
-                CollectionsRecordType.WORK.value -> {
-                    if (dto.descriptionType == CollectionsDescriptionType.SERIAL.value) {
-                        Mono.just(collectionsModelMockTitleA)
-                    } else {
-                        Mono.just(collectionsModelMockYearWorkB)
-                    }
-                }
+                CollectionsRecordType.WORK.value -> Mono.just(collectionsModelMockTitleA)
                 else -> Mono.just(collectionsModelEmptyRecordListMock)
             }
         }
@@ -146,7 +139,7 @@ class ItemControllerIntegrationTest (
 
 
     @Test
-    fun `post-newspapers-items endpoint should use year work and manifestation if it exists`() {
+    fun `post-newspapers-items endpoint should use manifestation if it exists`() {
         createItem(newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
@@ -154,19 +147,9 @@ class ItemControllerIntegrationTest (
     }
 
     @Test
-    fun `post-newspapers-items endpoint should create year work and manifestation if year work is not found`() {
-        val mockTitle = Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returnsMany listOf(mockTitle, mockTitle, Mono.just(collectionsModelMockItemA.copy()))
-
-        createItem(newspaperItemMockCValidForCreation)
-            .expectStatus().isCreated
-
-        verify(exactly = 3) { collectionsRepository.createTextsRecord(any()) }
-    }
-
-    @Test
     fun `post-newspapers-items endpoint should create correct manifestation if not found`() {
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         createItem(newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01")))
             .expectStatus().isCreated
@@ -175,7 +158,7 @@ class ItemControllerIntegrationTest (
     }
 
     @Test
-    fun `post-newspapers-items endpoint should link item to manifestation and upward`() {
+    fun `post-newspapers-items endpoint should link item to manifestation and title`() {
         createItem(newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
             .returnResult<Item>()

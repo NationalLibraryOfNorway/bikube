@@ -13,8 +13,7 @@ enum class CollectionsRecordType(val value: String) {
 }
 
 enum class CollectionsDescriptionType(val value: String) {
-    SERIAL("SERIAL"),
-    YEAR("YEAR");
+    SERIAL("SERIAL");
 
     companion object {
         fun fromString(value: String?): CollectionsDescriptionType? {

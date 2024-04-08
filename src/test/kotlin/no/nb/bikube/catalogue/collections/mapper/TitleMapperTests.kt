@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.catalogue.collections.model.CollectionsDating
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
 import no.nb.bikube.catalogue.collections.model.getFirstObject
+import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,17 +31,17 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map catalogueId `() {
-        Assertions.assertEquals("3", genericTitle.catalogueId)
+        Assertions.assertEquals("39977", genericTitle.catalogueId)
     }
 
     @Test
     fun `Title mapper should map start date`() {
-        Assertions.assertEquals(LocalDate.parse("1947-01-01"), genericTitle.startDate)
+        Assertions.assertEquals(LocalDate.parse("2024-01-01"), genericTitle.startDate)
     }
 
     @Test
     fun `Title mapper should map end date`() {
-        Assertions.assertEquals(LocalDate.parse("1999-01-09"), genericTitle.endDate)
+        Assertions.assertEquals(LocalDate.parse("2024-01-03"), genericTitle.endDate)
     }
 
     @Test
@@ -56,17 +56,17 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map title`() {
-        Assertions.assertEquals("Bikubeavisen", genericTitle.name)
+        Assertions.assertEquals("Bikubetestavisen", genericTitle.name)
     }
 
     @Test
     fun `Title mapper should map publication place `() {
-        Assertions.assertEquals("Mo i Rana", genericTitle.publisherPlace)
+        Assertions.assertEquals("Brakka", genericTitle.publisherPlace)
     }
 
     @Test
     fun `Title mapper should map publisher`() {
-        Assertions.assertEquals("Amedia", genericTitle.publisher)
+        Assertions.assertEquals("Brakka publishing", genericTitle.publisher)
     }
 
     @Test

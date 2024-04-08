@@ -39,48 +39,9 @@ class NewspaperService  (
             .flatMap { getSingleTitle(it.first().priRef) }
     }
 
-    @Throws(CollectionsException::class)
-    fun getItemsForTitle(titleCatalogId: String): Flux<Item> {
-
-        return collectionsRepository.getSingleCollectionsModel(titleCatalogId)
-            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
-                collectionsModel.adlibJson.recordList
-                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(CollectionsTitleNotFound("Title $titleCatalogId not found"))
-            }
-            .map { it.first() }
-            .handle { collectionsObject, sink ->
-                if (collectionsObject.isSerial())
-                    sink.next(collectionsObject)
-                else
-                    sink.error(CollectionsTitleNotFound("Title $titleCatalogId not found"))
-            }
-            .flatMapMany { title ->
-                val titleName = title.getName()
-                val materialType = title.getMaterialType()
-                Flux.fromIterable(title.partsList ?: emptyList())
-                    .flatMapIterable { yearWork ->
-                        yearWork.getPartRefs()
-                    }
-                    .flatMapIterable { manifestation ->
-                        manifestation.getPartRefs()
-                    }
-                    .mapNotNull { item ->
-                        item.partsReference?.let {
-                            mapCollectionsPartsObjectToGenericItem(
-                                item.partsReference,
-                                titleCatalogueId = titleCatalogId,
-                                titleName = titleName,
-                                materialType = materialType?.norwegian
-                            )
-                        }
-                    }
-            }
-    }
-
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleItem(catalogId: String): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModel(catalogId)
+        return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map {
                 validateSingleCollectionsModel(it, CollectionsRecordType.ITEM, null)
                 mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
@@ -89,7 +50,7 @@ class NewspaperService  (
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
-        return collectionsRepository.getSingleCollectionsModel(catalogId)
+        return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map {
                 validateSingleCollectionsModel(it, CollectionsRecordType.WORK, CollectionsDescriptionType.SERIAL)
                 mapCollectionsObjectToGenericTitle(it.getFirstObject()!!)
@@ -112,28 +73,24 @@ class NewspaperService  (
             .collectList()
     }
 
-    fun getItemsByTitle(
+    fun getItemsByTitleAndDate(
         titleCatalogId: String,
         date: LocalDate,
-        isDigital: Boolean,
-        materialType: MaterialType
+        isDigital: Boolean?
     ): Flux<CatalogueRecord> {
-        return collectionsRepository.getWorkYearForTitle(titleCatalogId, date.year)
+        return collectionsRepository.getManifestationsByDateAndTitle(date, titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
-            .flatMap { titleObject ->
-                val title = titleObject.getName() ?: ""
-                Flux.fromIterable(titleObject.getParts() ?: emptyList())
-                    .filter { manifestation -> filterByDate(manifestation, date) }
-                    .flatMap { manifestation -> collectionsRepository.getSingleCollectionsModel(manifestation.partsReference?.priRef!!) }
+            .flatMap { briefManifestation ->
+                collectionsRepository.getSingleCollectionsModel(briefManifestation.priRef)
                     .flatMapIterable { it.getObjects() ?: emptyList() }
                     .flatMapIterable { it.getParts() ?: emptyList() }
-                    .filter { itemPartReference -> filterByFormat(itemPartReference, isDigital) }
+                    .filter { if (isDigital != null) filterByFormat(it, isDigital) else true }
                     .map { itemPartReference ->
                         mapCollectionsPartsObjectToGenericItem(
                             itemPartReference.partsReference!!,
                             titleCatalogId,
-                            title,
-                            materialType.value,
+                            briefManifestation.getName() ?: "",
+                            MaterialType.NEWSPAPER.value,
                             date.toString()
                         )
                     }
@@ -212,21 +169,6 @@ class NewspaperService  (
         }
     }
 
-    fun createYearWork(
-        titleCatalogueId: String,
-        year: String,
-        username: String
-    ): Mono<CollectionsObject> {
-        val dto: YearDto = createYearDto(titleCatalogueId, year, username)
-        val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createTextsRecord(encodedBody)
-            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
-                collectionsModel.adlibJson.recordList
-                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(CollectionsYearWorkNotFound("New year not found"))
-            }.map { it.first() }
-    }
-
     fun createManifestation(
         titleCatalogueId: String,
         date: LocalDate,
@@ -244,14 +186,15 @@ class NewspaperService  (
 
     @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId)
+        return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
-                item.name = createTitleString(item, title.getFirstObject()?.getName()!!)
-                findOrCreateYearWorkRecord(title, item)
-            }.flatMap { yearWork ->
-                findOrCreateManifestationRecord(yearWork, item)
+                if (title.hasError() || title.getFirstObject() == null) {
+                    Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
+                } else {
+                    findOrCreateManifestationRecord(item)
+                }
             }.flatMap { manifestation ->
-                createLinkedNewspaperItem(item, manifestation)
+                createLinkedNewspaperItem(item, manifestation.priRef)
             }
     }
 
@@ -265,9 +208,9 @@ class NewspaperService  (
 
     private fun createLinkedNewspaperItem(
         item: ItemInputDto,
-        manifestation: CollectionsPartsObject
+        parentId: String
     ): Mono<Item> {
-        val dto: ItemDto = createNewspaperItemDto(item, manifestation.partsReference?.priRef!!)
+        val dto: ItemDto = createNewspaperItemDto(item, parentId)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
             collectionsModel.getObjects()
@@ -277,33 +220,19 @@ class NewspaperService  (
     }
 
     private fun findOrCreateManifestationRecord(
-        yearWork: CollectionsPartsObject,
-        item: ItemInputDto
-    ): Mono<CollectionsPartsObject> {
-        return yearWork.getPartRefs().find { manifestation ->
-            manifestation.getDate() == item.date
-        }?.toMono() ?: createManifestation(yearWork.partsReference!!.priRef!!, item.date, item.username)
-            .map { collectionsObj ->
-                mapCollectionsObjectToCollectionsPartObject(collectionsObj)
+        item: ItemInputDto,
+    ): Mono<CollectionsObject> {
+        return collectionsRepository.getManifestationsByDateAndTitle(
+            item.date, item.titleCatalogueId
+        ).flatMap {
+            if (it.isEmpty()) {
+                createManifestation(item.titleCatalogueId, item.date, item.username)
+            } else {
+                Mono.just(it.getFirstObject()!!)
             }
-    }
-
-    private fun findOrCreateYearWorkRecord(
-        title: CollectionsModel,
-        item: ItemInputDto
-    ): Mono<CollectionsPartsObject> {
-        return title.getFirstObject()?.getParts()?.find { year ->
-            year.getDate()?.year == item.date.year
-        }?.toMono() ?: createYearWork(item.titleCatalogueId, item.date.year.toString(), item.username)
-            .map { collectionsObj ->
-                mapCollectionsObjectToCollectionsPartObject(collectionsObj)
-            }
+        }
     }
 
     private fun filterByFormat(itemPartReference: CollectionsPartsObject?, isDigital: Boolean) =
         itemPartReference?.partsReference?.getFormat() == if (isDigital) CollectionsFormat.DIGITAL else CollectionsFormat.PHYSICAL
-
-    private fun filterByDate(manifestationPartsObject: CollectionsPartsObject, date: LocalDate) =
-        manifestationPartsObject.getDate().toString() == date.toString()
-
 }

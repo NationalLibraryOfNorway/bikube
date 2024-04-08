@@ -8,8 +8,8 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.catalogue.collections.model.*
@@ -46,7 +46,6 @@ class CoreControllerIntegrationTest (
     private lateinit var titleIndexService: TitleIndexService
 
     private val titleId = "1"
-    private val yearWorkId = "2"
     private val manifestationId = "3"
     private val itemId = "4"
 
@@ -55,12 +54,14 @@ class CoreControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
 
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
                 collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -157,20 +158,8 @@ class CoreControllerIntegrationTest (
     }
 
     @Test
-    fun `get-item endpoint should return 404 with message when ID belongs to title, year work or manifestation`() {
+    fun `get-item endpoint should return 404 with message when ID belongs to title or manifestation`() {
         getItem(titleId, MaterialType.NEWSPAPER)
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext { problemDetail ->
-                Assertions.assertEquals("Not Found", problemDetail.title)
-                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type item"))
-                Assertions.assertNotNull(problemDetail.instance)
-            }
-            .verifyComplete()
-
-        getItem(yearWorkId, MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
             .responseBody
@@ -251,20 +240,7 @@ class CoreControllerIntegrationTest (
     }
 
     @Test
-    fun `get-title endpoint should return 404 with message when ID belongs to year work, manifestation or item`() {
-        getTitle(yearWorkId, MaterialType.NEWSPAPER)
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext { problemDetail ->
-                Assertions.assertEquals("Not Found", problemDetail.title)
-                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type serial"))
-                Assertions.assertNotNull(problemDetail.instance)
-            }
-            .verifyComplete()
-
-
+    fun `get-title endpoint should return 404 with message when ID belongs to manifestation or item`() {
         getTitle(itemId, MaterialType.NEWSPAPER)
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -311,8 +287,6 @@ class CoreControllerIntegrationTest (
             .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![0]))
             .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![1]))
             .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![2]))
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![3]))
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![4]))
             .verifyComplete()
     }
 
@@ -379,7 +353,7 @@ class CoreControllerIntegrationTest (
             )!!,
             materialType = MaterialType.NEWSPAPER.value,
             titleCatalogueId = collectionsModelMockTitleA.getFirstId(),
-            titleName = collectionsModelMockYearWorkA.getFirstObject()!!.getName(),
+            titleName = collectionsPartsObjectMockManifestationA.partsReference!!.titleList!!.first().title!!,
             digital = collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
             urn = null
         )
@@ -401,7 +375,8 @@ class CoreControllerIntegrationTest (
             .expectNext(expectedItem)
             .verifyComplete()
 
-        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(any()) }
+        verify(exactly = 1) { collectionsRepository.getManifestationsByDateAndTitle(any(), "1") }
+        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) }
     }
 
     @Test
@@ -454,8 +429,6 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `search-item endpoint should return empty flux when no items match search term`() {
-        every { collectionsRepository.getWorkYearForTitle("no match", any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-
         webClient
             .get()
             .uri { uri ->
@@ -493,18 +466,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `search-item endpoint should return 400 bad request if required request params are omitted`() {
-        webClient
-            .get()
-            .uri { uri ->
-                uri.pathSegment("item", "search")
-                    .queryParam("titleCatalogueId", "1")
-                    .queryParam("materialType", MaterialType.NEWSPAPER)
-                    .queryParam("date", "2020-01-01")
-                    .build()
-            }
-            .exchange()
-            .expectStatus().isBadRequest
-
+        // Missing date
         webClient
             .get()
             .uri { uri ->
@@ -517,6 +479,7 @@ class CoreControllerIntegrationTest (
             .exchange()
             .expectStatus().isBadRequest
 
+        // Missing title ID
         webClient
             .get()
             .uri { uri ->
@@ -529,6 +492,7 @@ class CoreControllerIntegrationTest (
             .exchange()
             .expectStatus().isBadRequest
 
+        // Missing material type
         webClient
             .get()
             .uri { uri ->

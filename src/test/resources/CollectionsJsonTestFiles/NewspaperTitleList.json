@@ -2,10 +2,20 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 3,
-        "@created": "2023-09-20T08:38:07",
-        "@modification": "2023-09-26T12:10:00",
+        "@priref": 39977,
+        "@created": "2024-04-03T11:55:21",
+        "@modification": "2024-04-03T11:57:23",
         "@selected": false,
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "nob"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -13,11 +23,17 @@
         ],
         "Title": [
           {
-            "title": "Bikubeavisen"
+            "title": "Bikubetestavisen"
           }
         ],
-        "object_number": "3",
-        "priref": "3",
+        "object_number": "120531",
+        "place_of_publication": [
+          "Brakka"
+        ],
+        "priref": "39977",
+        "publisher": [
+          "Brakka publishing"
+        ],
         "record_type": [
           [
             {
@@ -42,7 +58,7 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ],
@@ -66,20 +82,27 @@
             },
             {
               "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
               "#text": "Serie"
             }
           ]
         ]
       },
       {
-        "@priref": 7,
-        "@created": "2023-09-20T09:19:26",
-        "@modification": "2023-09-26T12:09:48",
+        "@priref": 39986,
+        "@created": "2024-04-03T11:59:27",
+        "@modification": "2024-04-03T11:59:27",
         "@selected": false,
+        "Dating": [
+          {
+            "dating.date.end": "2024-02-28",
+            "dating.date.start": "2024-02-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "nob"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -87,11 +110,17 @@
         ],
         "Title": [
           {
-            "title": "Bikubeposten"
+            "title": "Bikubetestavisen 2"
           }
         ],
-        "object_number": "7",
-        "priref": "7",
+        "object_number": "120547",
+        "place_of_publication": [
+          "Brakka"
+        ],
+        "priref": "39986",
+        "publisher": [
+          "Brakka publishing"
+        ],
         "record_type": [
           [
             {
@@ -116,7 +145,7 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ],
@@ -140,20 +169,26 @@
             },
             {
               "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
               "#text": "Serie"
             }
           ]
         ]
       },
       {
-        "@priref": 9,
-        "@created": "2023-09-20T10:27:23",
-        "@modification": "2023-09-20T10:33:13",
+        "@priref": 39987,
+        "@created": "2024-04-03T11:59:57",
+        "@modification": "2024-04-03T11:59:57",
         "@selected": false,
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "fkv"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -161,11 +196,17 @@
         ],
         "Title": [
           {
-            "title": "The Bikube"
+            "title": "Bikubetestavisen kvensk"
           }
         ],
-        "object_number": "9",
-        "priref": "9",
+        "object_number": "120548",
+        "place_of_publication": [
+          "Brakka"
+        ],
+        "priref": "39987",
+        "publisher": [
+          "Brakka publishing"
+        ],
         "record_type": [
           [
             {
@@ -190,7 +231,7 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ],
@@ -214,15 +255,27 @@
             },
             {
               "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
               "#text": "Serie"
             }
           ]
         ]
       }
-    ]
+    ],
+    "diagnostic": {
+      "hits": 3,
+      "xmltype": "Grouped",
+      "hits_on_display": 3,
+      "search": "record_type=WORK and input.name='marmarmarmar'",
+      "sort": null,
+      "first_item": 1,
+      "forward": 0,
+      "backward": 0,
+      "limit": 10,
+      "dbname": "texts",
+      "dsname": "texts",
+      "cgistring": {
+        "database": "texts"
+      }
+    }
   }
 }

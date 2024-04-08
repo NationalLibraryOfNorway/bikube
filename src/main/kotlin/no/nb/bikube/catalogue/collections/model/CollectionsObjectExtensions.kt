@@ -20,11 +20,19 @@ fun CollectionsModel.getFirstId(): String? {
     return this.getObjects()?.first()?.priRef
 }
 
-// CollectionsObject
-fun CollectionsObject.isSerial(): Boolean {
-    return this.workTypeList?.first()?.first()?.text == CollectionsDescriptionType.SERIAL.value
+fun CollectionsModel.hasError(): Boolean {
+    return this.getError() != null
 }
 
+fun CollectionsModel.getError(): String? {
+    return this.adlibJson.diagnostic?.error?.message
+}
+
+fun CollectionsModel.isEmpty(): Boolean {
+    return this.getObjects()?.isEmpty() ?: true
+}
+
+// CollectionsObject
 fun CollectionsObject.getUrn(): String? {
     return this.urn?.firstOrNull() ?: this.alternativeNumberList?.find { it.type == "URN" }?.value
 }
@@ -46,17 +54,24 @@ fun CollectionsObject.getMaterialType(): MaterialType? {
 }
 
 fun CollectionsObject.getMaterialTypeFromParent(): MaterialType? {
-    return MaterialType.fromNorwegianString(
-        this.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.subMedium?.first()?.subMedium
-    )
+    // Migrated hysical items are directly below title, digital items and new physical items are two levels below
+    return this.getFirstPartOf()?.getMaterialType()
+        ?: this.getFirstPartOf()?.getFirstPartOf()?.getMaterialType()
 }
 
 fun CollectionsObject.getTitleCatalogueId(): String? {
-    return this.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.priRef
+    val firstParent = this.getFirstPartOf()
+
+    return if (firstParent?.getRecordType() == CollectionsRecordType.WORK) {
+        firstParent.priRef
+    } else {
+        firstParent?.getFirstPartOf()?.priRef
+    }
 }
 
 fun CollectionsObject.getTitleName(): String? {
-    return this.partOfList?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.partOfGroup?.first()?.partOfReference?.title?.first()?.title
+    // Usually title is two levels above, but old physical items are one level below the item
+    return this.getFirstPartOf()?.getFirstPartOf()?.getName() ?: this.getFirstPartOf()?.getName()
 }
 
 fun CollectionsObject.getFormat(): CollectionsFormat? {
@@ -97,8 +112,8 @@ fun CollectionsPartsReference.getName(): String? {
     return this.titleList?.first()?.title
 }
 
-fun CollectionsPartsReference.getItemDate(): LocalDate? {
-    return this.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) }
+fun CollectionsPartsReference.getStartDate(): LocalDate? {
+    return this.dateStart?.first()?.dateFrom?.let { parseYearOrDate(it) }
 }
 
 fun CollectionsPartsReference.getFormat(): CollectionsFormat? {
@@ -109,16 +124,8 @@ fun CollectionsPartsReference.getRecordType(): CollectionsRecordType? {
     return CollectionsRecordType.fromString(recordType?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
 }
 
-fun CollectionsPartsReference.getWorkType(): CollectionsDescriptionType? {
-    return CollectionsDescriptionType.fromString(workTypeList?.first()?.first { langObj -> langObj.lang == "neutral" }?.text)
-}
-
 // CollectionsPartsObject
-fun CollectionsPartsObject.getPartRefs(): List<CollectionsPartsObject> {
-    return this.partsReference?.partsList ?: emptyList()
-}
-
-fun CollectionsPartsObject.getDate(): LocalDate? {
+fun CollectionsPartsObject.getStartDate(): LocalDate? {
     return this.partsReference?.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
 }
 

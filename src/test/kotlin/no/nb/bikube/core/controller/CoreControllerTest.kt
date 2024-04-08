@@ -128,7 +128,7 @@ class CoreControllerTest {
 
     @Test
     fun `search item should return a list of items matching criteria`() {
-        every { newspaperService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.just(
+        every { newspaperService.getItemsByTitleAndDate(any(), any(), any()) } returns Flux.just(
             newspaperItemMockA.copy(), newspaperItemMockA.copy()
         )
 
@@ -150,24 +150,24 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.PERIODICAL, "2020-01-01", false) }
         assertThrows<NotSupportedException> { coreController.searchItem("Avis", MaterialType.MONOGRAPH, "2020-01-01", false) }
 
-        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { newspaperService.getItemsByTitleAndDate(any(), any(), any()) wasNot Called }
     }
 
     @Test
     fun `search item should call on newspaperService function when materialType is NEWSPAPER`() {
-        every { newspaperService.getItemsByTitle(any(), any(), any(), any()) } returns Flux.empty()
+        every { newspaperService.getItemsByTitleAndDate(any(), any(), any()) } returns Flux.empty()
 
         coreController.searchItem("1", MaterialType.NEWSPAPER, "2020-01-01", true).body!!
             .test()
             .verifyComplete()
 
-        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) }
+        verify(exactly = 1) { newspaperService.getItemsByTitleAndDate(any(), any(), any()) }
     }
 
     @Test
     fun `search item should throw BadRequestBodyException when searchTerm is empty`() {
         assertThrows<BadRequestBodyException> { coreController.searchItem("", MaterialType.NEWSPAPER, "2020-01-01", false) }
 
-        verify { newspaperService.getItemsByTitle(any(), any(), any(), any()) wasNot Called }
+        verify { newspaperService.getItemsByTitleAndDate(any(), any(), any()) wasNot Called }
     }
 }

@@ -1,0 +1,214 @@
+{
+  "adlibJSON": {
+    "recordList": [
+      {
+        "@priref": 39984,
+        "@created": "2024-04-03T11:57:32",
+        "@modification": "2024-04-03T11:57:32",
+        "@selected": false,
+        "format": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "PHYSICAL"
+            },
+            {
+              "@lang": 0,
+              "#text": "Physical item"
+            },
+            {
+              "@lang": 12,
+              "#text": "Fysisk"
+            }
+          ]
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Medium": [
+          {
+            "medium": "Tekst"
+          }
+        ],
+        "Part_of": [
+          {
+            "part_of_reference": {
+              "group:Part_of": [
+                {
+                  "part_of_reference": {
+                    "group:Submedium": [
+                      {
+                        "submedium": "Aviser"
+                      }
+                    ],
+                    "group:Title": [
+                      {
+                        "title": "Bikubetestavisen"
+                      }
+                    ],
+                    "object_number": "120531",
+                    "priref": "39977",
+                    "record_type": [
+                      [
+                        {
+                          "@lang": "neutral",
+                          "#text": "WORK"
+                        },
+                        {
+                          "@lang": 0,
+                          "#text": "Work"
+                        },
+                        {
+                          "@lang": 1,
+                          "#text": "Werk"
+                        },
+                        {
+                          "@lang": 3,
+                          "#text": "Werk"
+                        },
+                        {
+                          "@lang": 9,
+                          "#text": "Verk"
+                        },
+                        {
+                          "@lang": 12,
+                          "#text": "Seriepost (Verk)"
+                        }
+                      ]
+                    ],
+                    "work.description_type": [
+                      [
+                        {
+                          "@lang": "neutral",
+                          "#text": "SERIAL"
+                        },
+                        {
+                          "@lang": 0,
+                          "#text": "Serial"
+                        },
+                        {
+                          "@lang": 1,
+                          "#text": "Tijdschrift"
+                        },
+                        {
+                          "@lang": 3,
+                          "#text": "Zeitschrift"
+                        },
+                        {
+                          "@lang": 9,
+                          "#text": "Serie"
+                        }
+                      ]
+                    ]
+                  }
+                }
+              ],
+              "group:Submedium": [
+                {
+                  "submedium": "Aviser"
+                }
+              ],
+              "group:Title": [
+                {
+                  "title": "Bikubetestavisen"
+                }
+              ],
+              "object_number": "120539",
+              "priref": "39978",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "MANIFESTATION"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Manifestation"
+                  },
+                  {
+                    "@lang": 1,
+                    "#text": "Manifestatie"
+                  },
+                  {
+                    "@lang": 3,
+                    "#text": "Manifestation"
+                  },
+                  {
+                    "@lang": 9,
+                    "#text": "Manifestation"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Utgave (Manifestasjon)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubetestavisen"
+          }
+        ],
+        "input.date": "2024-04-03",
+        "input.name": "marmarmarmar",
+        "input.notes": "Registrert i Bikube",
+        "input.time": "11:57:32",
+        "object_number": "120545",
+        "priref": "39984",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "ITEM"
+            },
+            {
+              "@lang": 0,
+              "#text": "Item"
+            },
+            {
+              "@lang": 1,
+              "#text": "Item"
+            },
+            {
+              "@lang": 3,
+              "#text": "Exemplar"
+            },
+            {
+              "@lang": 9,
+              "#text": "Objekt"
+            },
+            {
+              "@lang": 12,
+              "#text": "Objekt (Bærer)"
+            }
+          ]
+        ]
+      }
+    ],
+    "diagnostic": {
+      "hits": 1,
+      "xmltype": "Grouped",
+      "hits_on_display": 1,
+      "search": "priref=39984",
+      "sort": null,
+      "first_item": 1,
+      "forward": 0,
+      "backward": 0,
+      "limit": 1,
+      "dbname": "texts",
+      "dsname": "texts",
+      "cgistring": {
+        "database": "texts"
+      }
+    }
+  }
+}

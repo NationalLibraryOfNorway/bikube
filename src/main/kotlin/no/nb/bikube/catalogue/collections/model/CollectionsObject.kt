@@ -8,7 +8,9 @@ data class CollectionsModel(
 )
 
 data class CollectionsRecordList(
-    val recordList: List<CollectionsObject>?
+    val recordList: List<CollectionsObject>?,
+
+    val diagnostic: CollectionDiagnostic? = null
 )
 
 data class CollectionsObject(
@@ -121,7 +123,10 @@ data class CollectionsPartOfReference(
     val subMedium: List<SubMedium>?,
 
     @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?
+    val workTypeList: List<List<CollectionsLanguageListObject>>?,
+
+    @JsonProperty("Dating")
+    val datingList: List<CollectionsDating>?,
 )
 
 data class SubMedium(
@@ -184,4 +189,18 @@ data class CollectionsAlternativeNumber(
 
     @JsonProperty("alternative_number")
     val value: String?
+)
+
+data class CollectionDiagnostic(
+    val error: ErrorMessage?,
+
+    val hits: String?,
+
+    val search: String?,
+
+    val dbname: String?
+)
+
+data class ErrorMessage(
+    val message: String?
 )

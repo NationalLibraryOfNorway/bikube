@@ -2,9 +2,9 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 5,
-        "@created": "2023-09-20T08:57:58",
-        "@modification": "2023-09-26T10:55:04",
+        "@priref": 39979,
+        "@created": "2024-04-03T11:57:10",
+        "@modification": "2024-04-03T11:57:10",
         "@selected": false,
         "format": [
           [
@@ -22,6 +22,17 @@
             }
           ]
         ],
+        "Alternative_number": [
+          {
+            "alternative_number": "testavisen_0001",
+            "alternative_number.type": "URN"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
         "Medium": [
           {
             "medium": "Tekst"
@@ -33,80 +44,6 @@
               "group:Part_of": [
                 {
                   "part_of_reference": {
-                    "group:Part_of": [
-                      {
-                        "part_of_reference": {
-                          "group:Submedium": [
-                            {
-                              "submedium": "Aviser"
-                            }
-                          ],
-                          "group:Title": [
-                            {
-                              "title": "Bikubeavisen"
-                            }
-                          ],
-                          "object_number": "3",
-                          "priref": "3",
-                          "record_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "WORK"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Work"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Werk"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Werk"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Verk"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Verk"
-                              }
-                            ]
-                          ],
-                          "work.description_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "SERIAL"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Serial"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Tijdschrift"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Zeitschrift"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Serie"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Serie"
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    ],
                     "group:Submedium": [
                       {
                         "submedium": "Aviser"
@@ -114,11 +51,11 @@
                     ],
                     "group:Title": [
                       {
-                        "title": "Bikubeavisen 2012"
+                        "title": "Bikubetestavisen"
                       }
                     ],
-                    "object_number": "4",
-                    "priref": "4",
+                    "object_number": "120531",
+                    "priref": "39977",
                     "record_type": [
                       [
                         {
@@ -143,7 +80,7 @@
                         },
                         {
                           "@lang": 12,
-                          "#text": "Verk"
+                          "#text": "Seriepost (Verk)"
                         }
                       ]
                     ],
@@ -151,15 +88,23 @@
                       [
                         {
                           "@lang": "neutral",
-                          "#text": "YEAR"
+                          "#text": "SERIAL"
                         },
                         {
                           "@lang": 0,
-                          "#text": "Year"
+                          "#text": "Serial"
                         },
                         {
-                          "@lang": 12,
-                          "#text": "År"
+                          "@lang": 1,
+                          "#text": "Tijdschrift"
+                        },
+                        {
+                          "@lang": 3,
+                          "#text": "Zeitschrift"
+                        },
+                        {
+                          "@lang": 9,
+                          "#text": "Serie"
                         }
                       ]
                     ]
@@ -173,11 +118,11 @@
               ],
               "group:Title": [
                 {
-                  "title": "Bikubeavisen 2012.01.02"
+                  "title": "Bikubetestavisen"
                 }
               ],
-              "object_number": "12",
-              "priref": "10",
+              "object_number": "120539",
+              "priref": "39978",
               "record_type": [
                 [
                   {
@@ -202,7 +147,7 @@
                   },
                   {
                     "@lang": 12,
-                    "#text": "Manifestasjon"
+                    "#text": "Utgave (Manifestasjon)"
                   }
                 ]
               ]
@@ -216,11 +161,15 @@
         ],
         "Title": [
           {
-            "title": "Bikubeavisen 2012.01.02"
+            "title": "Bikubetestavisen"
           }
         ],
-        "object_number": "5",
-        "priref": "5",
+        "input.date": "2024-04-03",
+        "input.name": "marmarmarmar",
+        "input.notes": "Registrert i Bikube",
+        "input.time": "11:57:10",
+        "object_number": "120540",
+        "priref": "39979",
         "record_type": [
           [
             {
@@ -245,11 +194,27 @@
             },
             {
               "@lang": 12,
-              "#text": "Objekt/Komponent"
+              "#text": "Objekt (Bærer)"
             }
           ]
         ]
       }
-    ]
+    ],
+    "diagnostic": {
+      "hits": 1,
+      "xmltype": "Grouped",
+      "hits_on_display": 1,
+      "search": "priref=39979",
+      "sort": null,
+      "first_item": 1,
+      "forward": 0,
+      "backward": 0,
+      "limit": 1,
+      "dbname": "texts",
+      "dsname": "texts",
+      "cgistring": {
+        "database": "texts"
+      }
+    }
   }
 }

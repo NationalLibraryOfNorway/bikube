@@ -28,7 +28,7 @@ fun mapCollectionsPartsObjectToGenericItem(
     return Item(
         catalogueId = model.priRef!!,
         name = model.getName(),
-        date = parseYearOrDate(date) ?: model.getItemDate(),
+        date = parseYearOrDate(date) ?: model.getStartDate(),
         materialType = materialType,
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,

@@ -1,6 +1,9 @@
 package no.nb.bikube.catalogue.collections.controller
 
-import no.nb.bikube.catalogue.collections.exception.*
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.core.controller.addDefaultProperties
 import no.nb.bikube.core.util.logger
 import org.springframework.http.HttpStatus
@@ -54,16 +57,4 @@ class CollectionsControllerExceptionHandler {
 
         return problemDetail
     }
-
-    @ExceptionHandler(CollectionsYearWorkNotFound::class)
-    fun handleCollectionsYearWorkNotFoundException(exception: CollectionsYearWorkNotFound): ProblemDetail {
-        logger().warn("CollectionsYearWorkNotFound occurred: ${exception.message}")
-
-        val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
-        problemDetail.detail = "Collections year work not found: ${exception.message}"
-        problemDetail.addDefaultProperties()
-
-        return problemDetail
-    }
-
 }
