@@ -165,7 +165,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockYearWorkA),
                         workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -190,7 +190,7 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -215,7 +215,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockYearWorkB),
                         workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -240,7 +240,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockYearWorkC),
                         workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -265,7 +265,7 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -340,7 +340,7 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -365,7 +365,7 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "avisa_null_null_20200105_1_1_1")),
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -389,7 +389,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockItemA),
                         workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -413,7 +413,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockManifestationA),
                         workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -438,7 +438,7 @@ class CollectionsModelMockData {
                         partsList = null,
                         workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -503,7 +503,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockManifestationB),
                         workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -539,7 +539,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockItemD),
                         workTypeList = null,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )
@@ -563,7 +563,7 @@ class CollectionsModelMockData {
                         partsList = listOf(),
                         workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = null,
-                        inputName = TEST_USERNAME
+                        inputName = listOf(TEST_USERNAME)
                     )
                 )
             )

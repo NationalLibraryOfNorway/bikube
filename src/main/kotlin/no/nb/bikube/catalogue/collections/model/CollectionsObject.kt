@@ -58,16 +58,16 @@ data class CollectionsObject(
     val urn: String? = null,
 
     @JsonProperty("input.name")
-    val inputName: String? = null,
+    val inputName: List<String>? = null,
 
     @JsonProperty("input.date")
-    val inputDate: String? = null,
+    val inputDate: List<String>? = null,
 
     @JsonProperty("input.time")
-    val inputTime: String? = null,
+    val inputTime: List<String>? = null,
 
     @JsonProperty("input.notes")
-    val inputNotes: String? = null,
+    val inputNotes: List<String>? = null,
 
     @JsonProperty("edit.name")
     val modifiedName: String? = null,
