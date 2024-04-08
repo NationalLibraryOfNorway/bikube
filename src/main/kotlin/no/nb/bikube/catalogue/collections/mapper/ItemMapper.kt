@@ -9,7 +9,7 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(
         catalogueId = model.priRef,
         name = model.getName(),
-        date = model.getItemDate(),
+        date = model.getStartDate(),
         materialType = model.getMaterialTypeFromParent()?.norwegian,
         titleCatalogueId = model.getTitleCatalogueId(),
         titleName = model.getTitleName(),

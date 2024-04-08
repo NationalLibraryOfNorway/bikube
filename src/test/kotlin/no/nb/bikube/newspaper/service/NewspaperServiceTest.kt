@@ -289,7 +289,7 @@ class NewspaperServiceTest(
                     Item(
                         catalogueId = testRecord.priRef,
                         name = testRecord.getName(),
-                        date = testRecord.getItemDate(),
+                        date = testRecord.getStartDate(),
                         materialType = testSerialWork.getMaterialType()!!.norwegian,
                         titleCatalogueId = testSerialWork.priRef,
                         titleName = testSerialWork.getName(),
@@ -624,7 +624,7 @@ class NewspaperServiceTest(
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null, date = null), it) }
             .verifyComplete()
     }
 
@@ -638,7 +638,7 @@ class NewspaperServiceTest(
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
             .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null), it) }
+            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null, date = null), it) }
             .verifyComplete()
 
         verify { collectionsRepository.createTextsRecord(itemEncodedDto) }

@@ -36,14 +36,14 @@ data class CollectionsObject(
     @JsonProperty("Dating")
     val datingList: List<CollectionsDating>?,
 
-    @JsonProperty("publisher")
-    val publisherList: List<String>?,
+    @JsonProperty("Publisher")
+    val publisherList: List<CollectionsPublisher>?,
 
     @JsonProperty("Language")
     val languageList: List<CollectionsLanguage>?,
 
-    @JsonProperty("place_of_publication")
-    val placeOfPublicationList: List<String>?,
+    @JsonProperty("AssociationGeo")
+    val placeOfPublicationList: List<CollectionsAssociationGeo>?,
 
     @JsonProperty("Parts")
     val partsList: List<CollectionsPartsObject>?,
@@ -55,19 +55,19 @@ data class CollectionsObject(
     val alternativeNumberList: List<CollectionsAlternativeNumber>?,
 
     @JsonProperty("PID_data_URN")
-    val urn: String? = null,
+    val urn: List<String>? = null,
 
     @JsonProperty("input.name")
-    val inputName: String? = null,
+    val inputName: List<String>? = null,
 
     @JsonProperty("input.date")
-    val inputDate: String? = null,
+    val inputDate: List<String>? = null,
 
     @JsonProperty("input.time")
-    val inputTime: String? = null,
+    val inputTime: List<String>? = null,
 
     @JsonProperty("input.notes")
-    val inputNotes: String? = null,
+    val inputNotes: List<String>? = null,
 
     @JsonProperty("edit.name")
     val modifiedName: String? = null,
@@ -84,6 +84,11 @@ data class CollectionsObject(
 
 data class CollectionsTitle(
     val title: String?
+)
+
+data class CollectionsPublisher(
+    @JsonProperty("publisher")
+    val name: String?
 )
 
 data class CollectionsLanguageListObject(
@@ -143,6 +148,11 @@ data class CollectionsLanguage(
 data class CollectionsPartsObject(
     @JsonProperty("parts_reference")
     val partsReference: CollectionsPartsReference?
+)
+
+data class CollectionsAssociationGeo(
+    @JsonProperty("association.geographical_keyword")
+    val name: String?
 )
 
 data class CollectionsPartsReference(

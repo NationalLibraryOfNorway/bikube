@@ -34,7 +34,7 @@ class TitleDto(
     @SerialName("publisher")
     val publisher: String? = null,
 
-    @SerialName("place_of_publication")
+    @SerialName("association.geographical_keyword")
     val placeOfPublication: String? = null,
 
     @SerialName("language")

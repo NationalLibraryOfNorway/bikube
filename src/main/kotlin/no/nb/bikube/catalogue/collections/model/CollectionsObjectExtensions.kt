@@ -26,15 +26,11 @@ fun CollectionsObject.isSerial(): Boolean {
 }
 
 fun CollectionsObject.getUrn(): String? {
-    return this.urn ?: this.alternativeNumberList?.find { it.type == "URN" }?.value
+    return this.urn?.firstOrNull() ?: this.alternativeNumberList?.find { it.type == "URN" }?.value
 }
 
 fun CollectionsObject.getName(): String? {
     return this.titleList?.first()?.title
-}
-
-fun CollectionsObject.getItemDate(): LocalDate? {
-    return this.titleList?.first()?.title.let { parseYearOrDate(it?.takeLast(10)) }
 }
 
 fun CollectionsObject.getStartDate(): LocalDate? {
@@ -68,11 +64,11 @@ fun CollectionsObject.getFormat(): CollectionsFormat? {
 }
 
 fun CollectionsObject.getPublisher(): String? {
-    return this.publisherList?.first()
+    return this.publisherList?.first()?.name
 }
 
 fun CollectionsObject.getPublisherPlace(): String? {
-    return this.placeOfPublicationList?.first()
+    return this.placeOfPublicationList?.first()?.name
 }
 
 fun CollectionsObject.getLanguage(): String? {
