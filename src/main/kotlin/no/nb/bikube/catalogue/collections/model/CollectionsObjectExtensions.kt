@@ -83,7 +83,7 @@ fun CollectionsObject.getPublisher(): String? {
 }
 
 fun CollectionsObject.getPublisherPlace(): String? {
-    return this.placeOfPublicationList?.first()?.name
+    return this.placeOfPublicationList?.first()
 }
 
 fun CollectionsObject.getLanguage(): String? {

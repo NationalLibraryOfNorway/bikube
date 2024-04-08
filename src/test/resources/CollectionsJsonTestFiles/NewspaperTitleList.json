@@ -27,10 +27,8 @@
           }
         ],
         "object_number": "120531",
-        "AssociationGeo": [
-          {
-            "association.geographical_keyword": "Brakka"
-          }
+        "place_of_publication": [
+          "Brakka"
         ],
         "priref": "39977",
         "publisher": [
@@ -116,10 +114,8 @@
           }
         ],
         "object_number": "120547",
-        "AssociationGeo": [
-          {
-            "association.geographical_keyword": "Brakka"
-          }
+        "place_of_publication": [
+          "Brakka"
         ],
         "priref": "39986",
         "publisher": [
@@ -204,10 +200,8 @@
           }
         ],
         "object_number": "120548",
-        "AssociationGeo": [
-          {
-            "association.geographical_keyword": "Brakka"
-          }
+        "place_of_publication": [
+          "Brakka"
         ],
         "priref": "39987",
         "publisher": [
