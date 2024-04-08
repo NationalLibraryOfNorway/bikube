@@ -62,11 +62,16 @@ jobs:
 
       - name: Create docker conf in /etc/default with proxy settings
         run: |
-          echo "export HTTP_PROXY=${{ secrets.HTTP_PROXY }}" | sudo tee -a /etc/default/docker
-          echo "export HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}" | sudo tee -a /etc/default/docker
-          echo "export NO_PROXY=${{ secrets.NO_PROXY }}" | sudo tee -a /etc/default/docker
-          cat /etc/default/docker
-          sudo systemctl restart docker
+          mkdir -p ~/.config/systemd/user/docker.service.d
+          echo "[Service]" > ~/.config/systemd/user/docker.service.d/http-proxy.conf
+          echo "Environment=\"HTTP_PROXY=${{ secrets.HTTP_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
+          echo "Environment=\"HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
+          echo "Environment=\"NO_PROXY=${{ secrets.NO_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
+          systemctl --user daemon-reload
+          systemctl --user restart docker
+
+      - name: Verify previous step
+        run: systemctl --user show --property=Environment docker
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
