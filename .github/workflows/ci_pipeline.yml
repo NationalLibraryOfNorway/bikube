@@ -60,11 +60,14 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Configure the Docker client to use proxy
-        run: |
-          sudo chown -R $USER:$USER $HOME
-          mkdir -p ~/.docker
-          echo "{\"proxies\":{\"default\":{\"httpProxy\":\"${{ secrets.HTTPS_PROXY }}\",\"httpsProxy\":\"${{ secrets.HTTPS_PROXY }}\",\"noProxy\":\"${{ secrets.NO_PROXY }}\"}}}" > ~/.docker/config.json
+#      - name: Configure the Docker client to use proxy
+#        run: |
+#          sudo chown -R $USER:$USER $HOME
+#          mkdir -p ~/.docker
+#          echo "{\"proxies\":{\"default\":{\"httpProxy\":\"${{ secrets.HTTPS_PROXY }}\",\"httpsProxy\":\"${{ secrets.HTTPS_PROXY }}\",\"noProxy\":\"${{ secrets.NO_PROXY }}\"}}}" > ~/.docker/config.json
+#          cat ~/.docker/config.json
+      - name: Print resolv.conf
+        run: cat /etc/resolv.conf
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -73,6 +76,7 @@ jobs:
             env.HTTP_PROXY=${{ secrets.HTTP_PROXY }}
             env.HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}
             "env.no_proxy='${{ secrets.NO_PROXY}}'"
+            image=moby/buildkit:
 
 #        continue-on-error: true
 
