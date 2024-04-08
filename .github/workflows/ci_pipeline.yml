@@ -62,11 +62,11 @@ jobs:
 
       - name: Create docker conf in /etc/default with proxy settings
         run: |
-          mkdir -p ~/.config/systemd/user/docker.service.d
-          echo "[Service]" > ~/.config/systemd/user/docker.service.d/http-proxy.conf
-          echo "Environment=\"HTTP_PROXY=${{ secrets.HTTP_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
-          echo "Environment=\"HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
-          echo "Environment=\"NO_PROXY=${{ secrets.NO_PROXY }}\"" >> ~/.config/systemd/user/docker.service.d/http-proxy.conf
+          sudo mkdir -p /etc/systemd/system/docker.service.d
+          echo "[Service]" > /etc/systemd/system/docker.service.d/http-proxy.conf
+          echo "Environment=\"HTTP_PROXY=${{ secrets.HTTP_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
+          echo "Environment=\"HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
+          echo "Environment=\"NO_PROXY=${{ secrets.NO_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
           systemctl --user daemon-reload
           systemctl --user restart docker
 
