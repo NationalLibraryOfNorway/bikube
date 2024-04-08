@@ -60,8 +60,13 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Debug docker default conf
-        run: cat /etc/default/docker
+      - name: Create docker conf in /etc/default with proxy settings
+        run: |
+          echo "export HTTP_PROXY=${{ secrets.HTTP_PROXY }}" | sudo tee -a /etc/default/docker
+          echo "export HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}" | sudo tee -a /etc/default/docker
+          echo "export NO_PROXY=${{ secrets.NO_PROXY }}" | sudo tee -a /etc/default/docker
+          cat /etc/default/docker
+          sudo systemctl restart docker
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
