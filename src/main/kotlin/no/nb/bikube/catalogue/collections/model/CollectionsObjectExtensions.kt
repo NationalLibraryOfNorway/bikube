@@ -68,7 +68,7 @@ fun CollectionsObject.getFormat(): CollectionsFormat? {
 }
 
 fun CollectionsObject.getPublisher(): String? {
-    return this.publisherList?.first()
+    return this.publisherList?.first()?.name
 }
 
 fun CollectionsObject.getPublisherPlace(): String? {

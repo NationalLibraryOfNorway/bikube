@@ -36,8 +36,8 @@ data class CollectionsObject(
     @JsonProperty("Dating")
     val datingList: List<CollectionsDating>?,
 
-    @JsonProperty("publisher")
-    val publisherList: List<String>?,
+    @JsonProperty("Publisher")
+    val publisherList: List<CollectionsPublisher>?,
 
     @JsonProperty("Language")
     val languageList: List<CollectionsLanguage>?,
@@ -84,6 +84,11 @@ data class CollectionsObject(
 
 data class CollectionsTitle(
     val title: String?
+)
+
+data class CollectionsPublisher(
+    @JsonProperty("publisher")
+    val name: String?
 )
 
 data class CollectionsLanguageListObject(
