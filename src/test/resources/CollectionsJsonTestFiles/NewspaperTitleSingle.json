@@ -531,8 +531,10 @@
           }
         ],
         "object_number": "3",
-        "place_of_publication": [
-          "Mo i Rana"
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Mo i Rana"
+          }
         ],
         "priref": "3",
         "publisher": [

@@ -42,8 +42,8 @@ data class CollectionsObject(
     @JsonProperty("Language")
     val languageList: List<CollectionsLanguage>?,
 
-    @JsonProperty("place_of_publication")
-    val placeOfPublicationList: List<String>?,
+    @JsonProperty("AssociationGeo")
+    val placeOfPublicationList: List<CollectionsAssociationGeo>?,
 
     @JsonProperty("Parts")
     val partsList: List<CollectionsPartsObject>?,
@@ -143,6 +143,11 @@ data class CollectionsLanguage(
 data class CollectionsPartsObject(
     @JsonProperty("parts_reference")
     val partsReference: CollectionsPartsReference?
+)
+
+data class CollectionsAssociationGeo(
+    @JsonProperty("association.geographical_keyword")
+    val name: String?
 )
 
 data class CollectionsPartsReference(
