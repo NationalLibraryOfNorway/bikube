@@ -2,9 +2,9 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 39978,
-        "@created": "2024-04-03T11:57:10",
-        "@modification": "2024-04-03T11:57:32",
+        "@priref": 1601048429,
+        "@created": "2024-04-09T12:31:15",
+        "@modification": "2024-04-09T12:34:27",
         "@selected": false,
         "Dating": [
           {
@@ -29,8 +29,8 @@
                   "title": "Bikubetestavisen"
                 }
               ],
-              "object_number": "120531",
-              "priref": "39977",
+              "object_number": "TE-1601048426",
+              "priref": "1601048426",
               "record_type": [
                 [
                   {
@@ -58,95 +58,11 @@
                     "#text": "Seriepost (Verk)"
                   }
                 ]
-              ],
-              "work.description_type": [
-                [
-                  {
-                    "@lang": "neutral",
-                    "#text": "SERIAL"
-                  },
-                  {
-                    "@lang": 0,
-                    "#text": "Serial"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Tijdschrift"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Zeitschrift"
-                  },
-                  {
-                    "@lang": 9,
-                    "#text": "Serie"
-                  }
-                ]
               ]
             }
           }
         ],
         "Parts": [
-          {
-            "parts_reference": {
-              "format": [
-                [
-                  {
-                    "@lang": "neutral",
-                    "#text": "DIGITAL"
-                  },
-                  {
-                    "@lang": 0,
-                    "#text": "Digital item"
-                  },
-                  {
-                    "@lang": 12,
-                    "#text": "Digital"
-                  }
-                ]
-              ],
-              "group:Dating": [
-                {
-                  "dating.date.start": "2024-01-01"
-                }
-              ],
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
-              "object_number": "120540",
-              "priref": "39979",
-              "record_type": [
-                [
-                  {
-                    "@lang": "neutral",
-                    "#text": "ITEM"
-                  },
-                  {
-                    "@lang": 0,
-                    "#text": "Item"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Item"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Exemplar"
-                  },
-                  {
-                    "@lang": 9,
-                    "#text": "Objekt"
-                  },
-                  {
-                    "@lang": 12,
-                    "#text": "Objekt (Bærer)"
-                  }
-                ]
-              ]
-            }
-          },
           {
             "parts_reference": {
               "format": [
@@ -165,18 +81,8 @@
                   }
                 ]
               ],
-              "group:Dating": [
-                {
-                  "dating.date.start": "2024-01-01"
-                }
-              ],
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
-              "object_number": "120545",
-              "priref": "39984",
+              "object_number": "TE-1601048432",
+              "priref": "1601048432",
               "record_type": [
                 [
                   {
@@ -193,7 +99,7 @@
                   },
                   {
                     "@lang": 3,
-                    "#text": "Exemplar"
+                    "#text": "Einzelstück"
                   },
                   {
                     "@lang": 9,
@@ -201,7 +107,57 @@
                   },
                   {
                     "@lang": 12,
-                    "#text": "Objekt (Bærer)"
+                    "#text": "Object (Bærer)"
+                  }
+                ]
+              ]
+            }
+          },
+          {
+            "parts_reference": {
+              "format": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "DIGITAL"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Digital item"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Digital"
+                  }
+                ]
+              ],
+              "object_number": "TE-1601048433",
+              "priref": "1601048433",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "ITEM"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Item"
+                  },
+                  {
+                    "@lang": 1,
+                    "#text": "Item"
+                  },
+                  {
+                    "@lang": 3,
+                    "#text": "Einzelstück"
+                  },
+                  {
+                    "@lang": 9,
+                    "#text": "Objekt"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Object (Bærer)"
                   }
                 ]
               ]
@@ -213,17 +169,17 @@
             "submedium": "Aviser"
           }
         ],
-        "Title": [
-          {
-            "title": "Bikubetestavisen"
-          }
+        "input.date": [
+          "2024-04-09"
         ],
-        "input.date": "2024-04-03",
-        "input.name": "marmarmarmar",
-        "input.notes": "Registrert i Bikube",
-        "input.time": "11:57:10",
-        "object_number": "120539",
-        "priref": "39978",
+        "input.name": [
+          "bikubeuser"
+        ],
+        "input.time": [
+          "12:31:04"
+        ],
+        "object_number": "TE-1601048429",
+        "priref": "1601048429",
         "record_type": [
           [
             {
@@ -235,40 +191,12 @@
               "#text": "Manifestation"
             },
             {
-              "@lang": 1,
-              "#text": "Manifestatie"
-            },
-            {
-              "@lang": 3,
-              "#text": "Manifestation"
-            },
-            {
-              "@lang": 9,
-              "#text": "Manifestation"
-            },
-            {
               "@lang": 12,
               "#text": "Utgave (Manifestasjon)"
             }
           ]
         ]
       }
-    ],
-    "diagnostic": {
-      "hits": 1,
-      "xmltype": "Grouped",
-      "hits_on_display": 1,
-      "search": "priref=39978",
-      "sort": null,
-      "first_item": 1,
-      "forward": 0,
-      "backward": 0,
-      "limit": 1,
-      "dbname": "texts",
-      "dsname": "texts",
-      "cgistring": {
-        "database": "texts"
-      }
-    }
+    ]
   }
 }

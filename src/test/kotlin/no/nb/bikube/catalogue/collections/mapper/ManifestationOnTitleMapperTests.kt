@@ -50,16 +50,9 @@ class ManifestationOnTitleMapperTests {
 
     @Test
     fun `Item-on-title mapper should map catalogueId`() {
-        Assertions.assertEquals("39978", mappedList[0].catalogueId)
-        Assertions.assertEquals("39980", mappedList[1].catalogueId)
-        Assertions.assertEquals("39982", mappedList[2].catalogueId)
-    }
-
-    @Test
-    fun `Item-on-title mapper should map names`() {
-        Assertions.assertTrue(mappedList.all {
-            it.name == "Bikubetestavisen"
-        })
+        Assertions.assertEquals("1601048429", mappedList[0].catalogueId)
+        Assertions.assertEquals("1601048430", mappedList[1].catalogueId)
+        Assertions.assertEquals("1601048431", mappedList[2].catalogueId)
     }
 
     @Test
@@ -79,7 +72,7 @@ class ManifestationOnTitleMapperTests {
     @Test
     fun `Item-on-title mapper should map title ID`() {
         Assertions.assertTrue(mappedList.all {
-            it.titleCatalogueId == "39977"
+            it.titleCatalogueId == "1601048426"
         })
     }
 

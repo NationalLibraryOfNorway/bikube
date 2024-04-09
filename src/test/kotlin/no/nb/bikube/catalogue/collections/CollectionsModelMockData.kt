@@ -1,6 +1,5 @@
 package no.nb.bikube.catalogue.collections
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.model.*
@@ -31,17 +30,12 @@ class CollectionsModelMockData {
             CollectionsLanguageListObject(lang = "neutral", text = CollectionsFormat.PHYSICAL.value)
         ))
 
-        private val collectionsWorkTypeListSerialMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = CollectionsDescriptionType.SERIAL.value)
-        ))
-
         // Regular digital item
         val collectionsPartsObjectMockItemA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "4",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
                 dateStart = null
@@ -54,7 +48,6 @@ class CollectionsModelMockData {
                 priRef = "5",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
                 dateStart = null
@@ -67,7 +60,6 @@ class CollectionsModelMockData {
                 priRef = "5",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
                 dateStart = null
@@ -80,7 +72,6 @@ class CollectionsModelMockData {
                 priRef = "3",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListManifestMock,
-                workTypeList = null,
                 formatList = null,
                 partsList = null,
                 dateStart = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null))
@@ -102,9 +93,8 @@ class CollectionsModelMockData {
                         datingList = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null)),
                         publisherList = listOf(CollectionsPublisher("NB")),
                         languageList = listOf(CollectionsLanguage(language = "nob")),
-                        placeOfPublicationList = listOf("Mo I Rana"),
+                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = listOf(collectionsPartsObjectMockManifestationA),
-                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -127,9 +117,8 @@ class CollectionsModelMockData {
                         datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
                         publisherList = listOf(CollectionsPublisher("NB")),
                         languageList = listOf(CollectionsLanguage(language = "nob")),
-                        placeOfPublicationList = listOf("Mo I Rana"),
+                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -152,9 +141,8 @@ class CollectionsModelMockData {
                         datingList = listOf(CollectionsDating("2020-01-01", "2020-01-31")),
                         publisherList = listOf(CollectionsPublisher("B-Forlaget")),
                         languageList = listOf(CollectionsLanguage("nob")),
-                        placeOfPublicationList = listOf("Brakka"),
+                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Brakka")),
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -185,7 +173,6 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListWorkMock,
                 subMedium = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                workTypeList = collectionsWorkTypeListSerialMock,
                 datingList = null
             )
         )
@@ -197,7 +184,6 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
                 recordType = collectionsRecordTypeListManifestMock,
                 subMedium = null,
-                workTypeList = null,
                 datingList = null
             )
         )
@@ -216,9 +202,8 @@ class CollectionsModelMockData {
                         datingList = listOf(CollectionsDating(dateFrom = "1999-12-24", dateTo = null)),
                         publisherList = listOf(CollectionsPublisher("NB")),
                         languageList = listOf(CollectionsLanguage(language = "nob")),
-                        placeOfPublicationList = listOf("Mo I Rana"),
+                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = null,
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -243,7 +228,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "avisa_null_null_20200105_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -268,7 +252,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemA),
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -293,7 +276,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -347,7 +329,6 @@ class CollectionsModelMockData {
                 priRef = "32",
                 titleList = listOf(CollectionsTitle(title = "Aftenposten")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
                 dateStart = null
@@ -370,7 +351,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemD),
-                        workTypeList = null,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )

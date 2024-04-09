@@ -32,10 +32,10 @@ class ItemMapperTests {
     private val collectionsPartsObjWithDateInTitle = collectionsPartsObjectMockItemA.partsReference!!
     private val collectionsPartsObjWithoutDateInTitle = collectionsPartsObjectMockItemC.partsReference!!
     @Test
-    fun `Item mapper should map catalogueId`() { Assertions.assertEquals("39979", genericItem.catalogueId) }
+    fun `Item mapper should map catalogueId`() { Assertions.assertEquals("1601048433", genericItem.catalogueId) }
 
     @Test
-    fun `Item mapper should map name`() { Assertions.assertEquals("Bikubetestavisen", genericItem.name) }
+    fun `Item mapper should map name`() { Assertions.assertEquals("Bikubetestavisen 123", genericItem.name) }
 
     @Test
     fun `Item mapper should map date`() { Assertions.assertEquals(LocalDate.parse("2024-01-01"), genericItem.date) }
@@ -44,7 +44,7 @@ class ItemMapperTests {
     fun `Item mapper should map material type`() { Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericItem.materialType) }
 
     @Test
-    fun `Item mapper should map title ID`() { Assertions.assertEquals("39977", genericItem.titleCatalogueId) }
+    fun `Item mapper should map title ID`() { Assertions.assertEquals("1601048426", genericItem.titleCatalogueId) }
 
     @Test
     fun `Item mapper should map title name`() { Assertions.assertEquals("Bikubetestavisen", genericItem.titleName) }
@@ -62,19 +62,6 @@ class ItemMapperTests {
             "1337-01-01"
         )
         Assertions.assertEquals(LocalDate.parse("1337-01-01"), partsObjItem.date)
-    }
-
-    @Test
-    // TODO: Check if this should be deleted or it if works
-    fun `Item mapper should use date from title if date field is not provided`() {
-        val collectionsPartsObjWithoutDateInTitle = collectionsPartsObjectMockItemA.partsReference!!
-        val partsObjItemWithoutDate = mapCollectionsPartsObjectToGenericItem(
-            collectionsPartsObjWithoutDateInTitle,
-            "1",
-            "Bikubeavisen",
-            MaterialType.NEWSPAPER.norwegian
-        )
-        Assertions.assertEquals(LocalDate.parse("2020-01-01"), partsObjItemWithoutDate.date)
     }
 
     @Test

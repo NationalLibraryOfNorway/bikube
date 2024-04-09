@@ -2,7 +2,6 @@ package no.nb.bikube.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
@@ -15,9 +14,6 @@ class TitleDto(
 
     @SerialName("record_type")
     val recordType: String?,
-
-    @SerialName("work.description_type")
-    val descriptionType: String?,
 
     @SerialName("medium")
     val medium: String? = null,
@@ -68,7 +64,6 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         placeOfPublication = title.publisherPlace,
         language = title.language,
         recordType = CollectionsRecordType.WORK.value,
-        descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
         inputName = title.username,

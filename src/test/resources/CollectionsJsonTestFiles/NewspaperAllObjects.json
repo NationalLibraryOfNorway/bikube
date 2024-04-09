@@ -2,6 +2,460 @@
   "adlibJSON": {
     "recordList": [
       {
+        "@priref": 1601048426,
+        "@created": "2024-04-09T12:26:47",
+        "@modification": "2024-04-09T12:32:02",
+        "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.end": "2024-03-31",
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubetestavisen"
+          }
+        ],
+        "object_number": "TE-1601048426",
+        "priref": "1601048426",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Seriepost (Verk)"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 1601048427,
+        "@created": "2024-04-09T12:28:35",
+        "@modification": "2024-04-09T12:28:36",
+        "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-04-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubetestavisen 2"
+          }
+        ],
+        "object_number": "TE-1601048427",
+        "priref": "1601048427",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Seriepost (Verk)"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 1601048428,
+        "@created": "2024-04-09T12:29:58",
+        "@modification": "2024-04-09T12:29:58",
+        "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "Title": [
+          {
+            "title": "Bikubetestavisen kvensk"
+          }
+        ],
+        "object_number": "TE-1601048428",
+        "priref": "1601048428",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "WORK"
+            },
+            {
+              "@lang": 0,
+              "#text": "Work"
+            },
+            {
+              "@lang": 1,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 3,
+              "#text": "Werk"
+            },
+            {
+              "@lang": 9,
+              "#text": "Verk"
+            },
+            {
+              "@lang": 12,
+              "#text": "Seriepost (Verk)"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 1601048429,
+        "@created": "2024-04-09T12:31:15",
+        "@modification": "2024-04-09T12:34:27",
+        "@selected": false,
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Part_of": [
+          {
+            "part_of_reference": {
+              "group:Dating": [
+                {
+                  "dating.date.start": "2024-01-01"
+                }
+              ],
+              "group:Submedium": [
+                {
+                  "submedium": "Aviser"
+                }
+              ],
+              "group:Title": [
+                {
+                  "title": "Bikubetestavisen"
+                }
+              ],
+              "object_number": "TE-1601048426",
+              "priref": "1601048426",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "WORK"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Work"
+                  },
+                  {
+                    "@lang": 1,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 3,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 9,
+                    "#text": "Verk"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Seriepost (Verk)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "object_number": "TE-1601048429",
+        "priref": "1601048429",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "MANIFESTATION"
+            },
+            {
+              "@lang": 0,
+              "#text": "Manifestation"
+            },
+            {
+              "@lang": 12,
+              "#text": "Utgave (Manifestasjon)"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 1601048430,
+        "@created": "2024-04-09T12:32:00",
+        "@modification": "2024-04-09T12:34:30",
+        "@selected": false,
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-02"
+          }
+        ],
+        "Part_of": [
+          {
+            "part_of_reference": {
+              "group:Dating": [
+                {
+                  "dating.date.start": "2024-01-01"
+                }
+              ],
+              "group:Submedium": [
+                {
+                  "submedium": "Aviser"
+                }
+              ],
+              "group:Title": [
+                {
+                  "title": "Bikubetestavisen"
+                }
+              ],
+              "object_number": "TE-1601048426",
+              "priref": "1601048426",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "WORK"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Work"
+                  },
+                  {
+                    "@lang": 1,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 3,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 9,
+                    "#text": "Verk"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Seriepost (Verk)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "object_number": "TE-1601048430",
+        "priref": "1601048430",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "MANIFESTATION"
+            },
+            {
+              "@lang": 0,
+              "#text": "Manifestation"
+            },
+            {
+              "@lang": 12,
+              "#text": "Utgave (Manifestasjon)"
+            }
+          ]
+        ]
+      },
+      {
+        "@priref": 1601048431,
+        "@created": "2024-04-09T12:32:02",
+        "@modification": "2024-04-09T12:32:02",
+        "@selected": false,
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-03"
+          }
+        ],
+        "Part_of": [
+          {
+            "part_of_reference": {
+              "group:Dating": [
+                {
+                  "dating.date.start": "2024-01-01"
+                }
+              ],
+              "group:Submedium": [
+                {
+                  "submedium": "Aviser"
+                }
+              ],
+              "group:Title": [
+                {
+                  "title": "Bikubetestavisen"
+                }
+              ],
+              "object_number": "TE-1601048426",
+              "priref": "1601048426",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "WORK"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Work"
+                  },
+                  {
+                    "@lang": 1,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 3,
+                    "#text": "Werk"
+                  },
+                  {
+                    "@lang": 9,
+                    "#text": "Verk"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Seriepost (Verk)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "object_number": "TE-1601048431",
+        "priref": "1601048431",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "MANIFESTATION"
+            },
+            {
+              "@lang": 0,
+              "#text": "Manifestation"
+            },
+            {
+              "@lang": 12,
+              "#text": "Utgave (Manifestasjon)"
+            }
+          ]
+        ]
+      },
+      {
         "@priref": 1601048432,
         "@created": "2024-04-09T12:34:25",
         "@modification": "2024-04-09T12:34:25",
@@ -88,11 +542,6 @@
               ],
               "object_number": "TE-1601048429",
               "priref": "1601048429",
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
               "record_type": [
                 [
                   {
@@ -235,11 +684,6 @@
               ],
               "object_number": "TE-1601048429",
               "priref": "1601048429",
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
               "record_type": [
                 [
                   {
@@ -382,11 +826,6 @@
               ],
               "object_number": "TE-1601048430",
               "priref": "1601048430",
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
               "record_type": [
                 [
                   {

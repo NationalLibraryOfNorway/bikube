@@ -32,9 +32,9 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
 
     @Test
     fun `Title object should extract priRefs`() {
-        Assertions.assertEquals("39977", titles.first().priRef)
-        Assertions.assertEquals("39986", titles[1].priRef)
-        Assertions.assertEquals("39987", titles[2].priRef)
+        Assertions.assertEquals("1601048426", titles.first().priRef)
+        Assertions.assertEquals("1601048427", titles[1].priRef)
+        Assertions.assertEquals("1601048428", titles[2].priRef)
     }
 
     @Test

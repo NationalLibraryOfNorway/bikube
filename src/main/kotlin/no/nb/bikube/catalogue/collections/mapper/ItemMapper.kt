@@ -9,7 +9,7 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(
         catalogueId = model.priRef,
         name = model.getName(),
-        date = model.getStartDate(),
+        date = model.getStartDate() ?: model.getParentDate(),
         materialType = model.getMaterialTypeFromParent()?.norwegian,
         titleCatalogueId = model.getTitleCatalogueId(),
         titleName = model.getTitleName(),
@@ -33,6 +33,6 @@ fun mapCollectionsPartsObjectToGenericItem(
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,
         digital = model.getFormat() == CollectionsFormat.DIGITAL,
-        urn = null
+        urn = model.urn?.first()
     )
 }

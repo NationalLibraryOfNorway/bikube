@@ -1,6 +1,5 @@
 package no.nb.bikube.catalogue.collections.model
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
@@ -49,6 +48,10 @@ fun CollectionsObject.getEndDate(): LocalDate? {
     return this.datingList?.first()?.dateTo?.let { parseYearOrDate(it) }
 }
 
+fun CollectionsObject.getParentDate(): LocalDate? {
+    return this.getFirstPartOf()?.getDate()
+}
+
 fun CollectionsObject.getMaterialType(): MaterialType? {
     return MaterialType.fromNorwegianString(this.subMediumList?.first()?.subMedium)
 }
@@ -83,7 +86,7 @@ fun CollectionsObject.getPublisher(): String? {
 }
 
 fun CollectionsObject.getPublisherPlace(): String? {
-    return this.placeOfPublicationList?.first()
+    return this.placeOfPublicationList?.first()?.name
 }
 
 fun CollectionsObject.getLanguage(): String? {
@@ -92,10 +95,6 @@ fun CollectionsObject.getLanguage(): String? {
 
 fun CollectionsObject.getRecordType(): CollectionsRecordType? {
     return CollectionsRecordType.fromString(this.recordTypeList?.first()?.first{ it.lang == "neutral" }?.text)
-}
-
-fun CollectionsObject.getWorkType(): CollectionsDescriptionType? {
-    return CollectionsDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
 }
 
 fun CollectionsObject.getFirstPartOf(): CollectionsPartOfReference? {
@@ -146,8 +145,8 @@ fun CollectionsPartOfReference.getFirstPartOf(): CollectionsPartOfReference? {
     return this.partOfGroup?.first()?.partOfReference
 }
 
-fun CollectionsPartOfReference.getWorkType(): CollectionsDescriptionType? {
-    return CollectionsDescriptionType.fromString(this.workTypeList?.first()?.first{ it.lang == "neutral" }?.text)
+fun CollectionsPartOfReference.getDate(): LocalDate? {
+    return this.datingList?.first()?.dateFrom?.let { parseYearOrDate(it) }
 }
 
 // CollectionsNameModel

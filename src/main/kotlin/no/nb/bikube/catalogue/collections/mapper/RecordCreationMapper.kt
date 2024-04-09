@@ -10,7 +10,6 @@ fun mapCollectionsObjectToCollectionsPartObject(collectionsObject: CollectionsOb
             priRef = collectionsObject.priRef,
             dateStart = collectionsObject.datingList,
             recordType = collectionsObject.recordTypeList,
-            workTypeList = collectionsObject.workTypeList,
             partsList = collectionsObject.partsList,
             titleList = collectionsObject.titleList,
             formatList = collectionsObject.formatList

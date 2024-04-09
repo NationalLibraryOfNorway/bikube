@@ -43,7 +43,7 @@ class NewspaperService  (
     fun getSingleItem(catalogId: String): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map {
-                validateSingleCollectionsModel(it, CollectionsRecordType.ITEM, null)
+                validateSingleCollectionsModel(it, CollectionsRecordType.ITEM)
                 mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
             }
     }
@@ -52,7 +52,7 @@ class NewspaperService  (
     fun getSingleTitle(catalogId: String): Mono<Title> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map {
-                validateSingleCollectionsModel(it, CollectionsRecordType.WORK, CollectionsDescriptionType.SERIAL)
+                validateSingleCollectionsModel(it, CollectionsRecordType.WORK)
                 mapCollectionsObjectToGenericTitle(it.getFirstObject()!!)
             }
     }
@@ -151,7 +151,10 @@ class NewspaperService  (
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
-    private fun validateSingleCollectionsModel(model: CollectionsModel, recordType: CollectionsRecordType?, workType: CollectionsDescriptionType?) {
+    private fun validateSingleCollectionsModel(
+        model: CollectionsModel,
+        recordType: CollectionsRecordType?
+    ) {
         val records = model.getObjects()
         if (records.isNullOrEmpty()) throw CollectionsTitleNotFound("Could not find object in Collections")
         if (records.size > 1) throw CollectionsException("More than one object found in Collections (Should be exactly 1)")
@@ -160,11 +163,6 @@ class NewspaperService  (
         recordType?.let {
             if (record.getRecordType() != recordType) {
                 throw CollectionsTitleNotFound("Could not find fitting object in Collections - Found object is not of type $recordType")
-            }
-        }
-        workType?.let {
-            if (record.getWorkType() != workType) {
-                throw CollectionsTitleNotFound("Could not find fitting object in Collections - Found object is not of type $workType")
             }
         }
     }

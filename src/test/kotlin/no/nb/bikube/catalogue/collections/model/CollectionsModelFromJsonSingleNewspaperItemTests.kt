@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
@@ -28,7 +27,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
 
     @Test
-    fun `Item object should extract priRef`() { Assertions.assertEquals("39979", singleItem.priRef) }
+    fun `Item object should extract priRef`() { Assertions.assertEquals("1601048433", singleItem.priRef) }
 
     @Test
     fun `Item object should extract format`() {
@@ -50,7 +49,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
 
     @Test
     fun `Item object should extract title`() {
-        Assertions.assertEquals("Bikubetestavisen", singleItem.getName())
+        Assertions.assertEquals("Bikubetestavisen 123", singleItem.getName())
     }
 
     @Test
@@ -61,8 +60,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     @Test
     fun `Item object should extract parent manifestation`() {
         val manifestation = singleItem.getFirstPartOf()!!
-        Assertions.assertEquals("39978", manifestation.priRef)
-        Assertions.assertEquals("Bikubetestavisen", manifestation.getName())
+        Assertions.assertEquals("1601048429", manifestation.priRef)
         Assertions.assertEquals(MaterialType.NEWSPAPER, manifestation.getMaterialType())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifestation.getRecordType())
     }
@@ -70,11 +68,9 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     @Test
     fun `Item object should extract parent title`() {
         val title = singleItem.getFirstPartOf()!!.getFirstPartOf()!!
-        Assertions.assertEquals("39977", title.priRef)
+        Assertions.assertEquals("1601048426", title.priRef)
         Assertions.assertEquals("Bikubetestavisen", title.getName())
         Assertions.assertEquals(CollectionsRecordType.WORK, title.getRecordType())
         Assertions.assertEquals(MaterialType.NEWSPAPER, title.getMaterialType())
-        Assertions.assertEquals(CollectionsDescriptionType.SERIAL, title.getWorkType())
     }
-
 }

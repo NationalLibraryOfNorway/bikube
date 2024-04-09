@@ -31,7 +31,7 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map catalogueId `() {
-        Assertions.assertEquals("39977", genericTitle.catalogueId)
+        Assertions.assertEquals("1601048426", genericTitle.catalogueId)
     }
 
     @Test
@@ -41,12 +41,12 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map end date`() {
-        Assertions.assertEquals(LocalDate.parse("2024-01-03"), genericTitle.endDate)
+        Assertions.assertEquals(LocalDate.parse("2024-03-31"), genericTitle.endDate)
     }
 
     @Test
     fun `Title mapper should map language`() {
-        Assertions.assertEquals("nob", genericTitle.language)
+        Assertions.assertEquals("Norsk bokmål", genericTitle.language)
     }
 
     @Test
@@ -61,12 +61,12 @@ class TitleMapperTests {
 
     @Test
     fun `Title mapper should map publication place `() {
-        Assertions.assertEquals("Brakka", genericTitle.publisherPlace)
+        Assertions.assertEquals("Norge;Nordland;;Rana;;;;", genericTitle.publisherPlace)
     }
 
     @Test
     fun `Title mapper should map publisher`() {
-        Assertions.assertEquals("Brakka publishing", genericTitle.publisher)
+        Assertions.assertEquals("Nasjonalbiblioteket", genericTitle.publisher)
     }
 
     @Test

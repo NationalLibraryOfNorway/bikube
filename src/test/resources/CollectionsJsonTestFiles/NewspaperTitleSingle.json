@@ -2,19 +2,27 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 39977,
-        "@created": "2024-04-03T11:55:21",
-        "@modification": "2024-04-03T11:57:23",
+        "@priref": 1601048426,
+        "@created": "2024-04-09T12:26:47",
+        "@modification": "2024-04-09T12:32:02",
         "@selected": false,
+        "edit.date": "2024-04-09",
+        "edit.name": "bikubeuser",
+        "edit.time": "12:28:24",
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
         "Dating": [
           {
-            "dating.date.start": "2024-01-01",
-            "dating.date.end": "2024-01-03"
+            "dating.date.end": "2024-03-31",
+            "dating.date.start": "2024-01-01"
           }
         ],
         "Language": [
           {
-            "language": "nob"
+            "language": "Norsk bokmål"
           }
         ],
         "Medium": [
@@ -30,13 +38,8 @@
                   "dating.date.start": "2024-01-01"
                 }
               ],
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
-              "object_number": "120539",
-              "priref": "39978",
+              "object_number": "TE-1601048429",
+              "priref": "1601048429",
               "record_type": [
                 [
                   {
@@ -45,18 +48,6 @@
                   },
                   {
                     "@lang": 0,
-                    "#text": "Manifestation"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Manifestatie"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Manifestation"
-                  },
-                  {
-                    "@lang": 9,
                     "#text": "Manifestation"
                   },
                   {
@@ -74,13 +65,8 @@
                   "dating.date.start": "2024-01-02"
                 }
               ],
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
-              "object_number": "120541",
-              "priref": "39980",
+              "object_number": "TE-1601048430",
+              "priref": "1601048430",
               "record_type": [
                 [
                   {
@@ -89,18 +75,6 @@
                   },
                   {
                     "@lang": 0,
-                    "#text": "Manifestation"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Manifestatie"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Manifestation"
-                  },
-                  {
-                    "@lang": 9,
                     "#text": "Manifestation"
                   },
                   {
@@ -118,13 +92,8 @@
                   "dating.date.start": "2024-01-03"
                 }
               ],
-              "group:Title": [
-                {
-                  "title": "Bikubetestavisen"
-                }
-              ],
-              "object_number": "120543",
-              "priref": "39982",
+              "object_number": "TE-1601048431",
+              "priref": "1601048431",
               "record_type": [
                 [
                   {
@@ -136,24 +105,17 @@
                     "#text": "Manifestation"
                   },
                   {
-                    "@lang": 1,
-                    "#text": "Manifestatie"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Manifestation"
-                  },
-                  {
-                    "@lang": 9,
-                    "#text": "Manifestation"
-                  },
-                  {
                     "@lang": 12,
                     "#text": "Utgave (Manifestasjon)"
                   }
                 ]
               ]
             }
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
           }
         ],
         "Submedium": [
@@ -166,18 +128,17 @@
             "title": "Bikubetestavisen"
           }
         ],
-        "input.date": "2024-04-03",
-        "input.name": "marmarmarmar",
-        "input.notes": "Registrert i Bikube",
-        "input.time": "11:55:15",
-        "object_number": "120531",
-        "place_of_publication": [
-          "Brakka"
+        "input.date": [
+          "2024-04-09"
         ],
-        "priref": "39977",
-        "publisher": [
-          "Brakka publishing"
+        "input.name": [
+          "bikubeuser"
         ],
+        "input.time": [
+          "08:26:44"
+        ],
+        "object_number": "TE-1601048426",
+        "priref": "1601048426",
         "record_type": [
           [
             {
@@ -205,63 +166,8 @@
               "#text": "Seriepost (Verk)"
             }
           ]
-        ],
-        "work.description_type": [
-          [
-            {
-              "@lang": "neutral",
-              "#text": "SERIAL"
-            },
-            {
-              "@lang": 0,
-              "#text": "Serial"
-            },
-            {
-              "@lang": 1,
-              "#text": "Tijdschrift"
-            },
-            {
-              "@lang": 3,
-              "#text": "Zeitschrift"
-            },
-            {
-              "@lang": 9,
-              "#text": "Serie"
-            }
-          ]
         ]
       }
-    ],
-    "diagnostic": {
-      "hits": 1,
-      "xmltype": "Grouped",
-      "hits_on_display": 1,
-      "search": "priref=39977",
-      "sort": null,
-      "first_item": 1,
-      "forward": 0,
-      "backward": 0,
-      "limit": 1,
-      "dbname": "texts",
-      "dsname": "texts",
-      "cgistring": {
-        "database": "texts"
-      },
-      "link_resolve_time": {
-        "@unit": "mS",
-        "@culture": "nb-NO",
-        "#text": "15,6251"
-      },
-      "xml_creation_time": {
-        "@unit": "mS",
-        "@culture": "nb-NO",
-        "#text": "0"
-      },
-      "response_time": {
-        "@unit": "mS",
-        "@culture": "nb-NO",
-        "#text": "32"
-      }
-    }
+    ]
   }
 }

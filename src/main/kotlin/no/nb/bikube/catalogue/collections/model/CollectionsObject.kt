@@ -44,14 +44,11 @@ data class CollectionsObject(
     @JsonProperty("Language")
     val languageList: List<CollectionsLanguage>?,
 
-    @JsonProperty("place_of_publication")
-    val placeOfPublicationList: List<String>?,
+    @JsonProperty("AssociationGeo")
+    val placeOfPublicationList: List<CollectionsAssociationGeo>?,
 
     @JsonProperty("Parts")
     val partsList: List<CollectionsPartsObject>?,
-
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("Alternative_number")
     val alternativeNumberList: List<CollectionsAlternativeNumber>?,
@@ -122,10 +119,7 @@ data class CollectionsPartOfReference(
     @JsonProperty("group:Submedium")
     val subMedium: List<SubMedium>?,
 
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?,
-
-    @JsonProperty("Dating")
+    @JsonProperty("group:Dating")
     val datingList: List<CollectionsDating>?,
 )
 
@@ -173,14 +167,14 @@ data class CollectionsPartsReference(
     @JsonProperty("record_type")
     val recordType: List<List<CollectionsLanguageListObject>>?,
 
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?,
-
     @JsonProperty("format")
     val formatList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("group:Parts")
-    val partsList: List<CollectionsPartsObject>?
+    val partsList: List<CollectionsPartsObject>?,
+
+    @JsonProperty("PID_data_URN")
+    val urn: List<String>? = null
 )
 
 data class CollectionsAlternativeNumber(
