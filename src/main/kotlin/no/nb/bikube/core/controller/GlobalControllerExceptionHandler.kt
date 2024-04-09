@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.core.exception.SearchIndexNotAvailableException
 import no.nb.bikube.core.util.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
@@ -54,6 +55,17 @@ class GlobalControllerExceptionHandler {
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST)
         problemDetail.detail = exception.message ?: "Validation error."
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
+
+    @ExceptionHandler
+    fun handlerSearchIndexNotAvailableException(exception: SearchIndexNotAvailableException): ProblemDetail {
+        logger().error("SearchIndexNotAvailableException occurred")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.SERVICE_UNAVAILABLE)
+        problemDetail.detail = "The search index is unavailable"
         problemDetail.addDefaultProperties()
 
         return problemDetail

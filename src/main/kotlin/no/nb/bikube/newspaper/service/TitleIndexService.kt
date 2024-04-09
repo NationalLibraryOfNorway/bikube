@@ -1,5 +1,6 @@
 package no.nb.bikube.newspaper.service
 
+import no.nb.bikube.core.exception.SearchIndexNotAvailableException
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.util.logger
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory
@@ -22,6 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.nio.file.Paths
 import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicInteger
 
 @Service
 class TitleIndexService (
@@ -55,20 +57,27 @@ class TitleIndexService (
         return document
     }
 
+    private val indexStatus = AtomicInteger(IndexStatus.UNINITIALIZED.ordinal)
+
     @Scheduled(
-        initialDelayString = "\${search-index.initial-delay}"
+        initialDelayString = "\${search-index.initial-delay}",
+        fixedDelayString = "\${search-index.rebuild-index-delay}"
     )
     fun indexAllTitles() {
+        if (indexStatus.get() == IndexStatus.INDEXING.ordinal)
+            return
         logger().debug("Start fetching all titles to index...")
         newspaperService.getAllTitles()
             .map { titles ->
                 titles.mapNotNull { makeDocument(it) }
             }
             .doOnSuccess { documents ->
+                indexStatus.set(IndexStatus.INDEXING.ordinal)
                 indexWriter.deleteAll()
                 indexWriter.addDocuments(documents)
                 indexWriter.commit()
                 searcherManager.maybeRefresh()
+                indexStatus.set(IndexStatus.READY.ordinal)
                 logger().info("Titles index ready")
             }
             .subscribe()
@@ -81,8 +90,10 @@ class TitleIndexService (
         searcherManager.maybeRefresh()
     }
 
+    @Throws(SearchIndexNotAvailableException::class)
     fun searchTitle(query: String): List<Title> {
-        // TODO: return error if index is not ready?
+        if (indexStatus.get() != IndexStatus.READY.ordinal)
+            throw SearchIndexNotAvailableException()
         val indexSearcher = searcherManager.acquire()
         val terms = query.split(Regex("\\s+"))
         val queryBuilder = BooleanQuery.Builder()
@@ -113,4 +124,14 @@ class TitleIndexService (
             }
     }
 
+    @Scheduled(fixedDelayString = "\${search-index.searcher-refresh-delay}")
+    fun refresh() {
+        searcherManager.maybeRefresh()
+    }
+}
+
+enum class IndexStatus {
+    UNINITIALIZED,
+    INDEXING,
+    READY
 }
