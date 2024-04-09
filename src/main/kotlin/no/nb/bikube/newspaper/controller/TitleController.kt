@@ -14,6 +14,7 @@ import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.NewspaperService
+import no.nb.bikube.newspaper.service.TitleIndexService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -27,7 +28,8 @@ import reactor.core.publisher.Mono
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
 @RequestMapping("/newspapers/titles")
 class TitleController (
-    private val newspaperService: NewspaperService
+    private val newspaperService: NewspaperService,
+    private val titleIndexService: TitleIndexService
 ) {
     @PostMapping("/", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a newspaper title")
@@ -68,7 +70,10 @@ class TitleController (
 
             return Mono.`when`(publisherMono, locationMono, languageMono)
                 .then(newspaperService.createNewspaperTitle(title))
-                .map { createdTitle -> ResponseEntity.status(HttpStatus.CREATED).body(createdTitle) }
+                .map { createdTitle ->
+                    titleIndexService.addTitle(createdTitle)
+                    ResponseEntity.status(HttpStatus.CREATED).body(createdTitle)
+                }
                 .doOnSuccess { responseEntity ->
                     logger().info("Newspaper title created with id: ${responseEntity.body?.catalogueId}")
                 }

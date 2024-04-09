@@ -43,3 +43,7 @@ alma:
 http-proxy:
   host: ""
   port: 0
+
+search-index:
+  path: index-data
+  initial-delay: 1000

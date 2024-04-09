@@ -18,6 +18,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
 import reactor.kotlin.core.publisher.toMono
+import reactor.util.function.Tuple2
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -93,6 +94,22 @@ class NewspaperService  (
                 validateSingleCollectionsModel(it, CollectionsRecordType.WORK, CollectionsDescriptionType.SERIAL)
                 mapCollectionsObjectToGenericTitle(it.getFirstObject()!!)
             }
+    }
+
+    fun getTitlesPage(pageNumber: Int): Mono<Tuple2<List<Title>, Int>> {
+        val pageContent = collectionsRepository.getAllNewspaperTitles(pageNumber)
+            .mapNotNull { model ->
+                model.getObjects()
+                    ?. map { mapCollectionsObjectToGenericTitle(it) }
+            }
+        return Mono.zip(pageContent, Mono.just(pageNumber))
+    }
+
+    fun getAllTitles(): Mono<List<Title>> {
+        return getTitlesPage(1)
+            .expand { p -> getTitlesPage(p.t2 + 1) }
+            .flatMapIterable { it.t1 }
+            .collectList()
     }
 
     fun searchTitleByName(name: String): Flux<CatalogueRecord> {
