@@ -80,11 +80,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          driver-opts: |
-            env.HTTP_PROXY=${{ secrets.HTTP_PROXY }}
-            env.HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}
-            "env.no_proxy='${{ secrets.NO_PROXY}}'"
-            env.docker_host=tcp://docker:2375
+          driver: docker
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
