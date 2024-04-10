@@ -60,6 +60,9 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: curl registry
+        run: curl https://registry-1.docker.io/v2/
+
       - name: Docker config
         run: |
           mkdir -p $HOME/.docker
@@ -75,6 +78,7 @@ jobs:
 
       - name: Docker version
         run: docker info
+
 
 
         
