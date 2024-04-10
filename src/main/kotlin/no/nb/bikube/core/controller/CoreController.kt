@@ -96,12 +96,6 @@ class CoreController (
         }
     }
 
-    // TODO: remove before PR, debugging only
-    @GetMapping("/title/list", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun listTitles(): ResponseEntity<Mono<List<Title>>> {
-        return ResponseEntity.ok(newspaperService.getAllTitles())
-    }
-
     @GetMapping("/item/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(
         summary = "Search catalogue items",

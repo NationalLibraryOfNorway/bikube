@@ -112,13 +112,6 @@ class NewspaperService  (
             .collectList()
     }
 
-    // TODO: remove?
-    fun searchTitleByName(name: String): Flux<CatalogueRecord> {
-        return collectionsRepository.getTitleByName(name)
-            .flatMapIterable { it.getObjects() ?: emptyList() }
-            .map { mapCollectionsObjectToGenericTitle(it) }
-    }
-
     fun getItemsByTitle(
         titleCatalogId: String,
         date: LocalDate,

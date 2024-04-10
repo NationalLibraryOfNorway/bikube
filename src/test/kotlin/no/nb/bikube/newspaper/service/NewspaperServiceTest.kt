@@ -442,42 +442,6 @@ class NewspaperServiceTest(
     }
 
     @Test
-    fun `getTitleByName should return correctly mapped title`() {
-        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleA)
-
-        newspaperService.searchTitleByName("1")
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(
-                    Title(
-                        name = collectionsModelMockTitleA.getFirstObject()!!.getName(),
-                        startDate = collectionsModelMockTitleA.getFirstObject()!!.getStartDate(),
-                        endDate = null,
-                        publisher = collectionsModelMockTitleA.getFirstObject()!!.getPublisher(),
-                        publisherPlace = collectionsModelMockTitleA.getFirstObject()!!.getPublisherPlace(),
-                        language = collectionsModelMockTitleA.getFirstObject()!!.getLanguage(),
-                        materialType = collectionsModelMockTitleA.getFirstObject()!!.getMaterialType()!!.norwegian,
-                        catalogueId = collectionsModelMockTitleA.getFirstObject()!!.priRef
-                    ),
-                    it
-                )
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getTitleByName should return empty Mono if no titles are found`() {
-        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-
-        newspaperService.searchTitleByName("1")
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
-    }
-
-    @Test
     fun `createTitle should return correctly mapped record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
@@ -501,26 +465,6 @@ class NewspaperServiceTest(
             .verifyComplete()
 
         verify { collectionsRepository.createTextsRecord(titleEncodedDto) }
-    }
-
-    @Test
-    fun `searchTitleByName should return a correctly mapped catalogue record`() {
-        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockTitleE)
-        newspaperService.searchTitleByName("1")
-            .test()
-            .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `searchTitleByName should return a flux of an empty list if no titles are found`() {
-        every { collectionsRepository.getTitleByName(any()) } returns Mono.empty()
-        newspaperService.searchTitleByName("1")
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
     }
 
     @Test

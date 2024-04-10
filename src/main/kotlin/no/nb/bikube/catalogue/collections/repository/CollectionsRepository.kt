@@ -33,15 +33,6 @@ class CollectionsRepository(
         )
     }
 
-    // TODO: remove?
-    fun getTitleByName(name: String): Mono<CollectionsModel> {
-        return searchTexts(
-            "record_type=${CollectionsRecordType.WORK} and " +
-            "work.description_type=${CollectionsDescriptionType.SERIAL} and " +
-            "title=\"${name}\""
-        )
-    }
-
     fun getAllNewspaperTitles(page: Int = 1): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.WORK} and " +
