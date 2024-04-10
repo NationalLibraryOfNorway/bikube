@@ -59,10 +59,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-#      - name: Docker config
-#        run: |
-#          mkdir -p $HOME/.docker
-#          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
@@ -70,11 +70,6 @@ jobs:
           registry: ${{ secrets.HARBOR_URL }}
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver: docker
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
