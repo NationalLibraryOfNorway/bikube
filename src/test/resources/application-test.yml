@@ -3,3 +3,5 @@ alma:
 
 search-index:
   enabled: false
+
+app.scheduling.enabled: false
