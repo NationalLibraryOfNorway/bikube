@@ -89,6 +89,9 @@ jobs:
         with:
           name: bikube.jar
 
+      - name: Debug config.json
+        run: cat $HOME/.docker/config.json
+
       - name: Build image
         uses: docker/build-push-action@v5
         with:
