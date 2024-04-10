@@ -60,30 +60,14 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-#      - name: Create docker conf in /etc/default with proxy settings
-#        run: |
-#          sudo chown -R $USER:$USER /etc/systemd/system/docker.service.d
-#          sudo mkdir -p /etc/systemd/system/docker.service.d
-#          echo "[Service]" > /etc/systemd/system/docker.service.d/http-proxy.conf
-#          echo "Environment=\"HTTP_PROXY=${{ secrets.HTTP_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
-#          echo "Environment=\"HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
-#          echo "Environment=\"NO_PROXY=${{ secrets.NO_PROXY }}\"" >> /etc/systemd/system/docker.service.d/http-proxy.conf
-#          systemctl --user daemon-reload
-#          systemctl --user restart docker
-
-#      - name: Verify previous step
-#        run: systemctl --user show --property=Environment docker
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: |
-            env.HTTP_PROXY=${{ secrets.HTTPS_PROXY }}
+            env.HTTP_PROXY=${{ secrets.HTTP_PROXY }}
             env.HTTPS_PROXY=${{ secrets.HTTPS_PROXY }}
             "env.no_proxy='${{ secrets.NO_PROXY}}'"
-            env.docker=tcp://docker:2375
-
-#        continue-on-error: true
+            env.docker_host=tcp://docker:2375
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
@@ -91,13 +75,6 @@ jobs:
           registry: ${{ secrets.HARBOR_URL }}
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
-#        continue-on-error: true
-#
-#      - name: Check daemon logs
-#        run: |
-#          journalctl -u docker.service
-#          echo "Throw error to fail the build"
-#          exit 1
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
