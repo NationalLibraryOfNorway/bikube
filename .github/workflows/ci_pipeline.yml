@@ -59,10 +59,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Docker config
-        run: |
-          mkdir -p $HOME/.docker
-          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
+#      - name: Docker config
+#        run: |
+#          mkdir -p $HOME/.docker
+#          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
@@ -96,11 +96,6 @@ jobs:
 
       - name: Debug docker config
         run: cat $HOME/.docker/config.json
-
-#      - name: Build image manually
-#        run: |
-#          /usr/local/bin/docker buildx create --use --driver-opt env.http_proxy=${{secrets.HTTP_PROXY}} --driver-opt env.https_proxy=${{secrets.HTTPS_PROXY}} --driver-opt '"env.no_proxy='${{secrets.NO_PROXY}}'"'
-#          /usr/local/bin/docker buildx build .
 
       - name: Build image
         uses: docker/build-push-action@v5
