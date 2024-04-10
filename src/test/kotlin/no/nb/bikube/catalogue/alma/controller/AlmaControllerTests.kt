@@ -80,4 +80,45 @@ class AlmaControllerTests(
             }
     }
 
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "1234",  // Too short
+            "1234-5678-90123456789",  // Too long
+            "1234567890ABC" // Invalid characters
+        ]
+    )
+    fun shouldValidateISBN(isbn: String) {
+        webClient.get().uri("/alma/isbn/$isbn")
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody(ProblemDetail::class.java)
+            .consumeWith { problemDetail ->
+                Assertions.assertEquals(
+                    problemDetail.responseBody!!.detail,
+                    "getMarcRecordsByISBN.isbn: ${AlmaController.ISBN_MESSAGE}"
+                )
+            }
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "M-1234-5678",  // Too short
+            "M-1234-5678-90",  // Too long
+            "M-1234-56AB" // Invalid characters
+        ]
+    )
+    fun shouldValidateISMN(ismn: String) {
+        webClient.get().uri("/alma/ismn/$ismn")
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody(ProblemDetail::class.java)
+            .consumeWith { problemDetail ->
+                Assertions.assertEquals(
+                    problemDetail.responseBody!!.detail,
+                    "getMarcRecordsByISMN.ismn: ${AlmaController.ISMN_MESSAGE}"
+                )
+            }
+    }
 }
