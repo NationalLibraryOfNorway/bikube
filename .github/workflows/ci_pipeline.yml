@@ -89,8 +89,9 @@ jobs:
         with:
           name: bikube.jar
 
-      - name: Debug config.json
-        run: cat $HOME/.docker/config.json
+      - name: Set proxy
+        run: |
+          docker buildx build --build-arg HTTP_PROXY=${{ secrets.HTTP_PROXY }} --build-arg HTTPS_PROXY=${{ secrets.HTTPS_PROXY }} --build-arg NO_PROXY=${{ secrets.NO_PROXY }} .
 
       - name: Build image
         uses: docker/build-push-action@v5
