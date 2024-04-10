@@ -70,6 +70,9 @@ jobs:
       - name: Docker version
         run: docker info
 
+      - name: Docker config
+        run: cat $HOME/.docker/config.json
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
