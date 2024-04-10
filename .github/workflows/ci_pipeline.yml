@@ -60,11 +60,15 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Docker config
+#      - name: Docker config
+#        run: |
+#          mkdir -p $HOME/.docker
+#          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
+#          cat $HOME/.docker/config.json
+
+      - name: Cat resolve.conf
         run: |
-          mkdir -p $HOME/.docker
-          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
-          cat $HOME/.docker/config.json
+          cat /etc/resolv.conf
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
@@ -75,7 +79,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        timeout-minutes: 2
         with:
           driver-opts: |
             env.HTTP_PROXY=${{ secrets.HTTP_PROXY }}
