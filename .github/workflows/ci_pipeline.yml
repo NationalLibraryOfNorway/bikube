@@ -60,9 +60,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: curl registry
-        run: curl https://registry-1.docker.io/v2/
-
       - name: Docker config
         run: |
           mkdir -p $HOME/.docker
@@ -76,15 +73,9 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Docker version
-        run: docker info
-
-
-
-        
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        timeout-minutes: 2
         with:
           driver-opts: |
             env.HTTP_PROXY=${{ secrets.HTTP_PROXY }}
