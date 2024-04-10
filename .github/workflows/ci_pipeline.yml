@@ -59,6 +59,11 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Docker config
+        run: |
+          mkdir -p $HOME/.docker
+          echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
+
       - name: Log in to Harbor
         uses: docker/login-action@v3
         with:
@@ -89,9 +94,8 @@ jobs:
         with:
           name: bikube.jar
 
-      - name: Set proxy
-        run: |
-          docker buildx build --build-arg HTTP_PROXY=${{ secrets.HTTP_PROXY }} --build-arg HTTPS_PROXY=${{ secrets.HTTPS_PROXY }} --build-arg NO_PROXY=${{ secrets.NO_PROXY }} .
+      - name: Debug docker config
+        run: cat $HOME/.docker/config.json
 
       - name: Build image
         uses: docker/build-push-action@v5
