@@ -45,6 +45,7 @@ http-proxy:
   port: 0
 
 search-index:
+  enabled: true
   path: index-data
   initial-delay: 1000
   rebuild-index-delay: 1800000

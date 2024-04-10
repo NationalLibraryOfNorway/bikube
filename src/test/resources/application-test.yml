@@ -1,2 +1,5 @@
 alma:
   api-key: SECRETKEY
+
+search-index:
+  enabled: false

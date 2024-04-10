@@ -19,17 +19,29 @@ import org.apache.lucene.search.SearcherManager
 import org.apache.lucene.search.WildcardQuery
 import org.apache.lucene.store.FSDirectory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.nio.file.Paths
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
 
+interface TitleIndexService {
+    fun indexAllTitles()
+    fun addTitle(title: Title)
+    fun searchTitle(query: String): List<Title>
+}
+
+@ConditionalOnProperty(
+    prefix = "search-index",
+    name = ["enabled"],
+    havingValue = "true"
+)
 @Service
-class TitleIndexService (
+class TitleIndexServiceImpl(
     private val newspaperService: NewspaperService,
     @Value("\${search-index.path}") private val searchIndexPath: String
-) {
+): TitleIndexService {
     private val titleAnalyzer = CustomAnalyzer.builder()
         .withTokenizer(WhitespaceTokenizerFactory.NAME)
         .addTokenFilter(LowerCaseFilterFactory.NAME)
@@ -63,7 +75,7 @@ class TitleIndexService (
         initialDelayString = "\${search-index.initial-delay}",
         fixedDelayString = "\${search-index.rebuild-index-delay}"
     )
-    fun indexAllTitles() {
+    override fun indexAllTitles() {
         if (indexStatus.get() == IndexStatus.INDEXING.ordinal)
             return
         logger().debug("Start fetching all titles to index...")
@@ -83,7 +95,7 @@ class TitleIndexService (
             .subscribe()
     }
 
-    fun addTitle(title: Title) {
+    override fun addTitle(title: Title) {
         logger().debug("Adding title ${title.name} to index")
         indexWriter.addDocument(makeDocument(title))
         indexWriter.commit()
@@ -91,7 +103,7 @@ class TitleIndexService (
     }
 
     @Throws(SearchIndexNotAvailableException::class)
-    fun searchTitle(query: String): List<Title> {
+    override fun searchTitle(query: String): List<Title> {
         if (indexStatus.get() != IndexStatus.READY.ordinal)
             throw SearchIndexNotAvailableException()
         val indexSearcher = searcherManager.acquire()
@@ -128,6 +140,18 @@ class TitleIndexService (
     fun refresh() {
         searcherManager.maybeRefresh()
     }
+}
+
+@ConditionalOnProperty(
+    prefix = "search-index",
+    name = ["enabled"],
+    havingValue = "false"
+)
+@Service
+class TitleIndexServiceDisabledImpl: TitleIndexService {
+    override fun indexAllTitles() {}
+    override fun addTitle(title: Title) {}
+    override fun searchTitle(query: String) = emptyList<Title>()
 }
 
 enum class IndexStatus {

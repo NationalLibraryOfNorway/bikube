@@ -33,6 +33,7 @@ class CollectionsRepository(
         )
     }
 
+    // TODO: remove?
     fun getTitleByName(name: String): Mono<CollectionsModel> {
         return searchTexts(
             "record_type=${CollectionsRecordType.WORK} and " +

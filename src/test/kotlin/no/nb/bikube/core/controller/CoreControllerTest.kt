@@ -7,10 +7,12 @@ import io.mockk.verify
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.service.NewspaperService
+import no.nb.bikube.newspaper.service.TitleIndexService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -29,6 +31,9 @@ class CoreControllerTest {
 
     @MockkBean
     private lateinit var newspaperService: NewspaperService
+
+    @MockkBean
+    private lateinit var titleIndexService: TitleIndexService
 
     @Test
     fun `get single item for newspaper should return item in body`() {
@@ -88,20 +93,16 @@ class CoreControllerTest {
 
     @Test
     fun `search title should return a list of titles matching name`() {
-        every { newspaperService.searchTitleByName(any()) } returns Flux.just(
+        every { titleIndexService.searchTitle(any()) } returns listOf(
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
-        coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(newspaperTitleMockA, it)
-            }
-            .assertNext {
-                Assertions.assertEquals(newspaperTitleMockB, it)
-            }
-            .verifyComplete()
+        Assertions.assertEquals(
+            coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
+            listOf(
+                newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+            )
+        )
     }
 
     @Test
@@ -110,18 +111,19 @@ class CoreControllerTest {
         assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.PERIODICAL) }
         assertThrows<NotSupportedException> { coreController.searchTitle("Avis", MaterialType.MONOGRAPH) }
 
-        verify { newspaperService.searchTitleByName(any()) wasNot Called }
+        verify(exactly = 0) { titleIndexService.searchTitle(any()) }
     }
 
     @Test
-    fun `search title should call on newspaperService function when materialType is NEWSPAPER`() {
-        every { newspaperService.searchTitleByName(any()) } returns Flux.empty()
+    fun `search title should call on titleIndexService function when materialType is NEWSPAPER`() {
+        every { titleIndexService.searchTitle(any()) } returns emptyList()
 
-        coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!
-            .test()
-            .verifyComplete()
+        Assertions.assertEquals(
+            coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
+            emptyList<Title>()
+        )
 
-        verify { newspaperService.searchTitleByName(any()) }
+        verify(exactly = 1) { titleIndexService.searchTitle(any()) }
     }
 
     @Test
