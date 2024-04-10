@@ -75,6 +75,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker
+          driver-opt: |
+            
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -97,13 +99,18 @@ jobs:
       - name: Debug docker config
         run: cat $HOME/.docker/config.json
 
-      - name: Build image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          context: .
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build image manually
+        run: |
+          /usr/local/bin/docker buildx create --use --driver-opt env.http_proxy=${{secrets.HTTP_PROXY}} --driver-opt env.https_proxy=${{secrets.HTTPS_PROXY}} --driver-opt '"env.no_proxy='${{secrets.NO_PROXY}}'"'
+          /usr/local/bin/docker buildx build .
+
+#      - name: Build image
+#        uses: docker/build-push-action@v5
+#        with:
+#          push: true
+#          context: .
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
