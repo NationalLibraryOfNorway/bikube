@@ -62,6 +62,7 @@ jobs:
 
       - name: Docker config
         run: |
+          mkdir -p $HOME/.docker
           echo '{ "proxies": { "default": { "httpProxy": "${{secrets.HTTP_PROXY}}", "httpsProxy": "${{secrets.HTTPS_PROXY}}", "noProxy": "${{secrets.NO_PROXY}}" } } }' > $HOME/.docker/config.json
           cat $HOME/.docker/config.json
 
