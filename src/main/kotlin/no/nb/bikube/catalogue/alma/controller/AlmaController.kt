@@ -88,9 +88,9 @@ class AlmaController(
     @Operation(summary = "Get bibliographic records by ISBN.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "400", description = "Invalid ISBN"),
-        ApiResponse(responseCode = "404", description = "ISBN not found"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Invalid ISBN", content = [Content()]),
+        ApiResponse(responseCode = "404", description = "ISBN not found", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun getMarcRecordsByISBN(
         @Parameter(description = "ISBN")
@@ -105,9 +105,9 @@ class AlmaController(
     @Operation(summary = "Get bibliographic records by ISMN.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
-        ApiResponse(responseCode = "400", description = "Invalid ISMN"),
-        ApiResponse(responseCode = "404", description = "ISMN not found"),
-        ApiResponse(responseCode = "500", description = "Server error")
+        ApiResponse(responseCode = "400", description = "Invalid ISMN", content = [Content()]),
+        ApiResponse(responseCode = "404", description = "ISMN not found", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun getMarcRecordsByISMN(
         @Parameter(description = "ISMN")
