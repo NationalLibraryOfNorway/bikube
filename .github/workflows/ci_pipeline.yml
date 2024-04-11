@@ -55,6 +55,8 @@ jobs:
 #    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
     runs-on: [self-hosted, Linux]
+    outputs:
+      output-image-tag: ${{ steps.export-tag.outputs.image_tag }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -82,7 +84,8 @@ jobs:
             type=ref,event=pr
 
       - name: Export image tag to github env
-        run: echo "IMAGE_TAG=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
+        id: export-tag
+        run: echo "image_tag=${{ steps.meta.outputs.tags }}" >> "$GITHUB_OUTPUT"
 
       - name: Download artifact
         uses: actions/download-artifact@v3
@@ -123,9 +126,11 @@ jobs:
           version: 'v1.26.5'
 
       - name: Deploy to stage cluster
+        env:
+          IMAGE_TAG: ${{ needs.build-and-publish-docker-image.outputs.output-image-tag }}
         run: |
           echo "Deploying to stage version ${{ env.IMAGE_TAG }}"
-          sed -i "s/<image>/${{ env.IMAGE_TAG }}/g" k8s/stage/bikube.yml
+          sed -i "s/<image>/$IMAGE_TAG/g" k8s/stage/bikube.yml
           sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
           kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
           kubectl config set clusters.stagecl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_CA }}
