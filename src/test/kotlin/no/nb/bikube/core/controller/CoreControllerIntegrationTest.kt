@@ -18,6 +18,7 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.util.DateUtils
+import no.nb.bikube.newspaper.service.TitleIndexService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,6 +42,9 @@ class CoreControllerIntegrationTest (
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
 
+    @MockkBean
+    private lateinit var titleIndexService: TitleIndexService
+
     private val titleId = "1"
     private val yearWorkId = "2"
     private val manifestationId = "3"
@@ -56,8 +60,9 @@ class CoreControllerIntegrationTest (
         every { collectionsRepository.getSingleCollectionsModel(yearWorkId) } returns Mono.just(collectionsModelMockYearWorkA.copy())
         every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getTitleByName(any()) } returns Mono.just(collectionsModelMockAllTitles.copy())
         every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { titleIndexService.searchTitle(any()) } returns
+                collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
@@ -331,7 +336,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title-search endpoint should return empty flux when no items match search term`() {
-        every { collectionsRepository.getTitleByName("no match") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { titleIndexService.searchTitle("no match") } returns emptyList()
 
         searchTitle("no match", MaterialType.NEWSPAPER)
             .returnResult<Title>()

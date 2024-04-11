@@ -18,6 +18,7 @@
 		<kotlin.version>1.9.23</kotlin.version>
 		<serialization.version>1.6.3</serialization.version>
 		<fasterxml.version>2.15.4</fasterxml.version>
+		<lucene.version>9.10.0</lucene.version>
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 	<dependencies>
@@ -111,6 +112,18 @@
 			<groupId>com.kerb4j</groupId>
 			<artifactId>kerb4j-client</artifactId>
 			<version>0.2.0</version>
+		</dependency>
+
+		<!-- For building the search index -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analysis-common</artifactId>
+			<version>${lucene.version}</version>
 		</dependency>
 
 		<!-- Dependencies only for tests -->

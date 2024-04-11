@@ -29,3 +29,5 @@ replay_pid*
 
 application-local.yml
 target
+index-data
+index-data-test

@@ -33,12 +33,14 @@ class CollectionsRepository(
         )
     }
 
-    fun getTitleByName(name: String): Mono<CollectionsModel> {
-        return searchTexts(
+    fun getAllNewspaperTitles(page: Int = 1): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.WORK} and " +
-            "work.description_type=${CollectionsDescriptionType.SERIAL} and " +
-            "title=\"${name}\""
-        )
+            "work.description_type=${CollectionsDescriptionType.SERIAL}",
+            CollectionsDatabase.TEXTS,
+            limit = 50,
+            from = (page-1) * 50 + 1
+        ).bodyToMono<CollectionsModel>()
     }
 
     fun searchPublisher(name: String): Mono<CollectionsNameModel> {
@@ -81,7 +83,12 @@ class CollectionsRepository(
         return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsTermModel>()
     }
 
-    private fun getRecordsWebClientRequest(query: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+    private fun getRecordsWebClientRequest(
+        query: String,
+        db: CollectionsDatabase,
+        limit: Int = 10,
+        from: Int = 1
+    ): WebClient.ResponseSpec {
         return webClient()
             .get()
             .uri {
@@ -89,6 +96,8 @@ class CollectionsRepository(
                     .queryParam("database", db.value)
                     .queryParam("output", "json")
                     .queryParam("search", query)
+                    .queryParam("limit", limit)
+                    .queryParam("startfrom", from)
                     .build()
             }
             .retrieve()

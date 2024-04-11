@@ -1,2 +1,7 @@
 alma:
   api-key: SECRETKEY
+
+search-index:
+  enabled: false
+
+app.scheduling.enabled: false

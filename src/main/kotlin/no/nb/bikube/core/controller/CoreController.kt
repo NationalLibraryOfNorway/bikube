@@ -19,6 +19,7 @@ import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.newspaper.service.NewspaperService
+import no.nb.bikube.newspaper.service.TitleIndexService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +34,8 @@ import java.time.LocalDate
 @Tag(name = "Catalogue objects", description = "Endpoints related to catalog data for all text material")
 @RequestMapping("")
 class CoreController (
-    private val newspaperService: NewspaperService
+    private val newspaperService: NewspaperService,
+    private val titleIndexService: TitleIndexService
 ){
     companion object {
         const val DATE_REGEX = "^(17|18|19|20)\\d{2}(-)?(0[1-9]|1[0-2])(-)?(0[1-9]|[12][0-9]|3[01])$"
@@ -86,10 +88,10 @@ class CoreController (
     fun searchTitle(
         @RequestParam searchTerm: String,
         @RequestParam materialType: MaterialType
-    ): ResponseEntity<Flux<CatalogueRecord>> {
+    ): ResponseEntity<List<CatalogueRecord>> {
         if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.searchTitleByName(searchTerm))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(titleIndexService.searchTitle(searchTerm))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
