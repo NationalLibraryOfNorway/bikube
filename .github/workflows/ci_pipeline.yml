@@ -12,7 +12,6 @@ on:
 
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
-  IMAGE_NAME: harbor.nb.no/tekst/bikube
 
 jobs:
   build-and-test:
@@ -53,7 +52,7 @@ jobs:
 
   build-and-publish-docker-image:
     needs: build-and-test
-#    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
     runs-on: [self-hosted, Linux]
     outputs:
@@ -78,7 +77,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: harbor.nb.no/tekst/bikube
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
@@ -104,7 +103,6 @@ jobs:
   deploy-to-k8s-stage:
     name: Deploy to kubernetes stage environment
     needs: build-and-publish-docker-image
-#    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: [self-hosted, Linux]
     environment: stage
     steps:
