@@ -21,7 +21,8 @@ Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vi
 | collections.password | AD-passord til Collections      |
 | kerberos.realm       | Kerberos realm                  |
 | kerberos.kdc         | Kerberos KDC                    |
-| alma.almaws-url      | Base URL til AlmaWS API-et      |
+| alma.alma-sru-url    | Base URL til Alma SRU API-et    |
+| alma.alma-ws-url     | Base URL til AlmaWS API-et      |
 | alma.api-key         | API-nøkkel til AlmaWS API-et    |
 
 

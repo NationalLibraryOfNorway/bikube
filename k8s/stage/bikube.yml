@@ -16,7 +16,7 @@ spec:
       priorityClassName: medium-priority
       containers:
         - name: app
-          image: nationallibraryofnorway/bikube:<version>
+          image: harbor.nb.no/tekst/bikube:<version>
           ports:
             - name: app-port
               containerPort: 8087
