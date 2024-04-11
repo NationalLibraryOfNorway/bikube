@@ -122,7 +122,7 @@ jobs:
 
       - name: Deploy to stage cluster
         run: |
-          echo "Deploying to stage version ${{ env.IMAGE_TAG }}"
+          echo "Deploying to stage version ${{ env.APP_VERSION }}"
           sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/stage/bikube.yml
           sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
           kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
