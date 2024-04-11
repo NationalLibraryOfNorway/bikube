@@ -131,8 +131,8 @@ jobs:
           IMAGE_TAG: ${{ needs.build-and-publish-docker-image.outputs.output-image-tag }}
         run: |
           echo "Deploying to stage version ${{ env.IMAGE_TAG }}"
-          sed -i "s/<image>/$IMAGE_TAG/g" k8s/stage/bikube.yml
-          sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/stage/bikube.yml
+          sed -i "s|<image>|$IMAGE_TAG|g" k8s/stage/bikube.yml
+          sed -i "s|<host_url>|${{ steps.import-secrets.outputs.K8S_HOST_URL }}|g" k8s/stage/bikube.yml
           kubectl config set-cluster stagecl --server=${{ steps.import-secrets.outputs.K8S_STAGE_SERVER }}
           kubectl config set clusters.stagecl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_CA }}
           kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_STAGE_USER }} --token=${{ steps.import-secrets.outputs.K8S_STAGE_NB_NO_TOKEN }}
