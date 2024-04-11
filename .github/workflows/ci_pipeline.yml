@@ -12,6 +12,7 @@ on:
 
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
+  IMAGE_NAME: harbor.nb.no/tekst/bikube
 
 jobs:
   build-and-test:
@@ -77,7 +78,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.HARBOR_IMAGE }}
+          images: ${{ env.IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
