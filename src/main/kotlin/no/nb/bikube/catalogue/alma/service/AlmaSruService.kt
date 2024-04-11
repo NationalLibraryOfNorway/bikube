@@ -41,12 +41,44 @@ class AlmaSruService(
                     .map { record -> record.recordData.record }
                     .filter { record ->
                         recordMatches(record, "022", "a") { s -> identicalIssn(s, issn) } &&
-                                !recordMatches(record, "035", "a") { s -> s.startsWith("(CKB)") }
+                                !isFromCentralKnowledgeBase(record)
                     }
             }
             .handle { marcRecords, sink ->
                 if (marcRecords.isEmpty())
                     sink.error(AlmaRecordNotFoundException("No record found for ISSN $issn"))
+                else
+                    sink.next(RecordList(marcRecords))
+            }
+    }
+
+    fun getRecordsByISBN(isbn: String): Mono<RecordList> {
+        return getRecordsWithFieldValue("isbn", isbn)
+            .map {
+                val result = marcXChangeService.parseSruResult(it)
+                result.records
+                    .map { record -> record.recordData.record }
+                    .filter { record -> !isFromCentralKnowledgeBase(record) }
+            }
+            .handle { marcRecords, sink ->
+                if (marcRecords.isEmpty())
+                    sink.error(AlmaRecordNotFoundException("No record found for ISBN $isbn"))
+                else
+                    sink.next(RecordList(marcRecords))
+            }
+    }
+
+    fun getRecordsByISMN(ismn: String): Mono<RecordList> {
+        return getRecordsWithFieldValue("stored_standard_number_024_a_ind1_2", ismn)
+            .map {
+                val result = marcXChangeService.parseSruResult(it)
+                result.records
+                    .map { record -> record.recordData.record }
+                    .filter { record -> !isFromCentralKnowledgeBase(record) }
+            }
+            .handle { marcRecords, sink ->
+                if (marcRecords.isEmpty())
+                    sink.error(AlmaRecordNotFoundException("No record found for ISMN $ismn"))
                 else
                     sink.next(RecordList(marcRecords))
             }
@@ -65,6 +97,10 @@ class AlmaSruService(
             .any { subfield ->
                 subfield.content ?. let { predicate(it) } ?: false
             }
+    }
+
+    private fun isFromCentralKnowledgeBase(record: MarcRecord): Boolean {
+        return recordMatches(record, "035", "a") { s -> s.startsWith("(CKB)") }
     }
 
     private fun identicalIssn(subfieldContent: String?, issn: String): Boolean {

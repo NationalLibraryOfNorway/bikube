@@ -2,6 +2,7 @@ package no.nb.bikube.catalogue.alma.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -84,6 +85,40 @@ class AlmaController(
             .map { marcXChangeService.writeAsByteArray(it) }
     }
 
+    @GetMapping("/isbn/{isbn}", produces = [MediaType.APPLICATION_XML_VALUE])
+    @Operation(summary = "Get bibliographic records by ISBN.")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Invalid ISBN", content = [Content()]),
+        ApiResponse(responseCode = "404", description = "ISBN not found", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
+    ])
+    fun getMarcRecordsByISBN(
+        @Parameter(description = "ISBN")
+        @Pattern(regexp = ISBN_REGEX, message = ISBN_MESSAGE)
+        @PathVariable isbn: String
+    ): Mono<ByteArray> {
+        return almaSruService.getRecordsByISBN(isbn)
+            .map { marcXChangeService.writeAsByteArray(it) }
+    }
+
+    @GetMapping("/ismn/{ismn}", produces = [MediaType.APPLICATION_XML_VALUE])
+    @Operation(summary = "Get bibliographic records by ISMN.")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Invalid ISMN", content = [Content()]),
+        ApiResponse(responseCode = "404", description = "ISMN not found", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
+    ])
+    fun getMarcRecordsByISMN(
+        @Parameter(description = "ISMN")
+        @Pattern(regexp = ISMN_REGEX, message = ISMN_MESSAGE)
+        @PathVariable ismn: String
+    ): Mono<ByteArray> {
+        return almaSruService.getRecordsByISMN(ismn)
+            .map { marcXChangeService.writeAsByteArray(it) }
+    }
+
     companion object {
         const val MMS_REGEX = "[0-9]{8,19}"
         const val MMS_MESSAGE = "MMS-ID kan kun inneholde tall, og må være mellom 8 og 19 tegn."
@@ -91,5 +126,9 @@ class AlmaController(
         const val BARCODE_MESSAGE = "Strekkode kan kun inneholde tall og bokstaver, og må være mellom 4 og 13 tegn."
         const val ISSN_REGEX = "[0-9]{4}-?[0-9]{3}[0-9Xx]"
         const val ISSN_MESSAGE = "Invalid ISSN pattern"
+        const val ISBN_REGEX = "([0-9]-?){9}[0-9](-?(([0-9]-?){2}[0-9]))?"
+        const val ISBN_MESSAGE = "Invalid ISBN pattern"
+        const val ISMN_REGEX = "$ISBN_REGEX|M-?[0-9]{4}-?[0-9]{4}-?[0-9]"
+        const val ISMN_MESSAGE = "Invalid ISMN pattern"
     }
 }
