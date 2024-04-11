@@ -49,7 +49,7 @@ class TitleIndexServiceTest(
     fun `All titles should be indexed and searchable`() {
         Assertions.assertEquals(
             titleIndexService.searchTitle("avis").size,
-            5
+            3
         )
     }
 

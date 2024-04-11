@@ -38,9 +38,9 @@ class CollectionsRepository(
         return getRecordsWebClientRequest("priref=${titleCatalogId}", CollectionsDatabase.TEXTS, fields).bodyToMono<CollectionsModel>()
     }
 
-    fun getTitleByName(name: String): Mono<CollectionsModel> {
-        return searchTexts(
-            "record_type=${CollectionsRecordType.WORK},
+    fun getAllNewspaperTitles(page: Int = 1): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(
+            "record_type=${CollectionsRecordType.WORK}",
             CollectionsDatabase.TEXTS,
             limit = 50,
             from = (page-1) * 50 + 1
