@@ -121,7 +121,7 @@ jobs:
 
       - name: Deploy to stage cluster
         env:
-          IMAGE_TAG: "${{ secrets.HARBOR_IMAGE }}/$GITHUB_REF_NAME"
+          IMAGE_TAG: ${{ secrets.HARBOR_IMAGE }}/$GITHUB_REF_NAME
         run: |
           echo "Deploying to stage version ${{ env.IMAGE_TAG }}"
           sed -i "s/<image>/$IMAGE_TAG/g" k8s/stage/bikube.yml
