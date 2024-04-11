@@ -55,6 +55,8 @@ jobs:
 #    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
     runs-on: [self-hosted, Linux]
+    outputs:
+      output-image-tag: ${{ steps.export-tag.outputs.image_tag }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -80,6 +82,10 @@ jobs:
             type=semver,pattern={{version}}
             type=ref,event=branch
             type=ref,event=pr
+
+      - name: Export image tag to github env
+        id: export-tag
+        run: echo "image_tag=${{ steps.meta.outputs.tags }}" >> "$GITHUB_OUTPUT"
 
       - name: Download artifact
         uses: actions/download-artifact@v3
@@ -121,7 +127,7 @@ jobs:
 
       - name: Deploy to stage cluster
         env:
-          IMAGE_TAG: ${{ secrets.HARBOR_IMAGE }}/$GITHUB_REF_NAME
+          IMAGE_TAG: ${{ needs.build-and-publish-docker-image.outputs.output-image-tag }}
         run: |
           echo "Deploying to stage version ${{ env.IMAGE_TAG }}"
           sed -i "s/<image>/$IMAGE_TAG/g" k8s/stage/bikube.yml
