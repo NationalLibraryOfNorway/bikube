@@ -16,7 +16,7 @@ spec:
       priorityClassName: medium-priority
       containers:
         - name: app
-          image: harbor.nb.no/<version>
+          image: <image>
           ports:
             - name: app-port
               containerPort: 8087
