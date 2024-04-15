@@ -57,7 +57,7 @@ fun CollectionsObject.getMaterialType(): MaterialType? {
 }
 
 fun CollectionsObject.getMaterialTypeFromParent(): MaterialType? {
-    // Migrated hysical items are directly below title, digital items and new physical items are two levels below
+    // Migrated physical items are directly below title, digital items and new physical items are two levels below
     return this.getFirstPartOf()?.getMaterialType()
         ?: this.getFirstPartOf()?.getFirstPartOf()?.getMaterialType()
 }
