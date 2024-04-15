@@ -12,17 +12,6 @@ enum class CollectionsRecordType(val value: String) {
     }
 }
 
-enum class CollectionsDescriptionType(val value: String) {
-    SERIAL("SERIAL"),
-    YEAR("YEAR");
-
-    companion object {
-        fun fromString(value: String?): CollectionsDescriptionType? {
-            return entries.firstOrNull { it.value.lowercase() == value?.lowercase() }
-        }
-    }
-}
-
 enum class CollectionsFormat(val value: String) {
     DIGITAL("DIGITAL"),
     PHYSICAL("PHYSICAL");

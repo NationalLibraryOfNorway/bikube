@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
-import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
@@ -29,16 +27,16 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).getFirstObject()!!
 
     @Test
-    fun `Title object should extract priRef`() { Assertions.assertEquals("3", singleTitle.priRef) }
+    fun `Title object should extract priRef`() { Assertions.assertEquals("1601048426", singleTitle.priRef) }
 
     @Test
-    fun `Title object should extract start date`() { Assertions.assertEquals(LocalDate.parse("1947-01-01"), singleTitle.getStartDate()) }
+    fun `Title object should extract start date`() { Assertions.assertEquals(LocalDate.parse("2024-01-01"), singleTitle.getStartDate()) }
 
     @Test
-    fun `Title object should extract end date`() { Assertions.assertEquals(LocalDate.parse("1999-01-09"), singleTitle.getEndDate()) }
+    fun `Title object should extract end date`() { Assertions.assertEquals(LocalDate.parse("2024-03-31"), singleTitle.getEndDate()) }
 
     @Test
-    fun `Title object should extract language`() { Assertions.assertEquals("nob", singleTitle.getLanguage()) }
+    fun `Title object should extract language`() { Assertions.assertEquals("Norsk bokmål", singleTitle.getLanguage()) }
 
     @Test
     fun `Title object should extract submedium`() {
@@ -46,103 +44,35 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
     }
 
     @Test
-    fun `Title object should extract title`() { Assertions.assertEquals("Bikubeavisen", singleTitle.getName()) }
+    fun `Title object should extract title`() { Assertions.assertEquals("Bikubetestavisen", singleTitle.getName()) }
 
     @Test
-    fun `Title object should extract publication place `() { Assertions.assertEquals("Mo i Rana", singleTitle.getPublisherPlace()) }
+    fun `Title object should extract publication place `() { Assertions.assertEquals("Norge;Nordland;;Rana;;;;", singleTitle.getPublisherPlace()) }
 
     @Test
-    fun `Title object should extract publisher`() { Assertions.assertEquals("Amedia", singleTitle.getPublisher()) }
-
-    @Test
-    fun `Title object should extract work type`() {
-        Assertions.assertEquals(CollectionsDescriptionType.SERIAL, singleTitle.getWorkType())
-    }
-
-    @Test
-    fun `Title object should extract child year works`() {
-        val yearWorks = singleTitle.partsList!!
-        Assertions.assertEquals(2, yearWorks.size)
-
-        val firstYear = yearWorks.first().partsReference!!
-        Assertions.assertEquals("11", firstYear.priRef)
-        Assertions.assertEquals("Bikubeavisen 2011", firstYear.getName())
-        Assertions.assertEquals(CollectionsRecordType.WORK, firstYear.getRecordType())
-        Assertions.assertEquals(CollectionsDescriptionType.YEAR, firstYear.getWorkType())
-        Assertions.assertEquals(1, firstYear.partsList!!.size)
-
-        val secondYear = yearWorks[1].partsReference!!
-        Assertions.assertEquals("4", secondYear.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012", secondYear.getName())
-        Assertions.assertEquals(CollectionsRecordType.WORK, secondYear.getRecordType())
-        Assertions.assertEquals(CollectionsDescriptionType.YEAR, secondYear.getWorkType())
-        Assertions.assertEquals(3, secondYear.partsList!!.size)
-    }
+    fun `Title object should extract publisher`() { Assertions.assertEquals("Nasjonalbiblioteket", singleTitle.getPublisher()) }
 
     @Test
     fun `Title object should extract child manifestations`() {
-        val manifestations = mutableListOf<CollectionsPartsObject>()
-        singleTitle.partsList!!.forEach { yearWorks -> yearWorks.getPartRefs().forEach { manifestations.add(it) } }
-        Assertions.assertEquals(4, manifestations.size)
+        val manifestations = singleTitle.partsList!!
+        Assertions.assertEquals(3, manifestations.size)
 
         val manifest1 = manifestations.first().partsReference!!
-        Assertions.assertEquals("18", manifest1.priRef)
-        Assertions.assertEquals("Bikubeavisen 2011.01.24", manifest1.getName())
+        Assertions.assertEquals("1601048429", manifest1.priRef)
+        Assertions.assertEquals(LocalDate.parse("2024-01-01"), manifest1.getStartDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest1.getRecordType())
-        Assertions.assertEquals(1, manifest1.partsList!!.size)
+        Assertions.assertEquals("2024-01-01", manifest1.dateStart!!.first().dateFrom)
 
         val manifest2 = manifestations[1].partsReference!!
-        Assertions.assertEquals("22", manifest2.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.10", manifest2.getName())
+        Assertions.assertEquals("1601048430", manifest2.priRef)
+        Assertions.assertEquals(LocalDate.parse("2024-01-02"), manifest2.getStartDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest2.getRecordType())
-        Assertions.assertEquals(null, manifest2.partsList)
+        Assertions.assertEquals("2024-01-02", manifest2.dateStart!!.first().dateFrom)
 
         val manifest3 = manifestations[2].partsReference!!
-        Assertions.assertEquals("20", manifest3.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.09", manifest3.getName())
+        Assertions.assertEquals("1601048431", manifest3.priRef)
+        Assertions.assertEquals(LocalDate.parse("2024-01-03"), manifest3.getStartDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest3.getRecordType())
-        Assertions.assertEquals(1, manifest3.partsList!!.size)
-
-        val manifest4 = manifestations[3].partsReference!!
-        Assertions.assertEquals("10", manifest4.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", manifest4.getName())
-        Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest4.getRecordType())
-        Assertions.assertEquals(2, manifest4.partsList!!.size)
+        Assertions.assertEquals("2024-01-03", manifest3.dateStart!!.first().dateFrom)
     }
-
-    @Test
-    fun `Title object should extract child items`() {
-        val items = mutableListOf<CollectionsPartsObject>()
-        singleTitle.partsList!!.forEach { yearWorks ->
-            yearWorks.getPartRefs().forEach { manifestations ->
-                manifestations.getPartRefs().forEach { items.add(it) }
-            }
-        }
-        Assertions.assertEquals(4, items.size)
-
-        val item1 = items.first().partsReference!!
-        Assertions.assertEquals("19", item1.priRef)
-        Assertions.assertEquals("Bikubeavisen 2011.01.24", item1.getName())
-        Assertions.assertEquals(CollectionsRecordType.ITEM, item1.getRecordType())
-        Assertions.assertEquals(CollectionsFormat.PHYSICAL, item1.getFormat())
-
-        val item2 = items[1].partsReference!!
-        Assertions.assertEquals("21", item2.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.09", item2.getName())
-        Assertions.assertEquals(CollectionsRecordType.ITEM, item2.getRecordType())
-        Assertions.assertEquals(CollectionsFormat.DIGITAL, item2.getFormat())
-
-        val item3 = items[2].partsReference!!
-        Assertions.assertEquals("6", item3.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", item3.titleList!!.first().title)
-        Assertions.assertEquals(CollectionsRecordType.ITEM, item3.getRecordType())
-        Assertions.assertEquals(CollectionsFormat.PHYSICAL, item3.getFormat())
-
-        val item4 = items[3].partsReference!!
-        Assertions.assertEquals("5", item4.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", item4.titleList!!.first().title)
-        Assertions.assertEquals(CollectionsRecordType.ITEM, item4.getRecordType())
-        Assertions.assertEquals(CollectionsFormat.DIGITAL, item4.getFormat())
-    }
-
 }

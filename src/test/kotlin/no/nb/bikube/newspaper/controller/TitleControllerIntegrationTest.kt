@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleE
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
@@ -54,8 +54,10 @@ class TitleControllerIntegrationTest (
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleE.copy())
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE.copy())
+        every { collectionsRepository.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())

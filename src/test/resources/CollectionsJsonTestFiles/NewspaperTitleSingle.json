@@ -2,19 +2,27 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 3,
-        "@created": "2023-09-20T08:38:07",
-        "@modification": "2023-09-26T12:10:00",
+        "@priref": 1601048426,
+        "@created": "2024-04-09T12:26:47",
+        "@modification": "2024-04-09T12:32:02",
         "@selected": false,
+        "edit.date": "2024-04-09",
+        "edit.name": "bikubeuser",
+        "edit.time": "12:28:24",
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
         "Dating": [
           {
-            "dating.date.start": "1947-01-01",
-            "dating.date.end": "1999-01-09"
+            "dating.date.end": "2024-03-31",
+            "dating.date.start": "2024-01-01"
           }
         ],
         "Language": [
           {
-            "language": "nob"
+            "language": "Norsk bokmål"
           }
         ],
         "Medium": [
@@ -25,152 +33,26 @@
         "Parts": [
           {
             "parts_reference": {
-              "group:Parts": [
+              "group:Dating": [
                 {
-                  "parts_reference": {
-                    "group:Parts": [
-                      {
-                        "parts_reference": {
-                          "format": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "PHYSICAL"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Physical item"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Fysisk"
-                              }
-                            ]
-                          ],
-                          "group:Title": [
-                            {
-                              "title": "Bikubeavisen 2011.01.24"
-                            }
-                          ],
-                          "object_number": "21",
-                          "priref": "19",
-                          "record_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "ITEM"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Exemplar"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Objekt"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Objekt/Komponent"
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    ],
-                    "group:Title": [
-                      {
-                        "title": "Bikubeavisen 2011.01.24"
-                      }
-                    ],
-                    "object_number": "20",
-                    "priref": "18",
-                    "record_type": [
-                      [
-                        {
-                          "@lang": "neutral",
-                          "#text": "MANIFESTATION"
-                        },
-                        {
-                          "@lang": 0,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 1,
-                          "#text": "Manifestatie"
-                        },
-                        {
-                          "@lang": 3,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 9,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 12,
-                          "#text": "Manifestasjon"
-                        }
-                      ]
-                    ]
-                  }
+                  "dating.date.start": "2024-01-01"
                 }
               ],
-              "group:Title": [
-                {
-                  "title": "Bikubeavisen 2011"
-                }
-              ],
-              "object_number": "13",
-              "priref": "11",
+              "object_number": "TE-1601048429",
+              "priref": "1601048429",
               "record_type": [
                 [
                   {
                     "@lang": "neutral",
-                    "#text": "WORK"
+                    "#text": "MANIFESTATION"
                   },
                   {
                     "@lang": 0,
-                    "#text": "Work"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Werk"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Werk"
-                  },
-                  {
-                    "@lang": 9,
-                    "#text": "Verk"
+                    "#text": "Manifestation"
                   },
                   {
                     "@lang": 12,
-                    "#text": "Verk"
-                  }
-                ]
-              ],
-              "work.description_type": [
-                [
-                  {
-                    "@lang": "neutral",
-                    "#text": "YEAR"
-                  },
-                  {
-                    "@lang": 0,
-                    "#text": "Year"
-                  },
-                  {
-                    "@lang": 12,
-                    "#text": "År"
+                    "#text": "Utgave (Manifestasjon)"
                   }
                 ]
               ]
@@ -178,346 +60,62 @@
           },
           {
             "parts_reference": {
-              "group:Parts": [
+              "group:Dating": [
                 {
-                  "parts_reference": {
-                    "group:Title": [
-                      {
-                        "title": "Bikubeavisen 2012.01.10"
-                      }
-                    ],
-                    "object_number": "24",
-                    "priref": "22",
-                    "record_type": [
-                      [
-                        {
-                          "@lang": "neutral",
-                          "#text": "MANIFESTATION"
-                        },
-                        {
-                          "@lang": 0,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 1,
-                          "#text": "Manifestatie"
-                        },
-                        {
-                          "@lang": 3,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 9,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 12,
-                          "#text": "Manifestasjon"
-                        }
-                      ]
-                    ]
-                  }
-                },
-                {
-                  "parts_reference": {
-                    "group:Parts": [
-                      {
-                        "parts_reference": {
-                          "format": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "DIGITAL"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Digital item"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Digital"
-                              }
-                            ]
-                          ],
-                          "group:Title": [
-                            {
-                              "title": "Bikubeavisen 2012.01.09"
-                            }
-                          ],
-                          "object_number": "23",
-                          "priref": "21",
-                          "record_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "ITEM"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Exemplar"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Objekt"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Objekt/Komponent"
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    ],
-                    "group:Title": [
-                      {
-                        "title": "Bikubeavisen 2012.01.09"
-                      }
-                    ],
-                    "object_number": "22",
-                    "priref": "20",
-                    "record_type": [
-                      [
-                        {
-                          "@lang": "neutral",
-                          "#text": "MANIFESTATION"
-                        },
-                        {
-                          "@lang": 0,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 1,
-                          "#text": "Manifestatie"
-                        },
-                        {
-                          "@lang": 3,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 9,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 12,
-                          "#text": "Manifestasjon"
-                        }
-                      ]
-                    ]
-                  }
-                },
-                {
-                  "parts_reference": {
-                    "group:Parts": [
-                      {
-                        "parts_reference": {
-                          "format": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "PHYSICAL"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Physical item"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Fysisk"
-                              }
-                            ]
-                          ],
-                          "group:Title": [
-                            {
-                              "title": "Bikubeavisen 2012.01.02"
-                            }
-                          ],
-                          "object_number": "6",
-                          "priref": "6",
-                          "record_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "ITEM"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Exemplar"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Objekt"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Objekt/Komponent"
-                              }
-                            ]
-                          ]
-                        }
-                      },
-                      {
-                        "parts_reference": {
-                          "format": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "DIGITAL"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Digital item"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Digital"
-                              }
-                            ]
-                          ],
-                          "group:Title": [
-                            {
-                              "title": "Bikubeavisen 2012.01.02"
-                            }
-                          ],
-                          "object_number": "5",
-                          "priref": "5",
-                          "record_type": [
-                            [
-                              {
-                                "@lang": "neutral",
-                                "#text": "ITEM"
-                              },
-                              {
-                                "@lang": 0,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 1,
-                                "#text": "Item"
-                              },
-                              {
-                                "@lang": 3,
-                                "#text": "Exemplar"
-                              },
-                              {
-                                "@lang": 9,
-                                "#text": "Objekt"
-                              },
-                              {
-                                "@lang": 12,
-                                "#text": "Objekt/Komponent"
-                              }
-                            ]
-                          ]
-                        }
-                      }
-                    ],
-                    "group:Title": [
-                      {
-                        "title": "Bikubeavisen 2012.01.02"
-                      }
-                    ],
-                    "object_number": "12",
-                    "priref": "10",
-                    "record_type": [
-                      [
-                        {
-                          "@lang": "neutral",
-                          "#text": "MANIFESTATION"
-                        },
-                        {
-                          "@lang": 0,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 1,
-                          "#text": "Manifestatie"
-                        },
-                        {
-                          "@lang": 3,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 9,
-                          "#text": "Manifestation"
-                        },
-                        {
-                          "@lang": 12,
-                          "#text": "Manifestasjon"
-                        }
-                      ]
-                    ]
-                  }
+                  "dating.date.start": "2024-01-02"
                 }
               ],
-              "group:Title": [
-                {
-                  "title": "Bikubeavisen 2012"
-                }
-              ],
-              "object_number": "4",
-              "priref": "4",
+              "object_number": "TE-1601048430",
+              "priref": "1601048430",
               "record_type": [
                 [
                   {
                     "@lang": "neutral",
-                    "#text": "WORK"
+                    "#text": "MANIFESTATION"
                   },
                   {
                     "@lang": 0,
-                    "#text": "Work"
-                  },
-                  {
-                    "@lang": 1,
-                    "#text": "Werk"
-                  },
-                  {
-                    "@lang": 3,
-                    "#text": "Werk"
-                  },
-                  {
-                    "@lang": 9,
-                    "#text": "Verk"
+                    "#text": "Manifestation"
                   },
                   {
                     "@lang": 12,
-                    "#text": "Verk"
-                  }
-                ]
-              ],
-              "work.description_type": [
-                [
-                  {
-                    "@lang": "neutral",
-                    "#text": "YEAR"
-                  },
-                  {
-                    "@lang": 0,
-                    "#text": "Year"
-                  },
-                  {
-                    "@lang": 12,
-                    "#text": "År"
+                    "#text": "Utgave (Manifestasjon)"
                   }
                 ]
               ]
             }
+          },
+          {
+            "parts_reference": {
+              "group:Dating": [
+                {
+                  "dating.date.start": "2024-01-03"
+                }
+              ],
+              "object_number": "TE-1601048431",
+              "priref": "1601048431",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "MANIFESTATION"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Manifestation"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Utgave (Manifestasjon)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
           }
         ],
         "Submedium": [
@@ -527,21 +125,20 @@
         ],
         "Title": [
           {
-            "title": "Bikubeavisen"
+            "title": "Bikubetestavisen"
           }
         ],
-        "object_number": "3",
-        "AssociationGeo": [
-          {
-            "association.geographical_keyword": "Mo i Rana"
-          }
+        "input.date": [
+          "2024-04-09"
         ],
-        "priref": "3",
-        "Publisher": [
-          {
-            "publisher": "Amedia"
-          }
+        "input.name": [
+          "bikubeuser"
         ],
+        "input.time": [
+          "08:26:44"
+        ],
+        "object_number": "TE-1601048426",
+        "priref": "1601048426",
         "record_type": [
           [
             {
@@ -566,35 +163,7 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
-            }
-          ]
-        ],
-        "work.description_type": [
-          [
-            {
-              "@lang": "neutral",
-              "#text": "SERIAL"
-            },
-            {
-              "@lang": 0,
-              "#text": "Serial"
-            },
-            {
-              "@lang": 1,
-              "#text": "Tijdschrift"
-            },
-            {
-              "@lang": 3,
-              "#text": "Zeitschrift"
-            },
-            {
-              "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
-              "#text": "Serie"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ]

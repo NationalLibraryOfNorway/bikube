@@ -1,0 +1,170 @@
+{
+  "adlibJSON": {
+    "recordList": [
+      {
+        "@priref": 1601048433,
+        "@created": "2024-04-09T12:34:27",
+        "@modification": "2024-04-09T12:34:27",
+        "@selected": false,
+        "format": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "DIGITAL"
+            },
+            {
+              "@lang": 0,
+              "#text": "Digital item"
+            },
+            {
+              "@lang": 12,
+              "#text": "Digital"
+            }
+          ]
+        ],
+        "Title": [
+          {
+            "title": "Bikubetestavisen 123"
+          }
+        ],
+        "Medium": [
+          {
+            "medium": "Tekst"
+          }
+        ],
+        "Part_of": [
+          {
+            "part_of_reference": {
+              "group:Dating": [
+                {
+                  "dating.date.start": "2024-01-01"
+                }
+              ],
+              "group:Part_of": [
+                {
+                  "part_of_reference": {
+                    "group:Submedium": [
+                      {
+                        "submedium": "Aviser"
+                      }
+                    ],
+                    "group:Title": [
+                      {
+                        "title": "Bikubetestavisen"
+                      }
+                    ],
+                    "object_number": "TE-1601048426",
+                    "priref": "1601048426",
+                    "record_type": [
+                      [
+                        {
+                          "@lang": "neutral",
+                          "#text": "WORK"
+                        },
+                        {
+                          "@lang": 0,
+                          "#text": "Work"
+                        },
+                        {
+                          "@lang": 1,
+                          "#text": "Werk"
+                        },
+                        {
+                          "@lang": 3,
+                          "#text": "Werk"
+                        },
+                        {
+                          "@lang": 9,
+                          "#text": "Verk"
+                        },
+                        {
+                          "@lang": 12,
+                          "#text": "Seriepost (Verk)"
+                        }
+                      ]
+                    ]
+                  }
+                }
+              ],
+              "group:Submedium": [
+                {
+                  "submedium": "Aviser"
+                }
+              ],
+              "group:Title": [
+                {
+                  "title": "Bikubetestavisen"
+                }
+              ],
+              "object_number": "TE-1601048429",
+              "priref": "1601048429",
+              "record_type": [
+                [
+                  {
+                    "@lang": "neutral",
+                    "#text": "MANIFESTATION"
+                  },
+                  {
+                    "@lang": 0,
+                    "#text": "Manifestation"
+                  },
+                  {
+                    "@lang": 12,
+                    "#text": "Utgave (Manifestasjon)"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Submedium": [
+          {
+            "submedium": "Aviser"
+          }
+        ],
+        "input.date": [
+          "2024-04-09"
+        ],
+        "input.name": [
+          "bikubeuser"
+        ],
+        "input.time": [
+          "12:33:44"
+        ],
+        "object_number": "TE-1601048433",
+        "PID_data_URN": [
+          "digavis_test"
+        ],
+        "priref": "1601048433",
+        "record_type": [
+          [
+            {
+              "@lang": "neutral",
+              "#text": "ITEM"
+            },
+            {
+              "@lang": 0,
+              "#text": "Item"
+            },
+            {
+              "@lang": 1,
+              "#text": "Item"
+            },
+            {
+              "@lang": 3,
+              "#text": "Einzelstück"
+            },
+            {
+              "@lang": 9,
+              "#text": "Objekt"
+            },
+            {
+              "@lang": 12,
+              "#text": "Object (Bærer)"
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

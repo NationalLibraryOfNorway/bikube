@@ -2,7 +2,10 @@ package no.nb.bikube
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nb.bikube.catalogue.collections.exception.*
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
@@ -79,7 +82,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsException should return 500 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsException(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsException(null))
         getItem()
             .expectStatus().is5xxServerError
             .returnResult<ProblemDetail>()
@@ -99,7 +102,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsTitleNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsTitleNotFound(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsTitleNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -119,7 +122,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `NotSupportedException should return 400 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(NotSupportedException(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(NotSupportedException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -138,7 +141,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `BadRequestBodyException should return 400 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(BadRequestBodyException(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(BadRequestBodyException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -157,7 +160,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `RecordAlreadyExistsException should return 409 conflict with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(RecordAlreadyExistsException(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(RecordAlreadyExistsException(null))
         getItem()
             .expectStatus().is4xxClientError
             .returnResult<ProblemDetail>()
@@ -176,7 +179,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsItemNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsItemNotFound(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsItemNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -197,7 +200,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsManifestationNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -209,27 +212,6 @@ class GeneralEndpointAndExceptionIntegrationTest (
                 Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, it.title)
                 Assertions.assertTrue(it.detail!!.lowercase().contains("not found"))
                 Assertions.assertTrue(it.detail!!.lowercase().contains("manifestation"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `CollectionsYearWorkNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.error(CollectionsYearWorkNotFound(null))
-        getItem()
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type404, it.type)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), it.status)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("not found"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("year work"))
                 Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
                 Assertions.assertEquals(expectedInstance, it.instance)
                 Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))

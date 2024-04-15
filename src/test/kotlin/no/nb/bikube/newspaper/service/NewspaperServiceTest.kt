@@ -10,31 +10,27 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleD
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleE
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockYearWorkC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.yearWorkNoManifestationA
-import no.nb.bikube.catalogue.collections.controller.CollectionsControllerExceptionHandler
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.catalogue.collections.exception.*
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.ItemDto
 import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
 import no.nb.bikube.catalogue.collections.model.dto.TitleDto
-import no.nb.bikube.catalogue.collections.model.dto.YearDto
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
@@ -57,9 +53,7 @@ import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @ActiveProfiles("test")
-class NewspaperServiceTest(
-    @Autowired private val collectionsControllerExceptionHandler: CollectionsControllerExceptionHandler
-) {
+class NewspaperServiceTest {
 
     companion object {
         @JvmStatic
@@ -82,20 +76,6 @@ class NewspaperServiceTest(
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
     }
-
-    private val yearWorkEncodedDto = Json.encodeToString(YearDto(
-        partOfReference = newspaperItemMockB.titleCatalogueId,
-        recordType = CollectionsRecordType.WORK.value,
-        descriptionType = CollectionsDescriptionType.YEAR.value,
-        dateStart = newspaperTitleMockB.startDate.toString().take(4),
-        title = null,
-        inputName = TEST_USERNAME,
-        inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
-        inputDate = LocalDate.now().toString(),
-        inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts"
-    ))
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
         partOfReference = newspaperItemMockB.catalogueId,
@@ -146,7 +126,6 @@ class NewspaperServiceTest(
         placeOfPublication = newspaperTitleMockB.publisherPlace,
         language = newspaperTitleMockB.language,
         recordType = CollectionsRecordType.WORK.value,
-        descriptionType = CollectionsDescriptionType.SERIAL.value,
         medium = "Tekst",
         subMedium = "Aviser",
         inputName = TEST_USERNAME,
@@ -159,8 +138,8 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         val body = newspaperTitleInputDtoMockB.copy()
 
@@ -183,101 +162,8 @@ class NewspaperServiceTest(
     }
 
     @Test
-    fun `getItemsForTitle should return all items for title`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-
-        newspaperService.getItemsForTitle(collectionsModelMockTitleA.getFirstObject()!!.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextCount(2)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return title information on items`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-
-        val record: CollectionsObject = collectionsModelMockTitleA.getFirstObject()!!
-        newspaperService.getItemsForTitle(record.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextMatches {
-                it.titleCatalogueId == record.priRef
-                && it.titleName == record.getName()
-            }
-            .expectNextMatches {
-                it.titleCatalogueId == record.priRef
-                && it.titleName == record.getName()
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return material type on items`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-
-        val record = collectionsModelMockTitleA.getFirstObject()!!
-        newspaperService.getItemsForTitle(record.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextMatches {
-                it.materialType == record.getMaterialType()!!.norwegian
-            }
-            .expectNextMatches {
-                it.materialType == record.getMaterialType()!!.norwegian
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return empty flux when serial work has no year works`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleB.copy())
-
-        newspaperService.getItemsForTitle(collectionsModelMockTitleB.getFirstObject()!!.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return empty flux when year work has no manifestations`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
-
-        newspaperService.getItemsForTitle(collectionsModelMockTitleC.getFirstObject()!!.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return empty flux when manifestation has no items`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD.copy())
-
-        newspaperService.getItemsForTitle(collectionsModelMockTitleD.getFirstObject()!!.priRef)
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getItemsForTitle should return an error if title does not exist`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-
-        newspaperService.getItemsForTitle("123")
-            .test()
-            .expectSubscription()
-            .expectErrorMatches { it is CollectionsTitleNotFound &&
-                    collectionsControllerExceptionHandler.handleCollectionsTitleNotFoundException(it).status == 404
-            }
-            .verify()
-    }
-
-    @Test
     fun `getSingleItem should return correctly mapped item`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemA.copy())
         val testRecord = collectionsModelMockItemA.getFirstObject()!!
         val testSerialWork = collectionsPartOfObjectMockSerialWorkA.partOfReference!!
 
@@ -304,7 +190,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleItem should throw CollectionsTitleNotFound if object is a manifestation`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockManifestationA.copy())
 
         newspaperService.getSingleItem("1")
             .test()
@@ -315,7 +201,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleItem should throw CollectionsTitleNotFound if object is a work`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockTitleA.copy())
 
         newspaperService.getSingleItem("1")
             .test()
@@ -326,7 +212,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleItem should throw CollectionsTitleNotFound if no items are received`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         newspaperService.getSingleItem("1")
             .test()
@@ -337,7 +223,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleItem should throw CollectionsException if multiple items are received`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
                     collectionsModelMockItemA.getFirstObject()!!.copy(),
@@ -355,7 +241,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleTitle should return correctly mapped title`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
         val testRecord = collectionsModelMockTitleA.getFirstObject()!!
 
         newspaperService.getSingleTitle("1")
@@ -381,7 +267,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleTitle should throw CollectionsTitleNotFound if object is a manifestation`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockManifestationA.copy())
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -392,18 +278,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleTitle should throw CollectionsTitleNotFound if object is an item`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA.copy())
-
-        newspaperService.getSingleTitle("1")
-            .test()
-            .expectSubscription()
-            .expectError(CollectionsTitleNotFound::class.java)
-            .verify()
-    }
-
-    @Test
-    fun `getSingleTitle should throw CollectionsTitleNotFound if object is a year work`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockItemA.copy())
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -414,7 +289,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleTitle should throw CollectionsTitleNotFound if no items are received`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -425,7 +300,7 @@ class NewspaperServiceTest(
 
     @Test
     fun `getSingleTitle should throw CollectionsException if multiple items are received`() {
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
                     collectionsModelMockTitleA.getFirstObject()!!.copy(),
@@ -443,8 +318,8 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitle should return correctly mapped record`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -455,8 +330,8 @@ class NewspaperServiceTest(
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleE)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleE)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -563,7 +438,8 @@ class NewspaperServiceTest(
     @Test
     fun `createNewspaperItem should return correctly mapped item record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -575,9 +451,9 @@ class NewspaperServiceTest(
     @Test
     fun `createNewspaperItem should correctly encode the item object sent to json string`() {
         every { collectionsRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -591,9 +467,9 @@ class NewspaperServiceTest(
     @Test
     fun `createNewspaperItem should throw CollectionsItemNotFound if item could not be found`() {
         every { collectionsRepository.createTextsRecord(itemEncodedDto) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { collectionsRepository.createTextsRecord(yearWorkEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -608,7 +484,8 @@ class NewspaperServiceTest(
     @Test
     fun `createNewspaperItem should ignore URN if is is a physical item`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
             .test()
@@ -678,68 +555,10 @@ class NewspaperServiceTest(
     }
 
     @Test
-    fun `createYearWork should throw CollectionsYearWorkNotFound if year work could not be found`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-
-        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
-            .test()
-            .expectSubscription()
-            .expectErrorMatches {
-                it is CollectionsYearWorkNotFound && it.message!!.contains("New year not found")
-            }
-            .verify()
-    }
-
-    @Test
-    fun `createYearWork should return correctly mapped year work record`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
-
-        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(collectionsModelMockYearWorkA.getFirstObject()!!, it)
-            }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `createYearWork should correctly encode the year work object sent to json string`() {
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockYearWorkA)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockYearWorkA)
-
-        val encodedValue = Json.encodeToString(
-            YearDto(
-                partOfReference = "1",
-                recordType = CollectionsRecordType.WORK.value,
-                descriptionType = CollectionsDescriptionType.YEAR.value,
-                dateStart = "2023",
-                title = null,
-                inputName = TEST_USERNAME,
-                inputNotes = INPUT_NOTES,
-                inputSource = "texts>texts",
-                inputDate = LocalDate.now().toString(),
-                inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-                dataset = "texts"
-            )
-        )
-
-        newspaperService.createYearWork("1", "2023", TEST_USERNAME)
-            .test()
-            .expectSubscription()
-            .assertNext {
-                Assertions.assertEquals(collectionsModelMockYearWorkA.getFirstObject()!!, it)
-            }
-            .verifyComplete()
-
-        verify { collectionsRepository.createTextsRecord(encodedValue) }
-    }
-
-    @Test
-    fun `searchItemByTitle should return correctly mapped item`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkC)
+    fun `getItemsByTitleAndDate should return correctly mapped item`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockManifestationC)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationC)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationC)
 
         val date = LocalDate.parse("2020-01-01")
         val expected = Item(
@@ -753,7 +572,7 @@ class NewspaperServiceTest(
             urn = null
         )
 
-        newspaperService.getItemsByTitle("1", date, true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitleAndDate("1", date, true)
             .test()
             .expectSubscription()
             .assertNext { actual ->
@@ -763,51 +582,39 @@ class NewspaperServiceTest(
     }
 
     @Test
-    fun `searchItemByTitle should return an empty flux if no items are found`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+    fun `getItemsByTitleAndDate should return an empty flux if no items are found`() {
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
 
-        newspaperService.getItemsByTitle("19", LocalDate.parse("1999-12-24"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitleAndDate("19", LocalDate.parse("1999-12-24"), true)
             .test()
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { collectionsRepository.getWorkYearForTitle("19", 1999) }
+        verify(exactly = 1) { collectionsRepository.getManifestationsByDateAndTitle(LocalDate.parse("1999-12-24"), "19") }
     }
 
     @Test
-    fun `searchItemByTitle should return an empty flux if title has no year works on given year`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockTitleB)
+    fun `getItemsByTitleAndDate should return an empty flux if no manifestations`() {
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.empty()
 
-        newspaperService.getItemsByTitle("6", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitleAndDate("7", LocalDate.parse("2000-01-01"), true)
             .test()
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
 
-        verify { collectionsRepository.getWorkYearForTitle("6", 2000) }
-    }
-
-    @Test
-    fun `searchItemByTitle should return an empty flux if year work has no manifestations`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(yearWorkNoManifestationA)
-
-        newspaperService.getItemsByTitle("7", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
-            .test()
-            .expectSubscription()
-            .expectNextCount(0)
-            .verifyComplete()
-
-        verify (exactly = 1) { collectionsRepository.getWorkYearForTitle("7", 2000) }
         verify { collectionsRepository.getSingleCollectionsModel(any()) wasNot Called }
+        verify { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) wasNot Called }
     }
 
     @Test
-    fun `searchItemByTitle should return an empty flux if manifestation has no items`() {
-        every { collectionsRepository.getWorkYearForTitle(any(), any()) } returns Mono.just(collectionsModelMockYearWorkA)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleD)
+    fun `getItemsByTitleAndDate should return an empty flux if manifestation has no items`() {
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockTitleA)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
 
-        newspaperService.getItemsByTitle("8", LocalDate.parse("2000-01-01"), true, MaterialType.NEWSPAPER)
+        newspaperService.getItemsByTitleAndDate("8", LocalDate.parse("2000-01-01"), true)
             .test()
             .expectSubscription()
             .expectNextCount(0)

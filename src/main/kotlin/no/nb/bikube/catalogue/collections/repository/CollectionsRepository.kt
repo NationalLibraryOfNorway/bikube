@@ -1,18 +1,20 @@
 package no.nb.bikube.catalogue.collections.repository
 
-import no.nb.bikube.core.enum.*
+import no.nb.bikube.catalogue.collections.config.CollectionsWebClient
+import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
 import no.nb.bikube.catalogue.collections.model.CollectionsNameModel
 import no.nb.bikube.catalogue.collections.model.CollectionsTermModel
+import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.util.logger
-import no.nb.bikube.catalogue.collections.config.CollectionsWebClient
-import no.nb.bikube.catalogue.collections.enum.*
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Repository
 class CollectionsRepository(
@@ -25,22 +27,33 @@ class CollectionsRepository(
         return searchTexts("priref=${titleCatalogId}")
     }
 
-    fun getWorkYearForTitle(titleCatalogId: String, year: Int): Mono<CollectionsModel> {
-        return searchTexts(
-            "part_of_reference.lref=${titleCatalogId} and " +
-            "dating.date.start=${year} and " +
-            "work.description_type=${CollectionsDescriptionType.YEAR}"
-        )
+    @Throws(CollectionsException::class)
+    fun getSingleCollectionsModelWithoutChildren(titleCatalogId: String): Mono<CollectionsModel> {
+        val fields = "priref and title and work.description_type and record_type " +
+                "and dating.date.start and dating.date.end and publisher " +
+                "and association.geographical_keyword and language and submedium " +
+                "and format and alternative_number and alternative_number.type " +
+                "and part_of_reference and PID_data_URN"
+
+        return getRecordsWebClientRequest("priref=${titleCatalogId}", CollectionsDatabase.TEXTS, fields).bodyToMono<CollectionsModel>()
     }
 
     fun getAllNewspaperTitles(page: Int = 1): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(
-            "record_type=${CollectionsRecordType.WORK} and " +
-            "work.description_type=${CollectionsDescriptionType.SERIAL}",
+            "record_type=${CollectionsRecordType.WORK}",
             CollectionsDatabase.TEXTS,
             limit = 50,
             from = (page-1) * 50 + 1
         ).bodyToMono<CollectionsModel>()
+    }
+
+    fun getManifestationsByDateAndTitle(date: LocalDate, titleCatalogId: String): Mono<CollectionsModel> {
+        val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
+        return searchTexts(
+            "record_type=${CollectionsRecordType.MANIFESTATION} and " +
+            "part_of_reference.lref=${titleCatalogId} and " +
+            "dating.date.start='${dateString}'"
+        )
     }
 
     fun searchPublisher(name: String): Mono<CollectionsNameModel> {
@@ -86,19 +99,25 @@ class CollectionsRepository(
     private fun getRecordsWebClientRequest(
         query: String,
         db: CollectionsDatabase,
+        fields: String? = null,
         limit: Int = 10,
         from: Int = 1
     ): WebClient.ResponseSpec {
         return webClient()
             .get()
             .uri {
-                it
+                val params = it
                     .queryParam("database", db.value)
                     .queryParam("output", "json")
                     .queryParam("search", query)
                     .queryParam("limit", limit)
                     .queryParam("startfrom", from)
-                    .build()
+
+                if (fields != null) {
+                    params.queryParam("fields", fields)
+                }
+
+                params.build()
             }
             .retrieve()
             .onStatus(

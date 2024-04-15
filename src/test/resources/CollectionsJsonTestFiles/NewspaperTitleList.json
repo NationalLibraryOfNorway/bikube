@@ -2,10 +2,31 @@
   "adlibJSON": {
     "recordList": [
       {
-        "@priref": 3,
-        "@created": "2023-09-20T08:38:07",
-        "@modification": "2023-09-26T12:10:00",
+        "@priref": 1601048426,
+        "@created": "2024-04-09T12:26:47",
+        "@modification": "2024-04-09T12:32:02",
         "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.end": "2024-03-31",
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -13,11 +34,11 @@
         ],
         "Title": [
           {
-            "title": "Bikubeavisen"
+            "title": "Bikubetestavisen"
           }
         ],
-        "object_number": "3",
-        "priref": "3",
+        "object_number": "TE-1601048426",
+        "priref": "1601048426",
         "record_type": [
           [
             {
@@ -42,44 +63,36 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
-            }
-          ]
-        ],
-        "work.description_type": [
-          [
-            {
-              "@lang": "neutral",
-              "#text": "SERIAL"
-            },
-            {
-              "@lang": 0,
-              "#text": "Serial"
-            },
-            {
-              "@lang": 1,
-              "#text": "Tijdschrift"
-            },
-            {
-              "@lang": 3,
-              "#text": "Zeitschrift"
-            },
-            {
-              "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
-              "#text": "Serie"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ]
       },
       {
-        "@priref": 7,
-        "@created": "2023-09-20T09:19:26",
-        "@modification": "2023-09-26T12:09:48",
+        "@priref": 1601048427,
+        "@created": "2024-04-09T12:28:35",
+        "@modification": "2024-04-09T12:28:36",
         "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-04-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -87,11 +100,11 @@
         ],
         "Title": [
           {
-            "title": "Bikubeposten"
+            "title": "Bikubetestavisen 2"
           }
         ],
-        "object_number": "7",
-        "priref": "7",
+        "object_number": "TE-1601048427",
+        "priref": "1601048427",
         "record_type": [
           [
             {
@@ -116,44 +129,36 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
-            }
-          ]
-        ],
-        "work.description_type": [
-          [
-            {
-              "@lang": "neutral",
-              "#text": "SERIAL"
-            },
-            {
-              "@lang": 0,
-              "#text": "Serial"
-            },
-            {
-              "@lang": 1,
-              "#text": "Tijdschrift"
-            },
-            {
-              "@lang": 3,
-              "#text": "Zeitschrift"
-            },
-            {
-              "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
-              "#text": "Serie"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ]
       },
       {
-        "@priref": 9,
-        "@created": "2023-09-20T10:27:23",
-        "@modification": "2023-09-20T10:33:13",
+        "@priref": 1601048428,
+        "@created": "2024-04-09T12:29:58",
+        "@modification": "2024-04-09T12:29:58",
         "@selected": false,
+        "AssociationGeo": [
+          {
+            "association.geographical_keyword": "Norge;Nordland;;Rana;;;;"
+          }
+        ],
+        "Dating": [
+          {
+            "dating.date.start": "2024-01-01"
+          }
+        ],
+        "Language": [
+          {
+            "language": "Norsk bokmål"
+          }
+        ],
+        "Publisher": [
+          {
+            "publisher": "Nasjonalbiblioteket"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"
@@ -161,11 +166,11 @@
         ],
         "Title": [
           {
-            "title": "The Bikube"
+            "title": "Bikubetestavisen kvensk"
           }
         ],
-        "object_number": "9",
-        "priref": "9",
+        "object_number": "TE-1601048428",
+        "priref": "1601048428",
         "record_type": [
           [
             {
@@ -190,35 +195,7 @@
             },
             {
               "@lang": 12,
-              "#text": "Verk"
-            }
-          ]
-        ],
-        "work.description_type": [
-          [
-            {
-              "@lang": "neutral",
-              "#text": "SERIAL"
-            },
-            {
-              "@lang": 0,
-              "#text": "Serial"
-            },
-            {
-              "@lang": 1,
-              "#text": "Tijdschrift"
-            },
-            {
-              "@lang": 3,
-              "#text": "Zeitschrift"
-            },
-            {
-              "@lang": 9,
-              "#text": "Serie"
-            },
-            {
-              "@lang": 12,
-              "#text": "Serie"
+              "#text": "Seriepost (Verk)"
             }
           ]
         ]

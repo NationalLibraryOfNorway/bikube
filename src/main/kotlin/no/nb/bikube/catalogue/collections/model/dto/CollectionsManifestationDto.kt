@@ -38,12 +38,12 @@ class ManifestationDto (
 )
 
 fun createManifestationDto(
-    yearWorkCatalogueId: String,
+    parentCatalogueId: String,
     date: LocalDate,
     username: String
 ): ManifestationDto {
     return ManifestationDto(
-        partOfReference = yearWorkCatalogueId,
+        partOfReference = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = date.toString(),
         inputName = username,

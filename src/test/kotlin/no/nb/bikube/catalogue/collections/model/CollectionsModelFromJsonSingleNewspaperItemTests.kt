@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.enum.MaterialType
@@ -24,11 +23,11 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
         return mapper
     }
 
-    private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingle.json")
+    private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingleDigital.json")
     private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
 
     @Test
-    fun `Item object should extract priRef`() { Assertions.assertEquals("5", singleItem.priRef) }
+    fun `Item object should extract priRef`() { Assertions.assertEquals("1601048433", singleItem.priRef) }
 
     @Test
     fun `Item object should extract format`() {
@@ -50,7 +49,7 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
 
     @Test
     fun `Item object should extract title`() {
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", singleItem.getName())
+        Assertions.assertEquals("Bikubetestavisen 123", singleItem.getName())
     }
 
     @Test
@@ -61,30 +60,17 @@ class CollectionsModelFromJsonSingleNewspaperItemTests {
     @Test
     fun `Item object should extract parent manifestation`() {
         val manifestation = singleItem.getFirstPartOf()!!
-        Assertions.assertEquals("10", manifestation.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012.01.02", manifestation.getName())
+        Assertions.assertEquals("1601048429", manifestation.priRef)
         Assertions.assertEquals(MaterialType.NEWSPAPER, manifestation.getMaterialType())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifestation.getRecordType())
     }
 
     @Test
-    fun `Item object should extract parent year work`() {
-        val yearWork = singleItem.getFirstPartOf()!!.getFirstPartOf()!!
-        Assertions.assertEquals("4", yearWork.priRef)
-        Assertions.assertEquals("Bikubeavisen 2012", yearWork.getName())
-        Assertions.assertEquals(CollectionsRecordType.WORK, yearWork.getRecordType())
-        Assertions.assertEquals(MaterialType.NEWSPAPER, yearWork.getMaterialType())
-        Assertions.assertEquals(CollectionsDescriptionType.YEAR, yearWork.getWorkType())
-    }
-
-    @Test
     fun `Item object should extract parent title`() {
-        val title = singleItem.getFirstPartOf()!!.getFirstPartOf()!!.getFirstPartOf()!!
-        Assertions.assertEquals("3", title.priRef)
-        Assertions.assertEquals("Bikubeavisen", title.getName())
+        val title = singleItem.getFirstPartOf()!!.getFirstPartOf()!!
+        Assertions.assertEquals("1601048426", title.priRef)
+        Assertions.assertEquals("Bikubetestavisen", title.getName())
         Assertions.assertEquals(CollectionsRecordType.WORK, title.getRecordType())
         Assertions.assertEquals(MaterialType.NEWSPAPER, title.getMaterialType())
-        Assertions.assertEquals(CollectionsDescriptionType.SERIAL, title.getWorkType())
     }
-
 }

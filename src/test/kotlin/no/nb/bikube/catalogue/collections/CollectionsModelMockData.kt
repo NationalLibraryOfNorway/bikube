@@ -1,6 +1,5 @@
 package no.nb.bikube.catalogue.collections
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsDescriptionType
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.model.*
@@ -31,21 +30,12 @@ class CollectionsModelMockData {
             CollectionsLanguageListObject(lang = "neutral", text = CollectionsFormat.PHYSICAL.value)
         ))
 
-        private val collectionsWorkTypeListSerialMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = CollectionsDescriptionType.SERIAL.value)
-        ))
-
-        private val collectionsWorkTypeListYearMock = listOf(listOf(
-            CollectionsLanguageListObject(lang = "neutral", text = CollectionsDescriptionType.YEAR.value)
-        ))
-
         // Regular digital item
         val collectionsPartsObjectMockItemA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "4",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
                 dateStart = null
@@ -58,7 +48,6 @@ class CollectionsModelMockData {
                 priRef = "5",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
                 dateStart = null
@@ -71,82 +60,25 @@ class CollectionsModelMockData {
                 priRef = "5",
                 titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
                 dateStart = null
             )
         )
 
-        // Regular manifestation with 2 child items
-        private val collectionsPartsObjectMockManifestationA = CollectionsPartsObject(
+        // Regular manifestation part
+        val collectionsPartsObjectMockManifestationA = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "3",
-                titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
+                titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListManifestMock,
-                workTypeList = null,
-                formatList = null,
-                partsList = listOf(
-                    collectionsPartsObjectMockItemA,
-                    collectionsPartsObjectMockItemB
-                ),
-                dateStart = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null))
-            )
-        )
-
-        // Manifestation with no children
-        private val collectionsPartsObjectMockManifestationB = CollectionsPartsObject(
-            partsReference = CollectionsPartsReference(
-                priRef = "9",
-                titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020.01.01")),
-                recordType = collectionsRecordTypeListManifestMock,
-                workTypeList = null,
                 formatList = null,
                 partsList = null,
                 dateStart = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null))
             )
         )
 
-        // Regular year work with 1 manifestation child and 2 items
-        private val collectionsPartsObjectMockYearWorkA = CollectionsPartsObject(
-            partsReference = CollectionsPartsReference(
-                priRef = "2",
-                titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2020")),
-                recordType = collectionsRecordTypeListWorkMock,
-                workTypeList = collectionsWorkTypeListYearMock,
-                formatList = null,
-                partsList = listOf(collectionsPartsObjectMockManifestationA),
-                dateStart = listOf(CollectionsDating(dateFrom = "2020", dateTo = null))
-            )
-        )
-
-        // Year work without children
-        private val collectionsPartsObjectMockYearWorkB = CollectionsPartsObject(
-            partsReference = CollectionsPartsReference(
-                priRef = "8",
-                titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2000")),
-                recordType = collectionsRecordTypeListWorkMock,
-                workTypeList = collectionsWorkTypeListYearMock,
-                formatList = null,
-                partsList = null,
-                dateStart = listOf(CollectionsDating(dateFrom = "2000", dateTo = null))
-            )
-        )
-
-        // Year work with 1 manifestation and no items
-        private val collectionsPartsObjectMockYearWorkC = CollectionsPartsObject(
-            partsReference = CollectionsPartsReference(
-                priRef = "10",
-                titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2000")),
-                recordType = collectionsRecordTypeListWorkMock,
-                workTypeList = collectionsWorkTypeListYearMock,
-                formatList = null,
-                partsList = listOf(collectionsPartsObjectMockManifestationB),
-                dateStart = null
-            )
-        )
-
-        // Regular title with 1 year work, 1 manifestation and 2 items
+        // Regular title with 1 manifestation
         val collectionsModelMockTitleA = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
@@ -162,8 +94,7 @@ class CollectionsModelMockData {
                         publisherList = listOf(CollectionsPublisher("NB")),
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
-                        partsList = listOf(collectionsPartsObjectMockYearWorkA),
-                        workTypeList = collectionsWorkTypeListSerialMock,
+                        partsList = listOf(collectionsPartsObjectMockManifestationA),
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -171,7 +102,7 @@ class CollectionsModelMockData {
             )
         )
 
-        // Title without any children
+        // Title without any manifestation children
         val collectionsModelMockTitleB = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
@@ -188,57 +119,6 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListSerialMock,
-                        alternativeNumberList = null,
-                        inputName = listOf(TEST_USERNAME)
-                    )
-                )
-            )
-        )
-
-        // Title with 1 year work and no manifestations
-        val collectionsModelMockTitleC = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "7",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
-                        formatList = null,
-                        partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                        mediumList = listOf(Medium(medium = "Tekst")),
-                        datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
-                        publisherList = listOf(CollectionsPublisher("NB")),
-                        languageList = listOf(CollectionsLanguage(language = "nob")),
-                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
-                        partsList = listOf(collectionsPartsObjectMockYearWorkB),
-                        workTypeList = collectionsWorkTypeListSerialMock,
-                        alternativeNumberList = null,
-                        inputName = listOf(TEST_USERNAME)
-                    )
-                )
-            )
-        )
-
-        // Title with 1 year work, 1 manifestation and no items
-        val collectionsModelMockTitleD = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "7",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 2")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
-                        formatList = null,
-                        partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                        mediumList = listOf(Medium(medium = "Tekst")),
-                        datingList = listOf(CollectionsDating(dateFrom = "2000", dateTo = null)),
-                        publisherList = listOf(CollectionsPublisher("NB")),
-                        languageList = listOf(CollectionsLanguage(language = "nob")),
-                        placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
-                        partsList = listOf(collectionsPartsObjectMockYearWorkC),
-                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -247,7 +127,7 @@ class CollectionsModelMockData {
         )
 
         // Equal to newspaperTitleMockB
-        val collectionsModelMockTitleE = CollectionsModel(
+        val collectionsModelMockTitleC = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
                     CollectionsObject(
@@ -263,7 +143,6 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage("nob")),
                         placeOfPublicationList = listOf(CollectionsAssociationGeo("Brakka")),
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListSerialMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -282,9 +161,7 @@ class CollectionsModelMockData {
                 recordList = listOf(
                     collectionsModelMockTitleA.getFirstObject()!!,
                     collectionsModelMockTitleB.getFirstObject()!!,
-                    collectionsModelMockTitleC.getFirstObject()!!,
-                    collectionsModelMockTitleD.getFirstObject()!!,
-                    collectionsModelMockTitleE.getFirstObject()!!
+                    collectionsModelMockTitleC.getFirstObject()!!
                 )
             )
         )
@@ -296,29 +173,18 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListWorkMock,
                 subMedium = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                workTypeList = collectionsWorkTypeListSerialMock
-            )
-        )
-
-        private val collectionsPartOfObjectMockYearWorkA = CollectionsPartOfObject(
-            partOfReference = CollectionsPartOfReference(
-                priRef = "21",
-                partOfGroup = listOf(collectionsPartOfObjectMockSerialWorkA),
-                title = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
-                recordType = collectionsRecordTypeListWorkMock,
-                subMedium = null,
-                workTypeList = collectionsWorkTypeListYearMock
+                datingList = null
             )
         )
 
         private val collectionsPartOfObjectMockManifestA = CollectionsPartOfObject(
             partOfReference = CollectionsPartOfReference(
                 priRef = "20",
-                partOfGroup = listOf(collectionsPartOfObjectMockYearWorkA),
+                partOfGroup = listOf(collectionsPartOfObjectMockSerialWorkA),
                 title = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
                 recordType = collectionsRecordTypeListManifestMock,
                 subMedium = null,
-                workTypeList = null
+                datingList = null
             )
         )
 
@@ -338,7 +204,6 @@ class CollectionsModelMockData {
                         languageList = listOf(CollectionsLanguage(language = "nob")),
                         placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = null,
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -363,7 +228,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        workTypeList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "avisa_null_null_20200105_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -371,37 +235,14 @@ class CollectionsModelMockData {
             )
         )
 
+        // Manifestation with parts
         val collectionsModelMockManifestationA = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
                     CollectionsObject(
                         priRef = "24",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
                         recordTypeList = collectionsRecordTypeListManifestMock,
-                        formatList = null,
-                        partOfList = listOf(collectionsPartOfObjectMockYearWorkA),
-                        subMediumList = null,
-                        mediumList = null,
-                        datingList = null,
-                        publisherList = null,
-                        languageList = null,
-                        placeOfPublicationList = null,
-                        partsList = listOf(collectionsPartsObjectMockItemA),
-                        workTypeList = null,
-                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = listOf(TEST_USERNAME)
-                    )
-                )
-            )
-        )
-
-        val collectionsModelMockYearWorkA = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "25",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
                         formatList = null,
                         partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
                         subMediumList = null,
@@ -410,8 +251,7 @@ class CollectionsModelMockData {
                         publisherList = null,
                         languageList = null,
                         placeOfPublicationList = null,
-                        partsList = listOf(collectionsPartsObjectMockManifestationA),
-                        workTypeList = collectionsWorkTypeListYearMock,
+                        partsList = listOf(collectionsPartsObjectMockItemA),
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -419,14 +259,14 @@ class CollectionsModelMockData {
             )
         )
 
-        // No manifestation children
-        val collectionsModelMockYearWorkB = CollectionsModel(
+        // Manifestation without parts
+        val collectionsModelMockManifestationB = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
                     CollectionsObject(
-                        priRef = "25",
-                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen 1999")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
+                        priRef = "46",
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
+                        recordTypeList = collectionsRecordTypeListManifestMock,
                         formatList = null,
                         partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
                         subMediumList = null,
@@ -436,7 +276,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME)
                     )
@@ -485,36 +324,11 @@ class CollectionsModelMockData {
             adlibJson = CollectionsNameRecordList(recordList = null)
         )
 
-        val collectionsModelMockYearWorkC = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "30",
-                        titleList = listOf(CollectionsTitle(title = "Aftenposten")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
-                        formatList = null,
-                        partOfList = null,
-                        subMediumList = null,
-                        mediumList = null,
-                        datingList = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null)),
-                        publisherList = null,
-                        languageList = null,
-                        placeOfPublicationList = null,
-                        partsList = listOf(collectionsPartsObjectMockManifestationB),
-                        workTypeList = collectionsWorkTypeListYearMock,
-                        alternativeNumberList = null,
-                        inputName = listOf(TEST_USERNAME)
-                    )
-                )
-            )
-        )
-
         private val collectionsPartsObjectMockItemD = CollectionsPartsObject(
             partsReference = CollectionsPartsReference(
                 priRef = "32",
                 titleList = listOf(CollectionsTitle(title = "Aftenposten")),
                 recordType = collectionsRecordTypeListItemMock,
-                workTypeList = null,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
                 dateStart = null
@@ -537,31 +351,6 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemD),
-                        workTypeList = null,
-                        alternativeNumberList = null,
-                        inputName = listOf(TEST_USERNAME)
-                    )
-                )
-            )
-        )
-
-        val yearWorkNoManifestationA = CollectionsModel(
-            adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    CollectionsObject(
-                        priRef = "100",
-                        titleList = listOf(CollectionsTitle(title = "Aftenposten")),
-                        recordTypeList = collectionsRecordTypeListWorkMock,
-                        formatList = null,
-                        partOfList = null,
-                        subMediumList = listOf(SubMedium(subMedium = "Aviser")),
-                        mediumList = null,
-                        datingList = listOf(CollectionsDating(dateFrom = "2024", dateTo = null)),
-                        publisherList = null,
-                        languageList = null,
-                        placeOfPublicationList = null,
-                        partsList = listOf(),
-                        workTypeList = collectionsWorkTypeListYearMock,
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )

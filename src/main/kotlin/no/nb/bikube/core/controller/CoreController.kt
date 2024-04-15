@@ -8,12 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.core.enum.CatalogueName
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.enum.materialTypeToCatalogueName
 import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.catalogue.collections.exception.CollectionsException
-import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.CatalogueRecord
 import no.nb.bikube.core.model.Item
@@ -110,13 +110,13 @@ class CoreController (
         Parameter(name = "titleCatalogueId", description = "Catalogue ID of the title to search items for."),
         Parameter(name = "materialType", description = "Material type of the items to search for."),
         Parameter(name = "date", description = "Date in ISO 8601 format (YYYY-MM-DD).", schema = Schema(pattern = DATE_REGEX)),
-        Parameter(name = "isDigital", description = "If 'true' returns digital items, physical items if 'false'. Default is 'false'")
+        Parameter(name = "isDigital", description = "If 'true' returns only digital items. If 'false', returns only physical items. Default is all.")
     )
     fun searchItem(
         @RequestParam(required = true) titleCatalogueId: String,
         @RequestParam(required = true) materialType: MaterialType,
         @RequestParam(required = true) date: String,
-        @RequestParam(required = true) isDigital: Boolean,
+        @RequestParam(required = false) isDigital: Boolean? = null,
     ): ResponseEntity<Flux<CatalogueRecord>> {
         if (titleCatalogueId.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
 
@@ -127,7 +127,7 @@ class CoreController (
 
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(
-                newspaperService.getItemsByTitle(titleCatalogueId, parsedDate, isDigital, materialType)
+                newspaperService.getItemsByTitleAndDate(titleCatalogueId, parsedDate, isDigital)
             )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }

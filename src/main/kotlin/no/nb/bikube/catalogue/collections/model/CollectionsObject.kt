@@ -8,7 +8,9 @@ data class CollectionsModel(
 )
 
 data class CollectionsRecordList(
-    val recordList: List<CollectionsObject>?
+    val recordList: List<CollectionsObject>?,
+
+    val diagnostic: CollectionDiagnostic? = null
 )
 
 data class CollectionsObject(
@@ -47,9 +49,6 @@ data class CollectionsObject(
 
     @JsonProperty("Parts")
     val partsList: List<CollectionsPartsObject>?,
-
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("Alternative_number")
     val alternativeNumberList: List<CollectionsAlternativeNumber>?,
@@ -120,8 +119,8 @@ data class CollectionsPartOfReference(
     @JsonProperty("group:Submedium")
     val subMedium: List<SubMedium>?,
 
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?
+    @JsonProperty("group:Dating")
+    val datingList: List<CollectionsDating>?,
 )
 
 data class SubMedium(
@@ -168,14 +167,14 @@ data class CollectionsPartsReference(
     @JsonProperty("record_type")
     val recordType: List<List<CollectionsLanguageListObject>>?,
 
-    @JsonProperty("work.description_type")
-    val workTypeList: List<List<CollectionsLanguageListObject>>?,
-
     @JsonProperty("format")
     val formatList: List<List<CollectionsLanguageListObject>>?,
 
     @JsonProperty("group:Parts")
-    val partsList: List<CollectionsPartsObject>?
+    val partsList: List<CollectionsPartsObject>?,
+
+    @JsonProperty("PID_data_URN")
+    val urn: List<String>? = null
 )
 
 data class CollectionsAlternativeNumber(
@@ -184,4 +183,18 @@ data class CollectionsAlternativeNumber(
 
     @JsonProperty("alternative_number")
     val value: String?
+)
+
+data class CollectionDiagnostic(
+    val error: ErrorMessage?,
+
+    val hits: String?,
+
+    val search: String?,
+
+    val dbname: String?
+)
+
+data class ErrorMessage(
+    val message: String?
 )

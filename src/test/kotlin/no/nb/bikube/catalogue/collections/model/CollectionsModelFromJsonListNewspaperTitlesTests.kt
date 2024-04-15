@@ -32,9 +32,9 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
 
     @Test
     fun `Title object should extract priRefs`() {
-        Assertions.assertEquals("3", titles.first().priRef)
-        Assertions.assertEquals("7", titles[1].priRef)
-        Assertions.assertEquals("9", titles[2].priRef)
+        Assertions.assertEquals("1601048426", titles.first().priRef)
+        Assertions.assertEquals("1601048427", titles[1].priRef)
+        Assertions.assertEquals("1601048428", titles[2].priRef)
     }
 
     @Test
@@ -44,9 +44,9 @@ class CollectionsModelFromJsonListNewspaperTitlesTests {
 
     @Test
     fun `Title object should extract title`() {
-        Assertions.assertEquals("Bikubeavisen", titles.first().getName())
-        Assertions.assertEquals("Bikubeposten", titles[1].getName())
-        Assertions.assertEquals("The Bikube", titles[2].getName())
+        Assertions.assertEquals("Bikubetestavisen", titles.first().getName())
+        Assertions.assertEquals("Bikubetestavisen 2", titles[1].getName())
+        Assertions.assertEquals("Bikubetestavisen kvensk", titles[2].getName())
     }
 
     @Test
