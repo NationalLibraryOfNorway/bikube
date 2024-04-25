@@ -144,7 +144,8 @@ class CoreControllerIntegrationTest (
                     titleCatalogueId = testItem.getTitleCatalogueId(),
                     titleName = testItem.getTitleName(),
                     digital = testItem.getFormat() == CollectionsFormat.DIGITAL,
-                    urn = testItem.getUrn()
+                    urn = testItem.getUrn(),
+                    location = testItem.locationBarcode
                 )
             )
             .verifyComplete()

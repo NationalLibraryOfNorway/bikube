@@ -33,7 +33,7 @@ class CollectionsRepository(
                 "and dating.date.start and dating.date.end and publisher " +
                 "and association.geographical_keyword and language and submedium " +
                 "and format and alternative_number and alternative_number.type " +
-                "and part_of_reference and PID_data_URN"
+                "and part_of_reference and PID_data_URN and current_location.barcode"
 
         return getRecordsWebClientRequest("priref=${titleCatalogId}", CollectionsDatabase.TEXTS, fields).bodyToMono<CollectionsModel>()
     }
