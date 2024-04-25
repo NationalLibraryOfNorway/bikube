@@ -357,5 +357,29 @@ class CollectionsModelMockData {
                 )
             )
         )
+
+        private val collectionsLocationListMock = listOf(listOf(
+            CollectionsLanguageListObject(lang = "neutral", text = "PACKAGE")
+        ))
+
+
+        val collectionsLocationObjectMock = CollectionsLocationObject(
+            priRef = "123",
+            name = listOf("Oslo"),
+            barcode = "123456789",
+            packageLocation = collectionsLocationListMock
+        )
+
+        val collectionsLocationModelMock = CollectionsLocationModel(
+            adlibJson = CollectionsLocationRecordList(
+                recordList = listOf(collectionsLocationObjectMock)
+            )
+        )
+
+        val emptyCollectionsLocationModelMock = CollectionsLocationModel(
+            adlibJson = CollectionsLocationRecordList(
+                recordList = emptyList()
+            )
+        )
     }
 }
