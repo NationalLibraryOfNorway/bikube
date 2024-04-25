@@ -48,7 +48,7 @@ fun createManifestationDto(
         dateStart = date.toString(),
         inputName = username,
         inputNotes = "Registrert i Bikube",
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts"

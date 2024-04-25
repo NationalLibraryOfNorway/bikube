@@ -87,7 +87,8 @@ class NewspaperMockData {
             username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1",
-            name = "Avis A 2020.01.05"
+            name = "Avis A 2020.01.05",
+            containerId = null
         )
 
         // Minimum valid for creating digital item
@@ -97,7 +98,8 @@ class NewspaperMockData {
             username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
-            name = "Avis A 2020.01.01"
+            name = "Avis A 2020.01.01",
+            containerId = null
         )
 
         val language: Language = Language(

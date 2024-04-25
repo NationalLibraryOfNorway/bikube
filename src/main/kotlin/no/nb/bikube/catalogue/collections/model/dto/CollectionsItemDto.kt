@@ -45,7 +45,10 @@ class ItemDto (
     val alternativeNumberList: List<AlternativeNumberInput>? = null,
 
     @SerialName("PID_data_URN")
-    val urn: String? = null
+    val urn: String? = null,
+
+    @SerialName("current_location.name")
+    val currentLocationName: String? = null,
 )
 
 @Serializable
@@ -69,12 +72,13 @@ fun createNewspaperItemDto(
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
         inputNotes = "Registrert i Bikube",
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
         partOfReference = manifestationCatalogueId,
         alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
-        urn = if (useUrn) item.urn else null
+        urn = if (useUrn) item.urn else null,
+        currentLocationName = if (item.digital == false) item.containerId else null
     )
 }

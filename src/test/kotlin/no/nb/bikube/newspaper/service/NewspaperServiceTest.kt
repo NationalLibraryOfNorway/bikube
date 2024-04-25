@@ -32,6 +32,7 @@ import no.nb.bikube.catalogue.collections.model.dto.ItemDto
 import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
 import no.nb.bikube.catalogue.collections.model.dto.TitleDto
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
@@ -69,6 +70,9 @@ class NewspaperServiceTest {
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
 
+    @MockkBean
+    private lateinit var collectionLocationService: CollectionsLocationService
+
     private val mockedTime = LocalTime.of(9, 30, 0)
 
     @BeforeEach
@@ -83,7 +87,7 @@ class NewspaperServiceTest {
         dateStart = newspaperItemMockB.date.toString(),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts"
@@ -95,7 +99,7 @@ class NewspaperServiceTest {
         alternativeNumberList = listOf(urnMock),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
@@ -110,7 +114,7 @@ class NewspaperServiceTest {
         alternativeNumberList = null,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
@@ -130,7 +134,7 @@ class NewspaperServiceTest {
         subMedium = "Aviser",
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts")
@@ -536,7 +540,7 @@ class NewspaperServiceTest {
                 dateStart = LocalDate.now().toString(),
                 inputName = TEST_USERNAME,
                 inputNotes = INPUT_NOTES,
-                inputSource = "texts>texts",
+                inputSource = "texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                 dataset = "texts"

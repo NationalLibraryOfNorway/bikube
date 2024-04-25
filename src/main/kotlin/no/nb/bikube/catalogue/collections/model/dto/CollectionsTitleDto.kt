@@ -68,7 +68,7 @@ fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
         subMedium = "Aviser",
         inputName = title.username,
         inputNotes = "Registrert i Bikube",
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts"
