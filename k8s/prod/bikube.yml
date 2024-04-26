@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bikube
+  namespace: tekst-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bikube
+  template:
+    metadata:
+      labels:
+        app: bikube
+    spec:
+      priorityClassName: medium-priority
+      containers:
+        - name: app
+          image: harbor.nb.no/tekst/bikube:<version>
+          ports:
+            - name: app-port
+              containerPort: 8087
+            - name: actuator-port
+              containerPort: 8088
+          env:
+            - name: INFO_ENVIRONMENT
+              value: PROD
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: PROD_BIKUBE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: username
+            - name: PROD_BIKUBE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: password
+            - name: COLLECTIONS_PATH_PROD
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: collections_url
+            - name: COLLECTIONS_USERNAME_PROD
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: ad_username
+            - name: COLLECTIONS_PASSWORD_PROD
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: ad_password
+            - name: KERBEROS_REALM
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: kerb_realm
+            - name: KERBEROS_KDC
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: kerb_kdc
+            - name: ALMA_SRU_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: alma_sru_url
+            - name: ALMA_WS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: alma_ws_url
+            - name: ALMA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: alma_api_key
+            - name: HTTP_PROXY_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: http_proxy_host
+            - name: HTTP_PROXY_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: http_proxy_port
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: actuator-port
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: actuator-port
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bikube
+spec:
+  ports:
+    - port: 8087
+      name: rest
+      targetPort: 8087
+    - port: 8088
+      name: http
+      targetPort: 8088
+  selector:
+    app: bikube
+  type: ClusterIP
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bikube-ingress
+  namespace: tekst-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: <host_url>
+      http:
+        paths:
+          - backend:
+              service:
+                name: bikube
+                port:
+                  number: 8087
+            path: /bikube
+            pathType: Prefix

@@ -98,6 +98,7 @@ jobs:
   deploy-to-k8s-stage:
     name: Deploy to kubernetes stage environment
     needs: build-and-publish-docker-image
+    if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux]
     environment: stage
     steps:
@@ -133,4 +134,45 @@ jobs:
           kubectl config view
           kubectl version
           kubectl apply -f k8s/stage/bikube.yml
+          kubectl rollout restart deploy/bikube
+
+  deploy-to-k8s-prod:
+    name: Deploy to kubernetes prod environment
+    needs: build-and-publish-docker-image
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    runs-on: [self-hosted, Linux]
+    environment: prod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Import secrets
+        id: import-secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_URL }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          secrets: |
+            kv/team/text/data/k8s-text-prod *
+
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.26.5'
+
+      - name: Deploy to prod cluster
+        run: |
+          echo "Deploying to production version ${{ env.APP_VERSION }}"
+          sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/prod/bikube.yml
+          sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/prod/bikube.yml
+          kubectl config set-cluster prodcl --server=${{ steps.import-secrets.outputs.K8S_PROD_SERVER }}
+          kubectl config set clusters.prodcl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_PROD_NB_NO_CA }}
+          kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_PROD_USER }} --token=${{ steps.import-secrets.outputs.K8S_PROD_NB_NO_TOKEN }}
+          kubectl config set-context tekst --cluster=prodcl --user=${{ steps.import-secrets.outputs.K8S_PROD_USER }} --namespace=tekst-prod
+          kubectl config use-context tekst
+          kubectl config view
+          kubectl version
+          kubectl apply -f k8s/prod/bikube.yml
           kubectl rollout restart deploy/bikube
