@@ -205,7 +205,8 @@ class CollectionsModelMockData {
                         placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
                         partsList = null,
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = listOf(TEST_USERNAME)
+                        inputName = listOf(TEST_USERNAME),
+                        locationBarcode = "EOAATEST123"
                     )
                 )
             )

@@ -180,7 +180,8 @@ class NewspaperServiceTest {
                         titleCatalogueId = testSerialWork.priRef,
                         titleName = testSerialWork.getName(),
                         digital = true,
-                        urn = testRecord.getUrn()
+                        urn = testRecord.getUrn(),
+                        location = testRecord.locationBarcode
                     ),
                     it
                 )

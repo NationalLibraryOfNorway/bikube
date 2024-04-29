@@ -79,6 +79,9 @@ data class CollectionsObject(
 
     @JsonProperty("edit.notes")
     val modifiedNotes: String? = null,
+
+    @JsonProperty("current_location.barcode")
+    val locationBarcode: String? = null
 )
 
 data class CollectionsTitle(

@@ -108,7 +108,8 @@ class ItemControllerIntegrationTest (
                 titleCatalogueId = testReturn.getTitleCatalogueId(),
                 titleName = testReturn.getTitleName(),
                 digital = testReturn.getFormat() == CollectionsFormat.DIGITAL,
-                urn = testReturn.getUrn()
+                urn = testReturn.getUrn(),
+                location = testReturn.locationBarcode
             ))
             .verifyComplete()
     }

@@ -14,7 +14,8 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
         titleCatalogueId = model.getTitleCatalogueId(),
         titleName = model.getTitleName(),
         digital = model.getFormat() == CollectionsFormat.DIGITAL,
-        urn = model.getUrn()
+        urn = model.getUrn(),
+        location = model.locationBarcode
     )
 }
 
