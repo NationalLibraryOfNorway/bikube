@@ -8,6 +8,7 @@ import no.nb.bikube.catalogue.collections.mapper.*
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsIdService
 import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
@@ -25,7 +26,8 @@ import java.time.format.DateTimeFormatter
 @Service
 class NewspaperService  (
     private val collectionsRepository: CollectionsRepository,
-    private val collectionsLocationService: CollectionsLocationService
+    private val collectionsLocationService: CollectionsLocationService,
+    private val collectionsIdService: CollectionsIdService
 ) {
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
@@ -214,7 +216,8 @@ class NewspaperService  (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val dto: ItemDto = createNewspaperItemDto(item, parentId)
+        val uniqueId = collectionsIdService.getUniqueId()
+        val dto: ItemDto = createNewspaperItemDto(uniqueId, item, parentId)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
             collectionsModel.getObjects()
