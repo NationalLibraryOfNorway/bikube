@@ -8,5 +8,6 @@ data class ItemInputDto(
     val username: String,
     val digital: Boolean? = false,
     val urn: String? = null,
-    var name: String? = null
+    var name: String? = null,
+    val containerId: String? = null
 )

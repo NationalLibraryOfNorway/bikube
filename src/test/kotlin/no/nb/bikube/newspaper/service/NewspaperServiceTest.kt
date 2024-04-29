@@ -6,6 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.INPUT_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemB
@@ -32,6 +33,7 @@ import no.nb.bikube.catalogue.collections.model.dto.ItemDto
 import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
 import no.nb.bikube.catalogue.collections.model.dto.TitleDto
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
@@ -69,6 +71,9 @@ class NewspaperServiceTest {
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
 
+    @MockkBean
+    private lateinit var collectionLocationService: CollectionsLocationService
+
     private val mockedTime = LocalTime.of(9, 30, 0)
 
     @BeforeEach
@@ -83,7 +88,7 @@ class NewspaperServiceTest {
         dateStart = newspaperItemMockB.date.toString(),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts"
@@ -95,7 +100,7 @@ class NewspaperServiceTest {
         alternativeNumberList = listOf(urnMock),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
@@ -110,7 +115,7 @@ class NewspaperServiceTest {
         alternativeNumberList = null,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
@@ -130,7 +135,7 @@ class NewspaperServiceTest {
         subMedium = "Aviser",
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "texts>texts",
+        inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts")
@@ -498,6 +503,68 @@ class NewspaperServiceTest {
     }
 
     @Test
+    fun `createNewspaperItem should get or create container if item is physical and has container ID`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionLocationService.createContainerIfNotExists(any(), any()) } returns Mono.just(collectionsLocationObjectMock)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        // Given that the item is physical and has a container ID
+        val barcode = "123"
+        val testItem = newspaperInputDtoItemMockB.copy(digital = false, containerId = barcode)
+
+        // When creating the item
+        newspaperService.createNewspaperItem(testItem)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        // Then the container should be created
+        verify (exactly = 1) { collectionLocationService.createContainerIfNotExists(barcode, TEST_USERNAME) }
+    }
+
+    @Test
+    fun `createNewspaperItem should not get or create container if item is digital`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        // Given that the item is digital
+        val testItem = newspaperInputDtoItemMockB.copy(digital = true, containerId = "123")
+
+        // When creating the item
+        newspaperService.createNewspaperItem(testItem)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        // Then a container should not be created
+        verify (exactly = 0) { collectionLocationService.createContainerIfNotExists(any(), any())}
+    }
+
+    @Test
+    fun `createNewspaperItem should not get or create container if item is physical and does not have container ID`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        // Given that the item is physical and does not have a container ID
+        val testItem = newspaperInputDtoItemMockB.copy(digital = false, containerId = null)
+
+        // When creating the item
+        newspaperService.createNewspaperItem(testItem)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        // Then a container should not be created
+        verify (exactly = 0) { collectionLocationService.createContainerIfNotExists(any(), any()) }
+    }
+
+    @Test
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
@@ -537,7 +604,7 @@ class NewspaperServiceTest {
                 dateStart = LocalDate.now().toString(),
                 inputName = TEST_USERNAME,
                 inputNotes = INPUT_NOTES,
-                inputSource = "texts>texts",
+                inputSource = "texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                 dataset = "texts"

@@ -3,6 +3,7 @@ package no.nb.bikube.catalogue.collections.repository
 import no.nb.bikube.catalogue.collections.config.CollectionsWebClient
 import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.model.CollectionsLocationModel
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
 import no.nb.bikube.catalogue.collections.model.CollectionsNameModel
 import no.nb.bikube.catalogue.collections.model.CollectionsTermModel
@@ -71,6 +72,10 @@ class CollectionsRepository(
         return searchTermDatabases("term=\"${name}\" and term.type=\"place\"", CollectionsDatabase.GEO_LOCATIONS)
     }
 
+    fun searchLocationAndContainers(barcode: String): Mono<CollectionsLocationModel> {
+        return searchLocationDatabase("barcode=${barcode}")
+    }
+
     @Throws(CollectionsException::class)
     fun createTextsRecord(serializedBody: String): Mono<CollectionsModel> {
         return createRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
@@ -84,6 +89,10 @@ class CollectionsRepository(
         return createRecordWebClientRequest(serializedBody, db).bodyToMono<CollectionsTermModel>()
     }
 
+    fun createLocationRecord(serializedBody: String): Mono<CollectionsLocationModel> {
+        return createRecordWebClientRequest(serializedBody, CollectionsDatabase.LOCATIONS).bodyToMono<CollectionsLocationModel>()
+    }
+
     private fun searchTexts(query: String): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(query, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
@@ -94,6 +103,10 @@ class CollectionsRepository(
 
     private fun searchTermDatabases(query: String, db: CollectionsDatabase): Mono<CollectionsTermModel> {
         return getRecordsWebClientRequest(query, db).bodyToMono<CollectionsTermModel>()
+    }
+
+    private fun searchLocationDatabase(query: String): Mono<CollectionsLocationModel> {
+        return getRecordsWebClientRequest(query, CollectionsDatabase.LOCATIONS).bodyToMono<CollectionsLocationModel>()
     }
 
     private fun getRecordsWebClientRequest(

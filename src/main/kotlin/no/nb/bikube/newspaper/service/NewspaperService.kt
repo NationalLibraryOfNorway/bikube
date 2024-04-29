@@ -8,6 +8,7 @@ import no.nb.bikube.catalogue.collections.mapper.*
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
@@ -23,7 +24,8 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class NewspaperService  (
-    private val collectionsRepository: CollectionsRepository
+    private val collectionsRepository: CollectionsRepository,
+    private val collectionsLocationService: CollectionsLocationService
 ) {
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
@@ -191,7 +193,12 @@ class NewspaperService  (
                     findOrCreateManifestationRecord(item)
                 }
             }.flatMap { manifestation ->
-                createLinkedNewspaperItem(item, manifestation.priRef)
+                if (item.digital == false && !item.containerId.isNullOrBlank()) {
+                    collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
+                        .then(createLinkedNewspaperItem(item, manifestation.priRef))
+                } else {
+                    createLinkedNewspaperItem(item, manifestation.priRef)
+                }
             }
     }
 
