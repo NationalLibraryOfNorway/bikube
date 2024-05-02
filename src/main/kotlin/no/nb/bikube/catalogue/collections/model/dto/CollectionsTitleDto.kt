@@ -10,6 +10,12 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 class TitleDto(
+    @SerialName("priref")
+    val priRef: String? = null,
+
+    @SerialName("object_number")
+    val objectNumber: String? = null,
+
     val title: String,
 
     @SerialName("record_type")
@@ -55,8 +61,10 @@ class TitleDto(
     val dataset: String? = null
 )
 
-fun createNewspaperTitleDto(title: TitleInputDto): TitleDto {
+fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
     return TitleDto(
+        priRef = id,
+        objectNumber = "TE-$id",
         title = title.name,
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),

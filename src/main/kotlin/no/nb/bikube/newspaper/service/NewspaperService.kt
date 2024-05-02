@@ -1,5 +1,7 @@
 package no.nb.bikube.newspaper.service
 
+import jakarta.persistence.EntityManager
+import jakarta.transaction.Transactional
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.enum.*
@@ -15,6 +17,7 @@ import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
+import no.nb.bikube.core.util.logger
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -27,11 +30,20 @@ import java.time.format.DateTimeFormatter
 class NewspaperService  (
     private val collectionsRepository: CollectionsRepository,
     private val collectionsLocationService: CollectionsLocationService,
-    private val collectionsIdService: CollectionsIdService
+    private val entityManager: EntityManager
 ) {
+
+    fun fetchUniqueIdSequence(): String {
+        val query = entityManager.createNativeQuery("SELECT nextval('collections_id_seq')")
+        val id = query.singleResult.toString()
+        logger().info("Got unique id $id from database sequence")
+        return id
+    }
+
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
-        val dto: TitleDto = createNewspaperTitleDto(title)
+        val id = fetchUniqueIdSequence()
+        val dto: TitleDto = createNewspaperTitleDto(id, title)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -175,7 +187,8 @@ class NewspaperService  (
         date: LocalDate,
         username: String
     ): Mono<CollectionsObject> {
-        val dto: ManifestationDto = createManifestationDto(titleCatalogueId, date, username)
+        val id = fetchUniqueIdSequence()
+        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -216,7 +229,7 @@ class NewspaperService  (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val uniqueId = collectionsIdService.getUniqueId()
+        val uniqueId = fetchUniqueIdSequence()
         val dto: ItemDto = createNewspaperItemDto(uniqueId, item, parentId)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
