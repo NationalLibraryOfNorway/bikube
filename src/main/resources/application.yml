@@ -17,9 +17,9 @@ spring:
         jwt:
           jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
   datasource:
-    url: ""
-    username: ""
-    password: ""
+    url: ${POSTRGRES_URL}
+    username: ${POSTRGRES_USERNAME}
+    password: ${POSTRGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
