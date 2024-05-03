@@ -19,7 +19,6 @@
 		<serialization.version>1.6.3</serialization.version>
 		<fasterxml.version>2.15.4</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
-		<testcontainers.version>1.19.7</testcontainers.version> <!-- e.g. org.testcontainers - testcontainers -->
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 	<dependencies>
