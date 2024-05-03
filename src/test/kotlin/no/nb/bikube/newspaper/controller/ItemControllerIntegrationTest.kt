@@ -20,6 +20,7 @@ import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
+import no.nb.bikube.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,11 +38,14 @@ import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class ItemControllerIntegrationTest (
-    @Autowired private var webClient: WebTestClient
-){
+class ItemControllerIntegrationTest {
+    @Autowired private lateinit var webClient: WebTestClient
+
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
+
+    @MockkBean
+    private lateinit var uniqueIdService: UniqueIdService
 
     private val titleId = collectionsModelMockTitleA.getFirstId()!!
     private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
@@ -71,6 +75,7 @@ class ItemControllerIntegrationTest (
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
         every { collectionsRepository.createTextsRecord(capture(encodedBody)) } answers {

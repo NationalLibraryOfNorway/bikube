@@ -19,6 +19,7 @@
 		<serialization.version>1.6.3</serialization.version>
 		<fasterxml.version>2.15.4</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
+		<testcontainers.version>1.19.7</testcontainers.version> <!-- e.g. org.testcontainers - testcontainers -->
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 	<dependencies>
@@ -131,6 +132,13 @@
 			<version>${lucene.version}</version>
 		</dependency>
 
+		<!-- For postgres -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.3</version>
+		</dependency>
+
 		<!-- Dependencies only for tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -178,11 +186,6 @@
 			<artifactId>xmlunit-matchers</artifactId>
 			<version>2.9.1</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.7.3</version>
 		</dependency>
 	</dependencies>
 

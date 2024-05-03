@@ -17,6 +17,7 @@ import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
+import no.nb.bikube.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,6 +38,9 @@ class TitleControllerIntegrationTest (
 ){
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
+
+    @MockkBean
+    private lateinit var uniqueIdService: UniqueIdService
 
     private val titleId = "1"
 
@@ -64,6 +68,7 @@ class TitleControllerIntegrationTest (
         every { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { uniqueIdService.getUniqueId() } returns "123"
     }
 
     @Test

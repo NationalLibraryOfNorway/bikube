@@ -24,6 +24,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+        hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
 
 springdoc:
   swagger-ui:
