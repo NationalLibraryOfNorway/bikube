@@ -43,7 +43,6 @@ jobs:
           tar xzf apache-maven-3.9.6-bin.tar.gz
           export M2_HOME=/usr/local/apache-maven/apache-maven-3.9.6 >> $GITHUB_ENV
           export M2=$M2_HOME/bin >> $GITHUB_ENV
-          export MAVEN_OPTS=-Xms256m -Xmx512m >> $GITHUB_ENV
           export PATH=$M2:$PATH >> $GITHUB_ENV
 
       - name: Verify maven installation
