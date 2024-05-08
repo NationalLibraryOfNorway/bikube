@@ -40,15 +40,9 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install wget -y
-          wget https://downloads.apache.org/maven/maven-3/${{ MAVEN_VERSION }}/binaries/apache-maven-${{ MAVEN_VERSION }}-bin.tar.gz
-          tar xzf apache-maven-${{ MAVEN_VERSION }}-bin.tar.gz
-          export M2_HOME=/usr/local/apache-maven/apache-maven-${{ MAVEN_VERSION }} >> $GITHUB_ENV
-          export M2=$M2_HOME/bin >> $GITHUB_ENV
-          export PATH=$M2:$PATH >> $GITHUB_ENV
-
-      - name: Verify maven installation
-        run: |
-          whereis mvn
+          wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+          tar xzf apache-maven-3.9.6-bin.tar.gz
+          export PATH=$PWD/apache-maven-3.9.6/bin:$PATH
           mvn -v
 
       - name: Build and Test
