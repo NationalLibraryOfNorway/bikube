@@ -24,8 +24,8 @@ jobs:
 
       - name: Install Maven
         run: |
-          sudo apt-get update
-          sudo apt-get install wget
+          sudo apt-get update -y
+          sudo apt-get install wget -y
           wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
           tar xzf apache-maven-3.9.6-bin.tar.gz
           echo "export M2_HOME=$PWD/apache-maven-3.9.6" >> $GITHUB_ENV
