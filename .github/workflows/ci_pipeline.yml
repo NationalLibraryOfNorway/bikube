@@ -12,6 +12,7 @@ on:
 
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
+  MAVEN_VERSION: 3.9.6
   APP_VERSION: ${{ github.ref_name }}
 
 jobs:
@@ -39,14 +40,16 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install wget -y
-          wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-          tar xzf apache-maven-3.9.6-bin.tar.gz
-          export M2_HOME=/usr/local/apache-maven/apache-maven-3.9.6 >> $GITHUB_ENV
+          wget https://downloads.apache.org/maven/maven-3/${{ MAVEN_VERSION }}/binaries/apache-maven-${{ MAVEN_VERSION }}-bin.tar.gz
+          tar xzf apache-maven-${{ MAVEN_VERSION }}-bin.tar.gz
+          export M2_HOME=/usr/local/apache-maven/apache-maven-${{ MAVEN_VERSION }} >> $GITHUB_ENV
           export M2=$M2_HOME/bin >> $GITHUB_ENV
           export PATH=$M2:$PATH >> $GITHUB_ENV
 
       - name: Verify maven installation
-        run: mvn -v
+        run: |
+          whereis mvn
+          mvn -v
 
       - name: Build and Test
         run: mvn ${{ env.MAVEN_INFO }} verify
