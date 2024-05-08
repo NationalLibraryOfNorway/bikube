@@ -17,10 +17,20 @@ env:
 jobs:
   build-and-test:
     name: Build and Test
-    runs-on: self-hosted-linux
+    runs-on: [self-hosted-linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install Maven
+        run: |
+          wget https://downloads.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+          tar xzf apache-maven-3.8.4-bin.tar.gz
+          echo "export M2_HOME=$PWD/apache-maven-3.8.4" >> $GITHUB_ENV
+          echo "export PATH=$M2_HOME/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Verify maven installation
+        run: mvn -v
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
