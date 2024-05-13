@@ -12,6 +12,7 @@ on:
 
 env:
   MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
+  MAVEN_PROXY: "--Dhttp.proxyHost=${{ secrets.HTTP_PROXY }} --Dhttps.proxyHost=${{ secrets.HTTPS_PROXY }} -Dhttp.nonProxyHosts=localhost|127.0.0.1|docker"
   MAVEN_VERSION: 3.9.6
   APP_VERSION: ${{ github.ref_name }}
 
@@ -48,7 +49,7 @@ jobs:
           mvn -v
 
       - name: Build and Test
-        run: mvn ${{ env.MAVEN_INFO }} verify
+        run: mvn ${{ env.MAVEN_INFO }} ${{ env.MAVEN_PROXY }} verify
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
