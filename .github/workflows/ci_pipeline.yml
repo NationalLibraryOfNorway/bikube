@@ -49,7 +49,7 @@ jobs:
           mvn -v
 
       - name: Build and Test
-        run: mvn ${{ env.MAVEN_INFO }} ${{ env.MAVEN_PROXY }} verify
+        run: mvn -e ${{ env.MAVEN_INFO }} ${{ env.MAVEN_PROXY }} verify
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
