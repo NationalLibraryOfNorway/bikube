@@ -77,7 +77,7 @@ jobs:
     needs: build-and-test
     # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -124,7 +124,7 @@ jobs:
     name: Deploy to kubernetes stage environment
     needs: build-and-publish-docker-image
     if: github.ref == 'refs/heads/main'
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     environment: stage
     steps:
       - name: Checkout repository
@@ -165,7 +165,7 @@ jobs:
     name: Deploy to kubernetes prod environment
     needs: build-and-publish-docker-image
     if: startsWith(github.event.ref, 'refs/tags/v')
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     environment: prod
     steps:
       - name: Checkout repository
