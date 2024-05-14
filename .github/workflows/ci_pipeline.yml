@@ -11,8 +11,7 @@ on:
       - "main"
 
 env:
-  MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
-  MAVEN_PROXY: "-Dhttp.proxyHost=${{ secrets.HTTP_PROXY }} -Dhttp.proxyPort=${{ secrets.HTTP_PROXY_PORT }} -Dhttps.proxyHost=${{ secrets.HTTPS_PROXY }} -Dhttps.proxyPort=${{ secrets.HTTPS_PROXY_PORT }} -Dhttp.nonProxyHosts=\"localhost|127.0.0.1|docker\""
+  MAVEN_INFO: "--batch-mode -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
   MAVEN_VERSION: 3.9.6
   APP_VERSION: ${{ github.ref_name }}
 
@@ -39,17 +38,27 @@ jobs:
 
       - name: Install Maven
         run: |
-          sudo apt-get update -y
-          sudo apt-get install wget -y
-          wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-          tar xzf apache-maven-3.9.6-bin.tar.gz
-          sudo mv apache-maven-3.9.6 /opt/
-          sudo ln -s /opt/apache-maven-3.9.6/bin/mvn /usr/local/bin/mvn
-          echo "PATH=/opt/apache-maven-3.9.6/bin:$PATH" >> $GITHUB_ENV
-          mvn -v
+          if test -d "/opt/apache-maven-3.9.6"; then
+            echo "Maven directory exists. Skipping installation."
+          else
+            echo "Maven directory does not exist. Proceeding with installation."
+            sudo apt-get update -y
+            sudo apt-get install wget -y
+            wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+            tar xzf apache-maven-3.9.6-bin.tar.gz
+            sudo mv apache-maven-3.9.6 /opt/
+            sudo ln -s /opt/apache-maven-3.9.6/bin/mvn /usr/local/bin/mvn
+            echo "PATH=/opt/apache-maven-3.9.6/bin:$PATH" >> $GITHUB_ENV
+            mvn -v
+          fi
 
       - name: Build and Test
-        run: mvn -e ${{ env.MAVEN_INFO }} ${{ env.MAVEN_PROXY }} verify
+        run: |
+            sed -i "s/https_proxy_host/${{ secrets.HTTP_PROXY }}/g" .m2/settings.xml
+            sed -i "s/https_proxy_port/${{ secrets.HTTP_PROXY_PORT }}/g" .m2/settings.xml
+            sed -i "s/http_proxy_host/${{ secrets.HTTP_PROXY }}/g" .m2/settings.xml
+            sed -i "s/http_proxy_port/${{ secrets.HTTP_PROXY_PORT }}/g" .m2/settings.xml
+            mvn -e -s .m2/settings.xml ${{ env.MAVEN_INFO }} verify
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
