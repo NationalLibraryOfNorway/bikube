@@ -25,11 +25,14 @@ import java.time.format.DateTimeFormatter
 @Service
 class NewspaperService  (
     private val collectionsRepository: CollectionsRepository,
-    private val collectionsLocationService: CollectionsLocationService
+    private val collectionsLocationService: CollectionsLocationService,
+    private val uniqueIdService: UniqueIdService
 ) {
+
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
-        val dto: TitleDto = createNewspaperTitleDto(title)
+        val id = uniqueIdService.getUniqueId()
+        val dto: TitleDto = createNewspaperTitleDto(id, title)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -173,7 +176,8 @@ class NewspaperService  (
         date: LocalDate,
         username: String
     ): Mono<CollectionsObject> {
-        val dto: ManifestationDto = createManifestationDto(titleCatalogueId, date, username)
+        val id = uniqueIdService.getUniqueId()
+        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
@@ -214,7 +218,8 @@ class NewspaperService  (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val dto: ItemDto = createNewspaperItemDto(item, parentId)
+        val uniqueId = uniqueIdService.getUniqueId()
+        val dto: ItemDto = createNewspaperItemDto(uniqueId, item, parentId)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
             collectionsModel.getObjects()

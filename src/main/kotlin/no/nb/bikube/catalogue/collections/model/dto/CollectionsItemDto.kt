@@ -11,6 +11,12 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 class ItemDto (
+    @SerialName("priref")
+    val priRef: String,
+
+    @SerialName("object_number")
+    val objectNumber: String,
+
     @SerialName("title")
     val title: String? = null,
 
@@ -61,12 +67,15 @@ data class AlternativeNumberInput (
 )
 
 fun createNewspaperItemDto(
+    id: String,
     item: ItemInputDto,
     manifestationCatalogueId: String
 ): ItemDto {
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
+        priRef = id,
+        objectNumber = "TE-$id",
         title = item.name,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,

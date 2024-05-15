@@ -74,15 +74,21 @@ class NewspaperServiceTest {
     @MockkBean
     private lateinit var collectionLocationService: CollectionsLocationService
 
+    @MockkBean
+    private lateinit var uniqueIdService: UniqueIdService
+
     private val mockedTime = LocalTime.of(9, 30, 0)
 
     @BeforeEach
     fun mockLocalTime() {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
+        every { uniqueIdService.getUniqueId() } returns "1600000000"
     }
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
+        priRef = "1600000000",
+        objectNumber = "TE-1600000000",
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = newspaperItemMockB.date.toString(),
@@ -95,6 +101,8 @@ class NewspaperServiceTest {
     ))
 
     private val itemEncodedDto = Json.encodeToString(ItemDto(
+        priRef = "1600000000",
+        objectNumber = "TE-1600000000",
         format = CollectionsFormat.DIGITAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = listOf(urnMock),
@@ -110,6 +118,8 @@ class NewspaperServiceTest {
     ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
+        priRef = "1600000000",
+        objectNumber = "TE-1600000000",
         format = CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         alternativeNumberList = null,
@@ -124,6 +134,8 @@ class NewspaperServiceTest {
     ))
 
     private val titleEncodedDto = Json.encodeToString(TitleDto(
+        priRef = "1600000000",
+        objectNumber = "TE-1600000000",
         title = newspaperTitleMockB.name!!,
         dateStart = newspaperTitleMockB.startDate.toString(),
         dateEnd = newspaperTitleMockB.endDate.toString(),
@@ -492,7 +504,6 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
             .test()
             .expectSubscription()
@@ -599,6 +610,8 @@ class NewspaperServiceTest {
 
         val encodedValue = Json.encodeToString(
             ManifestationDto(
+                priRef = "1600000000",
+                objectNumber = "TE-1600000000",
                 partOfReference = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
                 dateStart = LocalDate.now().toString(),
