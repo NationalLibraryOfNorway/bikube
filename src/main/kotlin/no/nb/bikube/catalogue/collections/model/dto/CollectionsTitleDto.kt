@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter
 @Serializable
 class TitleDto(
     @SerialName("priref")
-    val priRef: String? = null,
+    val priRef: String,
 
     @SerialName("object_number")
-    val objectNumber: String? = null,
+    val objectNumber: String,
 
     val title: String,
 

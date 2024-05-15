@@ -10,10 +10,10 @@ import java.time.format.DateTimeFormatter
 @Serializable
 class ManifestationDto (
     @SerialName("priref")
-    val priRef: String? = null,
+    val priRef: String,
 
     @SerialName("object_number")
-    val objectNumber: String? = null,
+    val objectNumber: String,
 
     @SerialName("part_of_reference.lref")
     val partOfReference: String?,

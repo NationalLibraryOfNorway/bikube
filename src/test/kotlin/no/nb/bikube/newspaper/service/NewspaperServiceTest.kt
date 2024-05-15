@@ -83,9 +83,12 @@ class NewspaperServiceTest {
     fun mockLocalTime() {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
+        every { uniqueIdService.getUniqueId() } returns "1600000000"
     }
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
+        priRef = "1600000000",
+        objectNumber = "TE-1600000000",
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         dateStart = newspaperItemMockB.date.toString(),
@@ -154,7 +157,6 @@ class NewspaperServiceTest {
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         val body = newspaperTitleInputDtoMockB.copy()
 
@@ -169,7 +171,6 @@ class NewspaperServiceTest {
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.error(CollectionsException("Error creating title"))
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
@@ -337,7 +338,6 @@ class NewspaperServiceTest {
     fun `createTitle should return correctly mapped record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -350,7 +350,6 @@ class NewspaperServiceTest {
     fun `createTitle should correctly encode the title object sent to json string`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -459,7 +458,6 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -474,7 +472,6 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -491,7 +488,6 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
@@ -508,8 +504,6 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
-
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
             .test()
             .expectSubscription()
@@ -584,7 +578,6 @@ class NewspaperServiceTest {
     @Test
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
             .test()
@@ -600,7 +593,6 @@ class NewspaperServiceTest {
     fun `createManifestation should return correctly mapped manifestation record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
             .test()
@@ -615,7 +607,6 @@ class NewspaperServiceTest {
     fun `createManifestation should correctly encode the manifestation object sent to json string`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
 
         val encodedValue = Json.encodeToString(
             ManifestationDto(

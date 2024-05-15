@@ -19,7 +19,7 @@ class UniqueIdServiceTest {
 
     @Test
     fun `should get unique id`() {
-        every { entityManager.createNativeQuery("SELECT nextval('collections_id_seq')") } returns mockk {
+        every { entityManager.createNativeQuery("SELECT nextval('maxit.collections_id_seq')") } returns mockk {
             every { singleResult } returns 123L
         }
 
