@@ -11,13 +11,13 @@ on:
       - "main"
 
 env:
-  MAVEN_INFO: "--batch-mode -Pcoverage -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
+  MAVEN_INFO: "--batch-mode -Dmaven.repo.local=.m2/repository -Dbuild.tag=$GITHUB_REF_NAME -Dbuild.commit-id-short=$GITHUB_SHA -Dbuild.commit-id-long=$GITHUB_SHA -Dbuild.pipeline-id=$GITHUB_RUN_ID"
   APP_VERSION: ${{ github.ref_name }}
 
 jobs:
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted-linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,8 +35,24 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Install Maven
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install wget -y
+          wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+          tar xzf apache-maven-3.9.6-bin.tar.gz
+          sudo mv apache-maven-3.9.6 /opt/
+          sudo ln -s /opt/apache-maven-3.9.6/bin/mvn /usr/local/bin/mvn
+          echo "PATH=/opt/apache-maven-3.9.6/bin:$PATH" >> $GITHUB_ENV
+          mvn -v
+
       - name: Build and Test
-        run: mvn ${{ env.MAVEN_INFO }} verify
+        run: |
+            sed -i "s/https_proxy_host/${{ secrets.HTTP_PROXY }}/g" .m2/settings.xml
+            sed -i "s/https_proxy_port/${{ secrets.HTTP_PROXY_PORT }}/g" .m2/settings.xml
+            sed -i "s/http_proxy_host/${{ secrets.HTTP_PROXY }}/g" .m2/settings.xml
+            sed -i "s/http_proxy_port/${{ secrets.HTTP_PROXY_PORT }}/g" .m2/settings.xml
+            mvn -e -s .m2/settings.xml ${{ env.MAVEN_INFO }} verify
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -55,7 +71,7 @@ jobs:
     needs: build-and-test
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     name: Create and push Docker image
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -99,7 +115,7 @@ jobs:
     name: Deploy to kubernetes stage environment
     needs: build-and-publish-docker-image
     if: github.ref == 'refs/heads/main'
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     environment: stage
     steps:
       - name: Checkout repository
@@ -140,7 +156,7 @@ jobs:
     name: Deploy to kubernetes prod environment
     needs: build-and-publish-docker-image
     if: startsWith(github.event.ref, 'refs/tags/v')
-    runs-on: [self-hosted]
+    runs-on: [self-hosted-linux]
     environment: prod
     steps:
       - name: Checkout repository
