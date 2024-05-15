@@ -37,7 +37,6 @@ jobs:
 
       - name: Install Maven
         run: |
-          echo "Maven directory does not exist. Proceeding with installation."
           sudo apt-get update -y
           sudo apt-get install wget -y
           wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
