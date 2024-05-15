@@ -8,7 +8,6 @@ import no.nb.bikube.catalogue.collections.mapper.*
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
-import no.nb.bikube.catalogue.collections.service.CollectionsIdService
 import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
