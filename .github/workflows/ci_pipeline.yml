@@ -178,10 +178,18 @@ jobs:
         with:
           version: 'v1.26.5'
 
+      - name: Set version tag
+        uses: actions/github-script@v7
+        id: set-version
+        with:
+          script: |
+            const no_v = context.ref.replace('refs/tags/v', '')
+            core.setOutput('image_version', no_v)
+
       - name: Deploy to prod cluster
         run: |
           echo "Deploying to production version ${{ env.APP_VERSION }}"
-          sed -i "s/<version>/${{ env.APP_VERSION }}/g" k8s/prod/bikube.yml
+          sed -i "s/<version>/${{ steps.set-version.outputs.image_version}}/g" k8s/prod/bikube.yml
           sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/prod/bikube.yml
           kubectl config set-cluster prodcl --server=${{ steps.import-secrets.outputs.K8S_PROD_SERVER }}
           kubectl config set clusters.prodcl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_PROD_NB_NO_CA }}
