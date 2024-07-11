@@ -184,6 +184,7 @@ jobs:
           echo "Deploying to production version ${{ needs.build-and-publish-docker-image.outputs.image_version }}"
           sed -i "s/<version>/${{ needs.build-and-publish-docker-image.outputs.image_version }}/g" k8s/prod/bikube.yml
           sed -i "s/<host_url>/${{ steps.import-secrets.outputs.K8S_HOST_URL }}/g" k8s/prod/bikube.yml
+          sed -i "s/<alt_host_url>/${{ steps.import-secrets.outputs.ALT_HOST_URL }}/g" k8s/prod/bikube.yml
           kubectl config set-cluster prodcl --server=${{ steps.import-secrets.outputs.K8S_PROD_SERVER }}
           kubectl config set clusters.prodcl.certificate-authority-data ${{ steps.import-secrets.outputs.K8S_PROD_NB_NO_CA }}
           kubectl config set-credentials ${{ steps.import-secrets.outputs.K8S_PROD_USER }} --token=${{ steps.import-secrets.outputs.K8S_PROD_NB_NO_TOKEN }}
