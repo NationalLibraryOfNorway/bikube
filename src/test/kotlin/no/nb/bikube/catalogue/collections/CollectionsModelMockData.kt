@@ -277,7 +277,7 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
+                        alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
                 )

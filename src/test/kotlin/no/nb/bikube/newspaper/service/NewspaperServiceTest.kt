@@ -38,8 +38,10 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockDNoItem
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.urnMock
@@ -723,5 +725,60 @@ class NewspaperServiceTest {
         val item = newspaperInputDtoItemMockB.copy(name = "Some fancy title")
         val result = newspaperService.createTitleString(item, "")
         Assertions.assertEquals("Some fancy title", result)
+    }
+
+    @Test
+    fun `createMissingItem should return correctly mapped item`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
+
+        newspaperService.createMissingItem(missingItemDtoMock)
+            .test()
+            .expectSubscription()
+            .assertNext { Assertions.assertEquals(newspaperItemMockDNoItem.copy(date = null, titleCatalogueId = "22"), it) }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `createMissingItem should create manifestation if it does not exist`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+
+        newspaperService.createMissingItem(missingItemDtoMock)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+    }
+
+    @Test
+    fun `createMissingItem should return manifestation if it exists`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
+
+        newspaperService.createMissingItem(missingItemDtoMock)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 0) { collectionsRepository.createTextsRecord(any()) }
+    }
+
+    @Test
+    fun `createMissingItem should return error if title does not exist`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.createMissingItem(missingItemDtoMock)
+            .test()
+            .expectSubscription()
+            .expectError()
+            .verify()
     }
 }
