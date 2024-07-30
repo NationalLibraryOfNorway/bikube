@@ -13,6 +13,7 @@ import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -48,6 +49,15 @@ class NewspaperService  (
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map {
                 validateSingleCollectionsModel(it, CollectionsRecordType.ITEM)
+                mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
+            }
+    }
+
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
+    fun getSingleManifestationAsItem(catalogId: String): Mono<Item> {
+        return collectionsRepository.getSingleCollectionsModel(catalogId)
+            .map {
+                validateSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION)
                 mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
             }
     }
@@ -194,7 +204,7 @@ class NewspaperService  (
                 if (title.hasError() || title.getFirstObject() == null) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username)
                 }
             }.flatMap { manifestation ->
                 if (item.digital == false && !item.containerId.isNullOrBlank()) {
@@ -214,6 +224,17 @@ class NewspaperService  (
         }
     }
 
+    fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
+        return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
+            .flatMap { title ->
+                if (title.hasError() || title.getFirstObject() == null) {
+                    Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
+                } else {
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username)
+                }
+            }.flatMap { getSingleManifestationAsItem(it.priRef) }
+    }
+
     private fun createLinkedNewspaperItem(
         item: ItemInputDto,
         parentId: String
@@ -229,13 +250,15 @@ class NewspaperService  (
     }
 
     private fun findOrCreateManifestationRecord(
-        item: ItemInputDto,
+        titleId: String,
+        date: LocalDate,
+        username: String
     ): Mono<CollectionsObject> {
         return collectionsRepository.getManifestationsByDateAndTitle(
-            item.date, item.titleCatalogueId
+            date, titleId
         ).flatMap {
             if (it.isEmpty()) {
-                createManifestation(item.titleCatalogueId, item.date, item.username)
+                createManifestation(titleId, date, username)
             } else {
                 Mono.just(it.getFirstObject()!!)
             }

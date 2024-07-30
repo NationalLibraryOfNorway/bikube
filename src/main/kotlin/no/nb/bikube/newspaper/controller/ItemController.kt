@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.service.CreationValidationService
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.NewspaperService
@@ -45,6 +46,25 @@ class ItemController (
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
                 logger().info("Newspaper item created with id: ${responseEntity.body?.catalogueId}")
+            }
+    }
+
+    @PostMapping("/missing", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create a 'missing item', in other words create a manifestation without item")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "201", description = "Manifestation/missing item created"),
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
+    ])
+    fun createManifestationOnly(
+        @RequestBody item: MissingPeriodicalItemDto
+    ): Mono<ResponseEntity<Item>> {
+        logger().info("Trying to create manifestation as missing item: $item")
+
+        return newspaperService.createMissingItem(item)
+            .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
+            .doOnSuccess { responseEntity ->
+                logger().info("Manifestation created with id: ${responseEntity.body?.catalogueId}")
             }
     }
 }

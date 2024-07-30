@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
@@ -19,6 +20,7 @@ import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.Assertions
@@ -49,6 +51,7 @@ class ItemControllerIntegrationTest {
 
     private val titleId = collectionsModelMockTitleA.getFirstId()!!
     private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
+    private val manifestationId2 = collectionsModelMockManifestationA.getFirstId()!!
     private val itemId = collectionsModelMockItemA.getFirstId()!!
 
     private fun createItem(item: ItemInputDto): ResponseSpec {
@@ -69,6 +72,7 @@ class ItemControllerIntegrationTest {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId2) } returns Mono.just(collectionsModelMockManifestationB.copy())
         every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
@@ -174,5 +178,79 @@ class ItemControllerIntegrationTest {
                 Assertions.assertEquals(collectionsPartOfObjectMockSerialWorkA.partOfReference!!.priRef, it.titleCatalogueId)
             }
             .verifyComplete()
+    }
+
+    @Test
+    fun `post missing-item should return 201 Created with item`() {
+        webClient
+            .post()
+            .uri("/newspapers/items/missing")
+            .bodyValue(missingItemDtoMock)
+            .exchange()
+            .expectStatus().isCreated
+            .expectBody<Item>()
+    }
+
+    @Test
+    fun `post missing-item should return correctly mapped item`() {
+        val testReturn = collectionsModelMockManifestationB.getFirstObject()!!
+
+        webClient
+            .post()
+            .uri("/newspapers/items/missing")
+            .bodyValue(missingItemDtoMock)
+            .exchange()
+            .returnResult<Item>()
+            .responseBody
+            .test()
+            .expectNext(Item(
+                catalogueId = testReturn.priRef,
+                name = testReturn.getName(),
+                date = testReturn.getStartDate(),
+                materialType = "Avis",
+                titleCatalogueId = testReturn.getTitleCatalogueId(),
+                titleName = testReturn.getTitleName(),
+                digital = null,
+                urn = null,
+                location = null
+            ))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `post missing-item should return 404 not found if title ID is not found`() {
+        webClient
+            .post()
+            .uri("/newspapers/items/missing")
+            .bodyValue(missingItemDtoMock.copy(titleCatalogueId = "489653148"))
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `post missing-item should use manifestation if it exists`() {
+        webClient
+            .post()
+            .uri("/newspapers/items/missing")
+            .bodyValue(missingItemDtoMock)
+            .exchange()
+            .expectStatus().isCreated
+
+        verify(exactly = 0) { collectionsRepository.createTextsRecord(any()) }
+    }
+
+    @Test
+    fun `post missing-item create correct manifestation if not found`() {
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        webClient
+            .post()
+            .uri("/newspapers/items/missing")
+            .bodyValue(missingItemDtoMock)
+            .exchange()
+            .expectStatus().isCreated
+
+        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
     }
 }

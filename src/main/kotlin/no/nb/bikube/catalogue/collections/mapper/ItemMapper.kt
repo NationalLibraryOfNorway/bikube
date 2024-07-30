@@ -13,7 +13,7 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
         materialType = model.getMaterialTypeFromParent()?.norwegian,
         titleCatalogueId = model.getTitleCatalogueId(),
         titleName = model.getTitleName(),
-        digital = model.getFormat() == CollectionsFormat.DIGITAL,
+        digital = model.getFormat()?.let { model.getFormat() == CollectionsFormat.DIGITAL },
         urn = model.getUrn(),
         location = model.locationBarcode
     )

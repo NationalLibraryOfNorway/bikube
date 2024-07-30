@@ -7,6 +7,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 
@@ -110,6 +111,24 @@ class NewspaperMockData {
         val urnMock = AlternativeNumberInput(
             name = newspaperItemMockB.urn!!,
             type = "URN"
+        )
+
+        val missingItemDtoMock = MissingPeriodicalItemDto(
+            date = LocalDate.parse("2020-01-01"),
+            titleCatalogueId = "1",
+            username = TEST_USERNAME
+        )
+
+        // Equals to collectionsModelMockManifestationB
+        val newspaperItemMockDNoItem = Item(
+            catalogueId = "46",
+            name = "Bikubeavisen",
+            date = missingItemDtoMock.date,
+            materialType = MaterialType.NEWSPAPER.norwegian,
+            titleCatalogueId = missingItemDtoMock.titleCatalogueId,
+            titleName = "Bikubeavisen",
+            digital = null,
+            urn = null
         )
     }
 }
