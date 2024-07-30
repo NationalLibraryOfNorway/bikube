@@ -2,6 +2,8 @@ package no.nb.bikube.catalogue.collections.model
 
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
+import no.nb.bikube.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.catalogue.collections.exception.CollectionsObjectMissing
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 import java.time.LocalDate
@@ -11,8 +13,15 @@ fun CollectionsModel.getObjects(): List<CollectionsObject>? {
     return this.adlibJson.recordList
 }
 
-fun CollectionsModel.getFirstObject(): CollectionsObject? {
-    return this.getObjects()?.first()
+fun CollectionsModel.hasObjects(): Boolean {
+    return this.getObjects() ?. isNotEmpty() ?: false
+}
+
+@Throws(CollectionsObjectMissing::class)
+fun CollectionsModel.getFirstObject(): CollectionsObject {
+    return this.getObjects().takeIf { !it.isNullOrEmpty() }
+        ?. first()
+        ?: throw CollectionsObjectMissing()
 }
 
 fun CollectionsModel.getFirstId(): String? {
@@ -154,8 +163,15 @@ fun CollectionsNameModel.getObjects(): List<CollectionsNameObject>? {
     return this.adlibJson.recordList
 }
 
-fun CollectionsNameModel.getFirstObject(): CollectionsNameObject? {
-    return this.getObjects()?.first()
+fun CollectionsNameModel.hasObjects(): Boolean {
+    return this.getObjects() ?. isNotEmpty() ?: false
+}
+
+@Throws(CollectionsObjectMissing::class)
+fun CollectionsNameModel.getFirstObject(): CollectionsNameObject {
+    return this.getObjects().takeIf { !it.isNullOrEmpty() }
+        ?. first()
+        ?: throw CollectionsObjectMissing()
 }
 
 //CollectionsTermModel
@@ -163,6 +179,25 @@ fun CollectionsTermModel.getObjects(): List<CollectionsTermObject>? {
     return this.adlibJson.recordList
 }
 
-fun CollectionsTermModel.getFirstObject(): CollectionsTermObject? {
-    return this.getObjects()?.first()
+fun CollectionsTermModel.hasObjects(): Boolean {
+    return this.getObjects() ?. isNotEmpty() ?: false
+}
+
+@Throws(CollectionsObjectMissing::class)
+fun CollectionsTermModel.getFirstObject(): CollectionsTermObject {
+    return this.getObjects().takeIf { !it.isNullOrEmpty() }
+        ?. first()
+        ?: throw CollectionsObjectMissing()
+}
+
+//CollectionsLocationModel
+@Throws(CollectionsObjectMissing::class)
+fun CollectionsLocationModel.getFirstObject(): CollectionsLocationObject {
+    return this.adlibJson?.recordList.takeIf { !it.isNullOrEmpty() }
+        ?. first()
+        ?: throw CollectionsObjectMissing()
+}
+
+fun CollectionsLocationModel.hasObjects(): Boolean {
+    return this.adlibJson?.recordList?.isNotEmpty() ?: false
 }

@@ -18,7 +18,6 @@ import no.nb.bikube.core.model.inputDto.TitleInputDto
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.publisher.SynchronousSink
 import reactor.util.function.Tuple2
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -36,39 +35,34 @@ class NewspaperService  (
         val dto: TitleDto = createNewspaperTitleDto(id, title)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
-            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
-                collectionsModel.adlibJson.recordList
-                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(CollectionsTitleNotFound("New title not found"))
+            .handle { collectionsModel, sink ->
+                if (collectionsModel.hasObjects())
+                    sink.next(collectionsModel.getFirstObject())
+                else
+                    sink.error(CollectionsTitleNotFound("New title not found"))
             }
-            .flatMap { getSingleTitle(it.first().priRef) }
+            .flatMap { getSingleTitle(it.priRef) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleItem(catalogId: String): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
-            .map {
-                validateSingleCollectionsModel(it, CollectionsRecordType.ITEM)
-                mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
-            }
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.ITEM) }
+            .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleManifestationAsItem(catalogId: String): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModel(catalogId)
-            .map {
-                validateSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION)
-                mapCollectionsObjectToGenericItem(it.getFirstObject()!!)
-            }
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION) }
+            .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
-            .map {
-                validateSingleCollectionsModel(it, CollectionsRecordType.WORK)
-                mapCollectionsObjectToGenericTitle(it.getFirstObject()!!)
-            }
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
+            .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
     fun getTitlesPage(pageNumber: Int): Mono<Tuple2<List<Title>, Int>> {
@@ -99,9 +93,10 @@ class NewspaperService  (
                     .flatMapIterable { it.getObjects() ?: emptyList() }
                     .flatMapIterable { it.getParts() ?: emptyList() }
                     .filter { if (isDigital != null) filterByFormat(it, isDigital) else true }
-                    .map { itemPartReference ->
+                    .mapNotNull { it.partsReference }
+                    .map { partsReference ->
                         mapCollectionsPartsObjectToGenericItem(
-                            itemPartReference.partsReference!!,
+                            partsReference!!,  // null values filtered in mapNotNull
                             titleCatalogId,
                             briefManifestation.getName() ?: "",
                             MaterialType.NEWSPAPER.value,
@@ -119,11 +114,11 @@ class NewspaperService  (
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher, username))
         return collectionsRepository.searchPublisher(publisher)
             .flatMap { collectionsModel ->
-                if (collectionsModel.getObjects()?.isNotEmpty() == true) {
+                if (collectionsModel.hasObjects()) {
                     Mono.error(RecordAlreadyExistsException("Publisher '$publisher' already exists"))
                 } else {
                     collectionsRepository.createNameRecord(serializedBody, CollectionsDatabase.PEOPLE)
-                        .map { mapCollectionsObjectToGenericPublisher(it.getFirstObject()!!) }
+                        .map { mapCollectionsObjectToGenericPublisher(it.getFirstObject()) }
                 }
             }
     }
@@ -134,14 +129,23 @@ class NewspaperService  (
     ): Mono<PublisherPlace> {
         if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
         return collectionsRepository.searchPublisherPlace(publisherPlace)
-            .flatMap { collectionsModel ->
-                if (collectionsModel.getObjects()?.isNotEmpty() == true) {
-                    Mono.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
-                } else {
-                    val serializedBody = Json.encodeToString(createTermRecordDtoFromString(publisherPlace, CollectionsTermType.LOCATION, username))
-                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
-                        .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()!!) }
-                }
+            .handle { collectionsTermModel, synchronousSink ->
+                if (collectionsTermModel.hasObjects())
+                    synchronousSink.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
+                else
+                    synchronousSink.next(
+                        Json.encodeToString(
+                            createTermRecordDtoFromString(
+                                publisherPlace,
+                                CollectionsTermType.LOCATION,
+                                username
+                            )
+                        )
+                    )
+            }
+            .flatMap { serializedBody ->
+                collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
+                    .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()) }
             }
     }
 
@@ -152,23 +156,32 @@ class NewspaperService  (
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }
-        val serializedBody = Json.encodeToString(createTermRecordDtoFromString(language, CollectionsTermType.LANGUAGE, username))
         return collectionsRepository.searchLanguage(language)
-            .flatMap { collectionsModel ->
-                if (collectionsModel.getObjects()?.isNotEmpty() == true) {
-                    Mono.error(RecordAlreadyExistsException("Language '$language' already exists"))
-                } else {
-                    collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LANGUAGES)
-                        .map { mapCollectionsObjectToGenericLanguage(it.getFirstObject()!!) }
-                }
+            .handle { collectionsTermModel, synchronousSink ->
+                if (collectionsTermModel.hasObjects())
+                    synchronousSink.error(RecordAlreadyExistsException("Language '$language' already exists"))
+                else
+                    synchronousSink.next(
+                        Json.encodeToString(
+                            createTermRecordDtoFromString(
+                                language,
+                                CollectionsTermType.LANGUAGE,
+                                username
+                            )
+                        )
+                    )
+            }
+            .flatMap { serializedBody ->
+                collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LANGUAGES)
+                    .map { mapCollectionsObjectToGenericLanguage(it.getFirstObject()) }
             }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
-    private fun validateSingleCollectionsModel(
+    private fun validateAndReturnSingleCollectionsModel(
         model: CollectionsModel,
         recordType: CollectionsRecordType?
-    ) {
+    ): CollectionsObject {
         val records = model.getObjects()
         if (records.isNullOrEmpty()) throw CollectionsTitleNotFound("Could not find object in Collections")
         if (records.size > 1) throw CollectionsException("More than one object found in Collections (Should be exactly 1)")
@@ -179,6 +192,7 @@ class NewspaperService  (
                 throw CollectionsTitleNotFound("Could not find fitting object in Collections - Found object is not of type $recordType")
             }
         }
+        return record
     }
 
     fun createManifestation(
@@ -190,18 +204,19 @@ class NewspaperService  (
         val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
-            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsObject>> ->
-                collectionsModel.adlibJson.recordList
-                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(CollectionsManifestationNotFound("New manifestation not found"))
-            }.map { it.first() }
+            .handle { collectionsModel, sink ->
+                if (collectionsModel.hasObjects())
+                    sink.next(collectionsModel.getFirstObject())
+                else
+                    sink.error(CollectionsManifestationNotFound("New manifestation not found"))
+            }
     }
 
     @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
-                if (title.hasError() || title.getFirstObject() == null) {
+                if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
                     findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username)
@@ -216,18 +231,18 @@ class NewspaperService  (
             }
     }
 
-    fun createTitleString(item: ItemInputDto, title: String): String {
+    fun createTitleString(item: ItemInputDto, title: String): String? {
         return if (item.name.isNullOrEmpty() && item.digital == true) {
             "$title ${item.date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}"
         } else {
-            item.name!!
+            item.name
         }
     }
 
     fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
-                if (title.hasError() || title.getFirstObject() == null) {
+                if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
                     findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username)
@@ -242,11 +257,14 @@ class NewspaperService  (
         val uniqueId = uniqueIdService.getUniqueId()
         val dto: ItemDto = createNewspaperItemDto(uniqueId, item, parentId)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createTextsRecord(encodedBody).handle { collectionsModel, sink ->
-            collectionsModel.getObjects()
-                ?. let { sink.next(collectionsModel.getObjects()) }
-                ?: sink.error(CollectionsItemNotFound("New item not found"))
-        }.flatMap { getSingleItem(it!!.first().priRef) }
+        return collectionsRepository.createTextsRecord(encodedBody)
+            .handle { collectionsModel, sink ->
+                if (collectionsModel.hasObjects())
+                    sink.next(collectionsModel.getFirstObject())
+                else
+                    sink.error(CollectionsItemNotFound("New item not found"))
+            }
+            .flatMap { getSingleItem(it.priRef) }
     }
 
     private fun findOrCreateManifestationRecord(
@@ -260,7 +278,7 @@ class NewspaperService  (
             if (it.isEmpty()) {
                 createManifestation(titleId, date, username)
             } else {
-                Mono.just(it.getFirstObject()!!)
+                Mono.just(it.getFirstObject())
             }
         }
     }

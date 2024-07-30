@@ -159,7 +159,7 @@ data class CollectionsAssociationGeo(
 
 data class CollectionsPartsReference(
     @JsonProperty("priref")
-    val priRef: String?,
+    val priRef: String,
 
     @JsonProperty("group:Dating")
     val dateStart: List<CollectionsDating>?,

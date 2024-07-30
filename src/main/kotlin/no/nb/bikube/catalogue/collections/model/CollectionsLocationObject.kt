@@ -25,7 +25,3 @@ data class CollectionsLocationObject(
     @JsonProperty("package_location")
     val packageLocation: List<List<CollectionsLanguageListObject>>?
 )
-
-fun CollectionsLocationModel.getFirstObject(): CollectionsLocationObject? {
-    return this.adlibJson?.recordList?.firstOrNull()
-}
