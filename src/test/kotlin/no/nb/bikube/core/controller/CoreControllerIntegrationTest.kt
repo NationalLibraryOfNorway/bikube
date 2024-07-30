@@ -347,14 +347,14 @@ class CoreControllerIntegrationTest (
     fun `search-item endpoint should return mapped items`() {
         val expectedItem = Item(
             catalogueId = collectionsPartsObjectMockItemA.partsReference!!.priRef,
-            name = collectionsPartsObjectMockItemA.partsReference.titleList!!.first().title!!,
+            name = collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
             date = DateUtils.parseYearOrDate(
-                collectionsPartsObjectMockItemA.partsReference.titleList.first().title!!.takeLast(10)
+                collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)
             )!!,
             materialType = MaterialType.NEWSPAPER.value,
             titleCatalogueId = collectionsModelMockTitleA.getFirstId(),
             titleName = collectionsPartsObjectMockManifestationA.partsReference!!.titleList!!.first().title!!,
-            digital = collectionsPartsObjectMockItemA.partsReference.getFormat() == CollectionsFormat.DIGITAL,
+            digital = collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
             urn = null
         )
 
