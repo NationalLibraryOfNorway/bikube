@@ -183,7 +183,7 @@ class NewspaperServiceTest {
     @Test
     fun `getSingleItem should return correctly mapped item`() {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemA.copy())
-        val testRecord = collectionsModelMockItemA.getFirstObject()!!
+        val testRecord = collectionsModelMockItemA.getFirstObject()
         val testSerialWork = collectionsPartOfObjectMockSerialWorkA.partOfReference!!
 
         newspaperService.getSingleItem("1")
@@ -246,8 +246,8 @@ class NewspaperServiceTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
-                    collectionsModelMockItemA.getFirstObject()!!.copy(),
-                    collectionsModelMockItemA.getFirstObject()!!.copy()
+                    collectionsModelMockItemA.getFirstObject().copy(),
+                    collectionsModelMockItemA.getFirstObject().copy()
                 )
             ))
         )
@@ -262,7 +262,7 @@ class NewspaperServiceTest {
     @Test
     fun `getSingleTitle should return correctly mapped title`() {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-        val testRecord = collectionsModelMockTitleA.getFirstObject()!!
+        val testRecord = collectionsModelMockTitleA.getFirstObject()
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -323,8 +323,8 @@ class NewspaperServiceTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
             CollectionsModel(adlibJson = CollectionsRecordList(
                 recordList = listOf(
-                    collectionsModelMockTitleA.getFirstObject()!!.copy(),
-                    collectionsModelMockTitleB.getFirstObject()!!.copy()
+                    collectionsModelMockTitleA.getFirstObject().copy(),
+                    collectionsModelMockTitleB.getFirstObject().copy()
                 )
             ))
         )
@@ -376,8 +376,8 @@ class NewspaperServiceTest {
     fun `createPublisher should call createRecord if search returns empty recordList`() {
         every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA)
         every { collectionsRepository.createNameRecord(any(), any()) } returns Mono.just(collectionsNameModelMockA)
-        val expectedName = collectionsNameModelMockA.getFirstObject()!!.name
-        val expectedId = collectionsNameModelMockA.getFirstObject()!!.priRef
+        val expectedName = collectionsNameModelMockA.getFirstObject().name
+        val expectedId = collectionsNameModelMockA.getFirstObject().priRef
         newspaperService.createPublisher("Schibsted", TEST_USERNAME)
             .test()
             .expectNext(Publisher(expectedName, expectedId))
@@ -394,7 +394,7 @@ class NewspaperServiceTest {
     @Test
     fun `createPublisherPlace should return RecordAlreadyExistsException if searchPublisherPlace returns non-empty list`() {
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB)
-        val publisherPlaceName = collectionsTermModelMockLocationB.getFirstObject()!!.term
+        val publisherPlaceName = collectionsTermModelMockLocationB.getFirstObject().term
         newspaperService.createPublisherPlace(publisherPlaceName, TEST_USERNAME)
             .test()
             .expectSubscription()
@@ -409,8 +409,8 @@ class NewspaperServiceTest {
     fun `createPublisherPlace should call createRecord if search returns empty recordList`() {
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA)
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLocationB)
-        val expectedTerm = collectionsTermModelMockLocationB.getFirstObject()!!.term
-        val expectedId = collectionsTermModelMockLocationB.getFirstObject()!!.priRef
+        val expectedTerm = collectionsTermModelMockLocationB.getFirstObject().term
+        val expectedId = collectionsTermModelMockLocationB.getFirstObject().priRef
         newspaperService.createPublisherPlace("Oslo", TEST_USERNAME)
             .test()
             .expectNext(PublisherPlace(expectedTerm, expectedId))
@@ -438,8 +438,8 @@ class NewspaperServiceTest {
     fun `createLanguage should call createRecord if search returns empty recordList`() {
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA)
         every { collectionsRepository.createTermRecord(any(), any()) } returns Mono.just(collectionsTermModelMockLanguageA)
-        val expectedTerm = collectionsTermModelMockLanguageA.getFirstObject()!!.term
-        val expectedId = collectionsTermModelMockLanguageA.getFirstObject()!!.priRef
+        val expectedTerm = collectionsTermModelMockLanguageA.getFirstObject().term
+        val expectedId = collectionsTermModelMockLanguageA.getFirstObject().priRef
         newspaperService.createLanguage("nob", TEST_USERNAME)
             .test()
             .expectNext(Language(expectedTerm, expectedId))
@@ -600,7 +600,7 @@ class NewspaperServiceTest {
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject()!!, it)
+                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject(), it)
             }
             .verifyComplete()
     }
@@ -630,7 +630,7 @@ class NewspaperServiceTest {
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject()!!, it)
+                Assertions.assertEquals(collectionsModelMockManifestationA.getFirstObject(), it)
             }
             .verifyComplete()
 

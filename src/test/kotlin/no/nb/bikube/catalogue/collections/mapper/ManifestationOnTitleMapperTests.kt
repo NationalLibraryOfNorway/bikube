@@ -26,7 +26,7 @@ class ManifestationOnTitleMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()
 
     private fun manifestationList(): List<Item> {
         val list = mutableListOf<Item>()

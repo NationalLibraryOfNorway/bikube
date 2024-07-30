@@ -275,7 +275,7 @@ class NewspaperService  (
         return collectionsRepository.getManifestationsByDateAndTitle(
             date, titleId
         ).flatMap {
-            if (it.isEmpty()) {
+            if (!it.hasObjects()) {
                 createManifestation(titleId, date, username)
             } else {
                 Mono.just(it.getFirstObject())

@@ -6,8 +6,6 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.model.CollectionsLocationObject
 import no.nb.bikube.catalogue.collections.model.dto.CollectionsLocationDto
 import no.nb.bikube.catalogue.collections.model.dto.createContainerDto
-import no.nb.bikube.catalogue.collections.model.getFirstObject
-import no.nb.bikube.catalogue.collections.model.hasObjects
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
