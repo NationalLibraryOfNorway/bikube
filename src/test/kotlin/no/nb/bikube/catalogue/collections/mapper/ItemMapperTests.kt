@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemC
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
-import no.nb.bikube.catalogue.collections.model.getFirstObject
 import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -27,7 +26,7 @@ class ItemMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingleDigital.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()!!
+    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
     private val collectionsPartsObjWithDateInTitle = collectionsPartsObjectMockItemA.partsReference!!
     private val collectionsPartsObjWithoutDateInTitle = collectionsPartsObjectMockItemC.partsReference!!

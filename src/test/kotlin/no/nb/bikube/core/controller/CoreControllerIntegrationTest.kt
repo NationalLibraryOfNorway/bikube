@@ -128,7 +128,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-item endpoint should return correctly mapped item`() {
-        val testItem = collectionsModelMockItemA.getFirstObject()!!
+        val testItem = collectionsModelMockItemA.getFirstObject()
 
         getItem(itemId, MaterialType.NEWSPAPER)
             .expectStatus().isOk
@@ -211,7 +211,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title endpoint should return correctly mapped title`() {
-        val testTitle = collectionsModelMockTitleA.getFirstObject()!!
+        val testTitle = collectionsModelMockTitleA.getFirstObject()
 
         getTitle(titleId, MaterialType.NEWSPAPER)
             .expectStatus().isOk
@@ -346,7 +346,7 @@ class CoreControllerIntegrationTest (
     @Test
     fun `search-item endpoint should return mapped items`() {
         val expectedItem = Item(
-            catalogueId = collectionsPartsObjectMockItemA.partsReference!!.priRef!!,
+            catalogueId = collectionsPartsObjectMockItemA.partsReference!!.priRef,
             name = collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
             date = DateUtils.parseYearOrDate(
                 collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)

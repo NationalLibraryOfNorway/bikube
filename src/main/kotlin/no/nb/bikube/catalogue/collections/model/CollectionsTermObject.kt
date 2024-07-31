@@ -4,17 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CollectionsTermModel(
     @JsonProperty("adlibJSON")
-    val adlibJson: CollectionsTermRecordList
-)
+    override val adlibJson: CollectionsTermRecordList
+) : CollectionsGenericModel<CollectionsTermObject>
 
 data class CollectionsTermRecordList(
-    val recordList: List<CollectionsTermObject>?
-)
+    override val recordList: List<CollectionsTermObject>?
+) : CollectionsGenericRecordList<CollectionsTermObject>
 
 data class CollectionsTermObject(
     @JsonProperty("@priref")
-    val priRef: String,
+    override val priRef: String,
 
     @JsonProperty("term")
     val term: String,
-)
+) : CollectionsGenericObject

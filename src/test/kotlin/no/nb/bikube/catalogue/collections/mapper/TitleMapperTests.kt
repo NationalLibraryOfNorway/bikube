@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nb.bikube.catalogue.collections.model.CollectionsDating
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
-import no.nb.bikube.catalogue.collections.model.getFirstObject
 import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -26,7 +25,7 @@ class TitleMapperTests {
     }
 
     private val singleTitleJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperTitleSingle.json")
-    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).getFirstObject()!!
+    private val singleTitle = mapper().readValue<CollectionsModel>(singleTitleJson).getFirstObject()
     private val genericTitle = mapCollectionsObjectToGenericTitle(singleTitle)
 
     @Test

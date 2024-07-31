@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CollectionsModel(
     @JsonProperty("adlibJSON")
-    val adlibJson: CollectionsRecordList
-)
+    override val adlibJson: CollectionsRecordList
+) : CollectionsGenericModel<CollectionsObject>
 
 data class CollectionsRecordList(
-    val recordList: List<CollectionsObject>?,
+    override val recordList: List<CollectionsObject>?,
 
     val diagnostic: CollectionDiagnostic? = null
-)
+) : CollectionsGenericRecordList<CollectionsObject>
 
 data class CollectionsObject(
     @JsonProperty("@priref")
-    val priRef: String,
+    override val priRef: String,
 
     @JsonProperty("Title")
     val titleList: List<CollectionsTitle>?,
@@ -82,7 +82,7 @@ data class CollectionsObject(
 
     @JsonProperty("current_location.barcode")
     val locationBarcode: String? = null
-)
+) : CollectionsGenericObject
 
 data class CollectionsTitle(
     val title: String?
@@ -159,7 +159,7 @@ data class CollectionsAssociationGeo(
 
 data class CollectionsPartsReference(
     @JsonProperty("priref")
-    val priRef: String?,
+    val priRef: String,
 
     @JsonProperty("group:Dating")
     val dateStart: List<CollectionsDating>?,

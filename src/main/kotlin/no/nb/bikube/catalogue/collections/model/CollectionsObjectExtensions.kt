@@ -7,14 +7,6 @@ import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
 import java.time.LocalDate
 
 // CollectionsModel
-fun CollectionsModel.getObjects(): List<CollectionsObject>? {
-    return this.adlibJson.recordList
-}
-
-fun CollectionsModel.getFirstObject(): CollectionsObject? {
-    return this.getObjects()?.first()
-}
-
 fun CollectionsModel.getFirstId(): String? {
     return this.getObjects()?.first()?.priRef
 }
@@ -25,10 +17,6 @@ fun CollectionsModel.hasError(): Boolean {
 
 fun CollectionsModel.getError(): String? {
     return this.adlibJson.diagnostic?.error?.message
-}
-
-fun CollectionsModel.isEmpty(): Boolean {
-    return this.getObjects()?.isEmpty() ?: true
 }
 
 // CollectionsObject
@@ -147,22 +135,4 @@ fun CollectionsPartOfReference.getFirstPartOf(): CollectionsPartOfReference? {
 
 fun CollectionsPartOfReference.getDate(): LocalDate? {
     return this.datingList?.first()?.dateFrom?.let { parseYearOrDate(it) }
-}
-
-// CollectionsNameModel
-fun CollectionsNameModel.getObjects(): List<CollectionsNameObject>? {
-    return this.adlibJson.recordList
-}
-
-fun CollectionsNameModel.getFirstObject(): CollectionsNameObject? {
-    return this.getObjects()?.first()
-}
-
-//CollectionsTermModel
-fun CollectionsTermModel.getObjects(): List<CollectionsTermObject>? {
-    return this.adlibJson.recordList
-}
-
-fun CollectionsTermModel.getFirstObject(): CollectionsTermObject? {
-    return this.getObjects()?.first()
 }

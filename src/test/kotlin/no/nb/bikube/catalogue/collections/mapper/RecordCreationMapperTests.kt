@@ -1,7 +1,6 @@
 package no.nb.bikube.catalogue.collections.mapper
 
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.catalogue.collections.model.getFirstObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,7 +13,7 @@ class RecordCreationMapperTests {
     @Test
     fun `RecordCreation mapper should map collectionsObject to collectionsPartObject`() {
         val original = collectionsModelMockTitleA.getFirstObject()
-        val mappedObj = mapCollectionsObjectToCollectionsPartObject(original!!).partsReference!!
+        val mappedObj = mapCollectionsObjectToCollectionsPartObject(original).partsReference!!
 
         Assertions.assertEquals(original.priRef, mappedObj.priRef)
         Assertions.assertEquals(original.datingList, mappedObj.dateStart)

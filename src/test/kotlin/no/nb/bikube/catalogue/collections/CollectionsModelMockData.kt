@@ -159,9 +159,9 @@ class CollectionsModelMockData {
         val collectionsModelMockAllTitles = CollectionsModel(
             adlibJson = CollectionsRecordList(
                 recordList = listOf(
-                    collectionsModelMockTitleA.getFirstObject()!!,
-                    collectionsModelMockTitleB.getFirstObject()!!,
-                    collectionsModelMockTitleC.getFirstObject()!!
+                    collectionsModelMockTitleA.getFirstObject(),
+                    collectionsModelMockTitleB.getFirstObject(),
+                    collectionsModelMockTitleC.getFirstObject()
                 )
             )
         )

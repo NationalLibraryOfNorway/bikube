@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CollectionsLocationModel(
     @JsonProperty("adlibJSON")
-    val adlibJson: CollectionsLocationRecordList?
-)
+    override val adlibJson: CollectionsLocationRecordList
+) : CollectionsGenericModel<CollectionsLocationObject>
 
 data class CollectionsLocationRecordList(
-    val recordList: List<CollectionsLocationObject>?
-)
+    override val recordList: List<CollectionsLocationObject>?
+) : CollectionsGenericRecordList<CollectionsLocationObject>
 
 data class CollectionsLocationObject(
     @JsonProperty("@priref")
-    val priRef: String?,
+    override val priRef: String,
 
     @JsonProperty("name")
     val name: List<String>?,
@@ -24,8 +24,4 @@ data class CollectionsLocationObject(
     // This one is weird for containers/location, use language=0! There we have "container" or "location". Otherwise, it's "package" or "location"
     @JsonProperty("package_location")
     val packageLocation: List<List<CollectionsLanguageListObject>>?
-)
-
-fun CollectionsLocationModel.getFirstObject(): CollectionsLocationObject? {
-    return this.adlibJson?.recordList?.firstOrNull()
-}
+) : CollectionsGenericObject

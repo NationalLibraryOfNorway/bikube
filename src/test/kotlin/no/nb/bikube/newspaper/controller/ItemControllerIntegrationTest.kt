@@ -102,7 +102,7 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspapers-items endpoint should return correctly mapped item`() {
-        val testReturn = collectionsModelMockItemA.getFirstObject()!!
+        val testReturn = collectionsModelMockItemA.getFirstObject()
 
         createItem(newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
@@ -193,7 +193,7 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post missing-item should return correctly mapped item`() {
-        val testReturn = collectionsModelMockManifestationB.getFirstObject()!!
+        val testReturn = collectionsModelMockManifestationB.getFirstObject()
 
         webClient
             .post()

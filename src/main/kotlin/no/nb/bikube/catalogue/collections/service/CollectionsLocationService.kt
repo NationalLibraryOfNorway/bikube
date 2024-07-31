@@ -6,11 +6,9 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.model.CollectionsLocationObject
 import no.nb.bikube.catalogue.collections.model.dto.CollectionsLocationDto
 import no.nb.bikube.catalogue.collections.model.dto.createContainerDto
-import no.nb.bikube.catalogue.collections.model.getFirstObject
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import reactor.core.publisher.SynchronousSink
 
 @Service
 class CollectionsLocationService (
@@ -22,8 +20,8 @@ class CollectionsLocationService (
     ): Mono<CollectionsLocationObject> {
         return collectionsRepository.searchLocationAndContainers(barcode)
             .flatMap {
-                if (it.adlibJson?.recordList?.isNotEmpty() == true) {
-                    Mono.just(it.getFirstObject()!!)
+                if (it.hasObjects()) {
+                    Mono.just(it.getFirstObject())
                 } else {
                     createLocationRecord(barcode, username)
                 }
@@ -37,11 +35,11 @@ class CollectionsLocationService (
         val dto: CollectionsLocationDto = createContainerDto(barcode, username, null)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createLocationRecord(encodedBody)
-            .handle { collectionsModel, sink: SynchronousSink<List<CollectionsLocationObject>> ->
-                collectionsModel.adlibJson?.recordList
-                    ?. let { sink.next(collectionsModel.adlibJson.recordList) }
-                    ?: sink.error(CollectionsItemNotFound("New container not found"))
+            .handle { collectionsLocationModel, sink ->
+                if (collectionsLocationModel.hasObjects())
+                    sink.next(collectionsLocationModel.getFirstObject())
+                else
+                    sink.error(CollectionsItemNotFound("New container not found"))
             }
-            .map { it.first() }
     }
 }

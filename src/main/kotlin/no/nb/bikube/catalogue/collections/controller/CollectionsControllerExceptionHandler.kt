@@ -1,9 +1,6 @@
 package no.nb.bikube.catalogue.collections.controller
 
-import no.nb.bikube.catalogue.collections.exception.CollectionsException
-import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
-import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
-import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
+import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.core.controller.addDefaultProperties
 import no.nb.bikube.core.util.logger
 import org.springframework.http.HttpStatus
@@ -53,6 +50,17 @@ class CollectionsControllerExceptionHandler {
 
         val problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND)
         problemDetail.detail = "Collections manifestation not found: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
+
+    @ExceptionHandler(CollectionsObjectMissing::class)
+    fun handleCollectionsObjectMissingException(exception: CollectionsObjectMissing): ProblemDetail {
+        logger().warn("CollectionsObjectMissing occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        problemDetail.detail = "Collections object missing: ${exception.message}"
         problemDetail.addDefaultProperties()
 
         return problemDetail

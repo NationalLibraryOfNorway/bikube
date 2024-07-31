@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration
 
 @ConfigurationProperties("kerberos")
 class KerberosConfigProperties (
-    var realm: String,
-    var kdc: String
+    val realm: String,
+    val kdc: String
 )
 
 @Configuration
