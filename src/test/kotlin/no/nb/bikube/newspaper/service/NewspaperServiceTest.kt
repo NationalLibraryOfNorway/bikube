@@ -5,6 +5,7 @@ import io.mockk.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.INPUT_NOTES
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
@@ -581,7 +582,7 @@ class NewspaperServiceTest {
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -596,7 +597,7 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
             .test()
             .expectSubscription()
             .assertNext {
@@ -622,11 +623,12 @@ class NewspaperServiceTest {
                 inputSource = "texts",
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-                dataset = "texts"
+                dataset = "texts",
+                notes = TEST_NOTES
             )
         )
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
             .test()
             .expectSubscription()
             .assertNext {

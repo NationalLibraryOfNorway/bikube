@@ -81,7 +81,10 @@ data class CollectionsObject(
     val modifiedNotes: String? = null,
 
     @JsonProperty("current_location.barcode")
-    val locationBarcode: String? = null
+    val locationBarcode: String? = null,
+
+    @JsonProperty("notes")
+    val notes: String? = null
 ) : CollectionsGenericObject
 
 data class CollectionsTitle(

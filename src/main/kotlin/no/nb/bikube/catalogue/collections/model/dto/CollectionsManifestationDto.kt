@@ -40,14 +40,18 @@ class ManifestationDto (
     val inputNotes: String? = null,
 
     @SerialName("dataset_name")
-    val dataset: String? = null
+    val dataset: String? = null,
+
+    @SerialName("notes")
+    val notes: String? = null
 )
 
 fun createManifestationDto(
     id: String,
     parentCatalogueId: String,
     date: LocalDate,
-    username: String
+    username: String,
+    notes: String? = null
 ): ManifestationDto {
     return ManifestationDto(
         priRef = id,
@@ -60,6 +64,7 @@ fun createManifestationDto(
         inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts"
+        dataset = "texts",
+        notes = notes
     )
 }
