@@ -9,6 +9,7 @@ class CollectionsModelMockData {
     companion object {
         const val TEST_USERNAME = "bikube-test"
         const val INPUT_NOTES = "Registrert i Bikube"
+        const val TEST_NOTES = "Tester notat og greier"
 
         private val collectionsRecordTypeListWorkMock = listOf(listOf(
             CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.WORK.value)
@@ -254,7 +255,8 @@ class CollectionsModelMockData {
                         placeOfPublicationList = null,
                         partsList = listOf(collectionsPartsObjectMockItemA),
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
-                        inputName = listOf(TEST_USERNAME)
+                        inputName = listOf(TEST_USERNAME),
+                        notes = TEST_NOTES
                     )
                 )
             )
