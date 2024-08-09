@@ -91,7 +91,7 @@ data class CollectionsTitle(
     val title: String?,
 
     @JsonProperty("title.type")
-    val titleType: String?
+    val titleType: String? = null
 )
 
 data class CollectionsPublisher(
