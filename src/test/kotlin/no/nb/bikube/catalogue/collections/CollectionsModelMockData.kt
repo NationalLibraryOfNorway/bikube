@@ -256,7 +256,7 @@ class CollectionsModelMockData {
                         partsList = listOf(collectionsPartsObjectMockItemA),
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME),
-                        notes = TEST_NOTES
+                        notes = listOf(TEST_NOTES)
                     )
                 )
             )
