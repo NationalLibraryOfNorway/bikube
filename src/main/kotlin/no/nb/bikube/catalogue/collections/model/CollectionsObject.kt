@@ -84,11 +84,14 @@ data class CollectionsObject(
     val locationBarcode: String? = null,
 
     @JsonProperty("notes")
-    val notes: String? = null
+    val notes: List<String>? = emptyList()
 ) : CollectionsGenericObject
 
 data class CollectionsTitle(
-    val title: String?
+    val title: String?,
+
+    @JsonProperty("title.type")
+    val titleType: String?
 )
 
 data class CollectionsPublisher(
