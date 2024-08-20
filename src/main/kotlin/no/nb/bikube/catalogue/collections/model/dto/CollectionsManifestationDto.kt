@@ -45,8 +45,8 @@ class ManifestationDto (
     @SerialName("notes")
     val notes: String? = null,
 
-    @SerialName("production.notes")
-    val number: String? = null
+    @SerialName("Alternative_number")
+    val alternativeNumbers: List<AlternativeNumberInput>? = null,
 )
 
 fun createManifestationDto(
@@ -57,6 +57,8 @@ fun createManifestationDto(
     notes: String? = null,
     number: String? = null
 ): ManifestationDto {
+    val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
+
     return ManifestationDto(
         priRef = id,
         objectNumber = "TE-$id",
@@ -70,6 +72,6 @@ fun createManifestationDto(
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
         notes = notes,
-        number = number
+        alternativeNumbers = altNumbers
     )
 }
