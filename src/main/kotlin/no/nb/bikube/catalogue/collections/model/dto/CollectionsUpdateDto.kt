@@ -5,6 +5,10 @@ import no.nb.bikube.core.util.DateUtils
 import java.time.LocalDate
 import java.time.LocalTime
 
+// ExperimentalSerializationApi and @EncodeDefault are used to avoid serializing null values.
+// When they are not present, they will not be updated in Collections.
+// If they were null, the value in Collections would be 'null'.
+
 @Serializable
 class CollectionsUpdateDto @OptIn(ExperimentalSerializationApi::class) constructor(
     @SerialName("priref")
