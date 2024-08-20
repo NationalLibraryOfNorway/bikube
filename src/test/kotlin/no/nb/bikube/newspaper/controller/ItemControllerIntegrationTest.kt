@@ -285,7 +285,7 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
             Assertions.assertTrue(it.contains("notes"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
-            Assertions.assertTrue(it.contains("production.notes"))
+            Assertions.assertTrue(it.contains("Alternative_number"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.number.toString()))
         })}
     }
@@ -316,7 +316,7 @@ class ItemControllerIntegrationTest {
             Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
             Assertions.assertFalse(it.contains("notes"))
             Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
-            Assertions.assertFalse(it.contains("production.notes"))
+            Assertions.assertFalse(it.contains("Alternative_number"))
         })}
     }
 

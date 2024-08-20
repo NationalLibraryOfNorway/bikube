@@ -6,6 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.INPUT_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NOTES
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NUMBER
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
@@ -30,10 +31,7 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.catalogue.collections.model.dto.CollectionsUpdateDto
-import no.nb.bikube.catalogue.collections.model.dto.ItemDto
-import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
-import no.nb.bikube.catalogue.collections.model.dto.TitleDto
+import no.nb.bikube.catalogue.collections.model.dto.*
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.MaterialType
@@ -586,7 +584,7 @@ class NewspaperServiceTest {
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -601,7 +599,7 @@ class NewspaperServiceTest {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
             .test()
             .expectSubscription()
             .assertNext {
@@ -628,11 +626,12 @@ class NewspaperServiceTest {
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                 dataset = "texts",
-                notes = TEST_NOTES
+                notes = TEST_NOTES,
+                alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, "Nummer"))
             )
         )
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
             .test()
             .expectSubscription()
             .assertNext {
@@ -818,7 +817,7 @@ class NewspaperServiceTest {
             priRef = newspaperItemUpdateDtoMockA.manifestationId,
             notes = TEST_NOTES,
             date = DateUtils.createDateString(newspaperItemUpdateDtoMockA.date!!),
-            number = newspaperItemUpdateDtoMockA.number,
+            alternativeNumbers = listOf(AlternativeNumberInput(name = newspaperItemUpdateDtoMockA.number!!, type = "Nummer")),
             editName = TEST_USERNAME,
             editTime = LocalTime.now().toString(),
             editDate = DateUtils.createDateString(LocalDate.now())

@@ -10,6 +10,7 @@ class CollectionsModelMockData {
         const val TEST_USERNAME = "bikube-test"
         const val INPUT_NOTES = "Registrert i Bikube"
         const val TEST_NOTES = "Tester notat og greier"
+        const val TEST_NUMBER = "123B"
 
         private val collectionsRecordTypeListWorkMock = listOf(listOf(
             CollectionsLanguageListObject(lang = "neutral", text = CollectionsRecordType.WORK.value)
