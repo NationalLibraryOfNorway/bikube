@@ -1,5 +1,6 @@
 package no.nb.bikube.newspaper
 
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.catalogue.collections.model.dto.AlternativeNumberInput
 import no.nb.bikube.core.enum.MaterialType
@@ -7,6 +8,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Language
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
@@ -129,6 +131,15 @@ class NewspaperMockData {
             titleName = "Bikubeavisen",
             digital = null,
             urn = null
+        )
+
+        // ID equals collectionsModelMockManifestationB
+        val newspaperItemUpdateDtoMockA = ItemUpdateDto(
+            manifestationId = "24",
+            username = TEST_USERNAME,
+            date = LocalDate.parse("2020-01-01"),
+            notes = TEST_NOTES,
+            number = "1"
         )
     }
 }

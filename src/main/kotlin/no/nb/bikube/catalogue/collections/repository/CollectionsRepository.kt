@@ -93,6 +93,10 @@ class CollectionsRepository(
         return createRecordWebClientRequest(serializedBody, CollectionsDatabase.LOCATIONS).bodyToMono<CollectionsLocationModel>()
     }
 
+    fun updateTextsRecord(serializedBody: String): Mono<CollectionsModel> {
+        return updateRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    }
+
     private fun searchTexts(query: String): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(query, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
@@ -165,4 +169,22 @@ class CollectionsRepository(
             )
     }
 
+    private fun updateRecordWebClientRequest(serializedBody: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+        return webClient()
+            .post()
+            .uri {
+                it
+                    .queryParam("database", db.value)
+                    .queryParam("command", "updaterecord")
+                    .queryParam("output", "json")
+                    .build()
+            }
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(serializedBody)
+            .retrieve()
+            .onStatus(
+                { it.is4xxClientError || it.is5xxServerError },
+                { Mono.error(CollectionsException("Error updating catalog item")) }
+            )
+    }
 }

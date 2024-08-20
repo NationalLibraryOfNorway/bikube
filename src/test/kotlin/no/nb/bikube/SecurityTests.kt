@@ -54,7 +54,7 @@ class SecurityTests (
     fun `should not allow access to post endpoints without login`() {
         webClient
             .post()
-            .uri("/newspapers/items/")
+            .uri("/newspapers/items")
             .bodyValue(newspaperItemMockCValidForCreation)
             .exchange()
             .expectStatus().isUnauthorized
@@ -68,7 +68,7 @@ class SecurityTests (
 
         webClient
             .post()
-            .uri("/newspapers/items/")
+            .uri("/newspapers/items")
             .bodyValue(newspaperItemMockCValidForCreation)
             .exchange()
             .expectStatus().isCreated
@@ -78,7 +78,7 @@ class SecurityTests (
     fun `should return 401 on post for invalid token`() {
         webClient
             .post()
-            .uri("/newspapers/items/")
+            .uri("/newspapers/items")
             .headers { it.setBearerAuth("eyIkkeEnToken") }
             .bodyValue(newspaperItemMockCValidForCreation)
             .exchange()

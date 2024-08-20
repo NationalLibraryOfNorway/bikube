@@ -384,5 +384,17 @@ class CollectionsModelMockData {
                 recordList = emptyList()
             )
         )
+
+        val erroneousCollectionsModelMock = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = null,
+                diagnostic = CollectionDiagnostic(
+                    error = ErrorMessage("Something went wrong"),
+                    null,
+                    null,
+                    null
+                )
+            )
+        )
     }
 }

@@ -13,6 +13,7 @@ import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import org.springframework.stereotype.Service
@@ -23,7 +24,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
-class NewspaperService  (
+class NewspaperService (
     private val collectionsRepository: CollectionsRepository,
     private val collectionsLocationService: CollectionsLocationService,
     private val uniqueIdService: UniqueIdService
@@ -251,6 +252,21 @@ class NewspaperService  (
             }.flatMap { getSingleManifestationAsItem(it.priRef) }
     }
 
+    fun updatePhysicalNewspaper(updateDto: ItemUpdateDto): Mono<CollectionsObject> {
+        return collectionsRepository.getSingleCollectionsModelWithoutChildren(updateDto.manifestationId)
+            .flatMap { manifestation ->
+                if (manifestation.hasError()) {
+                    Mono.error(CollectionsException("Error when updating manifestation: ${manifestation.getError()}"))
+                } else if (!manifestation.hasObjects()) {
+                    Mono.error(CollectionsManifestationNotFound("Manifestation with id ${updateDto.manifestationId} not found."))
+                } else if (manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
+                    updateManifestation(updateDto)
+                } else {
+                    Mono.error(NotSupportedException("Only manifestations can be edited this way. Catalog item with id ${updateDto.manifestationId} is not a manifestation"))
+                }
+            }
+    }
+
     private fun createLinkedNewspaperItem(
         item: ItemInputDto,
         parentId: String
@@ -283,6 +299,20 @@ class NewspaperService  (
                 Mono.just(it.getFirstObject())
             }
         }
+    }
+
+    private fun updateManifestation(
+        item: ItemUpdateDto
+    ): Mono<CollectionsObject> {
+        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.date, item.number)
+        val encodedBody = Json.encodeToString(dto)
+        return collectionsRepository.updateTextsRecord(encodedBody)
+            .handle { collectionsModel, sink ->
+                if (collectionsModel.hasObjects())
+                    sink.next(collectionsModel.getFirstObject())
+                else
+                    sink.error(CollectionsException("Error when updating manifestation: ${collectionsModel.getError()}"))
+            }
     }
 
     private fun filterByFormat(itemPartReference: CollectionsPartsObject?, isDigital: Boolean) =

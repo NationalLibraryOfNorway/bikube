@@ -30,6 +30,7 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.model.*
+import no.nb.bikube.catalogue.collections.model.dto.CollectionsUpdateDto
 import no.nb.bikube.catalogue.collections.model.dto.ItemDto
 import no.nb.bikube.catalogue.collections.model.dto.ManifestationDto
 import no.nb.bikube.catalogue.collections.model.dto.TitleDto
@@ -37,12 +38,15 @@ import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
+import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
+import no.nb.bikube.core.util.DateUtils
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockDNoItem
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.urnMock
@@ -781,6 +785,100 @@ class NewspaperServiceTest {
             .test()
             .expectSubscription()
             .expectError()
+            .verify()
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should update when manifestation ID is given`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 1){ collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) }
+        verify (exactly = 1){ collectionsRepository.updateTextsRecord(any()) }
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should encode body correctly`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        val dto = CollectionsUpdateDto(
+            priRef = newspaperItemUpdateDtoMockA.manifestationId,
+            notes = TEST_NOTES,
+            date = DateUtils.createDateString(newspaperItemUpdateDtoMockA.date!!),
+            number = newspaperItemUpdateDtoMockA.number,
+            editName = TEST_USERNAME,
+            editTime = LocalTime.now().toString(),
+            editDate = DateUtils.createDateString(LocalDate.now())
+        )
+
+        verify (exactly = 1){ collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) }
+        verify (exactly = 1){ collectionsRepository.updateTextsRecord(Json.encodeToString(dto)) }
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should throw CollectionsManifestationNotFound if manifestation could not be found`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsManifestationNotFound::class.java)
+            .verify()
+
+        verify (exactly = 1){ collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) }
+        verify (exactly = 0){ collectionsRepository.updateTextsRecord(any()) }
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should throw NotSupportedException if id belongs to item`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemA)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectError(NotSupportedException::class.java)
+            .verify()
+
+        verify (exactly = 1){ collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) }
+        verify (exactly = 0){ collectionsRepository.updateTextsRecord(any()) }
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should throw NotSupportedException if id belongs to title`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleA)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectError(NotSupportedException::class.java)
+            .verify()
+
+        verify (exactly = 1){ collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) }
+        verify (exactly = 0){ collectionsRepository.updateTextsRecord(any()) }
+    }
+
+    @Test
+    fun `updatePhysicalNewspaper should throw NotSupportedException if update fails due to wrong type`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleA)
+        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.updatePhysicalNewspaper(newspaperItemUpdateDtoMockA)
+            .test()
+            .expectSubscription()
+            .expectError(NotSupportedException::class.java)
             .verify()
     }
 }

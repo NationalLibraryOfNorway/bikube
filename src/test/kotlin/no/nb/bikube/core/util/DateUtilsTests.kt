@@ -35,4 +35,8 @@ class DateUtilsTests {
         Assertions.assertEquals(null, parseYearOrDate(""))
     }
 
+    @Test
+    fun `createDateString should return date string in format yyyy-MM-dd`() {
+        Assertions.assertEquals("2020-01-01", DateUtils.createDateString(LocalDate.parse("2020-01-01")))
+    }
 }

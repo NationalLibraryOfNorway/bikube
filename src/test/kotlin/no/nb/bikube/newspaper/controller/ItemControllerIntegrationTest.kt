@@ -13,6 +13,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.erroneousCollectionsModelMock
 import no.nb.bikube.catalogue.collections.DtoMock
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
@@ -22,6 +23,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
 import no.nb.bikube.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -57,7 +59,7 @@ class ItemControllerIntegrationTest {
     private fun createItem(item: ItemInputDto): ResponseSpec {
         return webClient
             .post()
-            .uri("/newspapers/items/")
+            .uri("/newspapers/items")
             .bodyValue(item)
             .exchange()
     }
@@ -79,6 +81,7 @@ class ItemControllerIntegrationTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
@@ -252,5 +255,110 @@ class ItemControllerIntegrationTest {
             .expectStatus().isCreated
 
         verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+    }
+
+    @Test
+    fun `put item should return 204 No Content on success`() {
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .exchange()
+            .expectStatus().isNoContent
+    }
+
+    @Test
+    fun `put item should update values`() {
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .exchange()
+
+        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+            Assertions.assertTrue(it.contains(manifestationId))
+            Assertions.assertTrue(it.contains("edit.date"))
+            Assertions.assertTrue(it.contains("edit.time"))
+            Assertions.assertTrue(it.contains("edit.name"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
+            Assertions.assertTrue(it.contains("dating.date.start"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
+            Assertions.assertTrue(it.contains("notes"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
+            Assertions.assertTrue(it.contains("production.notes"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.number.toString()))
+        })}
+    }
+
+    @Test
+    fun `put item should not update null-values`() {
+        val dto = newspaperItemUpdateDtoMockA.copy(
+            manifestationId = manifestationId,
+            date = null,
+            notes = null,
+            number = null
+        )
+
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(dto)
+            .exchange()
+
+        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+            Assertions.assertTrue(it.contains(manifestationId))
+            Assertions.assertTrue(it.contains("edit.date"))
+            Assertions.assertTrue(it.contains("edit.time"))
+            Assertions.assertTrue(it.contains("edit.name"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
+
+            Assertions.assertFalse(it.contains("dating.date.start"))
+            Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
+            Assertions.assertFalse(it.contains("notes"))
+            Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
+            Assertions.assertFalse(it.contains("production.notes"))
+        })}
+    }
+
+    @Test
+    fun `put item should return 404 NOT FOUND when id is not found`() {
+        val dummyId = "123123123"
+        every { collectionsRepository.getSingleCollectionsModel(dummyId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = dummyId))
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `put item should return 400 BAD REQUEST when id is not manifestation`() {
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = itemId))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = titleId))
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `put item should return 500 Server Error if the catalog returns an error`() {
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(erroneousCollectionsModelMock)
+
+        webClient
+            .put()
+            .uri("/newspapers/items")
+            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .exchange()
+            .expectStatus().is5xxServerError
     }
 }
