@@ -10,7 +10,7 @@ import java.time.LocalTime
 // If they were null, the value in Collections would be 'null'.
 
 @Serializable
-class CollectionsUpdateDto @OptIn(ExperimentalSerializationApi::class) constructor(
+class CollectionsObjectUpdateDto @OptIn(ExperimentalSerializationApi::class) constructor(
     @SerialName("priref")
     val priRef: String,
 
@@ -42,10 +42,10 @@ fun createUpdateManifestationDto(
     notes: String?,
     date: LocalDate?,
     number: String?
-): CollectionsUpdateDto {
+): CollectionsObjectUpdateDto {
     val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
 
-    return CollectionsUpdateDto(
+    return CollectionsObjectUpdateDto(
         priRef = id,
         notes = notes,
         date = date?.let { DateUtils.createDateString(date) },

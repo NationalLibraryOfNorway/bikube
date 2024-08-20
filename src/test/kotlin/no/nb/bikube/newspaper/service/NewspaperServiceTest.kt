@@ -813,7 +813,7 @@ class NewspaperServiceTest {
             .expectNextCount(1)
             .verifyComplete()
 
-        val dto = CollectionsUpdateDto(
+        val dto = CollectionsObjectUpdateDto(
             priRef = newspaperItemUpdateDtoMockA.manifestationId,
             notes = TEST_NOTES,
             date = DateUtils.createDateString(newspaperItemUpdateDtoMockA.date!!),
