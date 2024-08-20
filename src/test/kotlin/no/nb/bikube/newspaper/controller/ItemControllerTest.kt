@@ -2,7 +2,7 @@ package no.nb.bikube.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nb.bikube.core.service.CreationValidationService
+import no.nb.bikube.core.service.DtoValidationService
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
@@ -25,13 +25,13 @@ class ItemControllerTest {
     private lateinit var newspaperService: NewspaperService
 
     @MockkBean
-    private lateinit var creationValidationService: CreationValidationService
+    private lateinit var dtoValidationService: DtoValidationService
 
     @Test
     fun `create item should return 200 OK with created item`() {
         every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
-        every { creationValidationService.validateItem(any()) } returns Unit
+        every { dtoValidationService.validateItemInputDto(any()) } returns Unit
 
         itemController.createItem(newspaperItemMockCValidForCreation.copy())
             .test()

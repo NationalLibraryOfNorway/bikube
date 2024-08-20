@@ -9,7 +9,7 @@ import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
-import no.nb.bikube.core.service.CreationValidationService
+import no.nb.bikube.core.service.DtoValidationService
 import no.nb.bikube.core.util.logger
 import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("/newspapers/items")
 class ItemController (
     private val newspaperService: NewspaperService,
-    private val creationValidationService: CreationValidationService
+    private val dtoValidationService: DtoValidationService
 ){
     @PostMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create a single newspaper item")
@@ -40,7 +40,7 @@ class ItemController (
         @RequestBody item: ItemInputDto
     ): Mono<ResponseEntity<Item>> {
         logger().info("Trying to create newspaper item: $item")
-        creationValidationService.validateItem(item)
+        dtoValidationService.validateItemInputDto(item)
 
         // Checks that title exists before creating item. Will throw exception if not found.
         return newspaperService.getSingleTitle(item.titleCatalogueId)
@@ -86,6 +86,7 @@ class ItemController (
         @RequestBody item: ItemUpdateDto
     ): Mono<ResponseEntity<Void>> {
         logger().info("Trying to update newspaper item: $item")
+        dtoValidationService.validateItemUpdateDto(item)
 
         return newspaperService.updatePhysicalNewspaper(item)
             .map {
