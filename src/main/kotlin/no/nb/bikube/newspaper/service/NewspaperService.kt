@@ -201,9 +201,10 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
+        number: String?
     ): Mono<CollectionsObject> {
         val id = uniqueIdService.getUniqueId()
-        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username, notes)
+        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username, notes, number)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.createTextsRecord(encodedBody)
             .handle { collectionsModel, sink ->
@@ -221,7 +222,7 @@ class NewspaperService (
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
                 }
             }.flatMap { manifestation ->
                 if (item.digital == false && !item.containerId.isNullOrBlank()) {
@@ -247,7 +248,7 @@ class NewspaperService (
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
                 }
             }.flatMap { getSingleManifestationAsItem(it.priRef) }
     }
@@ -288,13 +289,14 @@ class NewspaperService (
         titleId: String,
         date: LocalDate,
         username: String,
-        notes: String?
+        notes: String?,
+        number: String?
     ): Mono<CollectionsObject> {
         return collectionsRepository.getManifestationsByDateAndTitle(
             date, titleId
         ).flatMap {
             if (!it.hasObjects()) {
-                createManifestation(titleId, date, username, notes)
+                createManifestation(titleId, date, username, notes, number)
             } else {
                 Mono.just(it.getFirstObject())
             }
