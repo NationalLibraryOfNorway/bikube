@@ -1,6 +1,7 @@
 package no.nb.bikube.core.util
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 val yearRegex = Regex("^\\d{4}$")
 val dateWithDashRegex = Regex("^\\d{4}-\\d{2}-\\d{2}$")
@@ -21,6 +22,10 @@ class DateUtils {
                 logger().warn("Could not parse date: $date")
                 null
             }
+        }
+
+        fun createDateString(date: LocalDate): String? {
+            return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
         }
     }
 }
