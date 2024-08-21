@@ -295,7 +295,6 @@ class ItemControllerIntegrationTest {
         val dto = newspaperItemUpdateDtoMockA.copy(
             manifestationId = manifestationId,
             date = null,
-            notes = null,
             number = null
         )
 
@@ -311,11 +310,11 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains("edit.time"))
             Assertions.assertTrue(it.contains("edit.name"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
+            Assertions.assertTrue(it.contains("notes"))
+            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
 
             Assertions.assertFalse(it.contains("dating.date.start"))
             Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
-            Assertions.assertFalse(it.contains("notes"))
-            Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
             Assertions.assertFalse(it.contains("Alternative_number"))
         })}
     }
