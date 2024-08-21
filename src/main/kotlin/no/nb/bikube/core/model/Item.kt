@@ -11,5 +11,6 @@ data class Item(
     val titleName: String?,
     val digital: Boolean?,
     val urn: String?,
-    val location: String? = null
+    val location: String? = null,
+    val parentCatalogueId: String?
 ) : CatalogueRecord

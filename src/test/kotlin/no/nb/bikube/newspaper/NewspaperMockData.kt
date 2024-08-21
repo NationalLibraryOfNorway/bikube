@@ -68,7 +68,8 @@ class NewspaperMockData {
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             titleName = newspaperTitleMockA.name,
             digital = true,
-            urn = "avisa_null_null_20200101_1_1_1"
+            urn = "avisa_null_null_20200101_1_1_1",
+            parentCatalogueId = null
         )
 
        // Equals to collectionsModelMockItemB
@@ -80,7 +81,8 @@ class NewspaperMockData {
             titleCatalogueId = newspaperTitleMockA.catalogueId,
             titleName = null,
             digital = true,
-            urn = "avisa_null_null_20200105_1_1_1"
+            urn = "avisa_null_null_20200105_1_1_1",
+            parentCatalogueId = null
         )
 
         // Equals to collectionsModelMockItemB
@@ -130,7 +132,8 @@ class NewspaperMockData {
             titleCatalogueId = missingItemDtoMock.titleCatalogueId,
             titleName = "Bikubeavisen",
             digital = null,
-            urn = null
+            urn = null,
+            parentCatalogueId = "22"
         )
 
         // ID equals collectionsModelMockManifestationB

@@ -121,7 +121,8 @@ class ItemControllerIntegrationTest {
                 titleName = testReturn.getTitleName(),
                 digital = testReturn.getFormat() == CollectionsFormat.DIGITAL,
                 urn = testReturn.getUrn(),
-                location = testReturn.locationBarcode
+                location = testReturn.locationBarcode,
+                parentCatalogueId = testReturn.getParentId()
             ))
             .verifyComplete()
     }
@@ -215,7 +216,8 @@ class ItemControllerIntegrationTest {
                 titleName = testReturn.getTitleName(),
                 digital = null,
                 urn = null,
-                location = null
+                location = null,
+                parentCatalogueId = testReturn.getParentId()
             ))
             .verifyComplete()
     }

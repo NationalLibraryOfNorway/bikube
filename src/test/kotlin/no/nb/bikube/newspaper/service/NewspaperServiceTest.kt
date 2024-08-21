@@ -203,7 +203,8 @@ class NewspaperServiceTest {
                         titleName = testSerialWork.getName(),
                         digital = true,
                         urn = testRecord.getUrn(),
-                        location = testRecord.locationBarcode
+                        location = testRecord.locationBarcode,
+                        parentCatalogueId = testRecord.getParentId()
                     ),
                     it
                 )
@@ -657,7 +658,8 @@ class NewspaperServiceTest {
             titleCatalogueId = "1",
             titleName = "Aftenposten",
             digital = true,
-            urn = null
+            urn = null,
+            parentCatalogueId = null
         )
 
         newspaperService.getItemsByTitleAndDate("1", date, true)
