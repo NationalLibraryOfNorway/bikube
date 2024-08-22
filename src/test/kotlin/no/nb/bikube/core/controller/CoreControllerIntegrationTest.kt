@@ -145,7 +145,8 @@ class CoreControllerIntegrationTest (
                     titleName = testItem.getTitleName(),
                     digital = testItem.getFormat() == CollectionsFormat.DIGITAL,
                     urn = testItem.getUrn(),
-                    location = testItem.locationBarcode
+                    location = testItem.locationBarcode,
+                    parentCatalogueId = testItem.getParentId()
                 )
             )
             .verifyComplete()
@@ -355,7 +356,8 @@ class CoreControllerIntegrationTest (
             titleCatalogueId = collectionsModelMockTitleA.getFirstId(),
             titleName = collectionsPartsObjectMockManifestationA.partsReference!!.titleList!!.first().title!!,
             digital = collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
-            urn = null
+            urn = null,
+            parentCatalogueId = null
         )
 
         webClient

@@ -15,7 +15,8 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
         titleName = model.getTitleName(),
         digital = model.getFormat()?.let { model.getFormat() == CollectionsFormat.DIGITAL },
         urn = model.getUrn(),
-        location = model.locationBarcode
+        location = model.locationBarcode,
+        parentCatalogueId = model.getParentId()
     )
 }
 
@@ -34,6 +35,7 @@ fun mapCollectionsPartsObjectToGenericItem(
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,
         digital = model.getFormat() == CollectionsFormat.DIGITAL,
-        urn = model.urn?.first()
+        urn = model.urn?.first(),
+        parentCatalogueId = null
     )
 }

@@ -93,6 +93,10 @@ fun CollectionsObject.getParts(): List<CollectionsPartsObject>? {
     return this.partsList
 }
 
+fun CollectionsObject.getParentId(): String? {
+    return this.getFirstPartOf()?.priRef
+}
+
 // CollectionsPartsReference
 
 fun CollectionsPartsReference.getName(): String? {
