@@ -96,7 +96,7 @@ class NewspaperServiceTest {
         objectNumber = "TE-1600000000",
         partOfReference = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
-        dateStart = newspaperItemMockB.date.toString(),
+        date = newspaperItemMockB.date.toString(),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
         inputSource = "texts",
@@ -197,7 +197,7 @@ class NewspaperServiceTest {
                     Item(
                         catalogueId = testRecord.priRef,
                         name = testRecord.getName(),
-                        date = testRecord.getStartDate(),
+                        date = testRecord.getDate(),
                         materialType = testSerialWork.getMaterialType()!!.norwegian,
                         titleCatalogueId = testSerialWork.priRef,
                         titleName = testSerialWork.getName(),
@@ -499,8 +499,8 @@ class NewspaperServiceTest {
             .test()
             .expectSubscription()
             .expectErrorMatches {
-                it is CollectionsItemNotFound &&
-                it.message!!.contains("New item not found")
+                it is CollectionsException &&
+                it.message!!.contains("Error creating item")
             }
             .verify()
     }
@@ -589,8 +589,8 @@ class NewspaperServiceTest {
             .test()
             .expectSubscription()
             .expectErrorMatches {
-                it is CollectionsManifestationNotFound &&
-                it.message!!.contains("New manifestation not found")
+                it is CollectionsException &&
+                it.message!!.contains("Error creating manifestation")
             }
             .verify()
     }
@@ -620,7 +620,7 @@ class NewspaperServiceTest {
                 objectNumber = "TE-1600000000",
                 partOfReference = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
-                dateStart = LocalDate.now().toString(),
+                date = LocalDate.now().toString(),
                 inputName = TEST_USERNAME,
                 inputNotes = INPUT_NOTES,
                 inputSource = "texts",

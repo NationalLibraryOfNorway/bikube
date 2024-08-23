@@ -28,6 +28,10 @@ fun CollectionsObject.getName(): String? {
     return this.titleList?.first()?.title
 }
 
+fun CollectionsObject.getDate(): LocalDate? {
+    return this.date?.firstOrNull().let { parseYearOrDate(it) }
+}
+
 fun CollectionsObject.getStartDate(): LocalDate? {
     return this.datingList?.first()?.dateFrom?.let { parseYearOrDate(it) }
 }
@@ -103,8 +107,8 @@ fun CollectionsPartsReference.getName(): String? {
     return this.titleList?.first()?.title
 }
 
-fun CollectionsPartsReference.getStartDate(): LocalDate? {
-    return this.dateStart?.first()?.dateFrom?.let { parseYearOrDate(it) }
+fun CollectionsPartsReference.getDate(): LocalDate? {
+    return this.date?.firstOrNull().let { parseYearOrDate(it) }
 }
 
 fun CollectionsPartsReference.getFormat(): CollectionsFormat? {
@@ -116,8 +120,8 @@ fun CollectionsPartsReference.getRecordType(): CollectionsRecordType? {
 }
 
 // CollectionsPartsObject
-fun CollectionsPartsObject.getStartDate(): LocalDate? {
-    return this.partsReference?.dateStart?.first()?.let { parseYearOrDate(it.dateFrom) }
+fun CollectionsPartsObject.getDate(): LocalDate? {
+    return this.partsReference?.date?.firstOrNull().let { parseYearOrDate(it) }
 }
 
 // CollectionsPartOfReference
@@ -138,5 +142,5 @@ fun CollectionsPartOfReference.getFirstPartOf(): CollectionsPartOfReference? {
 }
 
 fun CollectionsPartOfReference.getDate(): LocalDate? {
-    return this.datingList?.first()?.dateFrom?.let { parseYearOrDate(it) }
+    return this.date?.firstOrNull().let { parseYearOrDate(it) }
 }

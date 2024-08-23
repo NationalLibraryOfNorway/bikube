@@ -40,7 +40,7 @@ class NewspaperService (
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
                 else
-                    sink.error(CollectionsTitleNotFound("New title not found"))
+                    sink.error(CollectionsException("Error creating title: ${collectionsModel.getError()}"))
             }
             .flatMap { getSingleTitle(it.priRef) }
     }
@@ -211,7 +211,7 @@ class NewspaperService (
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
                 else
-                    sink.error(CollectionsManifestationNotFound("New manifestation not found"))
+                    sink.error(CollectionsException("Error creating manifestation: ${collectionsModel.getError()}"))
             }
     }
 
@@ -280,7 +280,7 @@ class NewspaperService (
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
                 else
-                    sink.error(CollectionsItemNotFound("New item not found"))
+                    sink.error(CollectionsException("Error creating item: ${collectionsModel.getError()}"))
             }
             .flatMap { getSingleItem(it.priRef) }
     }

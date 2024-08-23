@@ -40,7 +40,7 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
-                dateStart = null
+                date = null
             )
         )
 
@@ -52,7 +52,7 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
-                dateStart = null
+                date = null
             )
         )
 
@@ -64,7 +64,7 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 formatList = collectionsFormatListPhysicalMock,
                 partsList = null,
-                dateStart = null
+                date = null
             )
         )
 
@@ -76,7 +76,7 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListManifestMock,
                 formatList = null,
                 partsList = null,
-                dateStart = listOf(CollectionsDating(dateFrom = "2020-01-01", dateTo = null))
+                date = listOf("2020-01-01")
             )
         )
 
@@ -175,7 +175,7 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListWorkMock,
                 subMedium = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                datingList = null
+                date = null
             )
         )
 
@@ -186,7 +186,7 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
                 recordType = collectionsRecordTypeListManifestMock,
                 subMedium = null,
-                datingList = null
+                date = null
             )
         )
 
@@ -335,7 +335,7 @@ class CollectionsModelMockData {
                 recordType = collectionsRecordTypeListItemMock,
                 formatList = collectionsFormatListDigitalMock,
                 partsList = null,
-                dateStart = null
+                date = null
             )
         )
 

@@ -3,10 +3,7 @@ package no.nb.bikube.catalogue.collections.repository
 import no.nb.bikube.catalogue.collections.config.CollectionsWebClient
 import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
-import no.nb.bikube.catalogue.collections.model.CollectionsLocationModel
-import no.nb.bikube.catalogue.collections.model.CollectionsModel
-import no.nb.bikube.catalogue.collections.model.CollectionsNameModel
-import no.nb.bikube.catalogue.collections.model.CollectionsTermModel
+import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.util.logger
 import org.springframework.http.MediaType

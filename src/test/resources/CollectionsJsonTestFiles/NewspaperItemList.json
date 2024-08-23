@@ -22,22 +22,18 @@
             }
           ]
         ],
+        "edition.date": [
+          "2024-01-01"
+        ],
         "Part_of": [
           {
             "part_of_reference": {
-              "group:Dating": [
-                {
-                  "dating.date.start": "2024-01-01"
-                }
+              "edition.date": [
+                "2024-01-01"
               ],
               "group:Part_of": [
                 {
                   "part_of_reference": {
-                    "group:Dating": [
-                      {
-                        "dating.date.start": "2024-01-01"
-                      }
-                    ],
                     "group:Submedium": [
                       {
                         "submedium": "Aviser"
@@ -169,22 +165,18 @@
             }
           ]
         ],
+        "edition.date": [
+          "2024-01-01"
+        ],
         "Part_of": [
           {
             "part_of_reference": {
-              "group:Dating": [
-                {
-                  "dating.date.start": "2024-01-01"
-                }
+              "edition.date": [
+                "2024-01-01"
               ],
               "group:Part_of": [
                 {
                   "part_of_reference": {
-                    "group:Dating": [
-                      {
-                        "dating.date.start": "2024-01-01"
-                      }
-                    ],
                     "group:Submedium": [
                       {
                         "submedium": "Aviser"
@@ -316,22 +308,18 @@
             }
           ]
         ],
+        "edition.date": [
+          "2024-01-02"
+        ],
         "Part_of": [
           {
             "part_of_reference": {
-              "group:Dating": [
-                {
-                  "dating.date.start": "2024-01-02"
-                }
+              "edition.date": [
+                "2024-01-02"
               ],
               "group:Part_of": [
                 {
                   "part_of_reference": {
-                    "group:Dating": [
-                      {
-                        "dating.date.start": "2024-01-01"
-                      }
-                    ],
                     "group:Submedium": [
                       {
                         "submedium": "Aviser"
