@@ -51,7 +51,7 @@ fun createContainerDto(
         inputName = username,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        inputNotes = "Registrert i Bikube",
+        inputNotes = "Registrert i Bikube API",
         description = null
     )
 }

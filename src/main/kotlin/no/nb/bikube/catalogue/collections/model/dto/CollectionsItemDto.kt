@@ -76,7 +76,7 @@ fun createNewspaperItemDto(
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
-        inputNotes = "Registrert i Bikube",
+        inputNotes = "Registrert i Bikube API",
         inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
