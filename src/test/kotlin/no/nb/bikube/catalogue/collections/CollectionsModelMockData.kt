@@ -8,7 +8,7 @@ import no.nb.bikube.core.enum.MaterialType
 class CollectionsModelMockData {
     companion object {
         const val TEST_USERNAME = "bikube-test"
-        const val INPUT_NOTES = "Registrert i Bikube"
+        const val INPUT_NOTES = "Registrert i Bikube API"
         const val TEST_NOTES = "Tester notat og greier"
         const val TEST_NUMBER = "123B"
 

@@ -16,7 +16,8 @@ class TitleDto(
     @SerialName("object_number")
     val objectNumber: String,
 
-    val title: String,
+    @SerialName("Title")
+    val titles: List<CollectionsTitleDto>?,
 
     @SerialName("record_type")
     val recordType: String?,
@@ -36,7 +37,7 @@ class TitleDto(
     @SerialName("publisher")
     val publisher: String? = null,
 
-    @SerialName("place_of_publication")
+    @SerialName("association.geographical_keyword")
     val placeOfPublication: String? = null,
 
     @SerialName("language")
@@ -61,11 +62,22 @@ class TitleDto(
     val dataset: String? = null
 )
 
+@Serializable
+class CollectionsTitleDto(
+    val title: String?,
+
+    @SerialName("title.type")
+    val titleType: String? = null,
+
+    @SerialName("title.notes")
+    val titleNotes: String? = null
+)
+
 fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
     return TitleDto(
         priRef = id,
         objectNumber = "TE-$id",
-        title = title.name,
+        titles = listOf(CollectionsTitleDto(title.name, "Originaltittel")),
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),
         publisher = title.publisher,
@@ -75,7 +87,7 @@ fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
         medium = "Tekst",
         subMedium = "Aviser",
         inputName = title.username,
-        inputNotes = "Registrert i Bikube",
+        inputNotes = "Registrert i Bikube API",
         inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

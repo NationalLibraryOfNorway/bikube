@@ -27,7 +27,6 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
-import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.model.*
@@ -118,7 +117,6 @@ class NewspaperServiceTest {
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
         partOfReference = newspaperItemMockB.catalogueId,
-        title = "Avis A 2020.01.05",
         urn = urnMock.name
     ))
 
@@ -134,14 +132,13 @@ class NewspaperServiceTest {
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId,
-        title = "Avis A 2020.01.05"
+        partOfReference = newspaperItemMockB.catalogueId
     ))
 
     private val titleEncodedDto = Json.encodeToString(TitleDto(
         priRef = "1600000000",
         objectNumber = "TE-1600000000",
-        title = newspaperTitleMockB.name!!,
+        titles = listOf(CollectionsTitleDto(newspaperTitleMockB.name!!, "Originaltittel")),
         dateStart = newspaperTitleMockB.startDate.toString(),
         dateEnd = newspaperTitleMockB.endDate.toString(),
         publisher = newspaperTitleMockB.publisher,
@@ -709,29 +706,6 @@ class NewspaperServiceTest {
             .expectSubscription()
             .expectNextCount(0)
             .verifyComplete()
-    }
-
-    @Test
-    fun `createTitleString should create a title with date if the title field on the item is null`() {
-        val item = newspaperInputDtoItemMockB.copy(name = null, date = LocalDate.parse("2024-02-28"))
-        val title = "Aftenposten"
-        val result = newspaperService.createTitleString(item, title)
-        Assertions.assertEquals("$title 2024.02.28", result)
-    }
-
-    @Test
-    fun `createTitleString should create a title with date if the title field on the item is empty`() {
-        val item = newspaperInputDtoItemMockB.copy(name = "", date = LocalDate.parse("2024-02-28"))
-        val title = "Aftenposten"
-        val result = newspaperService.createTitleString(item, title)
-        Assertions.assertEquals("$title 2024.02.28", result)
-    }
-
-    @Test
-    fun `createTitleString should return the title field of the item if it is not null or empty`() {
-        val item = newspaperInputDtoItemMockB.copy(name = "Some fancy title")
-        val result = newspaperService.createTitleString(item, "")
-        Assertions.assertEquals("Some fancy title", result)
     }
 
     @Test

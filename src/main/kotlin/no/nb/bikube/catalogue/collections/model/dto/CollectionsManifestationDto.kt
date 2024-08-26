@@ -66,7 +66,7 @@ fun createManifestationDto(
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
         inputName = username,
-        inputNotes = "Registrert i Bikube",
+        inputNotes = "Registrert i Bikube API",
         inputSource = "texts",
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),

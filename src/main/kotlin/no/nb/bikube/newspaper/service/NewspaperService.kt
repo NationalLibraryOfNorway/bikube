@@ -21,7 +21,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
 class NewspaperService (
@@ -232,14 +231,6 @@ class NewspaperService (
                     createLinkedNewspaperItem(item, manifestation.priRef)
                 }
             }
-    }
-
-    fun createTitleString(item: ItemInputDto, title: String): String? {
-        return if (item.name.isNullOrEmpty() && item.digital == true) {
-            "$title ${item.date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))}"
-        } else {
-            item.name
-        }
     }
 
     fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
