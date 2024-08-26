@@ -36,7 +36,7 @@ class ManifestationOnTitleMapperTests {
                 singleItem.priRef,
                 singleItem.getName(),
                 singleItem.getMaterialType()?.norwegian,
-                manifestation.getStartDate().toString()
+                manifestation.getDate().toString()
             ))
         }
         return list

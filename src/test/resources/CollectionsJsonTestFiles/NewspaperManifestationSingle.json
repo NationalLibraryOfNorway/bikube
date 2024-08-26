@@ -6,10 +6,8 @@
         "@created": "2024-04-09T12:31:15",
         "@modification": "2024-04-09T12:34:27",
         "@selected": false,
-        "Dating": [
-          {
-            "dating.date.start": "2024-01-01"
-          }
+        "edition.date": [
+          "2024-01-01"
         ],
         "Medium": [
           {

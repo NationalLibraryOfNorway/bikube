@@ -59,20 +59,20 @@ class CollectionsModelFromJsonSingleNewspaperTitleTests {
 
         val manifest1 = manifestations.first().partsReference!!
         Assertions.assertEquals("1601048429", manifest1.priRef)
-        Assertions.assertEquals(LocalDate.parse("2024-01-01"), manifest1.getStartDate())
+        Assertions.assertEquals(LocalDate.parse("2024-01-01"), manifest1.getDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest1.getRecordType())
-        Assertions.assertEquals("2024-01-01", manifest1.dateStart!!.first().dateFrom)
+        Assertions.assertEquals("2024-01-01", manifest1.date!!.first())
 
         val manifest2 = manifestations[1].partsReference!!
         Assertions.assertEquals("1601048430", manifest2.priRef)
-        Assertions.assertEquals(LocalDate.parse("2024-01-02"), manifest2.getStartDate())
+        Assertions.assertEquals(LocalDate.parse("2024-01-02"), manifest2.getDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest2.getRecordType())
-        Assertions.assertEquals("2024-01-02", manifest2.dateStart!!.first().dateFrom)
+        Assertions.assertEquals("2024-01-02", manifest2.date!!.first())
 
         val manifest3 = manifestations[2].partsReference!!
         Assertions.assertEquals("1601048431", manifest3.priRef)
-        Assertions.assertEquals(LocalDate.parse("2024-01-03"), manifest3.getStartDate())
+        Assertions.assertEquals(LocalDate.parse("2024-01-03"), manifest3.getDate())
         Assertions.assertEquals(CollectionsRecordType.MANIFESTATION, manifest3.getRecordType())
-        Assertions.assertEquals("2024-01-03", manifest3.dateStart!!.first().dateFrom)
+        Assertions.assertEquals("2024-01-03", manifest3.date!!.first())
     }
 }

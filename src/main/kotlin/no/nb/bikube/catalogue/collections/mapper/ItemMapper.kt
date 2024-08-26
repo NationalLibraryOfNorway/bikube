@@ -9,7 +9,7 @@ fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(
         catalogueId = model.priRef,
         name = model.getName(),
-        date = model.getStartDate() ?: model.getParentDate(),
+        date = model.getDate() ?: model.getParentDate(),
         materialType = model.getMaterialTypeFromParent()?.norwegian,
         titleCatalogueId = model.getTitleCatalogueId(),
         titleName = model.getTitleName(),
@@ -30,7 +30,7 @@ fun mapCollectionsPartsObjectToGenericItem(
     return Item(
         catalogueId = model.priRef,
         name = model.getName(),
-        date = parseYearOrDate(date) ?: model.getStartDate(),
+        date = parseYearOrDate(date) ?: model.getDate(),
         materialType = materialType,
         titleCatalogueId = titleCatalogueId,
         titleName = titleName,
