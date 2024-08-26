@@ -17,9 +17,6 @@ class ItemDto (
     @SerialName("object_number")
     val objectNumber: String,
 
-    @SerialName("title")
-    val title: String? = null,
-
     @SerialName("format")
     val format: String,
 
@@ -76,7 +73,6 @@ fun createNewspaperItemDto(
     return ItemDto(
         priRef = id,
         objectNumber = "TE-$id",
-        title = item.name,
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
