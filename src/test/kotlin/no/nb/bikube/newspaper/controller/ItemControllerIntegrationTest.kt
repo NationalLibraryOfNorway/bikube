@@ -10,6 +10,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationD
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
@@ -82,6 +83,7 @@ class ItemControllerIntegrationTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
@@ -359,6 +361,50 @@ class ItemControllerIntegrationTest {
             .put()
             .uri("/newspapers/items")
             .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .exchange()
+            .expectStatus().is5xxServerError
+    }
+
+    @Test
+    fun `delete item should return 204 when deleted`() {
+        webClient
+            .delete()
+            .uri("/newspapers/items/physical/$manifestationId")
+            .exchange()
+            .expectStatus().isNoContent
+    }
+
+    @Test
+    fun `delete item should return 400 when item is item or title`() {
+        webClient
+            .delete()
+            .uri("/newspapers/items/physical/$itemId")
+            .exchange()
+            .expectStatus().isBadRequest
+
+        webClient
+            .delete()
+            .uri("/newspapers/items/physical/$titleId")
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `delete item should return 404 when item is not found`() {
+        webClient
+            .delete()
+            .uri("/newspapers/items/physical/123123123")
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `delete item should return 500 when manifestation has more than 1 physical item`() {
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationD.copy())
+
+        webClient
+            .delete()
+            .uri("/newspapers/items/physical/$manifestationId")
             .exchange()
             .expectStatus().is5xxServerError
     }

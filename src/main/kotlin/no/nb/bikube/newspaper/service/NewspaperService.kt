@@ -259,6 +259,43 @@ class NewspaperService (
             }
     }
 
+    fun deletePhysicalItemByManifestationId(manifestationId: String): Mono<CollectionsModel> {
+        return collectionsRepository.getSingleCollectionsModel(manifestationId)
+            .flatMap { manifestation ->
+                println(manifestation)
+                if (manifestation.hasError()) {
+                    Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
+                } else if (!manifestation.hasObjects()) {
+                    Mono.error(CollectionsManifestationNotFound("Manifestation with id $manifestationId not found."))
+                } else if (manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
+                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject())
+                } else {
+                    Mono.error(NotSupportedException("Catalog item with id $manifestationId is not a manifestation or does not exist."))
+                }
+            }
+    }
+
+    private fun deleteItemAndManifestationIfNoOtherItems(
+        manifestation: CollectionsObject
+    ): Mono<CollectionsModel> {
+        val allItems = manifestation.getParts()
+        val physicalItems = allItems?.filter {
+            it.partsReference?.getFormat() == CollectionsFormat.PHYSICAL
+        }
+
+        val firstPhysicalItem = physicalItems?.firstOrNull()
+        return if (physicalItems?.size == 1 && firstPhysicalItem?.partsReference != null) {
+            if (allItems.size == 1) {
+                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
+                    .then(collectionsRepository.deleteTextsRecord(manifestation.priRef))
+            } else {
+                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
+            }
+        } else {
+            Mono.error(CollectionsException("Manifestation had ${physicalItems?.size ?: 0} physical items, expected 1"))
+        }
+    }
+
     private fun createLinkedNewspaperItem(
         item: ItemInputDto,
         parentId: String

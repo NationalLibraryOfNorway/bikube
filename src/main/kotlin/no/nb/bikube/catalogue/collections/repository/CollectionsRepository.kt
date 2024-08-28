@@ -50,7 +50,7 @@ class CollectionsRepository(
         return searchTexts(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
             "part_of_reference.lref=${titleCatalogId} and " +
-            "dating.date.start='${dateString}'"
+            "edition.date='${dateString}'"
         )
     }
 
@@ -92,6 +92,10 @@ class CollectionsRepository(
 
     fun updateTextsRecord(serializedBody: String): Mono<CollectionsModel> {
         return updateRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    }
+
+    fun deleteTextsRecord(id: String): Mono<CollectionsModel> {
+        return deleteRecordWebClientRequest(id, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
 
     private fun searchTexts(query: String): Mono<CollectionsModel> {
@@ -182,6 +186,24 @@ class CollectionsRepository(
             .onStatus(
                 { it.is4xxClientError || it.is5xxServerError },
                 { Mono.error(CollectionsException("Error updating catalog item")) }
+            )
+    }
+
+    private fun deleteRecordWebClientRequest(id: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+        return webClient()
+            .post()
+            .uri {
+                it
+                    .queryParam("database", db.value)
+                    .queryParam("command", "deleterecord")
+                    .queryParam("output", "json")
+                    .queryParam("priref", id)
+                    .build()
+            }
+            .retrieve()
+            .onStatus(
+                { it.is4xxClientError || it.is5xxServerError },
+                { Mono.error(CollectionsException("Error deleting catalog item")) }
             )
     }
 }

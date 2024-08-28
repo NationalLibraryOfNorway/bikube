@@ -15,6 +15,8 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationD
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationE
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
@@ -855,5 +857,100 @@ class NewspaperServiceTest {
             .expectSubscription()
             .expectError(NotSupportedException::class.java)
             .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should return when valid deletion`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should throw CollectionsManifestationNotFound if manifestation could not be found`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsManifestationNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should throw NotSupportedException if id belongs to item`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemA)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectError(NotSupportedException::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should throw NotSupportedException if id belongs to title`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockTitleA)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectError(NotSupportedException::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should throw CollectionsException if manifestation does not have items`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsException::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should throw CollectionsException if manifestation does has multiple physical items`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationD)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsException::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should also delete manifestation when there are no more items`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationE)
+        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 2) { collectionsRepository.deleteTextsRecord(any()) }
+    }
+
+    @Test
+    fun `deletePhysicalItemByManifestationId should not delete manifestation when there are more items than one physical`() {
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+
+        newspaperService.deletePhysicalItemByManifestationId("1")
+            .test()
+            .expectSubscription()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 1) { collectionsRepository.deleteTextsRecord(any()) }
     }
 }

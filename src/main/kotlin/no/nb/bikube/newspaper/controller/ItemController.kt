@@ -15,11 +15,7 @@ import no.nb.bikube.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
@@ -91,6 +87,30 @@ class ItemController (
         return newspaperService.updatePhysicalNewspaper(item)
             .map {
                 logger().info("Newspaper item updated with id: ${item.manifestationId}")
+                ResponseEntity.noContent().build()
+            }
+    }
+
+    @DeleteMapping("/physical/{id}")
+    @Operation(
+        summary = "Delete a single physical newspaper by ID of manifestation.",
+        description = "Delete a single physical newspaper by the ID of its manifestation." +
+                      "The manifestation will also be deleted if there are no other items attached."
+    )
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "204", description = "Newspaper item deleted"),
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "404", description = "Not found", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
+    ])
+    fun deleteItem(
+        @PathVariable id: String
+    ): Mono<ResponseEntity<Void>> {
+        logger().info("Trying to delete newspaper item where its manifestation has id: $id")
+
+        return newspaperService.deletePhysicalItemByManifestationId(id)
+            .map {
+                logger().info("Newspaper item deleted with manifestation id: $id")
                 ResponseEntity.noContent().build()
             }
     }
