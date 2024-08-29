@@ -69,8 +69,9 @@ class ItemController (
     @PutMapping("")
     @Operation(
         summary = "Update a single physical newspaper by manifestation ID.",
-        description = "Update newspaper. All fields are optional (except ID and username), and fields not provided will not be updated. " +
-                      "All possible fields are only present on the manifestation in the current catalog, and will be updated there."
+        description = "Update newspaper. Notes and number is optional (not ID and username), and fields not provided will not be updated. " +
+                      "All possible fields are only present on the manifestation in the current catalog, and will be updated there." +
+                      "Date cannot be changed. In case of date change, delete the physical item and create a new one."
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "204", description = "Newspaper item updated"),

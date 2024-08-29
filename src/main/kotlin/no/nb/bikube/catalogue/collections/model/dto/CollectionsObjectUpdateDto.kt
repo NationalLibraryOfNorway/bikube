@@ -18,10 +18,6 @@ class CollectionsObjectUpdateDto @OptIn(ExperimentalSerializationApi::class) con
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     val notes: String? = null,
 
-    @SerialName("dating.date.start")
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    val date: String? = null,
-
     @SerialName("Alternative_number")
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     val alternativeNumbers: List<AlternativeNumberInput>? = null,
@@ -40,7 +36,6 @@ fun createUpdateManifestationDto(
     id: String,
     username: String,
     notes: String?,
-    date: LocalDate?,
     number: String?
 ): CollectionsObjectUpdateDto {
     val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
@@ -48,7 +43,6 @@ fun createUpdateManifestationDto(
     return CollectionsObjectUpdateDto(
         priRef = id,
         notes = notes,
-        date = date?.let { DateUtils.createDateString(date) },
         alternativeNumbers = altNumbers,
         editName = username,
         editDate = DateUtils.createDateString(LocalDate.now()),

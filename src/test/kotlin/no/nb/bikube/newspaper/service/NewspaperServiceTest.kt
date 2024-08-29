@@ -794,7 +794,6 @@ class NewspaperServiceTest {
         val dto = CollectionsObjectUpdateDto(
             priRef = newspaperItemUpdateDtoMockA.manifestationId,
             notes = TEST_NOTES,
-            date = DateUtils.createDateString(newspaperItemUpdateDtoMockA.date!!),
             alternativeNumbers = listOf(AlternativeNumberInput(name = newspaperItemUpdateDtoMockA.number!!, type = "Nummer")),
             editName = TEST_USERNAME,
             editTime = LocalTime.now().toString(),

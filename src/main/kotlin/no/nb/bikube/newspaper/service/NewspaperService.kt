@@ -334,7 +334,7 @@ class NewspaperService (
     private fun updateManifestation(
         item: ItemUpdateDto
     ): Mono<CollectionsObject> {
-        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.date, item.number)
+        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.updateTextsRecord(encodedBody)
             .handle { collectionsModel, sink ->

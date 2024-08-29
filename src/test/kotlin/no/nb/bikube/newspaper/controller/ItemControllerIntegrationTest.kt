@@ -285,8 +285,6 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains("edit.time"))
             Assertions.assertTrue(it.contains("edit.name"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
-            Assertions.assertTrue(it.contains("dating.date.start"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
             Assertions.assertTrue(it.contains("notes"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
             Assertions.assertTrue(it.contains("Alternative_number"))
@@ -298,7 +296,6 @@ class ItemControllerIntegrationTest {
     fun `put item should not update null-values`() {
         val dto = newspaperItemUpdateDtoMockA.copy(
             manifestationId = manifestationId,
-            date = null,
             number = null
         )
 
@@ -317,8 +314,6 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains("notes"))
             Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
 
-            Assertions.assertFalse(it.contains("dating.date.start"))
-            Assertions.assertFalse(it.contains(newspaperItemUpdateDtoMockA.date.toString()))
             Assertions.assertFalse(it.contains("Alternative_number"))
         })}
     }

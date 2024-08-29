@@ -58,18 +58,14 @@ class DtoValidationServiceTest {
     }
 
     @Test
-    fun `validateItemUpdateDto should throw exception if neither date, notes or number is provided`() {
+    fun `validateItemUpdateDto should throw exception if neither notes or number is provided`() {
         assertThrows<BadRequestBodyException> { dtoValidationService.validateItemUpdateDto(
             ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1")
         )}
     }
 
     @Test
-    fun `validateItemUpdateDto should not throw exception if only of date, notes or number is provided`() {
-        assertDoesNotThrow { dtoValidationService.validateItemUpdateDto(
-            ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1", date = LocalDate.now())
-        )}
-
+    fun `validateItemUpdateDto should not throw exception if only notes or number is provided`() {
         assertDoesNotThrow { dtoValidationService.validateItemUpdateDto(
             ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1", notes = "notes")
         )}

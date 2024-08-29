@@ -138,7 +138,6 @@ class NewspaperMockData {
         val newspaperItemUpdateDtoMockA = ItemUpdateDto(
             manifestationId = "24",
             username = TEST_USERNAME,
-            date = LocalDate.parse("2020-01-01"),
             notes = TEST_NOTES,
             number = "1"
         )
