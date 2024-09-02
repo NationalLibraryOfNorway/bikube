@@ -96,7 +96,8 @@ class ItemController (
     @Operation(
         summary = "Delete a single physical newspaper by ID of manifestation.",
         description = "Delete a single physical newspaper by the ID of its manifestation." +
-                      "The manifestation will also be deleted if there are no other items attached."
+                      "The manifestation will be deleted if there are no other items attached, " +
+                      "or if there are no items on the manifestation."
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "204", description = "Newspaper item deleted"),

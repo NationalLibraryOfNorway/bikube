@@ -290,6 +290,8 @@ class NewspaperService (
             } else {
                 collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
             }
+        } else if (allItems.isNullOrEmpty()) {
+            collectionsRepository.deleteTextsRecord(manifestation.priRef)
         } else {
             Mono.error(CollectionsException("Manifestation had ${physicalItems?.size ?: 0} physical items, expected 1"))
         }
