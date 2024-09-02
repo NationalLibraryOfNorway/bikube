@@ -904,14 +904,17 @@ class NewspaperServiceTest {
     }
 
     @Test
-    fun `deletePhysicalItemByManifestationId should throw CollectionsException if manifestation does not have items`() {
+    fun `deletePhysicalItemByManifestationId should delete manifestation if manifestation does not have items`() {
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         newspaperService.deletePhysicalItemByManifestationId("1")
             .test()
             .expectSubscription()
-            .expectError(CollectionsException::class.java)
-            .verify()
+            .expectNextCount(1)
+            .verifyComplete()
+
+        verify (exactly = 1){ collectionsRepository.deleteTextsRecord(any()) }
     }
 
     @Test
