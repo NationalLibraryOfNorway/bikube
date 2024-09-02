@@ -259,6 +259,42 @@ class NewspaperService (
             }
     }
 
+    fun deletePhysicalItemByManifestationId(manifestationId: String): Mono<CollectionsModel> {
+        return collectionsRepository.getSingleCollectionsModel(manifestationId)
+            .flatMap { manifestation ->
+                if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
+                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject())
+                } else if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() != CollectionsRecordType.MANIFESTATION) {
+                    Mono.error(NotSupportedException("Catalog item with id $manifestationId is not a manifestation. Must be a manifestation to delete this way."))
+                } else if (!manifestation.hasObjects()) {
+                    Mono.error(CollectionsManifestationNotFound("Manifestation with id $manifestationId not found."))
+                } else {
+                    Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
+                }
+            }
+    }
+
+    private fun deleteItemAndManifestationIfNoOtherItems(
+        manifestation: CollectionsObject
+    ): Mono<CollectionsModel> {
+        val allItems = manifestation.getParts()
+        val physicalItems = allItems?.filter {
+            it.partsReference?.getFormat() == CollectionsFormat.PHYSICAL
+        }
+
+        val firstPhysicalItem = physicalItems?.firstOrNull()
+        return if (physicalItems?.size == 1 && firstPhysicalItem?.partsReference != null) {
+            if (allItems.size == 1) {
+                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
+                    .then(collectionsRepository.deleteTextsRecord(manifestation.priRef))
+            } else {
+                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
+            }
+        } else {
+            Mono.error(CollectionsException("Manifestation had ${physicalItems?.size ?: 0} physical items, expected 1"))
+        }
+    }
+
     private fun createLinkedNewspaperItem(
         item: ItemInputDto,
         parentId: String
@@ -297,7 +333,7 @@ class NewspaperService (
     private fun updateManifestation(
         item: ItemUpdateDto
     ): Mono<CollectionsObject> {
-        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.date, item.number)
+        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
         return collectionsRepository.updateTextsRecord(encodedBody)
             .handle { collectionsModel, sink ->

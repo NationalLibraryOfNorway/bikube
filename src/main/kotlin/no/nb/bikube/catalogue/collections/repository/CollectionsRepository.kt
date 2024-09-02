@@ -28,7 +28,7 @@ class CollectionsRepository(
     @Throws(CollectionsException::class)
     fun getSingleCollectionsModelWithoutChildren(titleCatalogId: String): Mono<CollectionsModel> {
         val fields = "priref and title and work.description_type and record_type " +
-                "and dating.date.start and dating.date.end and publisher " +
+                "and dating.date.start and dating.date.end and edition.date and publisher " +
                 "and association.geographical_keyword and language and submedium " +
                 "and format and alternative_number and alternative_number.type " +
                 "and part_of_reference and PID_data_URN and current_location.barcode"
@@ -50,7 +50,7 @@ class CollectionsRepository(
         return searchTexts(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
             "part_of_reference.lref=${titleCatalogId} and " +
-            "dating.date.start='${dateString}'"
+            "edition.date='${dateString}'"
         )
     }
 
@@ -92,6 +92,10 @@ class CollectionsRepository(
 
     fun updateTextsRecord(serializedBody: String): Mono<CollectionsModel> {
         return updateRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    }
+
+    fun deleteTextsRecord(id: String): Mono<CollectionsModel> {
+        return deleteRecordWebClientRequest(id, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
     }
 
     private fun searchTexts(query: String): Mono<CollectionsModel> {
@@ -182,6 +186,24 @@ class CollectionsRepository(
             .onStatus(
                 { it.is4xxClientError || it.is5xxServerError },
                 { Mono.error(CollectionsException("Error updating catalog item")) }
+            )
+    }
+
+    private fun deleteRecordWebClientRequest(id: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+        return webClient()
+            .post()
+            .uri {
+                it
+                    .queryParam("database", db.value)
+                    .queryParam("command", "deleterecord")
+                    .queryParam("output", "json")
+                    .queryParam("priref", id)
+                    .build()
+            }
+            .retrieve()
+            .onStatus(
+                { it.is4xxClientError || it.is5xxServerError },
+                { Mono.error(CollectionsException("Error deleting catalog item")) }
             )
     }
 }

@@ -24,16 +24,16 @@ class DtoValidationService {
 
     @Throws(BadRequestBodyException::class)
     fun validateItemUpdateDto(dto: ItemUpdateDto) {
-        if (dto.date == null && dto.notes == null && dto.number == null) {
-            throw BadRequestBodyException("Need to provide at least one field to update")
-        }
-
         if (dto.username.isBlank()) {
             throw BadRequestBodyException("Need to provide username")
         }
 
         if (dto.manifestationId.isBlank()) {
             throw BadRequestBodyException("Need to provide manifestation ID")
+        }
+
+        if (dto.notes == null && dto.number == null) {
+            throw BadRequestBodyException("Need to provide either notes or number")
         }
     }
 }

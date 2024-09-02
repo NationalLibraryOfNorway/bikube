@@ -254,7 +254,7 @@ class CollectionsModelMockData {
                         publisherList = null,
                         languageList = null,
                         placeOfPublicationList = null,
-                        partsList = listOf(collectionsPartsObjectMockItemA),
+                        partsList = listOf(collectionsPartsObjectMockItemA, collectionsPartsObjectMockItemB),
                         alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "bikubeavisen_null_null_19991224_1_1_1")),
                         inputName = listOf(TEST_USERNAME),
                         notes = listOf(TEST_NOTES)
@@ -280,6 +280,54 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
+                        alternativeNumberList = null,
+                        inputName = listOf(TEST_USERNAME)
+                    )
+                )
+            )
+        )
+
+        // Manifestation with 2 physical parts
+        val collectionsModelMockManifestationD = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "46",
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
+                        recordTypeList = collectionsRecordTypeListManifestMock,
+                        formatList = null,
+                        partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(collectionsPartsObjectMockItemB, collectionsPartsObjectMockItemB),
+                        alternativeNumberList = null,
+                        inputName = listOf(TEST_USERNAME)
+                    )
+                )
+            )
+        )
+
+        // Manifestation with 1 physical part
+        val collectionsModelMockManifestationE = CollectionsModel(
+            adlibJson = CollectionsRecordList(
+                recordList = listOf(
+                    CollectionsObject(
+                        priRef = "46",
+                        titleList = listOf(CollectionsTitle(title = "Bikubeavisen")),
+                        recordTypeList = collectionsRecordTypeListManifestMock,
+                        formatList = null,
+                        partOfList = listOf(collectionsPartOfObjectMockSerialWorkA),
+                        subMediumList = null,
+                        mediumList = null,
+                        datingList = null,
+                        publisherList = null,
+                        languageList = null,
+                        placeOfPublicationList = null,
+                        partsList = listOf(collectionsPartsObjectMockItemB),
                         alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
