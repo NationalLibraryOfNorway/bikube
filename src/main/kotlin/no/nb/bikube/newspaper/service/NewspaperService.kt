@@ -262,15 +262,14 @@ class NewspaperService (
     fun deletePhysicalItemByManifestationId(manifestationId: String): Mono<CollectionsModel> {
         return collectionsRepository.getSingleCollectionsModel(manifestationId)
             .flatMap { manifestation ->
-                println(manifestation)
-                if (manifestation.hasError()) {
-                    Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
+                if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
+                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject())
+                } else if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() != CollectionsRecordType.MANIFESTATION) {
+                    Mono.error(NotSupportedException("Catalog item with id $manifestationId is not a manifestation. Must be a manifestation to delete this way."))
                 } else if (!manifestation.hasObjects()) {
                     Mono.error(CollectionsManifestationNotFound("Manifestation with id $manifestationId not found."))
-                } else if (manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
-                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject())
                 } else {
-                    Mono.error(NotSupportedException("Catalog item with id $manifestationId is not a manifestation or does not exist."))
+                    Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
                 }
             }
     }
