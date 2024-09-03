@@ -259,11 +259,11 @@ class NewspaperService (
             }
     }
 
-    fun deletePhysicalItemByManifestationId(manifestationId: String): Mono<CollectionsModel> {
+    fun deletePhysicalItemByManifestationId(manifestationId: String, deleteManifestation: Boolean): Mono<CollectionsModel> {
         return collectionsRepository.getSingleCollectionsModel(manifestationId)
             .flatMap { manifestation ->
                 if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
-                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject())
+                    deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject(), deleteManifestation)
                 } else if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() != CollectionsRecordType.MANIFESTATION) {
                     Mono.error(NotSupportedException("Catalog item with id $manifestationId is not a manifestation. Must be a manifestation to delete this way."))
                 } else if (!manifestation.hasObjects()) {
@@ -275,7 +275,8 @@ class NewspaperService (
     }
 
     private fun deleteItemAndManifestationIfNoOtherItems(
-        manifestation: CollectionsObject
+        manifestation: CollectionsObject,
+        deleteManifestation: Boolean
     ): Mono<CollectionsModel> {
         val allItems = manifestation.getParts()
         val physicalItems = allItems?.filter {
@@ -283,15 +284,18 @@ class NewspaperService (
         }
 
         val firstPhysicalItem = physicalItems?.firstOrNull()
+
         return if (physicalItems?.size == 1 && firstPhysicalItem?.partsReference != null) {
-            if (allItems.size == 1) {
+            if (allItems.size == 1 && deleteManifestation) {
                 collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
                     .then(collectionsRepository.deleteTextsRecord(manifestation.priRef))
             } else {
                 collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
             }
-        } else if (allItems.isNullOrEmpty()) {
+        } else if (allItems.isNullOrEmpty() && deleteManifestation) {
             collectionsRepository.deleteTextsRecord(manifestation.priRef)
+        } else if (allItems.isNullOrEmpty()) {
+            Mono.error(CollectionsException("Manifestation had no items, expected at least 1"))
         } else {
             Mono.error(CollectionsException("Manifestation had ${physicalItems?.size ?: 0} physical items, expected 1"))
         }

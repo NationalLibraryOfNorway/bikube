@@ -1,6 +1,7 @@
 package no.nb.bikube.newspaper.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -96,8 +97,9 @@ class ItemController (
     @Operation(
         summary = "Delete a single physical newspaper by ID of manifestation.",
         description = "Delete a single physical newspaper by the ID of its manifestation." +
-                      "The manifestation will be deleted if there are no other items attached, " +
-                      "or if there are no items on the manifestation."
+                      "Default, the manifestation will be deleted if there are no other items attached, " +
+                      "or if there are no items on the manifestation. Can be turned off by setting deleteManifestation=false. " +
+                      "When set to true, will still delete item (not manifestation) and return OK if there are more items on the manifestation."
     )
     @ApiResponses(value = [
         ApiResponse(responseCode = "204", description = "Newspaper item deleted"),
@@ -106,11 +108,13 @@ class ItemController (
         ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun deleteItem(
-        @PathVariable id: String
+        @PathVariable id: String,
+        @Parameter(description = "Include XML declaration/prolog in XML output.")
+        @RequestParam(required = false, defaultValue = "true") deleteManifestation: Boolean
     ): Mono<ResponseEntity<Void>> {
         logger().info("Trying to delete newspaper item where its manifestation has id: $id")
 
-        return newspaperService.deletePhysicalItemByManifestationId(id)
+        return newspaperService.deletePhysicalItemByManifestationId(id, deleteManifestation)
             .map {
                 logger().info("Newspaper item deleted with manifestation id: $id")
                 ResponseEntity.noContent().build()
