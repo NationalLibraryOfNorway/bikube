@@ -109,7 +109,7 @@ class ItemController (
     ])
     fun deleteItem(
         @PathVariable id: String,
-        @Parameter(description = "Include XML declaration/prolog in XML output.")
+        @Parameter(description = "Also delete manifestation if no other items are attached to it.")
         @RequestParam(required = false, defaultValue = "true") deleteManifestation: Boolean
     ): Mono<ResponseEntity<Void>> {
         logger().info("Trying to delete newspaper item where its manifestation has id: $id")
