@@ -18,7 +18,6 @@ import no.nb.bikube.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import org.springframework.stereotype.Service
-import org.springframework.web.util.DefaultUriBuilderFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
@@ -70,11 +69,8 @@ class NewspaperService (
     }
 
     fun getLinkToSingleTitle(catalogId: String): URL {
-        val url = URL(collectionsConfig.url)
-        return DefaultUriBuilderFactory().builder()
-            .scheme(url.protocol)
-            .host(url.host)
-            .pathSegment("collections_UAT", "link", "xplus", "textscatalogue", catalogId)
+        return collectionsConfig.directLinkPrefix
+            .pathSegment(catalogId)
             .build()
             .toURL()
     }
