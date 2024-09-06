@@ -53,6 +53,7 @@ import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.LocalDate
@@ -61,6 +62,7 @@ import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestPropertySource(properties = ["collections.url=http://collections.com/webapi"])
 class NewspaperServiceTest {
 
     companion object {
@@ -337,6 +339,14 @@ class NewspaperServiceTest {
             .expectSubscription()
             .expectError(CollectionsException::class.java)
             .verify()
+    }
+
+    @Test
+    fun `get link to single title should return correct URL`() {
+        Assertions.assertEquals(
+            newspaperService.getLinkToSingleTitle("12345").toString(),
+            "http://collections.com/collections_UAT/link/xplus/textscatalogue/12345"
+        )
     }
 
     @Test

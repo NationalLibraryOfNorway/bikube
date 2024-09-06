@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.net.URL
 import java.time.LocalDate
 
 @RestController
@@ -62,6 +63,7 @@ class CoreController (
     @Operation(summary = "Get single title from catalogue")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class, NotSupportedException::class)
@@ -133,4 +135,20 @@ class CoreController (
         }
     }
 
+    @GetMapping("/title/link")
+    @Operation(summary = "Get a direct link to title in catalogue")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()])
+    ])
+    @Throws(NotSupportedException::class)
+    fun getCatalogueLink(
+        @RequestParam catalogueId: String,
+        @RequestParam materialType: MaterialType
+    ): ResponseEntity<URL> {
+        return when(materialTypeToCatalogueName(materialType)) {
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getLinkToSingleTitle(catalogueId))
+            else -> throw NotSupportedException("Material type $materialType is not supported.")
+        }
+    }
 }
