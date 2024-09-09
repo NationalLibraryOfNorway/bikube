@@ -10,13 +10,13 @@ class CollectionsConfig (
     val url: String,
     val username: String,
     val password: String,
-    var directLinkPrefix: UriBuilder = DefaultUriBuilderFactory().builder()
+    var directLinkTemplate: UriBuilder = DefaultUriBuilderFactory().builder()
 ) {
     init {
         val urlObject = URL(url)
-        directLinkPrefix = directLinkPrefix
+        directLinkTemplate = directLinkTemplate
             .scheme(urlObject.protocol)
             .host(urlObject.host)
-            .pathSegment("collections_UAT", "link", "xplus", "textscatalogue")
+            .pathSegment("collections_UAT", "link", "xplus", "textscatalogue", "{id}")
     }
 }
