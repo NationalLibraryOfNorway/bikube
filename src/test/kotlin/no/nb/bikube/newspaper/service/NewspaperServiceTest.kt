@@ -340,6 +340,14 @@ class NewspaperServiceTest {
     }
 
     @Test
+    fun `get link to single title should return correct URL`() {
+        Assertions.assertEquals(
+            newspaperService.getLinkToSingleTitle("12345").toString(),
+            "http://collections.com/link/12345"
+        )
+    }
+
+    @Test
     fun `createTitle should return correctly mapped record`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)

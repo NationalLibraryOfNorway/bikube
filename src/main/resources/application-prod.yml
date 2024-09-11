@@ -5,3 +5,4 @@ collections:
   url: ${COLLECTIONS_PATH_PROD}
   username: ${COLLECTIONS_USERNAME_PROD}
   password: ${COLLECTIONS_PASSWORD_PROD}
+  direct-link: ${COLLECTIONS_DIRECTLINK_PROD}

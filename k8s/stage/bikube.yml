@@ -52,6 +52,11 @@ spec:
                 secretKeyRef:
                   name: bikube-secrets
                   key: ad_password
+            - name: COLLECTIONS_DIRECTLINK_STAGE
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: collections-directlink
             - name: KERBEROS_REALM
               valueFrom:
                 secretKeyRef:

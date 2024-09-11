@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.nb.bikube.catalogue.collections.config.CollectionsConfig
 import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.catalogue.collections.mapper.*
@@ -20,10 +21,12 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
+import java.net.URL
 import java.time.LocalDate
 
 @Service
 class NewspaperService (
+    private val collectionsConfig: CollectionsConfig,
     private val collectionsRepository: CollectionsRepository,
     private val collectionsLocationService: CollectionsLocationService,
     private val uniqueIdService: UniqueIdService
@@ -63,6 +66,12 @@ class NewspaperService (
         return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
             .map { mapCollectionsObjectToGenericTitle(it) }
+    }
+
+    fun getLinkToSingleTitle(catalogId: String): URL {
+        return collectionsConfig.linkTemplate
+            .build(catalogId)
+            .toURL()
     }
 
     fun getTitlesPage(pageNumber: Int): Mono<Tuple2<List<Title>, Int>> {
