@@ -69,7 +69,7 @@ class NewspaperService (
     }
 
     fun getLinkToSingleTitle(catalogId: String): URL {
-        return collectionsConfig.directLinkTemplate
+        return collectionsConfig.linkTemplate
             .build(catalogId)
             .toURL()
     }

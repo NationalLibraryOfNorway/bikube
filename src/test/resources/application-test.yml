@@ -5,5 +5,3 @@ search-index:
   enabled: false
 
 app.scheduling.enabled: false
-
-collections.url: http://collections.com/webapi

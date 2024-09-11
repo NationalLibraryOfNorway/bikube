@@ -5,3 +5,4 @@ collections:
   url: ${COLLECTIONS_PATH_STAGE}
   username: ${COLLECTIONS_USERNAME_STAGE}
   password: ${COLLECTIONS_PASSWORD_STAGE}
+  direct-link: ${COLLECTIONS_DIRECTLINK_STAGE}
