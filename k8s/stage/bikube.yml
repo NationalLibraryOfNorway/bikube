@@ -56,7 +56,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: bikube-secrets
-                  key: collections-directlink
+                  key: collections_directlink
             - name: KERBEROS_REALM
               valueFrom:
                 secretKeyRef:
