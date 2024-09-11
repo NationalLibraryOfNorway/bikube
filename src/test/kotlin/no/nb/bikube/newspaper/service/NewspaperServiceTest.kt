@@ -53,7 +53,6 @@ import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.LocalDate
@@ -62,7 +61,6 @@ import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(properties = ["collections.direct-link=http://collections.com/link/{id}"])
 class NewspaperServiceTest {
 
     companion object {

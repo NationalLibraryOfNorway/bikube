@@ -5,3 +5,5 @@ search-index:
   enabled: false
 
 app.scheduling.enabled: false
+
+collections.direct-link: http://collections.com/link/{id}
