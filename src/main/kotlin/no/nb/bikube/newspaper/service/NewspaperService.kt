@@ -95,7 +95,7 @@ class NewspaperService (
         date: LocalDate,
         isDigital: Boolean?
     ): Flux<CatalogueRecord> {
-        return collectionsRepository.getManifestationsByDateAndTitle(date, titleCatalogId)
+        return collectionsRepository.getManifestations(date, titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .flatMap { briefManifestation ->
                 collectionsRepository.getSingleCollectionsModel(briefManifestation.priRef)
@@ -334,8 +334,8 @@ class NewspaperService (
         notes: String?,
         number: String?
     ): Mono<CollectionsObject> {
-        return collectionsRepository.getManifestationsByDateAndTitle(
-            date, titleId
+        return collectionsRepository.getManifestations(
+            date, titleId, number
         ).flatMap {
             if (!it.hasObjects()) {
                 createManifestation(titleId, date, username, notes, number)

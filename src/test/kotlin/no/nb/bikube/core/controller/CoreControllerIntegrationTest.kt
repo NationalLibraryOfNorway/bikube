@@ -59,8 +59,8 @@ class CoreControllerIntegrationTest (
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestationsByDateAndTitle(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getManifestationsByDateAndTitle(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getManifestations(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getManifestations(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
                 collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -377,7 +377,7 @@ class CoreControllerIntegrationTest (
             .expectNext(expectedItem)
             .verifyComplete()
 
-        verify(exactly = 1) { collectionsRepository.getManifestationsByDateAndTitle(any(), "1") }
+        verify(exactly = 1) { collectionsRepository.getManifestations(any(), "1") }
         verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) }
     }
 

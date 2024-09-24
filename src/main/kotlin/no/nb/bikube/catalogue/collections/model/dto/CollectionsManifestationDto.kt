@@ -24,6 +24,9 @@ class ManifestationDto (
     @SerialName("edition.date")
     val date: String? = null,
 
+    @SerialName("edition")
+    val edition: String? = null,
+
     @SerialName("input.name")
     val inputName: String? = null,
 
@@ -65,6 +68,7 @@ fun createManifestationDto(
         partOfReference = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
+        edition = number,
         inputName = username,
         inputNotes = "Registrert i Bikube API",
         inputSource = "texts",
