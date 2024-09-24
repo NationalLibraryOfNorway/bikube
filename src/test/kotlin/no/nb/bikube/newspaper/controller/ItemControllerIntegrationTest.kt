@@ -81,7 +81,7 @@ class ItemControllerIntegrationTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestationsByDateAndTitleAndEdition(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
@@ -165,7 +165,7 @@ class ItemControllerIntegrationTest {
     @Test
     fun `post-newspapers-items endpoint should create correct manifestation if not found`() {
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getManifestationsByDateAndTitleAndEdition(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         createItem(newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01")))
             .expectStatus().isCreated
@@ -249,7 +249,7 @@ class ItemControllerIntegrationTest {
     @Test
     fun `post missing-item create correct manifestation if not found`() {
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getManifestationsByDateAndTitleAndEdition(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         webClient
             .post()
