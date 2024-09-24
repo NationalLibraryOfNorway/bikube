@@ -334,8 +334,8 @@ class NewspaperService (
         notes: String?,
         number: String?
     ): Mono<CollectionsObject> {
-        return collectionsRepository.getManifestationsByDateAndTitle(
-            date, titleId
+        return collectionsRepository.getManifestationsByDateAndTitleAndEdition(
+            date, titleId, number
         ).flatMap {
             if (!it.hasObjects()) {
                 createManifestation(titleId, date, username, notes, number)

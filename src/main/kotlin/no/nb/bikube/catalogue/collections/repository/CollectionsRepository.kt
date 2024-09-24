@@ -54,6 +54,16 @@ class CollectionsRepository(
         )
     }
 
+    fun getManifestationsByDateAndTitleAndEdition(date: LocalDate, titleCatalogId: String, number: String?): Mono<CollectionsModel> {
+        val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
+        return searchTexts(
+            "record_type=${CollectionsRecordType.MANIFESTATION} and " +
+                    "part_of_reference.lref=${titleCatalogId} and " +
+                    "edition.date='${dateString}'" +
+                    (number ?. let {" and edition='${number}'"} ?: "")
+        )
+    }
+
     fun searchPublisher(name: String): Mono<CollectionsNameModel> {
         return searchNameDatabases("name.type=${CollectionsNameType.PUBLISHER} and name=\"${name}\"")
     }
