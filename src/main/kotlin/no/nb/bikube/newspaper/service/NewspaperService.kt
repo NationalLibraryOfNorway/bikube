@@ -232,13 +232,19 @@ class NewspaperService (
                 } else {
                     findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
                 }
-            }.flatMap { manifestation ->
-                if (item.digital == false && !item.containerId.isNullOrBlank()) {
-                    collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
-                        .then(createLinkedNewspaperItem(item, manifestation.priRef))
-                } else {
-                    createLinkedNewspaperItem(item, manifestation.priRef)
-                }
+            }.flatMap { manifestationReference ->
+                collectionsRepository.getSingleCollectionsModel(manifestationReference.priRef)
+            }
+            .flatMap { manifestation ->
+                val manifestationId = manifestation.getFirstObject().priRef
+                checkForExistingItems(manifestation.getFirstObject(), item).then(
+                    if (item.digital == false && !item.containerId.isNullOrBlank()) {
+                        collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
+                            .then(createLinkedNewspaperItem(item, manifestationId))
+                    } else {
+                        createLinkedNewspaperItem(item, manifestationId)
+                    }
+                )
             }
     }
 
@@ -281,6 +287,20 @@ class NewspaperService (
                     Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
                 }
             }
+    }
+
+    private fun checkForExistingItems(
+        manifestation: CollectionsObject,
+        item: ItemInputDto
+    ): Mono<Void> {
+        val allItems = manifestation.getParts() ?: emptyList()
+        val hasDigitalItem = allItems.any { it.partsReference?.getFormat() == CollectionsFormat.DIGITAL }
+        val hasPhysicalItem = allItems.any { it.partsReference?.getFormat() == CollectionsFormat.PHYSICAL }
+        return when {
+            hasDigitalItem && item.digital == true -> Mono.error(CollectionsManifestationItemsAlreadyExist("Manifestation already has a digital item"))
+            hasPhysicalItem && item.digital == false -> Mono.error(CollectionsManifestationItemsAlreadyExist("Manifestation already has a physical item"))
+            else -> Mono.empty()
+        }
     }
 
     private fun deleteItemAndManifestationIfNoOtherItems(
