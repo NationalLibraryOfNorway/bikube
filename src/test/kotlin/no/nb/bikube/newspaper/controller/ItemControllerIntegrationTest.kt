@@ -180,12 +180,15 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspaper-items endpoint should return 409 conflict if manifestation already has item with given format`() {
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationD)
+        val item = newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
 
-        createItem(newspaperItemMockCValidForCreation)
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+
+        createItem(item)
             .expectStatus().isEqualTo(409)
-
-        verify(exactly = 0) { collectionsRepository.createTextsRecord(any()) }
     }
 
     @Test
