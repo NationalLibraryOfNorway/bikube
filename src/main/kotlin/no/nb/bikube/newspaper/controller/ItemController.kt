@@ -31,6 +31,7 @@ class ItemController (
     @ApiResponses(value = [
         ApiResponse(responseCode = "201", description = "Newspaper created"),
         ApiResponse(responseCode = "400", description = "Bad request", content = [Content()]),
+        ApiResponse(responseCode = "409", description = "Conflict", content = [Content()]),
         ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
     ])
     fun createItem(
