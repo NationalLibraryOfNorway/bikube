@@ -51,7 +51,9 @@ class CollectionsRepository(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
             "part_of_reference.lref=${titleCatalogId} and " +
             "edition.date='${dateString}'" +
-            (number ?. let {" and edition='${number}'"} ?: "")
+            (number.takeIf { !it.isNullOrBlank() }
+                ?. let { " and edition='${it}'" }
+                ?: " and not edition='*'") // equivalent to " and edition = null", but that isn't supported in Collections
         )
     }
 
