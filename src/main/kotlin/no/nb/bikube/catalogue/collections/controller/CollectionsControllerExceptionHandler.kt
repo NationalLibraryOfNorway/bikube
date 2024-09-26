@@ -65,4 +65,15 @@ class CollectionsControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(CollectionsManifestationItemsAlreadyExist::class)
+    fun handleCollectionsManifestationItemsAlreadyExistException(exception: CollectionsManifestationItemsAlreadyExist): ProblemDetail {
+        logger().warn("CollectionsManifestationItemsAlreadyExist occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT)
+        problemDetail.detail = "Collections manifestation items already exist: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }

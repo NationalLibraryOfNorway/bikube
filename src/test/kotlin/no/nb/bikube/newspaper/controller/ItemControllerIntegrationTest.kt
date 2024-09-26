@@ -11,6 +11,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationD
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationE
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
@@ -164,13 +165,30 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspapers-items endpoint should create correct manifestation if not found`() {
+        val item = newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
+
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationE.copy())
         every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        createItem(newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01")))
+        createItem(item)
             .expectStatus().isCreated
 
         verify(exactly = 2) { collectionsRepository.createTextsRecord(any()) }
+    }
+
+    @Test
+    fun `post-newspaper-items endpoint should return 409 conflict if manifestation already has item with given format`() {
+        val item = newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
+
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+
+        createItem(item)
+            .expectStatus().isEqualTo(409)
     }
 
     @Test
