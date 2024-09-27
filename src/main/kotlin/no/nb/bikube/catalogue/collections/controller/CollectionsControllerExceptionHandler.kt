@@ -76,4 +76,15 @@ class CollectionsControllerExceptionHandler {
 
         return problemDetail
     }
+
+    @ExceptionHandler(CollectionsPhysicalItemMissingContainer::class)
+    fun handleCollectionsPhysicalItemMissingContainerException(exception: CollectionsPhysicalItemMissingContainer): ProblemDetail {
+        logger().warn("CollectionsPhysicalItemMissingContainer occurred: ${exception.message}")
+
+        val problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST)
+        problemDetail.detail = "Physical item is missing container: ${exception.message}"
+        problemDetail.addDefaultProperties()
+
+        return problemDetail
+    }
 }

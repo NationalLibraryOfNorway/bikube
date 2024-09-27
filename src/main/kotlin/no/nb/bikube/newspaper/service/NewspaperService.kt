@@ -241,6 +241,8 @@ class NewspaperService (
                     if (item.digital == false && !item.containerId.isNullOrBlank()) {
                         collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
                             .then(createLinkedNewspaperItem(item, manifestationId))
+                    } else if (item.digital == false && item.containerId.isNullOrBlank()) {
+                        Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
                     } else {
                         createLinkedNewspaperItem(item, manifestationId)
                     }
