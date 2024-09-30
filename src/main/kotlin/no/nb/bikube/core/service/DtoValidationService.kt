@@ -20,6 +20,10 @@ class DtoValidationService {
         if (item.digital == true && item.urn.isNullOrBlank()) {
             throw BadRequestBodyException("Need to provide URN for digital item")
         }
+
+        if (!item.digital && item.containerId.isNullOrBlank()) {
+            throw BadRequestBodyException("Need to provide container ID for physical item")
+        }
     }
 
     @Throws(BadRequestBodyException::class)

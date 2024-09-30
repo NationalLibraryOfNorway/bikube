@@ -30,6 +30,7 @@ import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
+import no.nb.bikube.catalogue.collections.exception.CollectionsPhysicalItemMissingContainer
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
@@ -134,7 +135,8 @@ class NewspaperServiceTest {
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "texts",
-        partOfReference = newspaperItemMockB.catalogueId
+        partOfReference = newspaperItemMockB.catalogueId,
+        currentLocationName = collectionsLocationObjectMock.priRef
     ))
 
     private val titleEncodedDto = Json.encodeToString(TitleDto(
@@ -518,10 +520,14 @@ class NewspaperServiceTest {
     @Test
     fun `createNewspaperItem should ignore URN if is is a physical item`() {
         every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        newspaperService.createNewspaperItem(newspaperInputDtoItemMockB.copy(digital = false))
+        every { collectionLocationService.createContainerIfNotExists(any(), any()) } returns Mono.just(collectionsLocationObjectMock)
+
+        newspaperService.createNewspaperItem(
+            newspaperInputDtoItemMockB.copy(digital = false, containerId = collectionsLocationObjectMock.priRef)
+        )
             .test()
             .expectSubscription()
             .expectNextCount(1)
@@ -575,7 +581,7 @@ class NewspaperServiceTest {
     }
 
     @Test
-    fun `createNewspaperItem should not get or create container if item is physical and does not have container ID`() {
+    fun `createNewspaperItem should return CollectionsPhysicalItemMissingContainer if item is physical and does not have container ID`() {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
@@ -588,11 +594,11 @@ class NewspaperServiceTest {
         newspaperService.createNewspaperItem(testItem)
             .test()
             .expectSubscription()
-            .expectNextCount(1)
-            .verifyComplete()
-
-        // Then a container should not be created
-        verify (exactly = 0) { collectionLocationService.createContainerIfNotExists(any(), any()) }
+            .expectErrorMatches {
+                it is CollectionsPhysicalItemMissingContainer &&
+                it.message!!.contains("Physical item must have a container ID")
+            }
+            .verify()
     }
 
     @Test
