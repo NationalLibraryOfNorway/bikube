@@ -238,13 +238,13 @@ class NewspaperService (
             .flatMap { manifestation ->
                 val manifestationId = manifestation.getFirstObject().priRef
                 checkForExistingItems(manifestation.getFirstObject(), item).then(
-                    if (item.digital == false && !item.containerId.isNullOrBlank()) {
+                    if (item.digital == true) {
+                        createLinkedNewspaperItem(item, manifestationId)
+                    } else if (!item.containerId.isNullOrBlank()) {
                         collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
                             .then(createLinkedNewspaperItem(item, manifestationId))
-                    } else if (item.digital == false && item.containerId.isNullOrBlank()) {
-                        Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
                     } else {
-                        createLinkedNewspaperItem(item, manifestationId)
+                        Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
                     }
                 )
             }

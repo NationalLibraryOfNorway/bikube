@@ -24,7 +24,8 @@ class DtoValidationServiceTest {
         titleCatalogueId = "1",
         username = TEST_USERNAME,
         digital = true,
-        urn = "avis_null_null_20200101_1_1_1"
+        urn = "avis_null_null_20200101_1_1_1",
+        containerId = null
     )
 
     private val validPhysicalItem = ItemInputDto(
@@ -32,7 +33,8 @@ class DtoValidationServiceTest {
         titleCatalogueId = "1",
         username = TEST_USERNAME,
         digital = false,
-        urn = null
+        urn = null,
+        containerId = "1"
     )
 
     @Test
@@ -55,6 +57,13 @@ class DtoValidationServiceTest {
     fun `validateItemInputDto should throw exception if digital is true and urn is null or blank`() {
         assertThrows<BadRequestBodyException> { dtoValidationService.validateItemInputDto(validDigitalItem.copy(urn = null)) }
         assertThrows<BadRequestBodyException> { dtoValidationService.validateItemInputDto(validDigitalItem.copy(urn = "")) }
+    }
+
+    @Test
+    fun `validateItemInputDto should throw exception if digital is false and containerId is null or blank`() {
+        assertThrows<BadRequestBodyException> {
+            dtoValidationService.validateItemInputDto(validDigitalItem.copy(digital = false, containerId = null))
+        }
     }
 
     @Test
