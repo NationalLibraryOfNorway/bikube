@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="nb">
+<head>
+    <title>Getting info from Alma</title>
+    <link href="../static/style.css" media="screen" rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+    <h1 class="title" th:text="Bikube"></h1>
+    <p class="checking" th:text="'Sjekker ' + ${id}"></p>
+
+    <ul class="result_presentation">
+        <li th:text="${titleObject}"></li>
+        <li th:text="${authorObject}"></li>
+        <li th:text="${yearObject}"></li>
+        <li th:text="${pagesObject} "></li>
+    </ul>
+</body>
