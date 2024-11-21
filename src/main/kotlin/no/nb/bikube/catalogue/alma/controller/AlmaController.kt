@@ -7,14 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.Pattern
-import no.nb.bikube.catalogue.alma.service.*
+import no.nb.bikube.catalogue.alma.enum.OtherField
+import no.nb.bikube.catalogue.alma.model.MarcRecord
+import no.nb.bikube.catalogue.alma.service.AlmaService
+import no.nb.bikube.catalogue.alma.service.AlmaSruService
+import no.nb.bikube.catalogue.alma.service.MarcXChangeService
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import reactor.core.publisher.Mono
 
 @Validated
@@ -119,6 +120,20 @@ class AlmaController(
             .map { marcXChangeService.writeAsByteArray(it) }
     }
 
+    @GetMapping("/html/barcode/{barcode}", produces = [MediaType.TEXT_HTML_VALUE])
+    fun getHTMLBarcode(
+        @Parameter(description = "Item barcode")
+        @Pattern(regexp = BARCODE_REGEX, message = BARCODE_MESSAGE)
+        @PathVariable barcode: String
+    ): Mono<ModelAndView> {
+        val marcRecord = almaService.getRecordByBarcode(barcode)
+        val modelAndView = ModelAndView()
+        modelAndView.viewName = "check"
+        modelAndView.addObject("id", "strekkode: $barcode")
+        addMetadata(marcRecord, modelAndView)
+        return Mono.just(modelAndView)
+    }
+
     companion object {
         const val MMS_REGEX = "[0-9]{8,19}"
         const val MMS_MESSAGE = "MMS-ID kan kun inneholde tall, og må være mellom 8 og 19 tegn."
@@ -130,5 +145,13 @@ class AlmaController(
         const val ISBN_MESSAGE = "Invalid ISBN pattern"
         const val ISMN_REGEX = "$ISBN_REGEX|M-?[0-9]{4}-?[0-9]{4}-?[0-9]"
         const val ISMN_MESSAGE = "Invalid ISMN pattern"
+        private fun addMetadata(marcRecord: Mono<MarcRecord>, modelAndView: ModelAndView) {
+            marcRecord.subscribe { record ->
+                modelAndView.addObject("titleObject", record.datafield.find { it.tag == OtherField.TITLE.tag }?.subfield?.find { it.code == "a" }?.content.orEmpty())
+                modelAndView.addObject("authorObject", record.datafield.find { it.tag == OtherField.AUTHOR.tag }?.subfield?.find { it.code == "a" }?.content.orEmpty())
+                modelAndView.addObject("yearObject", record.datafield.find { it.tag == OtherField.YEAR.tag }?.subfield?.find { it.code == "a" }?.content.orEmpty())
+                modelAndView.addObject("pagesObject", record.datafield.find { it.tag == OtherField.NUMBER_OF_PAGES.tag }?.subfield?.find { it.code == "a" }?.content.orEmpty())
+            }
+        }
     }
 }
