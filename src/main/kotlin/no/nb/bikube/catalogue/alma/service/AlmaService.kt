@@ -87,27 +87,6 @@ class AlmaService(
             }
     }
 
-//    @Throws(NotFoundException::class, AlmaException::class, MarcXChangeException::class)
-//    fun getMarcXChangeRecordByBarcode(barcode: String): MarcXChangeRecord {
-//        val mms: String
-//        val enumChron: Map<EnumChronField, String>
-//        try {
-//            val result = almaClientService.getItem(barcode)
-//            if (result.getMMS().isEmpty()) {
-//                throw UncategorizedException("No MMS-id found in Alma item result.")
-//            } else mms = result.getMMS()
-//            enumChron = result.getEnumChron()
-//        } catch (ex: ErrorResponseException) {
-//            if (ex.containsErrorCode(AlmaErrorCode.BARCODE_NOT_FOUND.value)) {
-//                throw NotFoundException("Barcode not found", ex)
-//            }
-//            throw ex
-//        }
-//        val marcXChangeRecord = getRecordByMMS(mms)
-//        marcXChangeRecord.addEnumChron(enumChron)
-//        return marcXChangeRecord
-//    }
-
     private fun mapHttpError(response: ClientResponse): Mono<Throwable> {
         if (response.statusCode() != HttpStatus.BAD_REQUEST)
             return response.bodyToMono(String::class.java)
