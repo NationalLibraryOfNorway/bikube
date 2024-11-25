@@ -1,0 +1,34 @@
+body {
+    background-repeat: no-repeat;
+    background-color: azure;
+    background-position-x: 1em;
+    background-position-y: 1em;
+    font-family: sans-serif;
+    color: #222;
+    margin-left: 1em;
+}
+
+.checking {
+    padding-top: 1em;
+}
+
+ul {
+    border: 1px solid #888;
+    font-size: x-large;
+    list-style-type: none;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    width: 60%;
+}
+
+.result_presentation {
+    background-color: #ffffcc;
+}
+
+.result_presentation_err {
+    background-color: #ffcccc;
+}
+
+.title {
+    margin: 0;
+}

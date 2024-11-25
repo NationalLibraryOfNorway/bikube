@@ -73,6 +73,13 @@
 			<version>1.8.0</version>
 		</dependency>
 
+		<!-- Template engine -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 		<!-- Dependencies for keycloak ouath2 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
