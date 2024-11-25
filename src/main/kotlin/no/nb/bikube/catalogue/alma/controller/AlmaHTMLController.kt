@@ -1,5 +1,6 @@
 package no.nb.bikube.catalogue.alma.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nb.bikube.catalogue.alma.enum.OtherField
 import no.nb.bikube.catalogue.alma.model.MarcRecord
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import reactor.core.publisher.Mono
 import java.util.*
 
@@ -24,7 +26,11 @@ class AlmaHTMLController(
     private val almaService: AlmaService
 ) {
 
-    @RequestMapping("/barcode/{barcode}")
+    @RequestMapping("/barcode/{barcode}", method = [RequestMethod.GET])
+    @Operation(
+        summary = "Get bibliographic record by barcode",
+        description = "Returns a bibliographic record in HTML format for the given barcode"
+    )
     fun getHTMLByBarcode(
         model: Model,
         @PathVariable barcode: String
