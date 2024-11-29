@@ -101,6 +101,10 @@ class CoreControllerTest {
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
+        every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns listOf(
+            newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+        )
+
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
             listOf(
@@ -121,6 +125,7 @@ class CoreControllerTest {
     @Test
     fun `search title should call on titleIndexService function when materialType is NEWSPAPER`() {
         every { titleIndexService.searchTitle(any()) } returns emptyList()
+        every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns emptyList()
 
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
