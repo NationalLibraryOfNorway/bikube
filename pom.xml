@@ -15,7 +15,7 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
-		<kotlin.version>1.9.25</kotlin.version>
+		<kotlin.version>2.1.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<fasterxml.version>2.18.2</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
