@@ -4,18 +4,17 @@ on:
 
 jobs:
   build_maven_pipeline:
-    - name: Tekst workflow
-      uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/build_maven_pipeline@main
-      with:
-        ENVIRONMENT: stage
-        JDK_VERSION: 17
-        MAVEN_VERSION: 3.9.6
-        USE_MAVEN_PROXY_SETTINGS: true
-      secrets:
-        VAULT_URL: ${{ secrets.VAULT_URL }}
-        VAULT_SECRET_PATH: kv/team/text/data
-        VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
-        VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/build_maven_pipeline@main
+    with:
+      ENVIRONMENT: stage
+      JDK_VERSION: 17
+      MAVEN_VERSION: 3.9.6
+      USE_MAVEN_PROXY_SETTINGS: true
+    secrets:
+      VAULT_URL: ${{ secrets.VAULT_URL }}
+      VAULT_SECRET_PATH: kv/team/text/data
+      VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+      VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
 
 
 
