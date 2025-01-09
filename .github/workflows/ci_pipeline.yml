@@ -4,7 +4,7 @@ on:
 
 jobs:
   build_maven_pipeline:
-    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/build_maven_pipeline@main
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/build_maven_pipeline.yml@main
     with:
       ENVIRONMENT: stage
       JDK_VERSION: 17
