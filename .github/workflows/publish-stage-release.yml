@@ -6,7 +6,6 @@ on:
 
 jobs:
   build_maven_pipeline:
-    environment: stage
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
     with:
       ENVIRONMENT: stage
