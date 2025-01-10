@@ -12,7 +12,7 @@ jobs:
       ENVIRONMENT: stage
       JDK_VERSION: 17
       MAVEN_VERSION: 3.9.6
-      USE_MAVEN_PROXY_SETTINGS: true
+      USE_MAVEN_SETTINGS_FILE: true
     secrets:
       VAULT_URL: ${{ secrets.VAULT_URL }}
       VAULT_SECRET_PATH: kv/team/text/data
