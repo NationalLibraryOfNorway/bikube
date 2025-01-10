@@ -9,7 +9,6 @@ on:
 
 jobs:
   maven_pr_check:
-    if: (github.event_name == 'pull_request' || github.event_name == 'push') && github.ref != 'refs/heads/main'
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@main
     with:
       JDK_VERSION: 17

@@ -1,13 +1,13 @@
 name: Test tekst-workflows
 on:
-  release:
-    types:
-      - created
+  push:
+    tags:
+      - v*
 
 jobs:
   build_maven_pipeline:
-    if: github.event_name == 'release' && github.ref == 'refs/tags/v*'
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
+    environment: prod
     with:
       ENVIRONMENT: prod
       JDK_VERSION: 17
