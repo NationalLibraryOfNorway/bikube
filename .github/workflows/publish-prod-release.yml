@@ -1,0 +1,20 @@
+name: Test tekst-workflows
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build_maven_pipeline:
+    if: github.event_name == 'release' && github.ref == 'refs/tags/v*'
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
+    with:
+      ENVIRONMENT: prod
+      JDK_VERSION: 17
+      MAVEN_VERSION: 3.9.6
+      USE_MAVEN_PROXY_SETTINGS: true
+    secrets:
+      VAULT_URL: ${{ secrets.VAULT_URL }}
+      VAULT_SECRET_PATH: kv/team/text/data
+      VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+      VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}

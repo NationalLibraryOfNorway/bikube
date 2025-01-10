@@ -1,0 +1,16 @@
+name: Test tekst-workflows
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  maven_pr_check:
+    if: (github.event_name == 'pull_request' || github.event_name == 'push') && github.ref != 'refs/heads/main'
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@main
+    with:
+      JDK_VERSION: 17
+      MAVEN_VERSION: 3.9.6
