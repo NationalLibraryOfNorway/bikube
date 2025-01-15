@@ -7,7 +7,6 @@ on:
 jobs:
   build_maven_pipeline:
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
-    environment: prod
     with:
       ENVIRONMENT: prod
       JDK_VERSION: 17
