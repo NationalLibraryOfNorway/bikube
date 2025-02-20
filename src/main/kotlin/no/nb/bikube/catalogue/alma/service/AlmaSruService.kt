@@ -8,6 +8,7 @@ import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.model.RecordList
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
@@ -18,6 +19,14 @@ class AlmaSruService(
     private val marcXChangeService: MarcXChangeService
 ) {
 
+    private val commonParams: MultiValueMap<String, String> = MultiValueMap.fromSingleValue(
+        mapOf(
+            "version" to "1.2",
+            "operation" to "searchRetrieve",
+            "recordSchema" to "marcxml"
+        )
+    )
+
     private val webClient = WebClient.builder()
         .clientConnector(almaHttpConnector.httpConnector())
         .baseUrl(almaConfig.almaSruUrl)
@@ -27,7 +36,7 @@ class AlmaSruService(
         return webClient.get()
             .uri { builder ->
                 builder.path("/47BIBSYS_NB")
-                    .queryParams(almaConfig.commonParams)
+                    .queryParams(commonParams)
                     .queryParam("query", "$field=$value")
                     .build()
             }
@@ -95,7 +104,7 @@ class AlmaSruService(
             .get()
             .uri { builder ->
                 builder.path("/47BIBSYS_NETWORK")
-                    .queryParams(almaConfig.commonParams)
+                    .queryParams(commonParams)
                     .queryParam("query", queryString)
                     .build()
             }
