@@ -33,7 +33,7 @@ class AlmaSruServiceTests(
         @JvmStatic
         @DynamicPropertySource
         fun properties(r: DynamicPropertyRegistry) {
-            r.add("alma.alma-sru-url") { "http://localhost:" + mockBackEnd.port }
+            r.add("alma.alma-sru-url") { "http://127.0.0.1:" + mockBackEnd.port }
         }
 
         @JvmStatic
