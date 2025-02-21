@@ -42,3 +42,4 @@ Tekst-teamet på Nasjonalbibliotekets IT-avdeling vedlikeholder Bikube.
 
 Alle kan lage issues, men vi kan ikke garantere at alle blir tatt tak i. 
 Interne behov går foran eksterne forespørsler.
+
