@@ -17,7 +17,7 @@ import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
 class AlmaSruServiceTests(
     @Autowired private val almaSruService: AlmaSruService,

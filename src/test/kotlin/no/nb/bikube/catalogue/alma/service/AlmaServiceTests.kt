@@ -22,7 +22,7 @@ import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
 class AlmaServiceTests(
     @Autowired private val almaService: AlmaService,
