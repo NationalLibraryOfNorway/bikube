@@ -2,7 +2,6 @@ package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import no.nb.bikube.catalogue.alma.service.AlmaSruServiceTests.Companion
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
@@ -64,7 +63,6 @@ class AlmaServiceTests(
         println(mockBackEnd.requestCount)
         println(mockBackEnd.hostName)
         println(mockBackEnd.port)
-        println(mockBackEnd.url(""))
     }
 
     @Test

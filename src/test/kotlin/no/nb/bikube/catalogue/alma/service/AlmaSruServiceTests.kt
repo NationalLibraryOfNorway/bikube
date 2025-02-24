@@ -59,7 +59,6 @@ class AlmaSruServiceTests(
         println(mockBackEnd.requestCount)
         println(mockBackEnd.hostName)
         println(mockBackEnd.port)
-        println(mockBackEnd.url(""))
     }
 
     @Test
