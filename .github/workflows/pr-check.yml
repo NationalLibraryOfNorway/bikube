@@ -12,7 +12,7 @@ jobs:
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@test-jdk-dist
     with:
       JDK_VERSION: 17
-      JDK_DISTRIBUTION: "zulu"
+      JDK_DISTRIBUTION: "jetbrains"
       MAVEN_VERSION: 3.9.6
       USE_MAVEN_SETTINGS_FILE: true
     secrets:
