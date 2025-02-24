@@ -9,7 +9,7 @@ on:
 
 jobs:
   maven_pr_check:
-    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@test-jdk-dist
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check-v2.yml@test-jdk-dist
     with:
       JDK_VERSION: 17
       JDK_DISTRIBUTION: "jetbrains"
