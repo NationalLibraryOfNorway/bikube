@@ -6,6 +6,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +36,16 @@ class AlmaServiceTests(
         @DynamicPropertySource
         fun properties(r: DynamicPropertyRegistry) {
             r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            try {
+                mockBackEnd.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         @JvmStatic

@@ -1,10 +1,12 @@
 package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.catalogue.alma.service.AlmaServiceTests.Companion
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +36,16 @@ class AlmaSruServiceTests(
         @DynamicPropertySource
         fun properties(r: DynamicPropertyRegistry) {
             r.add("alma.alma-sru-url") { "http://localhost:" + mockBackEnd.port }
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            try {
+                mockBackEnd.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         @JvmStatic
