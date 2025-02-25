@@ -88,7 +88,7 @@ fun createNewspaperItemDto(
         partOfReference = manifestationCatalogueId,
         alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
         urn = if (useUrn) item.urn else null,
-        itemStatus = if (item.digital == true) item.itemStatus?.value else null,
+        itemStatus = if (item.digital == true) CollectionsItemStatus.fromString(item.itemStatus)?.value else null,
         currentLocationName = if (item.digital == false) item.containerId else null
     )
 }
