@@ -17,6 +17,7 @@
 
 package okhttpfork.mockwebserver
 
+import io.mockk.InternalPlatformDsl.toStr
 import java.io.Closeable
 import java.io.IOException
 import java.net.InetAddress
@@ -384,12 +385,14 @@ class MockWebServer : ExternalResource(), Closeable {
     this.inetSocketAddress = inetSocketAddress
 
     serverSocket = serverSocketFactory!!.createServerSocket()
+    logger.fine("Server socket ready: ${serverSocket?.localSocketAddress?:"null"}, ${serverSocket.toStr()}")
 
     // Reuse if the user specified a port
     serverSocket!!.reuseAddress = inetSocketAddress.port != 0
     serverSocket!!.bind(inetSocketAddress, 50)
 
     portField = serverSocket!!.localPort
+    logger.fine("PORT: $portField")
 
     taskRunner.newQueue().execute("MockWebServer $portField", cancelable = false) {
       try {
