@@ -44,6 +44,9 @@ class AlmaSruServiceTests(
                     Thread.sleep(5000)
                 }
                 mockBackEnd.start()
+                thread {
+                    Thread.sleep(5000)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -59,6 +62,9 @@ class AlmaSruServiceTests(
 
     @BeforeEach
     fun beforeEach() {
+        thread {
+            Thread.sleep(5000)
+        }
         println("MOCKBACKEND")
         println(mockBackEnd.requestCount)
         println(mockBackEnd.hostName)
