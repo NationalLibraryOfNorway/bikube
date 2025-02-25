@@ -45,6 +45,7 @@ class AlmaSruServiceTests(
 
     @Test
     fun `Alma SRU response should be mapped to correct RecordList`() {
+        println("Socket policy: ${mockBackEnd.dispatcher.peek().socketPolicy}")
         val sruResponse = StreamUtils.copyToString(
             ClassPathResource("AlmaXmlTestFiles/sru_result.xml").inputStream,
             Charsets.UTF_8
