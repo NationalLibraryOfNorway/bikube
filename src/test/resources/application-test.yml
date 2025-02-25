@@ -1,7 +1,5 @@
 alma:
   api-key: SECRETKEY
-  alma-sru-url: http://localhost:12345
-  alma-ws-url: http://localhost:23456
 
 search-index:
   enabled: false
