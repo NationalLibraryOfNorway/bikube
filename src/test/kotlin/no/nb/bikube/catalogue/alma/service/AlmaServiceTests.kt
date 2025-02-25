@@ -6,6 +6,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,40 +30,29 @@ class AlmaServiceTests(
     @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
-    companion object {
-        @JvmStatic
-        val mockBackEnd = MockWebServer()
+    lateinit var mockWebServer: MockWebServer
 
+    companion object {
         @JvmStatic
         @DynamicPropertySource
         fun properties(r: DynamicPropertyRegistry) {
-            println("PORT: " + mockBackEnd.port.toString())
-            r.add("alma.alma-ws-url") {  "http://localhost:" + mockBackEnd.port  }
-        }
-
-        @JvmStatic
-        @BeforeAll
-        fun beforeAll() {
-            try {
-                mockBackEnd.start()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun afterAll() {
-            mockBackEnd.shutdown()
+            r.add("alma.alma-ws-url") { "http://localhost:8081" }
         }
     }
 
     @BeforeEach
     fun beforeEach() {
+        this.mockWebServer = MockWebServer()
+        this.mockWebServer.start(8081)
         println("MOCKBACKEND")
-        println(mockBackEnd.requestCount)
-        println(mockBackEnd.hostName)
-        println(mockBackEnd.port)
+        println(this.mockWebServer.requestCount)
+        println(this.mockWebServer.hostName)
+        println(this.mockWebServer.port)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        this.mockWebServer.shutdown()
     }
 
     @Test
@@ -75,7 +65,7 @@ class AlmaServiceTests(
             ClassPathResource("AlmaXmlTestFiles/marc.xml").inputStream
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(bibResponse)
@@ -102,13 +92,13 @@ class AlmaServiceTests(
             ClassPathResource("AlmaXmlTestFiles/marc_enumchron.xml").inputStream
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(itemResponse)
                 .addHeader("Content-type", "application/xml")
         )
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(bibResponse)
@@ -128,7 +118,7 @@ class AlmaServiceTests(
             Charsets.UTF_8
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(itemResponse)
@@ -149,7 +139,7 @@ class AlmaServiceTests(
             Charsets.UTF_8
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .setBody(bibError)
@@ -173,7 +163,7 @@ class AlmaServiceTests(
             Charsets.UTF_8
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .setBody(bibError)
@@ -197,7 +187,7 @@ class AlmaServiceTests(
             Charsets.UTF_8
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .setBody(bibError)
@@ -221,7 +211,7 @@ class AlmaServiceTests(
             Charsets.UTF_8
         )
 
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .setBody(bibError)
@@ -240,7 +230,7 @@ class AlmaServiceTests(
 
     @Test
     fun `A 500 error from AlmaWs should be mapped to an AlmaException`() {
-        mockBackEnd.enqueue(
+        this.mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setBody("Server error")
