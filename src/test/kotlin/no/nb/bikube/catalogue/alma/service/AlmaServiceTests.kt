@@ -5,9 +5,7 @@ import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -19,7 +17,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
+import org.springframework.web.reactive.function.client.WebClient
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 @SpringBootTest
@@ -31,6 +31,9 @@ class AlmaServiceTests(
 ) {
 
     lateinit var mockWebServer: MockWebServer
+    val client = WebClient.builder()
+        .baseUrl("http://localhost:8081")
+        .build()
 
     companion object {
         @JvmStatic
@@ -44,6 +47,14 @@ class AlmaServiceTests(
     fun beforeEach() {
         this.mockWebServer = MockWebServer()
         this.mockWebServer.start(8081)
+        this.mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
+                .setBody("<bibResponse></bibResponse>")
+                .addHeader("Content-type", "application/xml")
+        )
+        val res = client.get().exchangeToMono { Mono.just(it) }.block()!!
+        println(res.statusCode())
         println("MOCKBACKEND")
         println(this.mockWebServer.requestCount)
         println(this.mockWebServer.hostName)
