@@ -29,6 +29,10 @@ class DtoValidationService {
         if (!item.digital && item.itemStatus != null) {
             throw BadRequestBodyException("Cannot provide item status for physical item")
         }
+
+        if (item.itemStatus != null && CollectionsItemStatus.fromString(item.itemStatus) == null) {
+            throw BadRequestBodyException("Need to provide a valid item status. Expected: ${CollectionsItemStatus.entries.joinToString(" OR ") { it.value }}, received: ${item.itemStatus}")
+        }
     }
 
     @Throws(BadRequestBodyException::class)

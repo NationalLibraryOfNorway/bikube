@@ -35,4 +35,10 @@ enum class CollectionsTermType(val value: String) {
 enum class CollectionsItemStatus(val value: String) {
     DIGITIZED("Digitalisert"),
     DIGITAL_LEGAL_DEPOSIT("Pliktavlevert");
+
+    companion object {
+        fun fromString(value: String?): CollectionsItemStatus? {
+            return entries.firstOrNull { it.value.lowercase() == value?.lowercase() }
+        }
+    }
 }
