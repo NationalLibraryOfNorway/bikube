@@ -15,6 +15,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
+import kotlin.concurrent.thread
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -39,6 +40,9 @@ class AlmaSruServiceTests(
         @BeforeAll
         fun beforeAll() {
             try {
+                thread {
+                    Thread.sleep(5000)
+                }
                 mockBackEnd.start()
             } catch (e: Exception) {
                 e.printStackTrace()
