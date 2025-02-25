@@ -5,6 +5,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
@@ -26,21 +25,16 @@ class AlmaSruServiceTests(
     @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
-    companion object {
-        @JvmStatic
-        val mockBackEnd = MockWebServer()
+    val mockBackEnd = MockWebServer()
 
-        @JvmStatic
-        @DynamicPropertySource
-        fun properties(r: DynamicPropertyRegistry) {
-            r.add("alma.alma-sru-url") { "http://localhost:" + mockBackEnd.port }
-        }
+    @BeforeAll
+    fun startMockServer() {
+        mockBackEnd.start(port = 12345)
+    }
 
-        @JvmStatic
-        @AfterAll
-        fun afterAll() {
-            mockBackEnd.shutdown()
-        }
+    @AfterAll
+    fun shutdoanMockServer() {
+        mockBackEnd.shutdown()
     }
 
     @Test
