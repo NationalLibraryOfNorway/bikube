@@ -1,7 +1,7 @@
 package no.nb.bikube.catalogue.alma.service
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import okhttp3.internal.concurrent.TaskRunner
+import okhttp3.internal.threadFactory
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -53,6 +53,36 @@ class SocketTest {
         clientOut.close()
         clientClientSocket.close()
         server.stop()
+    }
+
+    @Test
+    fun `Use TaskRunner`() {
+        val server = GreetServer()
+
+        val taskRunnerBackend = TaskRunner.RealBackend(
+            threadFactory("MockWebServer TaskRunner", daemon = false)
+        )
+        val taskRunner = TaskRunner(taskRunnerBackend)
+        taskRunner.newQueue().execute("MockWebServer", cancelable = false) {
+            server.start(2345)
+        }
+
+        thread(start = true, isDaemon = true) { server.start(2345) }
+
+        Thread.sleep(1000)
+        // Set up client
+        val clientClientSocket = Socket("127.0.0.1", 2345)
+        val clientOut = PrintWriter(clientClientSocket.getOutputStream(), true)
+        val clientIn = BufferedReader(InputStreamReader(clientClientSocket.getInputStream()))
+        clientOut.println("hello server")
+        val response = clientIn.readLine()
+        Assertions.assertEquals("hello client", response)
+
+        clientIn.close()
+        clientOut.close()
+        clientClientSocket.close()
+        server.stop()
+        taskRunnerBackend.shutdown()
     }
 }
 
