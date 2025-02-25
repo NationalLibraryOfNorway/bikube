@@ -10,5 +10,6 @@ data class ItemInputDto(
     val urn: String? = null,
     val containerId: String? = null,
     val notes: String? = null,
-    val number: String? = null
+    val number: String? = null,
+    val itemStatus: String? = null
 )
