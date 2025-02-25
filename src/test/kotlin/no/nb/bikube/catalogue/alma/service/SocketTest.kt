@@ -23,7 +23,7 @@ class SocketTest {
     @Test
     fun `Try ServerSocket`() {
         val socket = ServerSocketFactory.getDefault().createServerSocket()
-        socket.reuseAddress = true
+        socket.reuseAddress = false
         socket.bind(
             InetSocketAddress(
                 InetAddress.getByName("localhost"),
