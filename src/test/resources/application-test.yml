@@ -7,3 +7,5 @@ search-index:
 app.scheduling.enabled: false
 
 collections.direct-link: http://collections.com/link/{id}
+
+logging.level.okhttp3: DEBUG
