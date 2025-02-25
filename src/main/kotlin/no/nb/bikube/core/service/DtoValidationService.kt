@@ -1,5 +1,6 @@
 package no.nb.bikube.core.service
 
+import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.ItemUpdateDto
@@ -23,6 +24,10 @@ class DtoValidationService {
 
         if (!item.digital && item.containerId.isNullOrBlank()) {
             throw BadRequestBodyException("Need to provide container ID for physical item")
+        }
+
+        if (!item.digital && item.itemStatus != null) {
+            throw BadRequestBodyException("Cannot provide item status for physical item")
         }
     }
 

@@ -1,5 +1,6 @@
 package no.nb.bikube.core.model.inputDto
 
+import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
 import java.time.LocalDate
 
 data class ItemInputDto(
@@ -10,5 +11,6 @@ data class ItemInputDto(
     val urn: String? = null,
     val containerId: String? = null,
     val notes: String? = null,
-    val number: String? = null
+    val number: String? = null,
+    val itemStatus: CollectionsItemStatus? = null
 )

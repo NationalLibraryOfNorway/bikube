@@ -31,3 +31,8 @@ enum class CollectionsTermType(val value: String) {
     LANGUAGE("LANGUAGE"),
     LOCATION("PLACE")
 }
+
+enum class CollectionsItemStatus(val value: String) {
+    DIGITIZED("Digitalisert"),
+    DIGITAL_LEGAL_DEPOSIT("Pliktavlevert");
+}

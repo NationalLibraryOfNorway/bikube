@@ -3,6 +3,7 @@ package no.nb.bikube.catalogue.collections.model.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
+import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.model.inputDto.ItemInputDto
 import java.time.LocalDate
@@ -50,6 +51,9 @@ class ItemDto (
     @SerialName("PID_data_URN")
     val urn: String? = null,
 
+    @SerialName("item_status")
+    val itemStatus: String? = null,
+
     @SerialName("current_location.name")
     val currentLocationName: String? = null,
 )
@@ -84,6 +88,7 @@ fun createNewspaperItemDto(
         partOfReference = manifestationCatalogueId,
         alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
         urn = if (useUrn) item.urn else null,
+        itemStatus = if (item.digital == true) item.itemStatus?.value else null,
         currentLocationName = if (item.digital == false) item.containerId else null
     )
 }

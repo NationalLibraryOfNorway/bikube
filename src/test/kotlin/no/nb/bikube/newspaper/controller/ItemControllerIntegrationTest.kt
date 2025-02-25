@@ -205,6 +205,12 @@ class ItemControllerIntegrationTest {
     }
 
     @Test
+    fun `post-newspapers-items endpoint should give 400 bad request if item status is provided for a physical item`() {
+        createItem(newspaperItemMockCValidForCreation.copy(digital = false))
+            .expectStatus().isBadRequest
+    }
+
+    @Test
     fun `post missing-item should return 201 Created with item`() {
         webClient
             .post()

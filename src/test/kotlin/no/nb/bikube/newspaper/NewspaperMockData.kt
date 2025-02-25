@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper
 
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
+import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
 import no.nb.bikube.catalogue.collections.model.dto.AlternativeNumberInput
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
@@ -102,6 +103,7 @@ class NewspaperMockData {
             username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
+            itemStatus = CollectionsItemStatus.DIGITIZED,
             containerId = null
         )
 
