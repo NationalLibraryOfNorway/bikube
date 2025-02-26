@@ -425,6 +425,7 @@ class MockWebServer : ExternalResource(), Closeable {
     while (true) {
       val socket: Socket
       try {
+        logger.fine("Opening Socket from $serverSocket, with ${System.getSecurityManager()}")
         socket = serverSocket!!.accept()
       } catch (e: SocketException) {
         logger.fine("${this@MockWebServer} done accepting connections: ${e.message}")
