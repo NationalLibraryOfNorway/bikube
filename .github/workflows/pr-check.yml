@@ -8,12 +8,12 @@ on:
       - "main"
 
 jobs:
-#  check_hosts:
-#    runs-on: [self-hosted-linux]
-#    steps:
-#      - name: Cat config
-#        run: |
-#          cat /etc/hosts
+  check_hosts:
+    runs-on: [self-hosted-linux]
+    steps:
+      - name: Cat config
+        run: |
+          cat /etc/hosts
 
   maven_pr_check:
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@main
