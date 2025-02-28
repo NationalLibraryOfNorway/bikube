@@ -19,7 +19,7 @@ import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class AlmaServiceTests(
