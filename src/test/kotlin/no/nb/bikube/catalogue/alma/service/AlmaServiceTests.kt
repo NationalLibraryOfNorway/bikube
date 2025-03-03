@@ -6,6 +6,7 @@ import okhttpfork.mockwebserver.MockResponse
 import okhttpfork.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,8 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.TestPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
@@ -22,25 +22,41 @@ import reactor.test.StepVerifier
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
+@TestPropertySource(properties = ["alma.alma-ws-url=http://localhost:12345"])
 class AlmaServiceTests(
     @Autowired private val almaService: AlmaService,
     @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
-    companion object {
-        val mockBackEnd = MockWebServer()
+    private lateinit var mockBackEnd: MockWebServer
 
-        @DynamicPropertySource
-        fun properties(r: DynamicPropertyRegistry) {
-            r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun afterAll() {
-            mockBackEnd.shutdown()
-        }
+    @BeforeAll
+    fun startMock() {
+        mockBackEnd = MockWebServer()
+        mockBackEnd.start(12345)
     }
+
+    @AfterAll
+    fun stopMock() {
+        mockBackEnd.shutdown()
+    }
+
+//
+//    companion object {
+//        val mockBackEnd = MockWebServer()
+//
+//        @JvmStatic
+//        @DynamicPropertySource
+//        fun properties(r: DynamicPropertyRegistry) {
+//            r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
+//        }
+//
+//        @JvmStatic
+//        @AfterAll
+//        fun afterAll() {
+//            mockBackEnd.shutdown()
+//        }
+//    }
 
 
     @Test
