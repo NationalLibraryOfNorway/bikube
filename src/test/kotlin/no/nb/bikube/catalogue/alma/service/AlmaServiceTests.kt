@@ -18,6 +18,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
+import org.testcontainers.containers.PostgreSQLContainer
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -42,7 +43,22 @@ class AlmaServiceTests(
         fun afterAll() {
             mockBackEnd.shutdown()
         }
+
+        val container = PostgreSQLContainer<Nothing>("postgres:16.1").apply {
+            withDatabaseName("text")
+            withUsername("test")
+            withPassword("test")
+            withReuse(true)
+        }
+
+        init {
+            if (!container.isRunning) container.start()
+            System.setProperty("spring.datasource.url", container.jdbcUrl)
+            System.setProperty("spring.datasource.username", container.username)
+            System.setProperty("spring.datasource.password", container.password)
+        }
     }
+
 
     @Test
     fun `Alma bib response should be mapped to expected Marc record`() {
