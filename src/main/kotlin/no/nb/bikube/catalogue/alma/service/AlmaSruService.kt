@@ -2,6 +2,7 @@ package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.config.AlmaConfig
 import no.nb.bikube.catalogue.alma.config.AlmaHttpConnector
+import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import no.nb.bikube.catalogue.alma.model.MarcRecord
 import no.nb.bikube.catalogue.alma.model.RecordList
@@ -25,7 +26,9 @@ class AlmaSruService(
     private fun getRecordsWithFieldValue(field: String, value: String): Mono<String> {
         return webClient.get()
             .uri { builder ->
-                builder.queryParam("query", "$field=$value")
+                builder.path("/47BIBSYS_NB")
+                    .queryParams(almaConfig.commonParams)
+                    .queryParam("query", "$field=$value")
                     .build()
             }
             .accept(MediaType.TEXT_XML)
@@ -81,6 +84,34 @@ class AlmaSruService(
                     sink.error(AlmaRecordNotFoundException("No record found for ISMN $ismn"))
                 else
                     sink.next(RecordList(marcRecords))
+            }
+    }
+
+    fun searchRecords(title: String, author: String?, publishYear: Int): Mono<RecordList> {
+        val queryString = "title all \"$title\" " +
+                (author ?. let {"creator all \"$author\" "} ?: "") +
+                "main_pub_date==$publishYear"
+        return webClient
+            .get()
+            .uri { builder ->
+                builder.path("/47BIBSYS_NETWORK")
+                    .queryParams(almaConfig.commonParams)
+                    .queryParam("query", queryString)
+                    .build()
+            }
+            .accept(MediaType.TEXT_XML)
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .map {
+                val marcRecords = marcXChangeService.parseSruResult(it)
+                    .records
+                    .map { records ->
+                        records.recordData.record
+                    }
+                RecordList(marcRecords)
+            }
+            .onErrorResume {
+                Mono.error(AlmaException("Error while searching: ${it.message}"))
             }
     }
 

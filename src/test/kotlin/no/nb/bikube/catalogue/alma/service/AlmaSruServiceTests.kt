@@ -1,8 +1,8 @@
 package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import okhttpfork.mockwebserver.MockResponse
-import okhttpfork.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class AlmaSruServiceTests(
@@ -45,7 +45,6 @@ class AlmaSruServiceTests(
 
     @Test
     fun `Alma SRU response should be mapped to correct RecordList`() {
-        println("Socket policy: ${mockBackEnd.dispatcher.peek().socketPolicy}")
         val sruResponse = StreamUtils.copyToString(
             ClassPathResource("AlmaXmlTestFiles/sru_result.xml").inputStream,
             Charsets.UTF_8

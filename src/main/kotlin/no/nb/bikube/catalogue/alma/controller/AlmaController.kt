@@ -117,6 +117,22 @@ class AlmaController(
             .map { marcXChangeService.writeAsByteArray(it) }
     }
 
+    @GetMapping("/search", produces = [MediaType.APPLICATION_XML_VALUE])
+    @Operation(summary = "Find records via free text search")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Invalid query", content = [Content()]),
+        ApiResponse(responseCode = "500", description = "Server error", content = [Content()])
+    ])
+    fun searchAlma(
+        @RequestParam(required = true) title: String,
+        @RequestParam(required = false) author: String? = null,
+        @RequestParam(required = true) year: Int
+    ): Mono<ByteArray> {
+        return almaSruService.searchRecords(title, author, year)
+            .map { marcXChangeService.writeAsByteArray(it) }
+    }
+
     companion object {
         const val MMS_REGEX = "[0-9]{8,19}"
         const val MMS_MESSAGE = "MMS-ID kan kun inneholde tall, og må være mellom 8 og 19 tegn."

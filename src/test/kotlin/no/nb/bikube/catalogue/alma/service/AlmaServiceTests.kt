@@ -2,11 +2,10 @@ package no.nb.bikube.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaException
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import okhttpfork.mockwebserver.MockResponse
-import okhttpfork.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,50 +13,36 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
-@TestPropertySource(properties = ["alma.alma-ws-url=http://localhost:12345"])
 class AlmaServiceTests(
     @Autowired private val almaService: AlmaService,
     @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
-    private lateinit var mockBackEnd: MockWebServer
+    companion object {
+        @JvmStatic
+        val mockBackEnd = MockWebServer()
 
-    @BeforeAll
-    fun startMock() {
-        mockBackEnd = MockWebServer()
-        mockBackEnd.start(12345)
+        @JvmStatic
+        @DynamicPropertySource
+        fun properties(r: DynamicPropertyRegistry) {
+            r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun afterAll() {
+            mockBackEnd.shutdown()
+        }
     }
-
-    @AfterAll
-    fun stopMock() {
-        mockBackEnd.shutdown()
-    }
-
-//
-//    companion object {
-//        val mockBackEnd = MockWebServer()
-//
-//        @JvmStatic
-//        @DynamicPropertySource
-//        fun properties(r: DynamicPropertyRegistry) {
-//            r.add("alma.alma-ws-url") { "http://localhost:" + mockBackEnd.port }
-//        }
-//
-//        @JvmStatic
-//        @AfterAll
-//        fun afterAll() {
-//            mockBackEnd.shutdown()
-//        }
-//    }
-
 
     @Test
     fun `Alma bib response should be mapped to expected Marc record`() {
