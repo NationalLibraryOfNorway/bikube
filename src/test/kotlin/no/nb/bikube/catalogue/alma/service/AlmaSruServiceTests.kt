@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.core.util.logger
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -35,9 +36,13 @@ class AlmaSruServiceTests(
 
     @BeforeEach
     fun setup() {
+        logger().info("Setting up WireMockServer...")
         mockBackEnd = WireMockServer(WireMockConfiguration.options().port(12345))
+        logger().info("Starting")
         mockBackEnd.start()
+        logger().info("Configuring")
         configureFor("localhost", 12345)
+        logger().info("Done!")
     }
 
     @AfterEach
@@ -97,6 +102,7 @@ class AlmaSruServiceTests(
 
         val almaSruResponse = almaSruService.getRecordsByISSN(issn = "12345678")
             .block()!!
+        logger().info("Received $almaSruResponse")
         val mappedRecordList = marcXChangeService.writeAsByteArray(almaSruResponse)
         MatcherAssert.assertThat(mappedRecordList, CompareMatcher.isIdenticalTo(recordList).ignoreWhitespace())
     }
