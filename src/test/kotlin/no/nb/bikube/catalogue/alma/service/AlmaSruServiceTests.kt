@@ -5,7 +5,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import org.hamcrest.MatcherAssert
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -31,7 +30,6 @@ class AlmaSruServiceTests(
 ) {
 
     companion object {
-
         @JvmStatic
         lateinit var mockBackEnd: WireMockServer
 
@@ -52,12 +50,6 @@ class AlmaSruServiceTests(
             val serverSocket = ServerSocket(0)
             port = serverSocket.localPort
             r.add("alma.alma-sru-url") { "http://localhost:$port" }
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun shutdown() {
-            mockBackEnd.shutdown()
         }
     }
 
