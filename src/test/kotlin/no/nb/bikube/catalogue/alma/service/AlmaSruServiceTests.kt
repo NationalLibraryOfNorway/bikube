@@ -51,7 +51,6 @@ class AlmaSruServiceTests(
         fun properties(r: DynamicPropertyRegistry) {
             val serverSocket = ServerSocket(0)
             port = serverSocket.localPort
-            serverSocket.close()
             r.add("alma.alma-sru-url") { "http://localhost:$port" }
         }
 
