@@ -18,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
+import reactor.util.retry.Retry
+import java.time.Duration
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -68,6 +70,7 @@ class AlmaSruServiceTests(
         )
 
         val almaSruResponse = almaSruService.getRecordsByISSN(issn = "12345678")
+            .retryWhen(Retry.backoff(4, Duration.ofSeconds(1)))
             .block()!!
         logger().info("Received $almaSruResponse")
         val mappedRecordList = marcXChangeService.writeAsByteArray(almaSruResponse)
@@ -92,6 +95,7 @@ class AlmaSruServiceTests(
         )
 
         val almaSruResponse = almaSruService.getRecordsByISSN(issn = "1234-5678")
+            .retryWhen(Retry.backoff(4, Duration.ofSeconds(1)))
 
         StepVerifier.create(almaSruResponse)
             .expectErrorMatches {
