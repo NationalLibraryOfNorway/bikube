@@ -14,9 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher
 import reactor.test.StepVerifier
+import java.net.ServerSocket
+import kotlin.properties.Delegates
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -26,18 +30,36 @@ class AlmaSruServiceTests(
     @Autowired private val marcXChangeService: MarcXChangeService
 ) {
 
-    private lateinit var mockBackEnd: WireMockServer
+    companion object {
 
-    @BeforeAll
-    fun setUpServer() {
-        mockBackEnd = WireMockServer(WireMockConfiguration.options().port(12345))
-        mockBackEnd.start()
-        configureFor("localhost", 12345)
-    }
+        @JvmStatic
+        lateinit var mockBackEnd: WireMockServer
 
-    @AfterAll
-    fun shutdown() {
-        mockBackEnd.shutdown()
+        @JvmStatic
+        var port by Delegates.notNull<Int>()
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            mockBackEnd = WireMockServer(WireMockConfiguration.options().port(port))
+            mockBackEnd.start()
+            configureFor("localhost", port)
+        }
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun properties(r: DynamicPropertyRegistry) {
+            val serverSocket = ServerSocket(0)
+            port = serverSocket.localPort
+            serverSocket.close()
+            r.add("alma.alma-sru-url") { "http://localhost:$port" }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun shutdown() {
+            mockBackEnd.shutdown()
+        }
     }
 
     @Test
