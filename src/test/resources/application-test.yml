@@ -1,6 +1,5 @@
 alma:
   api-key: SECRETKEY
-  alma-sru-url: http://localhost:12345
 
 search-index:
   enabled: false
@@ -8,7 +7,3 @@ search-index:
 app.scheduling.enabled: false
 
 collections.direct-link: http://collections.com/link/{id}
-
-logging:
-  level:
-    com.github.tomakehurst.wiremock: DEBUG
