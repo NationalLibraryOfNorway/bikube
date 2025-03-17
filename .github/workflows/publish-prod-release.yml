@@ -8,10 +8,12 @@ jobs:
   build_maven_pipeline:
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
     with:
+      CLUSTER_NAME: "k8s"
       ENVIRONMENT: prod
       JDK_VERSION: 17
       MAVEN_VERSION: 3.9.6
-      USE_MAVEN_PROXY_SETTINGS: true
+      USE_MAVEN_SETTINGS_FILE: true
+      USE_HARBOR: true
     secrets:
       VAULT_URL: ${{ secrets.NB_VAULT_URL }}
       VAULT_SECRET_PATH: ${{ secrets.TEKST_VAULT_SECRET_PATH }}
