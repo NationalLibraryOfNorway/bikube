@@ -1,0 +1,21 @@
+name: Test tekst-workflows
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  maven_pr_check:
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@main
+    with:
+      JDK_VERSION: 17
+      MAVEN_VERSION: 3.9.6
+      USE_MAVEN_SETTINGS_FILE: true
+    secrets:
+      VAULT_URL: ${{ secrets.NB_VAULT_URL }}
+      VAULT_SECRET_PATH: ${{ secrets.TEKST_VAULT_SECRET_PATH }}
+      VAULT_ROLE_ID: ${{ secrets.TEKST_VAULT_ROLE_ID }}
+      VAULT_SECRET_ID: ${{ secrets.TEKST_VAULT_SECRET_ID }}
