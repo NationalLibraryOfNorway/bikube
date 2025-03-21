@@ -8,6 +8,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
+import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
@@ -30,9 +31,11 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.returnResult
+import org.springframework.web.util.UriBuilder
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration
+import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -89,13 +92,21 @@ class CoreControllerIntegrationTest (
             .exchange()
     }
 
-    private fun searchTitle(search: String, materialType: MaterialType): ResponseSpec {
+    private fun searchTitle(search: String, materialType: MaterialType, date: LocalDate? = null, selectBestMatch: Boolean? = null): ResponseSpec {
         return webClient
             .get()
             .uri { uri ->
                 uri.pathSegment("title", "search")
                     .queryParam("searchTerm", search)
                     .queryParam("materialType", materialType)
+                    .apply {
+                        if (date != null) {
+                            queryParam("date", date)
+                        }
+                        if (selectBestMatch != null) {
+                            queryParam("selectBestMatch", selectBestMatch)
+                        }
+                    }
                     .build()
             }
             .exchange()
@@ -319,6 +330,29 @@ class CoreControllerIntegrationTest (
             .test()
             .expectSubscription()
             .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `get-title-search endpoint should return best match if query parameter is present`() {
+        searchTitle("Bikubeavisen", MaterialType.NEWSPAPER, selectBestMatch = true)
+            .returnResult<Title>()
+            .responseBody
+            .test()
+            .expectSubscription()
+            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleA.getFirstObject()))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `get-title-search endpoint should filter by date if query parameter is present`() {
+        searchTitle("Bikubeavisen", MaterialType.NEWSPAPER, date = LocalDate.parse("2021-01-01"))
+            .returnResult<Title>()
+            .responseBody
+            .test()
+            .expectSubscription()
+            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleA.getFirstObject()))
+            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleB.getFirstObject()))
             .verifyComplete()
     }
 

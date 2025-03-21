@@ -8,6 +8,7 @@ import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.model.Title
+import no.nb.bikube.core.service.SearchFilterService
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
@@ -34,6 +35,9 @@ class CoreControllerTest {
 
     @MockkBean
     private lateinit var titleIndexService: TitleIndexService
+
+    @MockkBean
+    private lateinit var searchFilterService: SearchFilterService
 
     @Test
     fun `get single item for newspaper should return item in body`() {
@@ -97,6 +101,10 @@ class CoreControllerTest {
             newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
         )
 
+        every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns listOf(
+            newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+        )
+
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
             listOf(
@@ -117,6 +125,7 @@ class CoreControllerTest {
     @Test
     fun `search title should call on titleIndexService function when materialType is NEWSPAPER`() {
         every { titleIndexService.searchTitle(any()) } returns emptyList()
+        every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns emptyList()
 
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
@@ -124,6 +133,24 @@ class CoreControllerTest {
         )
 
         verify(exactly = 1) { titleIndexService.searchTitle(any()) }
+    }
+
+    @Test
+    fun `search title should call on searchFilterService function when materialType is NEWSPAPER`() {
+        every { titleIndexService.searchTitle(any()) } returns listOf(
+            newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+        )
+        every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns listOf(
+            newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+        )
+
+        Assertions.assertEquals(
+            coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
+            listOf(
+                newspaperTitleMockA.copy(), newspaperTitleMockB.copy()
+            )
+        )
+        verify(exactly = 1) { searchFilterService.filterSearchResults(any(), any(), any(), any()) }
     }
 
     @Test

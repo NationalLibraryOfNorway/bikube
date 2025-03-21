@@ -144,6 +144,13 @@
 			<version>${lucene.version}</version>
 		</dependency>
 
+		<!-- For fuzzy searching -->
+		<dependency>
+			<groupId>me.xdrop</groupId>
+			<artifactId>fuzzywuzzy</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
 		<!-- For postgres -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
