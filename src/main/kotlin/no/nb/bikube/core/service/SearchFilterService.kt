@@ -25,7 +25,7 @@ class SearchFilterService {
         return if (selectBestMatch == true && bestMatch != null && bestMatch.score > 50) {
             listOf(filteredResult[bestMatch.index])
         } else {
-            filteredResult
+            filteredResult.sortedByDescending { title -> scores.find { it.string == title.name }?.score ?: 0 }
         }
     }
 }
