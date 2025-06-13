@@ -49,6 +49,16 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+        <!-- Prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
 		<!-- Kotlin dependencies -->
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
