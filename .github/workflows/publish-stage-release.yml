@@ -11,7 +11,7 @@ jobs:
       CLUSTER_NAME: "k8s"
       ENVIRONMENT: stage
       JDK_VERSION: 17
-      MAVEN_VERSION: 3.9.6
+      MAVEN_VERSION: 3.9.11
       USE_MAVEN_SETTINGS_FILE: true
       USE_HARBOR: true
     secrets:
