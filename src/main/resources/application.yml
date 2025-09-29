@@ -46,13 +46,7 @@ security:
   enabled: false
 
 collections:
-  url: ${COLLECTIONS_PATH_STAGE}
-  username: ""
-  password: ""
-
-kerberos:
-  realm: ${KERBEROS_REALM}
-  kdc: ${KERBEROS_KDC}
+  url: ${COLLECTIONS_URL}
 
 alma:
   alma-sru-url: ${ALMA_SRU_URL}
