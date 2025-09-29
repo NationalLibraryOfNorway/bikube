@@ -1,6 +1,6 @@
 package no.nb.bikube.catalogue.collections.repository
 
-import no.nb.bikube.catalogue.collections.config.CollectionsWebClient
+import no.nb.bikube.catalogue.collections.config.CollectionsWebClientConfig
 import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.model.*
@@ -16,9 +16,9 @@ import java.time.format.DateTimeFormatter
 
 @Repository
 class CollectionsRepository(
-    private val collectionsWebClient: CollectionsWebClient
+    private val collectionsWebClient: CollectionsWebClientConfig
 ) {
-    fun webClient() = collectionsWebClient.webClient()
+    fun collectionsWebClient() = collectionsWebClient.collectionsWebClient()
 
     @Throws(CollectionsException::class)
     fun getSingleCollectionsModel(titleCatalogId: String): Mono<CollectionsModel> {
@@ -124,7 +124,7 @@ class CollectionsRepository(
         limit: Int = 10,
         from: Int = 1
     ): WebClient.ResponseSpec {
-        return webClient()
+        return collectionsWebClient()
             .get()
             .uri {
                 val params = it
@@ -155,7 +155,7 @@ class CollectionsRepository(
     }
 
     private fun createRecordWebClientRequest(serializedBody: String, db: CollectionsDatabase): WebClient.ResponseSpec {
-        return webClient()
+        return collectionsWebClient()
             .post()
             .uri {
                 it
@@ -174,7 +174,7 @@ class CollectionsRepository(
     }
 
     private fun updateRecordWebClientRequest(serializedBody: String, db: CollectionsDatabase): WebClient.ResponseSpec {
-        return webClient()
+        return collectionsWebClient()
             .post()
             .uri {
                 it
@@ -193,7 +193,7 @@ class CollectionsRepository(
     }
 
     private fun deleteRecordWebClientRequest(id: String, db: CollectionsDatabase): WebClient.ResponseSpec {
-        return webClient()
+        return collectionsWebClient()
             .post()
             .uri {
                 it

@@ -8,8 +8,6 @@ import java.net.URL
 @ConfigurationProperties("collections")
 class CollectionsConfig (
     val url: String,
-    val username: String,
-    val password: String,
     val directLink: String,
     val linkTemplate: UriBuilder = DefaultUriBuilderFactory().uriString(directLink)
 )
