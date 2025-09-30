@@ -11,6 +11,19 @@ info:
     name: @project.name@
     version: @project.version@
 
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: '@project.version@'
+    spring-cloud-version: '@spring-cloud.version@'
+    spring-boot-version: '@spring-boot.version@'
+  build:
+    group: @project.groupId@
+    artifact: @project.artifactId@
+    name: @project.name@
+    version: @project.version@
+
 server:
   port: 8087
 
@@ -74,6 +87,25 @@ search-index:
   initial-delay: 1000
   rebuild-index-delay: 1800000
   searcher-refresh-delay: 600000
+
+management:
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      profile: ${spring.profiles.active:default}
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  endpoint:
+    health:
+      show-details: always
+  server:
+    port: 8101
 
 management:
   info:
