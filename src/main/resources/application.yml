@@ -26,9 +26,9 @@ spring:
           keycloak:
             issuer-uri: ${KEYCLOAK_ISSUER_URI}
   datasource:
-    url: ${POSTRGRES_URL}
-    username: ${POSTRGRES_USERNAME}
-    password: ${POSTRGRES_PASSWORD}
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
