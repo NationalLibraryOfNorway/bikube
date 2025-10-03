@@ -14,16 +14,21 @@ For lokal utvikling må url til Axiell Collections-APIet legges inn, og man må 
 dersom APIet er satt opp med autentisering.
 Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vil bli ignorert av gitignore).
 
-| Påkrevde variabler   | Forklaring                      |
-|----------------------|---------------------------------|
-| collections.url      | Base URL til Collections API-et | 
-| collections.username | AD-brukernavn til Collections   |
-| collections.password | AD-passord til Collections      |
-| kerberos.realm       | Kerberos realm                  |
-| kerberos.kdc         | Kerberos KDC                    |
-| alma.alma-sru-url    | Base URL til Alma SRU API-et    |
-| alma.alma-ws-url     | Base URL til AlmaWS API-et      |
-| alma.api-key         | API-nøkkel til AlmaWS API-et    |
+| Påkrevde variabler       | Forklaring                       |
+|--------------------------|----------------------------------|
+| COLLECTIONS_URL          | Base URL til Collections API-et  | 
+| COLLECTIONS_USERNAME     | AD-brukernavn til Collections    |
+| COLLECTIONS_PASSWORD     | AD-passord til Collections       |
+| COLLECTIONS_DIRECTLINK   | Direkte URL til Collections      |
+| KEYCLOAK_ISSUER_URI      | Keycloak issuer uri              |
+| KEYCLOAK_CLIENT_ID       | Keycloak id                      |
+| KEYCLOAK_CLIENT_SECRET   | Keycloak secret                  |
+| POSTGRES_URL             | URL til postgres-databasen       |
+| POSTGRES_USERNAME        | Brukernavn til postgres          |
+| POSTGRES_PASSWORD        | Passord til postgres             |
+| alma.alma-sru-url        | Base URL til Alma SRU API-et     |
+| alma.alma-ws-url         | Base URL til AlmaWS API-et       |
+| alma.api-key             | API-nøkkel til AlmaWS API-et     |
 
 
 Kjør `java -jar target/bikube.jar` eller sett opp i din IDE. APIet kjører default på port 8080.
