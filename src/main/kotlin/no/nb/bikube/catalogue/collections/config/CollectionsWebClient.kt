@@ -57,7 +57,7 @@ class CollectionsWebClientConfig(
             .responseTimeout(Duration.ofSeconds(30))
 
         val oauth = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
-        oauth.setDefaultClientRegistrationId("keycloak") // Use your client registration ID
+        oauth.setDefaultClientRegistrationId("keycloak") // Uses the 'keycloak' client registration as configured in application properties
 
         val webClientBuilder: Builder = WebClient.builder()
             .clientConnector(ReactorClientHttpConnector(httpClient))
