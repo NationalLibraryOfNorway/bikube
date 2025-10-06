@@ -16,10 +16,19 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
   datasource:
-    url: ${POSTRGRES_URL}
-    username: ${POSTRGRES_USERNAME}
-    password: ${POSTRGRES_PASSWORD}
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -37,13 +46,7 @@ security:
   enabled: false
 
 collections:
-  url: ${COLLECTIONS_PATH_STAGE}
-  username: ""
-  password: ""
-
-kerberos:
-  realm: ${KERBEROS_REALM}
-  kdc: ${KERBEROS_KDC}
+  url: ${COLLECTIONS_URL}
 
 alma:
   alma-sru-url: ${ALMA_SRU_URL}

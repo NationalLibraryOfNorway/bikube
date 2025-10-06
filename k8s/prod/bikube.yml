@@ -37,36 +37,41 @@ spec:
                 secretKeyRef:
                   name: bikube-secrets
                   key: password
-            - name: COLLECTIONS_PATH_PROD
+            - name: COLLECTIONS_URL
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: collections_url
-            - name: COLLECTIONS_USERNAME_PROD
+                  name: collections-secret
+                  key: COLLECTIONS_URL
+            - name: COLLECTIONS_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: ad_username
-            - name: COLLECTIONS_PASSWORD_PROD
+                  name: collections-secret
+                  key: COLLECTIONS_USERNAME
+            - name: COLLECTIONS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: ad_password
-            - name: COLLECTIONS_DIRECTLINK_PROD
+                  name: collections-secret
+                  key: COLLECTIONS_PASSWORD
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: collections-secret
+                  key: KEYCLOAK_CLIENT_ID
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: collections-secret
+                  key: KEYCLOAK_CLIENT_SECRET
+            - name: KEYCLOAK_ISSUER_URI
+              valueFrom:
+                secretKeyRef:
+                  name: collections-secret
+                  key: KEYCLOAK_ISSUER_URI
+            - name: COLLECTIONS_DIRECTLINK
               valueFrom:
                 secretKeyRef:
                   name: bikube-secrets
                   key: collections_directlink
-            - name: KERBEROS_REALM
-              valueFrom:
-                secretKeyRef:
-                  name: bikube-secrets
-                  key: kerb_realm
-            - name: KERBEROS_KDC
-              valueFrom:
-                secretKeyRef:
-                  name: bikube-secrets
-                  key: kerb_kdc
             - name: ALMA_SRU_URL
               valueFrom:
                 secretKeyRef:
