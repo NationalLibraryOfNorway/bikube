@@ -63,14 +63,6 @@ class CollectionsWebClientConfig(
             .clientConnector(ReactorClientHttpConnector(httpClient))
             .baseUrl(collectionsConfig.url)
             .filter(oauth)
-            .filter { request, next -> // Logging filter runs after OAuth2 filter
-                logger().info("Request URL: ${request.url()}")
-                request.headers().forEach { name, values ->
-                    logger().info("Header: $name = $values")
-                }
-                logger().info(request.body().toString())
-                next.exchange(request)
-            }
             .exchangeStrategies(
                 ExchangeStrategies.builder().codecs { configurer ->
                     configurer.defaultCodecs().maxInMemorySize(64 * 1024 * 1024)
