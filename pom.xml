@@ -5,20 +5,21 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
+		<version>3.4.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
 	<artifactId>bikube</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bikube</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Bikube (BIbliografisk Katalog for Uthenting og BEhandling) er et API for kommunikasjon med kataloger for tekstmateriale</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<kotlin.version>2.1.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<fasterxml.version>2.18.2</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
+        <vaadin.version>24.8.6</vaadin.version>
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 	<dependencies>
@@ -162,6 +163,30 @@
 			<version>42.7.4</version>
 		</dependency>
 
+        <!-- Vaadin -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-core</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-spring-boot-starter</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+
+        <!-- Oauth2 for Vaadin frontend -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
 		<!-- Dependencies only for tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -265,6 +290,18 @@
 					<runOrder>random</runOrder>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-frontend</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 

@@ -67,3 +67,6 @@ search-index:
   initial-delay: 1000
   rebuild-index-delay: 1800000
   searcher-refresh-delay: 600000
+
+vaadin:
+  url-mapping: /hugin/*
