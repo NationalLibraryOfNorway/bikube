@@ -2,8 +2,8 @@ import { ConnectClient as ConnectClient_1 } from "@vaadin/hilla-frontend";
 import {MaybePromise, MiddlewareContext, MiddlewareNext} from "@vaadin/hilla-frontend/Connect.js";
 
 const mwareFunction = async (context: MiddlewareContext, next: MiddlewareNext) => {
-    if (["GET", "POST"].includes(context.request.method) && (context.request.url.includes("/ammo/connect/"))) {
-        const newUrl = context.request.url.replace("/ammo", "")
+    if (["GET", "POST"].includes(context.request.method) && (context.request.url.includes("/hugin/connect/"))) {
+        const newUrl = context.request.url.replace("/hugin", "")
 
         const body = context.request.method === 'POST'
             ? await context.request.clone().text()
