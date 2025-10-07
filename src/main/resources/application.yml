@@ -81,6 +81,8 @@ search-index:
   searcher-refresh-delay: 600000
 
 vaadin:
+  copilot:
+    enable: false
   url-mapping: /hugin/*
 
 logging:
