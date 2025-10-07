@@ -6,14 +6,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction
-import org.springframework.security.oauth2.client.InMemoryReactiveOAuth2AuthorizedClientService
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
-import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
@@ -28,17 +27,17 @@ import java.time.Duration
 class KeycloakConfig {
 
     @Bean
-    fun reactiveOAuth2AuthorizedClientManager(
-        clientRegistrationRepository: ReactiveClientRegistrationRepository
-    ): ReactiveOAuth2AuthorizedClientManager {
-        val authorizedClientProvider: ReactiveOAuth2AuthorizedClientProvider =
-            ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+    fun oAuth2AuthorizedClientManager(
+        clientRegistrationRepository: ClientRegistrationRepository
+    ): OAuth2AuthorizedClientManager {
+        val authorizedClientProvider: OAuth2AuthorizedClientProvider =
+            OAuth2AuthorizedClientProviderBuilder.builder()
                 .clientCredentials()
                 .build()
 
-        val authorizedClientManager = AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+        val authorizedClientManager = AuthorizedClientServiceOAuth2AuthorizedClientManager(
             clientRegistrationRepository,
-            InMemoryReactiveOAuth2AuthorizedClientService(clientRegistrationRepository)
+            InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository)
         )
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
         return authorizedClientManager
@@ -48,7 +47,7 @@ class KeycloakConfig {
 @Configuration
 class CollectionsWebClientConfig(
     private val collectionsConfig: CollectionsConfig,
-    private val authorizedClientManager: ReactiveOAuth2AuthorizedClientManager
+    private val authorizedClientManager: OAuth2AuthorizedClientManager
 ) {
 
     @Bean
@@ -56,7 +55,7 @@ class CollectionsWebClientConfig(
         val httpClient = HttpClient.create()
             .responseTimeout(Duration.ofSeconds(30))
 
-        val oauth = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+        val oauth = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
         oauth.setDefaultClientRegistrationId("keycloak") // Uses the 'keycloak' client registration as configured in application properties
 
         val webClientBuilder: Builder = WebClient.builder()

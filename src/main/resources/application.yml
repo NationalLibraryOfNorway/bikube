@@ -1,5 +1,7 @@
 server:
   port: 8087
+  servlet:
+    context-path: /bikube
 
 management:
   endpoint:
@@ -9,6 +11,8 @@ management:
     port: 8088
 
 spring:
+  application:
+    name: bikube
   webflux:
     base-path: /bikube
   security:
@@ -70,3 +74,8 @@ search-index:
 
 vaadin:
   url-mapping: /hugin/*
+
+logging:
+  level:
+    org.springframework.security: debug
+    com.vaadin: debug

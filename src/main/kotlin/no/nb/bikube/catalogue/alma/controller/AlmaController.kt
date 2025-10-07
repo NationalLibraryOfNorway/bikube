@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono
     name = "MarcXchange",
     description = "Get bibliographic records as MarcXchange encoded MARC-21"
 )
-@RequestMapping("/alma")
+@RequestMapping("/api/alma")
 class AlmaController(
     private val almaService: AlmaService,
     private val almaSruService: AlmaSruService,

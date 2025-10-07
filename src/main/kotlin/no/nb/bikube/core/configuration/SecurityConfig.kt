@@ -8,27 +8,19 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
-import org.springframework.core.convert.converter.Converter
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
 import org.springframework.security.web.context.SecurityContextHolderFilter
-import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.util.AntPathMatcher
-import reactor.core.publisher.Mono
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -36,58 +28,60 @@ import java.util.stream.Stream
 @Order(1)
 class ApiSecurityConfig {
 
+    companion object {
+        fun apiSecurityMatcher() = listOf(
+            "/api/**/",
+            "/",
+            "/webjars/swagger-ui/**",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/actuator",
+            "/actuator/**"
+        )
+    }
+
     @ConditionalOnProperty(
         prefix = "security",
         name = ["enabled"],
         havingValue = "true"
     )
     @Configuration
-    @EnableWebFluxSecurity
+    @EnableWebSecurity
     class Enabled {
         @Bean
-        fun apiSecurityEnabledFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+            val jwtAuthConverter = JwtAuthenticationConverter().apply {
+                setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter())
+            }
+
             http
-                .csrf { csrf -> csrf.disable() }
-                .authorizeExchange { exchange ->
-                    exchange
-                        .pathMatchers(
-                            "/",
-                            "/webjars/swagger-ui/**",
-                            "/v3/api-docs",
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/swagger-resources",
-                            "/swagger-resources/**",
-                            "/actuator",
-                            "/actuator/**"
-                        ).permitAll()
-                        .pathMatchers(HttpMethod.GET, "/**").permitAll()
-                        .anyExchange().hasAuthority("bikube-create")
+                .csrf { it -> it.disable() }
+                .authorizeHttpRequests { auth ->
+                    auth
+                        .requestMatchers(*apiSecurityMatcher().toTypedArray()).permitAll()
+                        .requestMatchers(*apiSecurityMatcher().toTypedArray()).hasAuthority("bikube-create")
                 }
                 .oauth2ResourceServer { server ->
                     server.jwt { jwt ->
-                        jwt.jwtAuthenticationConverter(authoritiesExtractor())
+                        jwt.jwtAuthenticationConverter(jwtAuthConverter)
                     }
                 }
+                .securityMatcher(*apiSecurityMatcher().toTypedArray())
             return http.build()
         }
 
-        fun authoritiesExtractor(): Converter<Jwt, Mono<AbstractAuthenticationToken>> {
-            val jwtAuthConverter = JwtAuthenticationConverter()
-            jwtAuthConverter.setJwtGrantedAuthoritiesConverter(GrantedAuthoritiesExtractor())
-            return ReactiveJwtAuthenticationConverterAdapter(jwtAuthConverter)
-        }
-
-        internal class GrantedAuthoritiesExtractor : Converter<Jwt, Collection<GrantedAuthority>> {
-            override fun convert(jwt: Jwt): Collection<GrantedAuthority> {
-                @Suppress("UNCHECKED_CAST")
-                val realmAccess: Map<String, List<String>> = jwt.claims.getOrDefault("realm_access", emptyMap<String, List<String>>()) as Map<String, List<String>>
-                val roles: List<String> = realmAccess.getOrDefault("roles", emptyList())
-
-                return roles.map { SimpleGrantedAuthority(it) }
+        @Bean
+        fun grantedAuthoritiesConverter(): org.springframework.core.convert.converter.Converter<Jwt, Collection<GrantedAuthority>> =
+            org.springframework.core.convert.converter.Converter { jwt ->
+                val realmAccess = (jwt.claims["realm_access"] as? Map<*, *>) ?: emptyMap<String, Any>()
+                val roles = (realmAccess["roles"] as? Collection<*>)?.filterIsInstance<String>() ?: emptyList()
+                roles.map { SimpleGrantedAuthority(it) }
             }
-        }
+
     }
 
     @ConditionalOnProperty(
@@ -96,16 +90,15 @@ class ApiSecurityConfig {
         havingValue = "false"
     )
     @Configuration
-    @EnableWebFluxSecurity
+    @EnableWebSecurity
     class Disabled {
         @Bean
-        fun apiSecurityDisabledFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
             http
                 .csrf { csrf -> csrf.disable() }
-                .authorizeExchange { authorizeExchange ->
-                    authorizeExchange
-                        .anyExchange()
-                        .permitAll()
+                .authorizeHttpRequests { auth ->
+                    auth
+                        .requestMatchers(*apiSecurityMatcher().toTypedArray()).permitAll()
                 }
             return http.build()
         }
@@ -126,22 +119,28 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
             "/hugin/**",
             "/connect/**"
         )
+    }
 
-        // For logging purposes, we add a filter that logs the filter used and the request URI
-        @Bean
-        fun vaadinChainLoggingFilter(): jakarta.servlet.Filter {
-            val matcher = vaadinSecurityMatcher()
-            val pathMatcher = AntPathMatcher()
-            return jakarta.servlet.Filter { request, response, chain ->
-                if (matcher.any { pattern -> pathMatcher.match(pattern, (request as HttpServletRequest).servletPath) }) {
-                    logger().debug("VaadinSecurityFilterChain handling: ${(request as HttpServletRequest).servletPath}")
-                } else {
-                    logger().debug("VaadinSecurityFilterChain skipping: ${(request as HttpServletRequest).servletPath}")
-                }
-                chain.doFilter(request, response)
+    // For logging purposes, we add a filter that logs the filter used and the request URI
+    @Bean
+    fun vaadinChainLoggingFilter(): jakarta.servlet.Filter {
+        val matcher = vaadinSecurityMatcher()
+        val pathMatcher = AntPathMatcher()
+        return jakarta.servlet.Filter { request, response, chain ->
+            if (matcher.any { pattern ->
+                    pathMatcher.match(
+                        pattern,
+                        (request as HttpServletRequest).servletPath
+                    )
+                }) {
+                logger().debug("VaadinSecurityFilterChain handling: ${(request as HttpServletRequest).servletPath}")
+            } else {
+                logger().debug("VaadinSecurityFilterChain skipping: ${(request as HttpServletRequest).servletPath}")
             }
+            chain.doFilter(request, response)
         }
     }
+
 
     override fun configure(http: HttpSecurity) {
         super.configure(http)
@@ -150,22 +149,17 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
             oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
         }
             // TODO: Ammo feiler med invalid csrf-token
-            .csrf { csrf ->
-                csrf.disable()
-            }
-        http.logout {
-            it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-        }
+            .csrf { csrf -> csrf.disable() }
+            .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
+            .securityMatcher(*vaadinSecurityMatcher().toTypedArray())
     }
 
     @Bean(name = ["VaadinSecurityFilterChainBean"])
     override fun filterChain(http: HttpSecurity): SecurityFilterChain {
         // For logging purposes, we add a filter that logs the filter used and the request URI
-        http.addFilterBefore(vaadinChainLoggingFilter(), SecurityContextHolderFilter::class.java)
-
-        http.securityMatcher(
-            *vaadinSecurityMatcher().toTypedArray()
-        )
+        http
+            .addFilterBefore(vaadinChainLoggingFilter(), SecurityContextHolderFilter::class.java)
+            .securityMatcher(*vaadinSecurityMatcher().toTypedArray())
         return super.filterChain(http)
     }
 
