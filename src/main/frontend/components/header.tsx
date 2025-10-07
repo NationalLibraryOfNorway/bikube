@@ -21,8 +21,8 @@ export default function Header({ onToggleTheme, user, onLogout }: HeaderProps) {
           >
               <NavLink to="/">
                   <div className="flex items-center gap-2">
-                      <Logo className="w-[45px] mt-4" />
-                      <span className={"text-2xl mt-3"}>Hugin</span>
+                      <Logo className="w-[45px]" />
+                      <span className={"text-2xl"}>Hugin</span>
                   </div>
               </NavLink>
 
