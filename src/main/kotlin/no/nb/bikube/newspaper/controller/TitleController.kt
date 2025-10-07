@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @Tag(name="Newspaper titles", description="Endpoints related to newspaper titles.")
-@RequestMapping("/newspapers/titles")
+@RequestMapping("/api/newspapers/titles")
 class TitleController (
     private val newspaperService: NewspaperService,
     private val titleIndexService: TitleIndexService
