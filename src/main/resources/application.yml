@@ -22,10 +22,18 @@ spring:
           jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
       client:
         registration:
-          keycloak:
+          keycloak-collections:
             client-id: ${KEYCLOAK_CLIENT_ID}
             client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: client_credentials
+            provider: keycloak
+          keycloak-hugin:
+            client-id: ${KEYCLOAK_HUGIN_CLIENT_ID}
+            client-secret: ${KEYCLOAK_HUGIN_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            provider: keycloak
         provider:
           keycloak:
             issuer-uri: ${KEYCLOAK_ISSUER_URI}

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -30,8 +31,7 @@ class ApiSecurityConfig {
 
     companion object {
         fun apiSecurityMatcher() = listOf(
-            "/api/**/",
-            "/",
+            "/api/**",
             "/webjars/swagger-ui/**",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -54,6 +54,8 @@ class ApiSecurityConfig {
     class Enabled {
         @Bean
         fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+            http.securityMatcher(*apiSecurityMatcher().toTypedArray())
+
             val jwtAuthConverter = JwtAuthenticationConverter().apply {
                 setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter())
             }
@@ -62,7 +64,7 @@ class ApiSecurityConfig {
                 .csrf { it -> it.disable() }
                 .authorizeHttpRequests { auth ->
                     auth
-                        .requestMatchers(*apiSecurityMatcher().toTypedArray()).permitAll()
+                        .requestMatchers(HttpMethod.GET,*apiSecurityMatcher().toTypedArray()).permitAll()
                         .requestMatchers(*apiSecurityMatcher().toTypedArray()).hasAuthority("bikube-create")
                 }
                 .oauth2ResourceServer { server ->
@@ -95,6 +97,7 @@ class ApiSecurityConfig {
         @Bean
         fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
             http
+                .securityMatcher(*apiSecurityMatcher().toTypedArray())
                 .csrf { csrf -> csrf.disable() }
                 .authorizeHttpRequests { auth ->
                     auth
@@ -141,17 +144,15 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
         }
     }
 
-
     override fun configure(http: HttpSecurity) {
+
         super.configure(http)
-        setOAuth2LoginPage(http, "/oauth2/authorization/keycloak")
+        setOAuth2LoginPage(http, "/oauth2/authorization/keycloak-hugin") // ???
         http.oauth2Login { oauth2 ->
             oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
         }
-            // TODO: Ammo feiler med invalid csrf-token
             .csrf { csrf -> csrf.disable() }
             .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
-            .securityMatcher(*vaadinSecurityMatcher().toTypedArray())
     }
 
     @Bean(name = ["VaadinSecurityFilterChainBean"])
@@ -175,10 +176,7 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
                     roles.stream().map { r: String? -> SimpleGrantedAuthority("ROLE_$r") }
                 }
                 .reduce(Stream.empty()) { joinedAuthorities: Stream<SimpleGrantedAuthority>, roleAuthorities: Stream<SimpleGrantedAuthority> ->
-                    Stream.concat(
-                        joinedAuthorities,
-                        roleAuthorities
-                    )
+                    Stream.concat(joinedAuthorities, roleAuthorities)
                 }
                 .collect(Collectors.toList())
         }
