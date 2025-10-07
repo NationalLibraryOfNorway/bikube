@@ -1,19 +1,7 @@
 import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
 import {useState} from "react";
-import {ChevronFirst, ChevronLast} from "lucide-react";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious
-} from "@/components/ui/pagination";
 import {useAuth} from "@/context/auth-context";
-import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
-import {Button} from "../components/ui/button";
-import {getPagesButtonsList} from "../lib/utils";
+import Logo from "@/components/logo";
 
 export const config: ViewConfig = {
     menu: {
@@ -24,13 +12,17 @@ export const config: ViewConfig = {
 };
 
 export default function MainView() {
-    const [page, setPage] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
     const { state } = useAuth()
 
     return (
-        <div className="flex min-h-screen flex-col">
+        <div className="flex flex-col items-center justify-center mt-20">
+            <Logo className={"w-[150px] mb-5"}/>
+            <input
+                type="text"
+                placeholder="Søk etter avistittel..."
+                className="w-80 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+        </div>
 
-        </div >
     )
 };
