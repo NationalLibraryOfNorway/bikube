@@ -48,12 +48,12 @@ function MainLayout() {
         <AppSidebar theme={theme} items={sidebarMenuItems} />
         <div className={'flex flex-col h-screen w-full px-5 pb-5'}>
             <Toaster />
-            <Header
+            {/*<Header
                 theme={theme}
                 onLogout={logout}
                 onToggleTheme={toggleTheme}
                 user={{ initials: state.user?.initials, fullName: state.user?.fullName }}
-            />
+            />*/}
             <Outlet />
         </div>
     </>)

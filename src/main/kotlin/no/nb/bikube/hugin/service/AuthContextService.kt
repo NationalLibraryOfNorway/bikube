@@ -1,8 +1,8 @@
-package no.nb.hugin.service
+package no.nb.bikube.hugin.service
 
 import com.vaadin.hilla.BrowserCallable
 import jakarta.annotation.security.PermitAll
-import no.nb.hugin.model.User
+import no.nb.bikube.hugin.model.User
 import org.springframework.lang.NonNull
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder

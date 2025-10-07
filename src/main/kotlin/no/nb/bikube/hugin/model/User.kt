@@ -1,4 +1,4 @@
-package no.nb.hugin.model
+package no.nb.bikube.hugin.model
 
 import org.springframework.lang.NonNull
 import kotlin.plus
