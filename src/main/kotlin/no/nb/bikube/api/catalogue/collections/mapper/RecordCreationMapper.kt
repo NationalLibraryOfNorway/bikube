@@ -1,8 +1,8 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
-import no.nb.bikube.catalogue.collections.model.CollectionsObject
-import no.nb.bikube.catalogue.collections.model.CollectionsPartsObject
-import no.nb.bikube.catalogue.collections.model.CollectionsPartsReference
+import no.nb.bikube.api.catalogue.collections.model.CollectionsObject
+import no.nb.bikube.api.catalogue.collections.model.CollectionsPartsObject
+import no.nb.bikube.api.catalogue.collections.model.CollectionsPartsReference
 
 fun mapCollectionsObjectToCollectionsPartObject(collectionsObject: CollectionsObject): CollectionsPartsObject {
     return CollectionsPartsObject(

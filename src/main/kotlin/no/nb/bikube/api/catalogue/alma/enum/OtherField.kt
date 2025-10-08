@@ -1,6 +1,6 @@
-package no.nb.bikube.catalogue.alma.enum
+package no.nb.bikube.api.catalogue.alma.enum
 
-import no.nb.bikube.catalogue.alma.model.FieldID
+import no.nb.bikube.api.catalogue.alma.model.FieldID
 
 enum class OtherField(override val tag: String, override val code: String) : FieldID {
     // 100 - Main Entry-Personal Name (NR)

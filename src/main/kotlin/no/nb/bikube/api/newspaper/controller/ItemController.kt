@@ -1,4 +1,4 @@
-package no.nb.bikube.newspaper.controller
+package no.nb.bikube.api.newspaper.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -6,13 +6,13 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.inputDto.ItemInputDto
-import no.nb.bikube.core.model.inputDto.ItemUpdateDto
-import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
-import no.nb.bikube.core.service.DtoValidationService
-import no.nb.bikube.core.util.logger
-import no.nb.bikube.newspaper.service.NewspaperService
+import no.nb.bikube.api.core.model.Item
+import no.nb.bikube.api.core.model.inputDto.ItemInputDto
+import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
+import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
+import no.nb.bikube.api.core.service.DtoValidationService
+import no.nb.bikube.api.core.util.logger
+import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

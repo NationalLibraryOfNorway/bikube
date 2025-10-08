@@ -1,4 +1,9 @@
 package no.nb.bikube.hugin.repository
 
-interface TitleRepository {
+import no.nb.bikube.hugin.model.Title
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface TitleRepository : JpaRepository<Title, Int> {
+    fun findAllByVendorContainingIgnoreCase(title: String): List<Title>
 }
+

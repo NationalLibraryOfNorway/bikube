@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.model
+package no.nb.bikube.api.catalogue.alma.model
 
 interface FieldID {
     val tag: String?

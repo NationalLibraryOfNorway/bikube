@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.model
+package no.nb.bikube.api.catalogue.alma.model
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement

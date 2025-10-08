@@ -1,7 +1,7 @@
-package no.nb.bikube.catalogue.collections.model.dto
+package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.*
-import no.nb.bikube.core.util.DateUtils
+import no.nb.bikube.api.core.util.DateUtils
 import java.time.LocalDate
 import java.time.LocalTime
 

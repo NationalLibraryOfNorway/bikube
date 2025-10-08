@@ -1,4 +1,4 @@
-package no.nb.bikube.core.configuration
+package no.nb.bikube.api.core.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

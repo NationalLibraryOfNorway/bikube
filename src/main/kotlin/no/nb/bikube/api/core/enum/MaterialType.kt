@@ -1,4 +1,4 @@
-package no.nb.bikube.core.enum
+package no.nb.bikube.api.core.enum
 
 enum class MaterialType (val value: String, val norwegian: String) {
     NEWSPAPER("Newspaper", "Avis"),

@@ -1,8 +1,8 @@
-package no.nb.bikube.newspaper.service
+package no.nb.bikube.api.newspaper.service
 
-import no.nb.bikube.core.exception.SearchIndexNotAvailableException
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.exception.SearchIndexNotAvailableException
+import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.util.logger
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory
 import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory
 import org.apache.lucene.analysis.custom.CustomAnalyzer

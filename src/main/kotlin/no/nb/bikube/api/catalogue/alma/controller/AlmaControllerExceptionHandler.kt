@@ -1,9 +1,9 @@
-package no.nb.bikube.catalogue.alma.controller
+package no.nb.bikube.api.catalogue.alma.controller
 
-import no.nb.bikube.catalogue.alma.exception.AlmaException
-import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import no.nb.bikube.core.controller.addDefaultProperties
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.catalogue.alma.exception.AlmaException
+import no.nb.bikube.api.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.api.core.controller.addDefaultProperties
+import no.nb.bikube.api.core.util.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ControllerAdvice

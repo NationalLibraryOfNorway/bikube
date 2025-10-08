@@ -1,8 +1,8 @@
-package no.nb.bikube.catalogue.collections.model.dto
+package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.catalogue.collections.enum.CollectionsNameType
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsNameType
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

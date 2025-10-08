@@ -1,4 +1,4 @@
-package no.nb.bikube.core.util
+package no.nb.bikube.api.core.util
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

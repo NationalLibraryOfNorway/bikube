@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.controller
+package no.nb.bikube.api.catalogue.alma.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.constraints.Pattern
-import no.nb.bikube.catalogue.alma.service.AlmaService
-import no.nb.bikube.catalogue.alma.service.AlmaSruService
-import no.nb.bikube.catalogue.alma.service.MarcXChangeService
+import no.nb.bikube.api.catalogue.alma.service.AlmaService
+import no.nb.bikube.api.catalogue.alma.service.AlmaSruService
+import no.nb.bikube.api.catalogue.alma.service.MarcXChangeService
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*

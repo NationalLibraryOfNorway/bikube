@@ -1,7 +1,7 @@
-package no.nb.bikube.catalogue.collections.config
+package no.nb.bikube.api.catalogue.collections.config
 
 import io.netty.handler.timeout.TimeoutException
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.util.logger
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile

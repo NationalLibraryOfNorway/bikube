@@ -1,12 +1,12 @@
-package no.nb.bikube.catalogue.alma.service
+package no.nb.bikube.api.catalogue.alma.service
 
-import no.nb.bikube.catalogue.alma.config.AlmaConfig
-import no.nb.bikube.catalogue.alma.config.AlmaHttpConnector
-import no.nb.bikube.catalogue.alma.exception.AlmaException
-import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
-import no.nb.bikube.catalogue.alma.model.AlmaBibResult
-import no.nb.bikube.catalogue.alma.model.AlmaErrorCode
-import no.nb.bikube.catalogue.alma.model.MarcRecord
+import no.nb.bikube.api.catalogue.alma.config.AlmaConfig
+import no.nb.bikube.api.catalogue.alma.config.AlmaHttpConnector
+import no.nb.bikube.api.catalogue.alma.exception.AlmaException
+import no.nb.bikube.api.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.api.catalogue.alma.model.AlmaBibResult
+import no.nb.bikube.api.catalogue.alma.model.AlmaErrorCode
+import no.nb.bikube.api.catalogue.alma.model.MarcRecord
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service

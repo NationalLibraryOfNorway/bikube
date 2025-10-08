@@ -1,6 +1,6 @@
-package no.nb.bikube.catalogue.alma.config
+package no.nb.bikube.api.catalogue.alma.config
 
-import no.nb.bikube.core.configuration.ProxyConfig
+import no.nb.bikube.api.core.configuration.ProxyConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ClientHttpConnector

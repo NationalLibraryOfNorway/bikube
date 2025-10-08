@@ -1,4 +1,4 @@
-package no.nb.bikube.core.util
+package no.nb.bikube.api.core.util
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.enum
+package no.nb.bikube.api.catalogue.alma.enum
 
 enum class EnumChronCaption(val code: String, val caption: String) {
     A("a", "volume"),

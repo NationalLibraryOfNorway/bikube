@@ -1,9 +1,9 @@
-package no.nb.bikube.catalogue.alma.model
+package no.nb.bikube.api.catalogue.alma.model
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.nb.bikube.catalogue.alma.enum.EnumChronCaption
+import no.nb.bikube.api.catalogue.alma.enum.EnumChronCaption
 import java.util.*
 
 @JacksonXmlRootElement(localName = "item")
