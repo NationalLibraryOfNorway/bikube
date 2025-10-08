@@ -6,8 +6,6 @@ import no.nb.bikube.api.catalogue.collections.config.CollectionsConfig
 import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.api.catalogue.collections.enum.*
 import no.nb.bikube.api.catalogue.collections.exception.*
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.catalogue.collections.mapper.*
 import no.nb.bikube.api.catalogue.collections.model.*
 import no.nb.bikube.api.catalogue.collections.model.dto.*
@@ -18,9 +16,6 @@ import no.nb.bikube.api.core.model.*
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
-import no.nb.bikube.api.core.exception.BadRequestBodyException
-import no.nb.bikube.api.core.exception.NotSupportedException
-import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.api.core.model.inputDto.TitleInputDto
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
