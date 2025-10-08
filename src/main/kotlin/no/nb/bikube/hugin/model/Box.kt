@@ -29,7 +29,7 @@ class Box() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id", nullable = false)
     @JsonBackReference("title-boxes")
-    var title: Title? = null;
+    var title: HuginTitle? = null;
 
     @OneToMany(mappedBy = "box", cascade = [], orphanRemoval = false, fetch = FetchType.LAZY)
     @JsonManagedReference("box-newspapers")

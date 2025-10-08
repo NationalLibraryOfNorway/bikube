@@ -12,7 +12,7 @@ import org.hibernate.type.SqlTypes
 
 @Entity
 @Table(name = "title", schema = "hugin")
-open class Title() {
+open class HuginTitle() {
 
     @Id
     @Column(name = "id", nullable = false)
