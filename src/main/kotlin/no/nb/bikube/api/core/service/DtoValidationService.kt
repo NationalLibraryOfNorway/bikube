@@ -1,9 +1,9 @@
-package no.nb.bikube.core.service
+package no.nb.bikube.api.core.service
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
-import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.model.inputDto.ItemInputDto
-import no.nb.bikube.core.model.inputDto.ItemUpdateDto
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsItemStatus
+import no.nb.bikube.api.core.exception.BadRequestBodyException
+import no.nb.bikube.api.core.model.inputDto.ItemInputDto
+import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import org.springframework.stereotype.Service
 
 @Service

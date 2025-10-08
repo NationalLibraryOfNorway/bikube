@@ -1,6 +1,6 @@
-package no.nb.bikube.catalogue.collections.model
+package no.nb.bikube.api.catalogue.collections.model
 
-import no.nb.bikube.catalogue.collections.exception.CollectionsObjectMissing
+import no.nb.bikube.api.catalogue.collections.exception.CollectionsObjectMissing
 
 interface CollectionsGenericObject {
     val priRef: String

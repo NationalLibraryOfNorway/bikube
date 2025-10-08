@@ -1,8 +1,8 @@
-package no.nb.bikube.catalogue.collections.controller
+package no.nb.bikube.api.catalogue.collections.controller
 
-import no.nb.bikube.catalogue.collections.exception.*
-import no.nb.bikube.core.controller.addDefaultProperties
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.catalogue.collections.exception.*
+import no.nb.bikube.api.core.controller.addDefaultProperties
+import no.nb.bikube.api.core.util.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ControllerAdvice

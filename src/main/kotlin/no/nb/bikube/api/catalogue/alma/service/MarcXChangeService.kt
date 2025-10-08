@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.service
+package no.nb.bikube.api.catalogue.alma.service
 
 import com.fasterxml.jackson.core.JacksonException
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nb.bikube.catalogue.alma.model.*
+import no.nb.bikube.api.catalogue.alma.model.*
 import org.springframework.stereotype.Service
 
 @Service

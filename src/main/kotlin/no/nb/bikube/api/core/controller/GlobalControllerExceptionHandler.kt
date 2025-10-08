@@ -1,11 +1,11 @@
-package no.nb.bikube.core.controller
+package no.nb.bikube.api.core.controller
 
 import jakarta.validation.ConstraintViolationException
-import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.exception.NotSupportedException
-import no.nb.bikube.core.exception.RecordAlreadyExistsException
-import no.nb.bikube.core.exception.SearchIndexNotAvailableException
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.exception.BadRequestBodyException
+import no.nb.bikube.api.core.exception.NotSupportedException
+import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.api.core.exception.SearchIndexNotAvailableException
+import no.nb.bikube.api.core.util.logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ControllerAdvice

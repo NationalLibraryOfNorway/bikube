@@ -1,9 +1,9 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.core.model.Item
+import no.nb.bikube.api.core.util.DateUtils.Companion.parseYearOrDate
 
 fun mapCollectionsObjectToGenericItem(model: CollectionsObject): Item {
     return Item(

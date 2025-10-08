@@ -1,7 +1,7 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.core.model.Title
 
 
 fun mapCollectionsObjectToGenericTitle(model: CollectionsObject): Title {

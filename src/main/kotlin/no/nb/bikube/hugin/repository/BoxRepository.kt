@@ -1,4 +1,6 @@
 package no.nb.bikube.hugin.repository
 
-interface BoxRepository {
-}
+import no.nb.bikube.hugin.model.Box
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface BoxRepository : JpaRepository<Box, String>

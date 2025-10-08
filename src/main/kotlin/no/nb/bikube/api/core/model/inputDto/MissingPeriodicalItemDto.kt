@@ -1,4 +1,4 @@
-package no.nb.bikube.core.model.inputDto
+package no.nb.bikube.api.core.model.inputDto
 
 import java.time.LocalDate
 

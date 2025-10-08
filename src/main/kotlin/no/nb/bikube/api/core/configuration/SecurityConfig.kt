@@ -1,8 +1,8 @@
-package no.nb.bikube.core.configuration
+package no.nb.bikube.api.core.configuration
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity
 import jakarta.servlet.http.HttpServletRequest
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.util.logger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

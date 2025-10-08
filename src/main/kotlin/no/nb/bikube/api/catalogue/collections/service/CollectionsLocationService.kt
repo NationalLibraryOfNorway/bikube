@@ -1,12 +1,12 @@
-package no.nb.bikube.catalogue.collections.service
+package no.nb.bikube.api.catalogue.collections.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
-import no.nb.bikube.catalogue.collections.model.CollectionsLocationObject
-import no.nb.bikube.catalogue.collections.model.dto.CollectionsLocationDto
-import no.nb.bikube.catalogue.collections.model.dto.createContainerDto
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.api.catalogue.collections.exception.CollectionsItemNotFound
+import no.nb.bikube.api.catalogue.collections.model.CollectionsLocationObject
+import no.nb.bikube.api.catalogue.collections.model.dto.CollectionsLocationDto
+import no.nb.bikube.api.catalogue.collections.model.dto.createContainerDto
+import no.nb.bikube.api.catalogue.collections.repository.CollectionsRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 

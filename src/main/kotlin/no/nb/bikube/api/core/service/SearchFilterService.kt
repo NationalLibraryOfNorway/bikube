@@ -1,8 +1,8 @@
-package no.nb.bikube.core.service
+package no.nb.bikube.api.core.service
 
 import me.xdrop.fuzzywuzzy.FuzzySearch
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.util.logger
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 

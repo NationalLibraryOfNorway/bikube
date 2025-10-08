@@ -1,7 +1,7 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
-import no.nb.bikube.catalogue.collections.model.CollectionsNameObject
-import no.nb.bikube.core.model.Publisher
+import no.nb.bikube.api.catalogue.collections.model.CollectionsNameObject
+import no.nb.bikube.api.core.model.Publisher
 
 fun mapCollectionsObjectToGenericPublisher(model: CollectionsNameObject): Publisher {
     return Publisher(

@@ -1,10 +1,10 @@
-package no.nb.bikube.catalogue.alma.controller
+package no.nb.bikube.api.catalogue.alma.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nb.bikube.catalogue.alma.enum.OtherField
-import no.nb.bikube.catalogue.alma.model.MarcRecord
-import no.nb.bikube.catalogue.alma.service.AlmaService
+import no.nb.bikube.api.catalogue.alma.enum.OtherField
+import no.nb.bikube.api.catalogue.alma.model.MarcRecord
+import no.nb.bikube.api.catalogue.alma.service.AlmaService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.PathVariable

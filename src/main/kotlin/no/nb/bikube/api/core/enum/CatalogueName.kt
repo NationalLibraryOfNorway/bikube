@@ -1,6 +1,6 @@
-package no.nb.bikube.core.enum
+package no.nb.bikube.api.core.enum
 
-import no.nb.bikube.core.exception.NotSupportedException
+import no.nb.bikube.api.core.exception.NotSupportedException
 
 enum class CatalogueName(val value: String) {
     COLLECTIONS("COLLECTIONS"),

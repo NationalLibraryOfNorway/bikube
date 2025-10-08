@@ -1,4 +1,4 @@
-package no.nb.bikube.core.configuration
+package no.nb.bikube.api.core.configuration
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.security.SecurityScheme

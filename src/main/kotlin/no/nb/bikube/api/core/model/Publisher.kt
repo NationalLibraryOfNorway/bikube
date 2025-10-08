@@ -1,4 +1,4 @@
-package no.nb.bikube.core.model
+package no.nb.bikube.api.core.model
 
 data class Publisher(
     val name: String?,
