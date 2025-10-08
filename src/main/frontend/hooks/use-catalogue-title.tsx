@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { HuginNewspaperService } from '@/generated/endpoints';
+import {HuginCollectionsService } from '@/generated/endpoints';
 import { redirect } from '@/lib/utils';
 
 type CatalogueTitleParams = {
@@ -18,7 +18,7 @@ export function useCatalogueTitle({
     retry: false,
     queryFn: async () => {
       try {
-        return await HuginNewspaperService.getTitlesByTitle(query);
+        return await HuginCollectionsService.findByTitleAndMaterialType(query);
       } catch (e: any) {
         if (e?.response?.status === 401 || String(e?.message ?? '').includes('401')) {
           redirect('/bikube/hugin');

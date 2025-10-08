@@ -34,7 +34,7 @@ class ContactInfo() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id")
     @JsonBackReference("title-contactInfos")
-    var title: Title? = null;
+    var title: HuginTitle? = null;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "contact_type")
