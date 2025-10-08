@@ -10,7 +10,6 @@ type CatalogueTitleParams = {
 export function useCatalogueTitle({
   query,
 }: CatalogueTitleParams) {
-  const [selected, setSelected] = useState<null | undefined>(undefined);
 
   const q = useQuery({
     queryKey: ['title', query ],
@@ -30,18 +29,9 @@ export function useCatalogueTitle({
     select: (arr) => arr ?? [],
   });
 
-  // Pick first as default once data arrives (don’t override user choice)
-  useEffect(() => {
-    if (!selected && q.data && q.data.length > 0) {
-      //setSelected(q.data[0]);
-    }
-  }, [q.data]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return {
     options: q.data ?? [],
     isLoading: q.isLoading,
-    selected,
-    setSelected,
     search: q.refetch,
   };
 }
