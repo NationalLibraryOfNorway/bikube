@@ -1,7 +1,7 @@
-package no.nb.bikube.newspaper.service
+package no.nb.bikube.api.newspaper.service
 
 import jakarta.persistence.EntityManager
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.core.util.logger
 import org.springframework.stereotype.Service
 
 @Service
