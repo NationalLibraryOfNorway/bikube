@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import {HuginCollectionsService, HuginNewspaperService} from '@/generated/endpoints';
+import {HuginCollectionsService } from '@/generated/endpoints';
 import { redirect } from '@/lib/utils';
 import {keys} from "@/query/keys";
 

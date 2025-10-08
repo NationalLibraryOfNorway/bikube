@@ -1,4 +1,4 @@
-package no.nb.bikube.api.newspaper.service
+package no.nb.bikube.newspaper.service
 
 import jakarta.annotation.PreDestroy
 import no.nb.bikube.api.core.exception.SearchIndexNotAvailableException
@@ -42,7 +42,7 @@ interface TitleIndexService {
 class TitleIndexServiceImpl(
     private val newspaperService: NewspaperService,
     @Value("\${search-index.path}") private val searchIndexPath: String
-) : TitleIndexService {
+): TitleIndexService {
     private val titleAnalyzer = CustomAnalyzer.builder()
         .withTokenizer(WhitespaceTokenizerFactory.NAME)
         .addTokenFilter(LowerCaseFilterFactory.NAME)
@@ -154,7 +154,7 @@ class TitleIndexServiceImpl(
     havingValue = "false"
 )
 @Service
-class TitleIndexServiceDisabledImpl : TitleIndexService {
+class TitleIndexServiceDisabledImpl: TitleIndexService {
     override fun indexAllTitles() {}
     override fun addTitle(title: Title) {}
     override fun searchTitle(query: String) = emptyList<Title>()
