@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import {HuginCollectionsService, HuginNewspaperService} from '@/generated/endpoints';
 import { redirect } from '@/lib/utils';
 import {keys} from "@/query/keys";
-import Title from "@/generated/no/nb/bikube/api/core/model/Title";
 
 export function useCatalogueTitles(query: string) {
 

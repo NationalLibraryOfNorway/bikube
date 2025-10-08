@@ -8,4 +8,3 @@ interface NewspaperRepository : JpaRepository<Newspaper, String> {
     fun findTopByBoxIdOrderByDateDesc(boxId: String): Newspaper?
     fun existsByBoxIdAndDate(boxId: String, date: LocalDate): Boolean
 }
-
