@@ -6,4 +6,3 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface TitleRepository : JpaRepository<HuginTitle, Int> {
     fun findAllByVendorContainingIgnoreCase(title: String): List<HuginTitle>
 }
-
