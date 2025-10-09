@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 
-.header-mono {
-  font-family: "JetBrains Mono", monospace;
+body {
+  font-family: 'Quicksand', sans-serif;
 }

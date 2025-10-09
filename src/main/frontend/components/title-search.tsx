@@ -8,6 +8,8 @@ import {Badge} from "@/components/ui/badge";
 import React, {useMemo, useRef, useState} from "react";
 import {useCatalogueTitles} from "@/hooks/use-catalogue-title";
 import {useNavigate} from "react-router";
+import {useQueries, useQueryClient} from "@tanstack/react-query";
+import {keys} from "@/query/keys";
 
 export default function TitleSearch({ className }:{ className?: string }) {
     const [term, setTerm] = useState("")
@@ -17,22 +19,12 @@ export default function TitleSearch({ className }:{ className?: string }) {
     const navigate = useNavigate();
 
     const handleSelect = (item: Title) => {
+        qc.setQueryData( keys.catalogueTitle(item.catalogueId), item)
         navigate(`${item.catalogueId}`);
         setOpen(false);
     };
-
+    const qc = useQueryClient();
     const rows: Title[] = useMemo(() => catalogueTitlesList as Title[], [catalogueTitlesList]);
-
-    // Close when clicking outside the popover content
-    function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-        // Wait a tick so clicks in the popover can run first
-        setTimeout(() => {
-            const active = document.activeElement as HTMLElement | null
-            if (!contentRef.current?.contains(active ?? null)) {
-                setOpen(false)
-            }
-        }, 0)
-    }
 
     return (
         <div className="w-[25rem] max-w-[90vw]">

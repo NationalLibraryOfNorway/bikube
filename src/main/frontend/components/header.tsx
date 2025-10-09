@@ -1,11 +1,10 @@
 import {NavLink, useLocation} from "react-router";
-import {Button, HorizontalLayout} from "@vaadin/react-components";
-import {SidebarTrigger} from "@/components/ui/sidebar";
+import {HorizontalLayout} from "@vaadin/react-components";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {LogOut, Sun, Moon} from "lucide-react";
 import Logo from "@/components/logo";
-import {translate, key} from "@vaadin/hilla-react-i18n";
 import TitleSearch from "@/components/title-search";
+import {Button} from "@/components/ui/button";
 
 type HeaderProps = {
     onToggleTheme: () => void;
@@ -41,14 +40,9 @@ export default function Header({onToggleTheme, user, onLogout}: HeaderProps) {
                         <p className="text-sm !m-0 header-mono hidden sm:inline">{user?.fullName}</p>
                     </HorizontalLayout>
 
-                    <Button
-                        className="header-mono bg-transparent text-black p-2 min-w-1"
-                        onClick={onLogout}
-                    >
-                        <HorizontalLayout className="items-center text-purple-500 text-sm">
-                            <span className="hidden sm:inline">Logg ut</span>
-                            <LogOut className="ms-1"/>
-                        </HorizontalLayout>
+                    <Button onClick={onLogout} variant="secondary">
+                        <span className="hidden sm:inline text-xs">Logg ut</span>
+                        <LogOut className="ms-1"/>
                     </Button>
                 </div>
             </HorizontalLayout>
