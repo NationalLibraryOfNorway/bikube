@@ -15,7 +15,7 @@ function MainLayout() {
     const {logout, state} = useAuth();
 
     return (<>
-        <div className={'flex flex-col h-screen w-full px-5 pb-5'}>
+        <div className={'flex flex-col h-screen w-full px-5 pb-2'}>
             <Toaster/>
             {<Header
                 onLogout={logout}
@@ -24,8 +24,8 @@ function MainLayout() {
             />}
             <div className="flex-grow flex justify-center pt-6">
                 <Outlet/>
-                <div>Nasjonalbiblioteket © 2025</div>
             </div>
+            <div className="font-light flex flex-col w-full text-center">Nasjonalbiblioteket © 2025</div>
         </div>
     </>)
 }

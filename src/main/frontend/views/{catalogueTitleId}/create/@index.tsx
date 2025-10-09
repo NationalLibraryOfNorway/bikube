@@ -29,7 +29,7 @@ export default function CatalogueTitleCreateView() {
 
     return (
         <div className="flex w-9/12 flex-col max-w-screen-lg items-start">
-            <Button variant="secondary" onClick={() => navigate(-1)} className="font-light mb-8">
+            <Button variant="outline" onClick={() => navigate(-1)} className="font-light mb-8">
                 <ArrowLeft/>
                 Tilbake til titteloversikt
             </Button>
