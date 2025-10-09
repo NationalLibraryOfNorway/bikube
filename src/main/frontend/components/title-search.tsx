@@ -6,23 +6,22 @@ import {isActive} from "@/lib/utils";
 import {clsx} from "clsx";
 import {Badge} from "@/components/ui/badge";
 import React, {useMemo, useRef, useState} from "react";
-import {useCatalogueTitle} from "@/hooks/use-catalogue-title";
+import {useCatalogueTitles} from "@/hooks/use-catalogue-title";
 import {useNavigate} from "react-router";
 
 export default function TitleSearch({ className }:{ className?: string }) {
     const [term, setTerm] = useState("")
     const [open, setOpen] = useState(false)
     const contentRef = useRef<HTMLDivElement>(null)
-    const {options, isLoading } = useCatalogueTitle({
-        query: term.trim(),
-    });
+    const {catalogueTitlesList, isLoading } = useCatalogueTitles(term.trim());
     const navigate = useNavigate();
 
     const handleSelect = (item: Title) => {
         navigate(`${item.catalogueId}`);
+        setOpen(false);
     };
 
-    const rows: Title[] = useMemo(() => options as Title[], [options]);
+    const rows: Title[] = useMemo(() => catalogueTitlesList as Title[], [catalogueTitlesList]);
 
     // Close when clicking outside the popover content
     function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
