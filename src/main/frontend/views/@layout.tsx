@@ -24,6 +24,7 @@ function MainLayout() {
             />}
             <div className="flex-grow flex justify-center pt-6">
                 <Outlet/>
+                <div>Nasjonalbiblioteket © 2025</div>
             </div>
         </div>
     </>)

@@ -4,6 +4,7 @@ import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactInfo/Contac
 import ContactInfo from "@/generated/no/nb/bikube/hugin/model/ContactInfo";
 import {Info, MailPlus, MessageCircle, MessageCirclePlus, MessageCircleX, Minus, SaveIcon, Undo} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 
 type ContactFormValues = {
     vendor: string;
@@ -137,7 +138,7 @@ export default function ContactForm({title, onSubmit}: {
                                             className="h-6 w-6 rounded-full p-0"
                                             onClick={() => removeContactAt(i)}
                                         >
-                                            <Minus />
+                                            <Minus/>
                                         </Button>
                                     </div>
                                 ))}
@@ -157,7 +158,16 @@ export default function ContactForm({title, onSubmit}: {
                 {/* Hyllesignatur */}
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-sm font-medium">
-                        Hyllesignatur <Info className="h-4 w-4 opacity-60"/>
+                        Hyllesignatur
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="h-4 w-4 opacity-60"/>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Plassering av avis i paternoster.
+                            </TooltipContent>
+                        </Tooltip>
+
                     </label>
                     <input
                         className="w-full rounded-lg border p-3"
@@ -168,7 +178,15 @@ export default function ContactForm({title, onSubmit}: {
                 {/* Merknad/kommentar */}
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-sm font-medium">
-                        Merknad/kommentar <Info className="h-4 w-4 opacity-60"/>
+                        Merknad/kommentar
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="h-4 w-4 opacity-60"/>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Kommentarer blir kun liggende i Hugin og lagres ikke i katalogen.
+                            </TooltipContent>
+                        </Tooltip>
                     </label>
                     <textarea
                         rows={4}
