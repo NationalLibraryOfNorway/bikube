@@ -11,9 +11,8 @@ class HuginNewspaperService(
 ) {
 
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
-    fun getTitlesByTitle(title: String): List<HuginTitle> {
-        var titles = titleRepository.findAllByVendorContainingIgnoreCase(title)
-        return titles;
+    fun getTitle(titleId: Int): HuginTitle? {
+        return titleRepository.findById(titleId).orElse(null)
     }
 
 }

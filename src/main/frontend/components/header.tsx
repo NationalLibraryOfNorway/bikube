@@ -15,7 +15,7 @@ type HeaderProps = {
 
 export default function Header({onToggleTheme, user, onLogout}: HeaderProps) {
     const location = useLocation();
-    console.log(location)
+
     return (
         <div className="w-full xl:flex xl:justify-center">
             <HorizontalLayout

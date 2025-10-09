@@ -1,23 +1,18 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {HuginCollectionsService } from '@/generated/endpoints';
+import {HuginCollectionsService, HuginNewspaperService} from '@/generated/endpoints';
 import { redirect } from '@/lib/utils';
+import {keys} from "@/query/keys";
+import Title from "@/generated/no/nb/bikube/api/core/model/Title";
 
-type CatalogueTitleParams = {
-  query: string,
-}
-
-export function useCatalogueTitle({
-  query,
-}: CatalogueTitleParams) {
+export function useCatalogueTitles(query: string) {
 
   const q = useQuery({
-    queryKey: ['title', query ],
+    queryKey: keys.catalogueTitles(query),
     enabled: query?.trim().length > 0,
     retry: false,
     queryFn: async () => {
       try {
-        return await HuginCollectionsService.findByTitleAndMaterialType(query);
+        return await HuginCollectionsService.findByTitle(query);
       } catch (e: any) {
         if (e?.response?.status === 401 || String(e?.message ?? '').includes('401')) {
           redirect('/bikube/hugin');
@@ -30,8 +25,32 @@ export function useCatalogueTitle({
   });
 
   return {
-    options: q.data ?? [],
+    catalogueTitlesList: q.data ?? [],
     isLoading: q.isLoading,
     search: q.refetch,
   };
+}
+
+export function useCatalogueTitle(id: string) {
+    const q = useQuery({
+        queryKey: keys.catalogueTitle(id),
+        retry: false,
+        queryFn: async () => {
+            try {
+                return await HuginCollectionsService.findById(id);
+            } catch (e: any) {
+                if (e?.response?.status === 401 || String(e?.message ?? '').includes('401')) {
+                    redirect('/bikube/hugin');
+                    return undefined;
+                }
+                throw e;
+            }
+        },
+    });
+
+    return {
+        catalogueTitle: q.data ?? undefined,
+        isLoading: q.isLoading,
+        search: q.refetch,
+    };
 }

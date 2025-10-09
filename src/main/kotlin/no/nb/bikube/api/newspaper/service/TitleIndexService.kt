@@ -41,7 +41,7 @@ interface TitleIndexService {
 class TitleIndexServiceImpl(
     private val newspaperService: NewspaperService,
     @Value("\${search-index.path}") private val searchIndexPath: String
-): TitleIndexService {
+) : TitleIndexService {
     private val titleAnalyzer = CustomAnalyzer.builder()
         .withTokenizer(WhitespaceTokenizerFactory.NAME)
         .addTokenFilter(LowerCaseFilterFactory.NAME)
@@ -60,12 +60,12 @@ class TitleIndexServiceImpl(
         val document = Document()
         document.add(TextField("name", title.name, Field.Store.YES))
         document.add(StoredField("catalogueId", title.catalogueId))
-        title.startDate ?. let { document.add(StoredField("startDate", it.toString())) }
-        title.endDate ?. let { document.add(StoredField("endDate", it.toString())) }
-        title.publisher ?. let { document.add(StoredField("publisher", it)) }
-        title.publisherPlace ?. let { document.add(StoredField("publisherPlace", it)) }
-        title.language ?. let { document.add(StoredField("language", it)) }
-        title.materialType ?. let { document.add(StoredField("materialType", it)) }
+        title.startDate?.let { document.add(StoredField("startDate", it.toString())) }
+        title.endDate?.let { document.add(StoredField("endDate", it.toString())) }
+        title.publisher?.let { document.add(StoredField("publisher", it)) }
+        title.publisherPlace?.let { document.add(StoredField("publisherPlace", it)) }
+        title.language?.let { document.add(StoredField("language", it)) }
+        title.materialType?.let { document.add(StoredField("materialType", it)) }
         return document
     }
 
@@ -126,8 +126,8 @@ class TitleIndexServiceImpl(
                 Title(
                     catalogueId = doc.get("catalogueId"),
                     name = doc.get("name"),
-                    startDate = doc.get("startDate") ?. let { LocalDate.parse(it) },
-                    endDate = doc.get("endDate") ?. let { LocalDate.parse(it) },
+                    startDate = doc.get("startDate")?.let { LocalDate.parse(it) },
+                    endDate = doc.get("endDate")?.let { LocalDate.parse(it) },
                     publisher = doc.get("publisher"),
                     publisherPlace = doc.get("publisherPlace"),
                     language = doc.get("language"),
@@ -148,7 +148,7 @@ class TitleIndexServiceImpl(
     havingValue = "false"
 )
 @Service
-class TitleIndexServiceDisabledImpl: TitleIndexService {
+class TitleIndexServiceDisabledImpl : TitleIndexService {
     override fun indexAllTitles() {}
     override fun addTitle(title: Title) {}
     override fun searchTitle(query: String) = emptyList<Title>()
