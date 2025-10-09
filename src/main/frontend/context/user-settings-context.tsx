@@ -1,22 +1,17 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { i18n } from '@vaadin/hilla-react-i18n';
 
 type Theme = 'light' | 'dark';
-type Language = 'nb' | 'se' | 'nn'; // nb = Norsk bokmål, se = Nordsamisk
 
 interface UserSettings {
     theme: Theme;
-    language: Language;
 }
 
 interface UserSettingsContextProps extends UserSettings {
     toggleTheme: () => void;
-    setLanguage: (lang: Language) => void;
 }
 
 const defaultSettings: UserSettings = {
     theme: 'light',
-    language: 'nb',
 };
 
 const STORAGE_KEY = 'user-settings';
@@ -24,7 +19,6 @@ const STORAGE_KEY = 'user-settings';
 const UserSettingsContext = createContext<UserSettingsContextProps>({
     ...defaultSettings,
     toggleTheme: () => {},
-    setLanguage: () => {},
 });
 
 export const UserSettingsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,15 +32,11 @@ export const UserSettingsProvider = ({ children }: { children: React.ReactNode }
             const merged: UserSettings = {
                 ...defaultSettings,
                 ...parsed,
-                // fallback hvis gammel storage mangler language
-                language: (parsed.language as Language) ?? defaultSettings.language,
             };
             setSettings(merged);
             applyDomTheme(merged.theme);
-            applyLanguage(merged.language);
         } else {
             applyDomTheme(defaultSettings.theme);
-            applyLanguage(defaultSettings.language);
         }
     }, []);
 
@@ -54,11 +44,6 @@ export const UserSettingsProvider = ({ children }: { children: React.ReactNode }
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     }, [settings]);
-
-    // reager på språk-endringer (om de oppstår utenom hydrering)
-    useEffect(() => {
-        applyLanguage(settings.language);
-    }, [settings.language]);
 
     // reager på tema-endringer (om de oppstår utenom toggleTheme)
     useEffect(() => {
@@ -70,18 +55,8 @@ export const UserSettingsProvider = ({ children }: { children: React.ReactNode }
         root.classList.toggle('dark', theme === 'dark');
     };
 
-    const applyLanguage = (lang: Language) => {
-        document.documentElement.lang = lang;
-        // Hilla i18n forventer BCP-47-kode; 'se' for nordsamisk
-        i18n.configure({ language: lang });
-    };
-
     const toggleTheme = () => {
         setSettings((prev) => ({ ...prev, theme: prev.theme === 'dark' ? 'light' : 'dark' }));
-    };
-
-    const setLanguage = (lang: Language) => {
-        setSettings((prev) => ({ ...prev, language: lang }));
     };
 
     return (
@@ -89,7 +64,6 @@ export const UserSettingsProvider = ({ children }: { children: React.ReactNode }
             value={{
                 ...settings,
                 toggleTheme,
-                setLanguage,
             }}
         >
             {children}

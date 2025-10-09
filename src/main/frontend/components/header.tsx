@@ -41,7 +41,7 @@ export default function Header({onToggleTheme, user, onLogout}: HeaderProps) {
                     </HorizontalLayout>
 
                     <Button onClick={onLogout} variant="secondary">
-                        <span className="hidden sm:inline text-xs">Logg ut</span>
+                        <span className="hidden sm:inline font-light">Logg ut</span>
                         <LogOut className="ms-1"/>
                     </Button>
                 </div>

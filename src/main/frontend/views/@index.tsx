@@ -13,7 +13,7 @@ export const config: ViewConfig = {
 export default function MainView() {
 
     return (
-        <div className="flex mt-20 flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
             <Logo className="w-[150px] mb-5"/>
             <TitleSearch className="p-3" />
         </div>

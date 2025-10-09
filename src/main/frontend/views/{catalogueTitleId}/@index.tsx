@@ -37,7 +37,13 @@ export default function CatalogueTitleView() {
                     >
                         <ArrowLeft/>Tilbake
                     </Button>
-                    <Button size="lg" className="absolute right-0 bottom-0" >Legg til informasjon<Edit/></Button>
+                    <Button
+                        size="lg"
+                        className="absolute right-0 bottom-0"
+                        onClick={() => navigate('create')}
+                    >
+                        Legg til informasjon<Edit/>
+                    </Button>
                 </div>
             </div>
         )
