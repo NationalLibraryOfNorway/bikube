@@ -1,5 +1,5 @@
 import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {useHuginTitle} from "@/hooks/use-hugin-title";
 import {ArrowLeft, Edit, LoaderCircle} from "lucide-react";
 import {useCatalogueTitle} from "@/hooks/use-catalogue-title";
@@ -17,19 +17,27 @@ export default function CatalogueTitleView() {
     const {catalogueTitleId} = useParams(); // Item id from url
     const {title, isLoading} = useHuginTitle(Number.parseInt(catalogueTitleId!))
     const {catalogueTitle} = useCatalogueTitle(catalogueTitleId!)
+    const navigate = useNavigate();
 
     if (title === null && !isLoading) {
         return (
             <div className="max-w-[50rem] mx-auto">
-                <div className="w-full xl:flex xl:justify-center text-4xl mb-10">
+                <div className="w-full flex justify-center text-4xl mb-10">
                     {catalogueTitle?.name}
                 </div>
-                <div className="w-full xl:flex xl:justify-center text-lg mb-10">
+                <div className="w-full flex justify-center text-lg">
                     Fant ikke kontakt- og utgivelsesinformasjon for denne tittelen. Ønsker du å legge til?
                 </div>
-                <div className="w-full xl:flex xl:justify-center text-lg">
-                    <Button variant="outline" size="lg" className="mr-auto"><ArrowLeft/>Tilbake</Button>
-                    <Button size="lg" >Legg til informasjon<Edit/></Button>
+                <div className="w-full flex justify-center text-lg relative mt-20">
+                    <Button
+                        variant="secondary"
+                        size="lg"
+                        className="absolute left-0 bottom-0"
+                        onClick={() => navigate("/")}
+                    >
+                        <ArrowLeft/>Tilbake
+                    </Button>
+                    <Button size="lg" className="absolute right-0 bottom-0" >Legg til informasjon<Edit/></Button>
                 </div>
             </div>
         )
