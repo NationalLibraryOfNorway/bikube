@@ -52,7 +52,6 @@ export default function TitleSearch({ className }:{ className?: string }) {
                     </PopoverTrigger>
 
                     <PopoverContent
-                        ref={contentRef}
                         onOpenAutoFocus={(e) => e.preventDefault()}
                         className="my-2 rounded-lg w-[23rem] max-w-[90vw] p-0"
                     >
