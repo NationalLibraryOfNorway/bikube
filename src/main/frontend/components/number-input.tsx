@@ -1,71 +1,63 @@
-import {FC, useState} from 'react';
-import {ErrorMessage, FieldProps, useFormikContext} from 'formik';
 import {CircleMinus, CirclePlus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
-//import AccessibleButton from '@/components/ui/AccessibleButton';
+export type NumberInputWithButtonsProps = {
+    value: number;
+    onChange: (next: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    className?: string;
+};
 
-interface NumberInputWithButtonsProps extends FieldProps {
-    minValue?: number;
-    maxValue?: number;
-}
-
-const NumberInputWithButtons: FC<NumberInputWithButtonsProps> = ({
-                                                                     field,
-                                                                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                                                                     form, // Needed for 'field'-element to work
-                                                                     minValue,
-                                                                     maxValue,
-                                                                     ...props
-                                                                 }) => {
-    const {setFieldValue, getFieldProps, setFieldTouched} = useFormikContext<{ [key: string]: number }>();
-    const [showCustomText, setShowCustomText] = useState<string | undefined>(undefined);
-
-    const increaseValue = () => {
-        const oldValue = +getFieldProps(field.name).value;
-        if (maxValue === undefined || oldValue < maxValue) {
-            void setFieldTouched(field.name, true);
-            void setFieldValue(field.name, oldValue + 1);
-            setShowCustomText(undefined);
-        } else if (oldValue >= maxValue) {
-            setShowCustomText(`Maksverdi nådd (${maxValue})`);
-            setTimeout(() => setShowCustomText(undefined), 2000);
-        }
+export default function NumberInputWithButtons({
+   value,
+   onChange,
+   min,
+   max,
+   step = 1,
+   className,
+}: NumberInputWithButtonsProps) {
+    const inc = () => {
+        const next = (value ?? 0) + step;
+        onChange(max !== undefined ? Math.min(next, max) : next);
     };
 
-    const decreaseValue = () => {
-        const oldValue = +getFieldProps(field.name).value;
-
-        if (minValue === undefined || oldValue > minValue) {
-            void setFieldTouched(field.name, true);
-            void setFieldValue(field.name, oldValue - 1);
-            setShowCustomText(undefined);
-        } else if (oldValue <= minValue) {
-            setShowCustomText(`Minimumsverdi nådd (${minValue})`);
-            setTimeout(() => setShowCustomText(undefined), 2000);
-        }
+    const dec = () => {
+        const next = (value ?? 0) - step;
+        onChange(min !== undefined ? Math.max(next, min) : next);
     };
 
     return (
-        <div className='my-1.5'>
-            <div className='flex flex-row gap-1'>
-                <Button type='button' onClick={decreaseValue} >
-                    <CircleMinus size={30}/>
+        <div className="my-1.5">
+            <div className="flex flex-row gap-1">
+                <Button
+                    type="button"
+                    onClick={dec}
+                    size="icon"
+                    className="rounded-full"
+                >
+                    <CircleMinus />
                 </Button>
 
-                <input type='number' {...field} {...props} />
+                <div
+                    className="min-w-12 text-center rounded-full border px-3 py-2 "
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    {Number.isFinite(value) ? value : 0}
+                </div>
 
-                <Button type='button' onClick={increaseValue} >
-                    <CirclePlus size={30}/>
+
+                <Button
+                    size="icon"
+                    type="button"
+                    onClick={inc}
+                    className="rounded-full"
+                >
+                    <CirclePlus />
                 </Button>
-
-            </div>
-            <div className='mt-1 w-full'>
-                <ErrorMessage name={field.name}></ErrorMessage>
-                {showCustomText && <div>{showCustomText}</div>}
             </div>
         </div>
     );
-};
-
-export default NumberInputWithButtons;
+}
