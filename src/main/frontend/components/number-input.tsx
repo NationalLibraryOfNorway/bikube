@@ -1,4 +1,4 @@
-import {CircleMinus, CirclePlus} from "lucide-react";
+import {CircleMinus, CirclePlus, Minus, Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 export type NumberInputWithButtonsProps = {
@@ -29,19 +29,19 @@ export default function NumberInputWithButtons({
     };
 
     return (
-        <div className="my-1.5">
-            <div className="flex flex-row gap-1">
+        <div className="my-1">
+            <div className="gap-1 align-middle inline-flex items-center">
                 <Button
                     type="button"
                     onClick={dec}
                     size="icon"
-                    className="rounded-full"
+                    className="h-7 w-7 p-0 rounded-full"
                 >
-                    <CircleMinus />
+                    <Minus />
                 </Button>
 
                 <div
-                    className="min-w-12 text-center rounded-full border px-3 py-2 "
+                    className="min-w-12 text-center rounded-full border px-2 py-2 bg-white"
                     aria-live="polite"
                     aria-atomic="true"
                 >
@@ -53,9 +53,9 @@ export default function NumberInputWithButtons({
                     size="icon"
                     type="button"
                     onClick={inc}
-                    className="rounded-full"
+                    className="h-7 w-7 p-0 rounded-full"
                 >
-                    <CirclePlus />
+                    <Plus />
                 </Button>
             </div>
         </div>

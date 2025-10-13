@@ -1,9 +1,13 @@
 import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
-import {useNavigate, useParams} from "react-router";
+import {NavLink, useNavigate, useParams} from "react-router";
 import {useHuginTitle} from "@/hooks/use-hugin-title";
-import {ArrowLeft, Edit, LoaderCircle} from "lucide-react";
+import {ArrowLeft, Edit, ExternalLink, LoaderCircle} from "lucide-react";
 import {useCatalogueTitle} from "@/hooks/use-catalogue-title";
 import {Button} from "@/components/ui/button";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import TitleCommentForm from "@/components/title-comment-form";
+import ContactForm from "@/components/contact-form";
+import ReleasePatternForm from "@/components/release-pattern-form";
 
 export const config: ViewConfig = {
     menu: {
@@ -58,9 +62,54 @@ export default function CatalogueTitleView() {
     }
 
     return (
-        <div className="w-full xl:flex xl:justify-center">
-            <p className="text-3xl">{title?.vendor}</p>
+        <div className="w-[50rem] justify-center">
+            <div className="flex flex-row gap-5">
+                <div className="flex flex-col gap-y-2 border-1 p-5 bg-gray-50 rounded-lg">
+                    <p className="text-4xl font-medium mb-1">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <NavLink to={'create'} className={"inline-flex whitespace-nowrap gap-2 items-center"}>
+                                    {title?.vendor}
+                                    <Button size="icon" className="p-0 m-0">
+                                        <Edit/>
+                                    </Button>
+                                </NavLink>
+                            </TooltipTrigger>
+                            <TooltipContent>Rediger tittelinformasjon</TooltipContent>
+                        </Tooltip>
+                    </p>
+                    <p className="inline-flex whitespace-nowrap gap-2">
+                        <span className="font-semibold">Katalog ID:</span>
+                        <NavLink
+                            to={`https://collections.stage.nb.no/collections/link/xplus/textscatalogue/${title?.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                        >
+                            {title?.id}
+                            <ExternalLink size={16}/>
+                        </NavLink>
+                    </p>
+                    <p className="text-xl">
+                        <span className="font-semibold">Hyllesignatur:</span> {title?.shelf}
+                    </p>
+                </div>
+
+                <div className="flex flex-col gap-y-5">
+                    <div className="p-5 border-1 bg-gray-50 rounded-lg">
+                        <p className="whitespace-nowrap font-semibold mb-3">Merknad/kommentar på tittel:</p>
+                        <TitleCommentForm title={title}/>
+                    </div>
+                    <div className="p-5 border-1 bg-gray-50 rounded-lg">
+                        <ContactForm title={title!} fields={["vendor", "contactName", "phone", "email"]}/>
+                    </div>
+                    <div className="p-5 border-1 bg-gray-50 rounded-lg">
+                        <ReleasePatternForm title={title} />
+                    </div>
+                </div>
+            </div>
         </div>
-    );
+    )
+        ;
 }
 

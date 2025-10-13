@@ -17,8 +17,19 @@ type ContactFormValues = {
     contactInfos: HuginTitle['contactInfos'];
 };
 
-export default function ContactForm({title}: {
+type ContactFormField =
+    | "vendor"
+    | "contactName"
+    | "phone"
+    | "email"
+    | "shelf"
+    | "notes";
+
+const ALL_FIELDS: ContactFormField[] = ["vendor", "contactName", "phone", "email", "shelf", "notes"];
+
+export default function ContactForm({title, fields}: {
     title: HuginTitle | null | undefined;
+    fields?: ContactFormField[];
 }) {
     const {catalogueTitleId} = useParams(); // Item id from url
     const save = useSaveHuginTitle();
@@ -52,6 +63,8 @@ export default function ContactForm({title}: {
         .filter(([ci]) => ci.contactType === ContactType.email)
         .map(([, i]) => i);
 
+    const visible = new Set(fields ?? ALL_FIELDS);
+
     return (
         <FormikProvider value={formik}>
             <Form
@@ -61,31 +74,34 @@ export default function ContactForm({title}: {
                 <h2 className="text-xl font-semibold">Kontaktinformasjon</h2>
 
                 {/* Avleverer (vendor) */}
+                {visible.has("vendor") && (
                 <div className="space-y-1">
                     <label className="block text-sm font-medium">Avleverer</label>
                     <input
-                        className="w-full rounded-lg border p-3"
+                        className="w-full rounded-lg border p-3 bg-white"
                         placeholder=""
                         {...formik.getFieldProps('vendor')}
                     />
-                </div>
+                </div>)}
 
                 {/* Navn */}
+                {visible.has("contactName") && (
                 <div className="space-y-1">
                     <label className="block text-sm font-medium">Navn</label>
                     <input
-                        className="w-full rounded-lg border p-3"
+                        className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('contactName')}
                     />
-                </div>
+                </div>)}
 
                 {/* Telefon (+/-) */}
+                {visible.has("phone") && (
                 <div className="space-y-2">
                     <label className="block text-sm font-medium">Telefon</label>
                     {phoneContacts.map((idx) => (
                         <div key={`phone-${idx}`} className="relative">
                             <input
-                                className="w-full rounded-lg border py-3 ps-3 pr-10"
+                                className="w-full rounded-lg border py-3 ps-3 pr-10 bg-white"
                                 name={`contactInfos[${idx}].contactValue`}
                                 value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
                                 onChange={formik.handleChange}
@@ -119,16 +135,17 @@ export default function ContactForm({title}: {
                         <MessageCirclePlus/>
                         Legg til telefon
                     </Button>
-                </div>
+                </div>)}
 
                 {/* E-post (+/-) */}
+                {visible.has("email") && (
                 <div className="space-y-2">
 
                     <label className="block text-sm font-medium">E-post</label>
                     {emailContacts.map((idx) => (
                         <div key={`email-${idx}`} className="relative">
                             <input
-                                className="w-full rounded-lg border py-3 ps-3 pr-10"
+                                className="w-full rounded-lg border py-3 ps-3 pr-10 bg-white"
                                 name={`contactInfos[${idx}].contactValue`}
                                 value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
                                 onChange={formik.handleChange}
@@ -162,9 +179,10 @@ export default function ContactForm({title}: {
                         <MailPlus />
                         Legg til e-post
                     </Button>
-                </div>
+                </div>)}
 
                 {/* Hyllesignatur */}
+                {visible.has("shelf") && (
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-sm font-medium">
                         Hyllesignatur
@@ -179,12 +197,13 @@ export default function ContactForm({title}: {
 
                     </label>
                     <input
-                        className="w-full rounded-lg border p-3"
+                        className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('shelf')}
                     />
-                </div>
+                </div>)}
 
                 {/* Merknad/kommentar */}
+                {visible.has("notes") && (
                 <div className="space-y-1">
                     <label className="flex items-center gap-1 text-sm font-medium">
                         Merknad/kommentar
@@ -199,10 +218,10 @@ export default function ContactForm({title}: {
                     </label>
                     <textarea
                         rows={4}
-                        className="w-full rounded-lg border p-3"
+                        className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('notes')}
                     />
-                </div>
+                </div>)}
 
                 <div className="flex gap-3">
                     <Button size="lg" type="submit">
