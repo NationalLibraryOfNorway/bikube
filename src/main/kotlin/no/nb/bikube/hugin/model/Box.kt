@@ -14,25 +14,24 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "box", schema = "hugin")
-class Box() {
-
+data class Box(
     @Id
     @Column(name = "id", nullable = false)
-    var id: String = "";
+    var id: String = "",
 
     @Column(name = "date_from", nullable = false)
-    var dateFrom: LocalDate? = null;
+    var dateFrom: LocalDate? = null,
 
     @Column(name = "active", nullable = false)
-    var active: Boolean = false;
+    var active: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id", nullable = false)
     @JsonBackReference("title-boxes")
-    var title: HuginTitle? = null;
+    var title: HuginTitle? = null,
 
     @OneToMany(mappedBy = "box", cascade = [], orphanRemoval = false, fetch = FetchType.LAZY)
     @JsonManagedReference("box-newspapers")
-    var newspapers: MutableList<Newspaper> = mutableListOf()
-}
+    var newspapers: MutableList<Newspaper> = mutableListOf(),
+)
 

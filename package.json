@@ -171,7 +171,7 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "b896bde7dc8fc752689610ec5eb570e4b38cb4614755f9417fb9173f92aff5ef"
+    "hash": "0262b442de7a4105788f669cd1d979f3296e527c55648ebd4eb68a9b8b183dcf"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -295,7 +295,8 @@
     "@vaadin/upload": "24.9.1",
     "@vaadin/router": "2.0.0",
     "@vaadin/vertical-layout": "24.9.1",
-    "@vaadin/virtual-list": "24.9.1"
+    "@vaadin/virtual-list": "24.9.1",
+    "formik": "$formik"
   },
   "resolutions": {
     "date-fns": "2.30.0"
