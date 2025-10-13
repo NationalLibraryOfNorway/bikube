@@ -47,6 +47,8 @@ class HuginNewspaperService(
             }
         }
 
+        // Release pattern
+        dto.releasePattern?.let { entity.releasePattern = it.toTypedArray() }
         return titleRepository.save(entity)
     }
 }

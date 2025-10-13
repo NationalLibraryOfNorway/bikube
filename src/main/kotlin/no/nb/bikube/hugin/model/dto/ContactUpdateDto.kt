@@ -6,5 +6,6 @@ data class ContactUpdateDto(
     val contactName: String? = null,
     val shelf: String? = null,
     val notes: String? = null,
-    val contactInfos: List<ContactInfoDto>? = null
+    val contactInfos: List<ContactInfoDto>? = null,
+    val releasePattern: List<Int>? = null
 )

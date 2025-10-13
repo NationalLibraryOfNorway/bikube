@@ -39,15 +39,13 @@ export default function CatalogueTitleCreateView() {
                 <p className="mt-1.5">({catalogueTitle?.catalogueId})</p>
             </div>
 
-            <div className="flex w-full flex-row gap-8 mb-10">
+            <div className="flex w-full flex-row gap-20 mb-10">
                 <div className="flex w-full">
                     <ContactForm title={title}></ContactForm>
                 </div>
                 <div className="flex w-full">
+                    <ReleasePatternForm title={title}></ReleasePatternForm>
                 </div>
-                <div className="flex w-full">
-                </div>
-
             </div>
         </div>
     )
