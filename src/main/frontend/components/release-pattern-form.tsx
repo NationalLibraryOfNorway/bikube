@@ -51,7 +51,7 @@ export default function ReleasePatternForm({ title }: { title: HuginTitle | null
             <Form onSubmit={formik.handleSubmit} className="w-full max-w-xl space-y-5">
                 <h2 className="text-xl font-semibold">Utgivelsesmønster</h2>
 
-                <Table className="table-fixed text-left mb-5" aria-labelledby="releaseTable">
+                <Table className="table text-left" aria-labelledby="releaseTable">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Dag</TableHead>
@@ -60,9 +60,9 @@ export default function ReleasePatternForm({ title }: { title: HuginTitle | null
                     </TableHeader>
                     <TableBody>
                         {daysOfWeek.map((day, index) => (
-                            <TableRow key={index} className="text-left">
-                                <TableCell className="text-lg p-0">{day}</TableCell>
-                                <TableCell className="m-2.5 py-0 pr-0 w-full">
+                            <TableRow key={index} className="text-left border-0">
+                                <TableCell className="text-base p-0 w-full">{day}</TableCell>
+                                <TableCell className="m-5 py-0 pr-0 w-full">
                                     <NumberInputWithButtons
                                         value={values.releasePattern[index] ?? 0}
                                         onChange={(v: number) => setDayValue(index, v)}
