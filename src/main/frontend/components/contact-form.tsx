@@ -1,12 +1,15 @@
 import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
-import {FieldArray, Form, Formik, FormikProvider, useFormik} from "formik";
-import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactInfo/ContactType";
-import ContactInfo from "@/generated/no/nb/bikube/hugin/model/ContactInfo";
-import {Info, MailPlus, MessageCircle, MessageCirclePlus, MessageCircleX, Minus, SaveIcon, Undo} from "lucide-react";
+import {Form, FormikProvider, useFormik} from "formik";
+import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactType";
+import {Info, MessageCirclePlus, MailPlus, Minus, SaveIcon, Undo} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {useSaveHuginTitle} from "@/hooks/use-save-hugin-title";
+import {toast} from "sonner";
+import {useParams} from "react-router";
 
 type ContactFormValues = {
+    id: number;
     vendor: string;
     contactName: string;
     shelf: string;
@@ -14,37 +17,30 @@ type ContactFormValues = {
     contactInfos: HuginTitle['contactInfos'];
 };
 
-export default function ContactForm({title, onSubmit}: {
+export default function ContactForm({title}: {
     title: HuginTitle | null | undefined;
-    onSubmit?: (values: ContactFormValues) => void;
 }) {
-
+    const {catalogueTitleId} = useParams(); // Item id from url
+    const save = useSaveHuginTitle();
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
+            id: Number.parseInt(catalogueTitleId!),
             vendor: title?.vendor ?? '',
             contactName: title?.contactName ?? '',
             shelf: title?.shelf ?? '',
             notes: title?.notes ?? '',
             contactInfos: title?.contactInfos ?? [],
         },
-        onSubmit: (values: ContactFormValues) => {
+        onSubmit: async (values: ContactFormValues) => {
+            await save.mutateAsync(values)
+                .then(() => toast.success("Lagret kontaktinformasjon"))
+                .catch(() => toast.error("Noe gikk galt ved lagring av kontaktinformasjon"));
         },
+
         validateOnChange: true,
     })
     const {values, getFieldProps, handleSubmit, setFieldValue, resetForm} = formik;
-
-    const addContact = (type: ContactType) =>
-        setFieldValue("contactInfos", [
-            ...values.contactInfos,
-            {contactType: type, contactValue: ""} as ContactInfo,
-        ]);
-
-    const removeContactAt = (absoluteIndex: number) =>
-        setFieldValue(
-            "contactInfos",
-            values.contactInfos.filter((_, i) => i !== absoluteIndex)
-        );
 
     const phoneContacts = formik.values.contactInfos
         .map((ci, i) => [ci, i] as const)
@@ -55,7 +51,6 @@ export default function ContactForm({title, onSubmit}: {
         .map((ci, i) => [ci, i] as const)
         .filter(([ci]) => ci.contactType === ContactType.email)
         .map(([, i]) => i);
-
 
     return (
         <FormikProvider value={formik}>
@@ -87,72 +82,86 @@ export default function ContactForm({title, onSubmit}: {
                 {/* Telefon (+/-) */}
                 <div className="space-y-2">
                     <label className="block text-sm font-medium">Telefon</label>
-                    <FieldArray
-                        name="phones"
-                        render={(arrayHelpers) => (
-                            <div className="space-y-2">
-                                {phoneContacts.map((i) => (
-                                    <div key={i} className="flex items-center gap-2">
-                                        <input
-                                            className="flex-1 rounded-lg border p-3"
-                                            {...formik.getFieldProps(`phones[${i}]`)}
-                                        />
-                                        <Button
-                                            onClick={() => removeContactAt(i)}
-                                            size="icon"
-                                            className="h-6 w-6 rounded-full p-0"
-                                        >
-                                            <Minus/>
-                                        </Button>
-                                    </div>
-                                ))}
-                                <Button
-                                    size="lg"
-                                    variant="secondary"
-                                    onClick={() => addContact(ContactType.phone)}
-                                >
-                                    <MessageCirclePlus/>
-                                    Legg til telefon
-                                </Button>
-
-                            </div>
-                        )}
-                    />
+                    {phoneContacts.map((idx) => (
+                        <div key={`phone-${idx}`} className="relative">
+                            <input
+                                className="w-full rounded-lg border py-3 ps-3 pr-10"
+                                name={`contactInfos[${idx}].contactValue`}
+                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
+                                onChange={formik.handleChange}
+                                type="tel"
+                            />
+                            <Button
+                                type="button"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full p-0"
+                                onClick={() =>
+                                    formik.setFieldValue(
+                                        "contactInfos",
+                                        formik.values.contactInfos.filter((_, i) => i !== idx)
+                                    )
+                                }
+                            >
+                                <Minus className="h-3.5 w-3.5"/>
+                            </Button>
+                        </div>
+                    ))}
+                    <Button
+                        type="button"
+                        size="lg"
+                        variant="secondary"
+                        onClick={() =>
+                            formik.setFieldValue("contactInfos", [
+                                ...formik.values.contactInfos,
+                                {contactType: ContactType.phone, contactValue: ""},
+                            ])
+                        }
+                    >
+                        <MessageCirclePlus/>
+                        Legg til telefon
+                    </Button>
                 </div>
 
                 {/* E-post (+/-) */}
                 <div className="space-y-2">
+
                     <label className="block text-sm font-medium">E-post</label>
-                    <FieldArray
-                        name="emails"
-                        render={(arrayHelpers) => (
-                            <div className="space-y-2">
-                                {emailContacts.map((i) => (
-                                    <div key={i} className="flex items-center gap-2">
-                                        <input
-                                            className="flex-1 rounded-lg border p-3"
-                                            type="email"
-                                            {...formik.getFieldProps(`emails[${i}]`)}
-                                        />
-                                        <Button
-                                            className="h-6 w-6 rounded-full p-0"
-                                            onClick={() => removeContactAt(i)}
-                                        >
-                                            <Minus/>
-                                        </Button>
-                                    </div>
-                                ))}
-                                <Button
-                                    size="lg"
-                                    variant="secondary"
-                                    onClick={() => addContact(ContactType.email)}
-                                >
-                                    <MailPlus/>
-                                    Legg til e-post
-                                </Button>
-                            </div>
-                        )}
-                    />
+                    {emailContacts.map((idx) => (
+                        <div key={`email-${idx}`} className="relative">
+                            <input
+                                className="w-full rounded-lg border py-3 ps-3 pr-10"
+                                name={`contactInfos[${idx}].contactValue`}
+                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
+                                onChange={formik.handleChange}
+                                type="email"
+                            />
+                            <Button
+                                type="button"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full p-0"
+                                onClick={() =>
+                                    formik.setFieldValue(
+                                        "contactInfos",
+                                        formik.values.contactInfos.filter((_, i) => i !== idx)
+                                    )
+                                }
+                            >
+                                <Minus className="h-3.5 w-3.5"/>
+                            </Button>
+                        </div>
+                    ))}
+                    <Button
+                        type="button"
+                        size="lg"
+                        variant="secondary"
+                        onClick={() =>
+                            formik.setFieldValue("contactInfos", [
+                                ...formik.values.contactInfos,
+                                {contactType: ContactType.email, contactValue: ""},
+                            ])
+                        }
+                    >
+                        <MailPlus />
+                        Legg til e-post
+                    </Button>
                 </div>
 
                 {/* Hyllesignatur */}
@@ -200,8 +209,16 @@ export default function ContactForm({title, onSubmit}: {
                         Lagre
                         <SaveIcon/>
                     </Button>
-                    <Button variant="outline" size="lg" onClick={() => formik.resetForm()}>
-                        Avbryt
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        onClick={() => {
+                            formik.resetForm()
+                            toast.info('Endringer angret')
+                        }}
+                    >
+                        Angre
                         <Undo/>
                     </Button>
                 </div>

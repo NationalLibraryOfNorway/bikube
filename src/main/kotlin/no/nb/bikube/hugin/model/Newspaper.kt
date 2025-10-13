@@ -12,29 +12,28 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "newspaper", schema = "hugin")
-class Newspaper() {
-
+data class Newspaper(
     @Column(name = "edition")
-    var edition: String? = null;
+    var edition: String? = null,
 
     @Column(name = "date")
-    var date: LocalDate? = null;
+    var date: LocalDate? = null,
 
     @Column(name = "received")
-    var received: Boolean? = null;
+    var received: Boolean? = null,
 
     @Column(name = "username")
-    var username: String? = null;
+    var username: String? = null,
 
     @Column(name = "notes")
-    var notes: String? = null;
+    var notes: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", nullable = false)
     @JsonBackReference("box-newspapers")
-    var box: Box? = null;
+    var box: Box? = null,
 
     @Id
     @Column(name = "catalog_id", nullable = false)
-    var catalogId: String = "";
-}
+    var catalogId: String = "",
+)

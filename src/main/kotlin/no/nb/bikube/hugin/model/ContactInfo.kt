@@ -24,26 +24,21 @@ import java.util.UUID
         )
     ]
 )
-class ContactInfo() {
-
+data class ContactInfo(
     @Id
     @GeneratedValue
     @Column(name = "id", columnDefinition = "uuid", nullable = false)
-    var id: UUID? = null;
+    var id: UUID? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "title_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "title_id", nullable = false)
     @JsonBackReference("title-contactInfos")
-    var title: HuginTitle? = null;
+    var title: HuginTitle? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "contact_type")
-    var contactType: ContactType? = null;
+    @Column(name = "contact_type", nullable = false)
+    var contactType: ContactType? = null,
 
     @Column(name = "contact_value")
-    var contactValue: String? = null;
-
-    enum class ContactType {
-        phone, email
-    }
-}
+    var contactValue: String? = null,
+)
