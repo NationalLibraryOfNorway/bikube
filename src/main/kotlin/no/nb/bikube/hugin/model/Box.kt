@@ -23,9 +23,9 @@ data class Box(
     var dateFrom: LocalDate? = null,
 
     @Column(name = "active", nullable = false)
-    var active: Boolean = false,
+    var active: Boolean = true,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "title_id", nullable = false)
     @JsonBackReference("title-boxes")
     var title: HuginTitle? = null,
