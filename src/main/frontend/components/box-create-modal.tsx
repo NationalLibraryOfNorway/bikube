@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Box as BoxIcon, SaveIcon } from "lucide-react";
 import BoxCreateForm from "@/components/box-create-form";
 
-export default function CreateBoxModal() {
+export default function BoxCreateModal() {
     const [open, setOpen] = React.useState(false);
 
     return (

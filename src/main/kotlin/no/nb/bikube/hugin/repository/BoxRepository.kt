@@ -3,4 +3,6 @@ package no.nb.bikube.hugin.repository
 import no.nb.bikube.hugin.model.Box
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface BoxRepository : JpaRepository<Box, String>
+interface BoxRepository : JpaRepository<Box, String> {
+    fun findAllByTitleIdOrderByDateFromAsc(titleId: Int): List<Box>
+}
