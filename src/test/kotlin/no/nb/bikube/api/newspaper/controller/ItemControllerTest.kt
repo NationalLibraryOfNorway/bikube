@@ -27,8 +27,8 @@ class ItemControllerTest {
 
     @Test
     fun `create item should return 200 OK with created item`() {
-        every { newspaperService.getSingleTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
-        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(NewspaperMockData.newspaperItemMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
         every { dtoValidationService.validateItemInputDto(any()) } returns Unit
 
         itemController.createItem(NewspaperMockData.newspaperItemMockCValidForCreation.copy())

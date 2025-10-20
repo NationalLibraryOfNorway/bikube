@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
+import no.nb.bikube.api.catalogue.collections.mapper.mapCollectionsObjectToGenericItem
+import no.nb.bikube.api.catalogue.collections.mapper.mapCollectionsPartsObjectToGenericItem
 import no.nb.bikube.api.catalogue.collections.model.CollectionsObject
 import no.nb.bikube.api.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
