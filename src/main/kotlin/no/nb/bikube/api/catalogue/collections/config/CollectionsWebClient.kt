@@ -70,11 +70,4 @@ class CollectionsWebClientConfig(
 
         return webClientBuilder.build()
     }
-
-    fun retryStrategy(functionName: String, mavisId: String): RetryBackoffSpec {
-        return Retry.backoff(10, Duration.ofSeconds(5))
-            .doBeforeRetry { logger().warn("$functionName failed, retrying in 5 seconds") }
-            .doAfterRetry { logger().info("Retrying $functionName with mavisId $mavisId")}
-            .filter { throwable -> throwable is WebClientRequestException && throwable.cause is TimeoutException }
-    }
 }
