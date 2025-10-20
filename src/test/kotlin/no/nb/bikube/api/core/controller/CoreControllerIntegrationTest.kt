@@ -31,6 +31,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.returnResult
+import org.springframework.web.util.UriBuilder
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration

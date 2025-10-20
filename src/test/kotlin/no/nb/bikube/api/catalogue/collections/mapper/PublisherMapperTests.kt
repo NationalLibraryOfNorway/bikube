@@ -1,6 +1,6 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class PublisherMapperTests {
 
-    val publisherPlaceMock = collectionsNameModelMockA.getFirstObject()
+    val publisherPlaceMock = CollectionsModelMockData.Companion.collectionsNameModelMockA.getFirstObject()
 
     @Test
     fun `Publisher mapper should map catalogueId`() {

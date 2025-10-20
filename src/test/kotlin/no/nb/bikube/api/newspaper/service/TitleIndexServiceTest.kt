@@ -1,11 +1,10 @@
-package no.nb.bikube.newspaper.service
+package no.nb.bikube.api.newspaper.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockAllTitles
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
+import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.controller.TitleController
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -37,7 +36,7 @@ class TitleIndexServiceTest(
     fun mockTitleList() {
         every { newspaperService.getAllTitles() } returns
                 Mono.just(
-                    collectionsModelMockAllTitles
+                    CollectionsModelMockData.Companion.collectionsModelMockAllTitles
                         .getObjects()!!
                         .map { mapCollectionsObjectToGenericTitle(it) }
                 )
@@ -62,9 +61,9 @@ class TitleIndexServiceTest(
         every { newspaperService.createPublisherPlace(any(), any()) } returns Mono.empty()
         every { newspaperService.createLanguage(any(), any()) } returns Mono.empty()
         every { newspaperService.createNewspaperTitle(any()) } returns
-                Mono.just(newspaperTitleMockA.copy(name = "Unique title"))
+                Mono.just(NewspaperMockData.Companion.newspaperTitleMockA.copy(name = "Unique title"))
 
-        titleController.createTitle(newspaperTitleInputDtoMockA)
+        titleController.createTitle(NewspaperMockData.Companion.newspaperTitleInputDtoMockA)
             .subscribe()
 
         Assertions.assertEquals(

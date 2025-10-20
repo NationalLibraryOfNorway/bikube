@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.collections.model
+package no.nb.bikube.api.catalogue.collections.model
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

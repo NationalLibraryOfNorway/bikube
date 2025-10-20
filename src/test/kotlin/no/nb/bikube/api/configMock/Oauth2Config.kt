@@ -1,4 +1,4 @@
-package no.nb.bikube.configMock
+package no.nb.bikube.api.configMock
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientAutoConfiguration

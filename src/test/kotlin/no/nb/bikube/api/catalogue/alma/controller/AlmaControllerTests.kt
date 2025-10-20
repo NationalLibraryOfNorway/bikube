@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.controller
+package no.nb.bikube.api.catalogue.alma.controller
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
