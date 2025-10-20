@@ -10,14 +10,14 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
-import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.model.inputDto.TitleInputDto
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.api.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.service.UniqueIdService
+import no.nb.bikube.api.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,7 +61,7 @@ class TitleControllerIntegrationTest (
         every { collectionsRepository.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsRepository.createTextsRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsRepository.createNewspaperRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())

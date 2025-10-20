@@ -2,6 +2,7 @@ package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import java.time.LocalDate
 import java.time.LocalTime
@@ -71,10 +72,10 @@ fun createManifestationDto(
         edition = number,
         inputName = username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = "texts",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts",
+        dataset = CollectionsDatabase.NEWSPAPER.value,
         notes = notes,
         alternativeNumbers = altNumbers
     )

@@ -2,6 +2,7 @@ package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsItemStatus
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
@@ -81,10 +82,10 @@ fun createNewspaperItemDto(
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = "texts",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts",
+        dataset = CollectionsDatabase.NEWSPAPER.value,
         partOfReference = manifestationCatalogueId,
         alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
         urn = if (useUrn) item.urn else null,

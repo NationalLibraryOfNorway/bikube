@@ -17,16 +17,16 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.erroneousCollectionsModelMock
 import no.nb.bikube.catalogue.collections.DtoMock
-import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.inputDto.ItemInputDto
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.api.core.model.Item
+import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
-import no.nb.bikube.newspaper.service.UniqueIdService
+import no.nb.bikube.api.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -83,12 +83,12 @@ class ItemControllerIntegrationTest {
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
-        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.updateNewspaperRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.deleteNewspaperRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
-        every { collectionsRepository.createTextsRecord(capture(encodedBody)) } answers {
+        every { collectionsRepository.createNewspaperRecord(capture(encodedBody)) } answers {
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
@@ -160,7 +160,7 @@ class ItemControllerIntegrationTest {
         createItem(newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 1) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -175,7 +175,7 @@ class ItemControllerIntegrationTest {
         createItem(item)
             .expectStatus().isCreated
 
-        verify(exactly = 2) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 2) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -267,7 +267,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 0) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -282,7 +282,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 1) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -303,7 +303,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
 
-        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+        verify(exactly = 1) { collectionsRepository.updateNewspaperRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
@@ -329,7 +329,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(dto)
             .exchange()
 
-        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+        verify(exactly = 1) { collectionsRepository.updateNewspaperRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))

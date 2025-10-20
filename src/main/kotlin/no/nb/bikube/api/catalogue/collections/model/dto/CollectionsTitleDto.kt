@@ -2,6 +2,7 @@ package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
@@ -88,9 +89,9 @@ fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
         subMedium = "Aviser",
         inputName = title.username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = "texts",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts"
+        dataset = CollectionsDatabase.NEWSPAPER.value
     )
 }

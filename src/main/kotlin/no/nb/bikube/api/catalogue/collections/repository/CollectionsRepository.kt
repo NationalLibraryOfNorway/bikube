@@ -21,7 +21,7 @@ class CollectionsRepository(
 
     @Throws(CollectionsException::class)
     fun getSingleCollectionsModel(titleCatalogId: String): Mono<CollectionsModel> {
-        return searchTexts("priref=${titleCatalogId}")
+        return searchNewspaper("priref=${titleCatalogId}")
     }
 
     @Throws(CollectionsException::class)
@@ -32,13 +32,13 @@ class CollectionsRepository(
                 "and format and alternative_number and alternative_number.type " +
                 "and part_of_reference and PID_data_URN and current_location.barcode"
 
-        return getRecordsWebClientRequest("priref=${titleCatalogId}", CollectionsDatabase.TEXTS, fields).bodyToMono<CollectionsModel>()
+        return getRecordsWebClientRequest("priref=${titleCatalogId}", CollectionsDatabase.NEWSPAPER, fields).bodyToMono<CollectionsModel>()
     }
 
     fun getAllNewspaperTitles(page: Int = 1): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.WORK}",
-            CollectionsDatabase.TEXTS,
+            CollectionsDatabase.NEWSPAPER,
             limit = 50,
             from = (page-1) * 50 + 1
         ).bodyToMono<CollectionsModel>()
@@ -46,7 +46,7 @@ class CollectionsRepository(
 
     fun getManifestations(date: LocalDate, titleCatalogId: String, number: String? = null): Mono<CollectionsModel> {
         val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
-        return searchTexts(
+        return searchNewspaper(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
             "part_of_reference.lref=${titleCatalogId} and " +
             "edition.date='${dateString}'" +
@@ -76,8 +76,8 @@ class CollectionsRepository(
     }
 
     @Throws(CollectionsException::class)
-    fun createTextsRecord(serializedBody: String): Mono<CollectionsModel> {
-        return createRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    fun createNewspaperRecord(serializedBody: String): Mono<CollectionsModel> {
+        return createRecordWebClientRequest(serializedBody, CollectionsDatabase.NEWSPAPER).bodyToMono<CollectionsModel>()
     }
 
     fun createNameRecord(serializedBody: String, db: CollectionsDatabase): Mono<CollectionsNameModel> {
@@ -92,16 +92,16 @@ class CollectionsRepository(
         return createRecordWebClientRequest(serializedBody, CollectionsDatabase.LOCATIONS).bodyToMono<CollectionsLocationModel>()
     }
 
-    fun updateTextsRecord(serializedBody: String): Mono<CollectionsModel> {
-        return updateRecordWebClientRequest(serializedBody, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    fun updateNewspaperRecord(serializedBody: String): Mono<CollectionsModel> {
+        return updateRecordWebClientRequest(serializedBody, CollectionsDatabase.NEWSPAPER).bodyToMono<CollectionsModel>()
     }
 
-    fun deleteTextsRecord(id: String): Mono<CollectionsModel> {
-        return deleteRecordWebClientRequest(id, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    fun deleteNewspaperRecord(id: String): Mono<CollectionsModel> {
+        return deleteRecordWebClientRequest(id, CollectionsDatabase.NEWSPAPER).bodyToMono<CollectionsModel>()
     }
 
-    private fun searchTexts(query: String): Mono<CollectionsModel> {
-        return getRecordsWebClientRequest(query, CollectionsDatabase.TEXTS).bodyToMono<CollectionsModel>()
+    private fun searchNewspaper(query: String): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(query, CollectionsDatabase.NEWSPAPER).bodyToMono<CollectionsModel>()
     }
 
     private fun searchNameDatabases(query: String): Mono<CollectionsNameModel> {
