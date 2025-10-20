@@ -1,5 +1,6 @@
 package no.nb.bikube.api.newspaper.service
 
+import jakarta.annotation.PreDestroy
 import no.nb.bikube.api.core.exception.SearchIndexNotAvailableException
 import no.nb.bikube.api.core.model.Title
 import no.nb.bikube.api.core.util.logger
@@ -139,6 +140,11 @@ class TitleIndexServiceImpl(
     @Scheduled(fixedDelayString = "\${search-index.searcher-refresh-delay}")
     fun refresh() {
         searcherManager.maybeRefresh()
+    }
+    @PreDestroy
+    fun close() {
+        indexWriter.commit()
+        indexWriter.close()
     }
 }
 
