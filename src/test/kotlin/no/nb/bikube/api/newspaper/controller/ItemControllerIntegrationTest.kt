@@ -1,4 +1,4 @@
-package no.nb.bikube.api.newspaper.controller
+package no.nb.bikube.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
