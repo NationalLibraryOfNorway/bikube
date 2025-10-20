@@ -1,127 +1,207 @@
-import {useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Switch} from "@/components/ui/switch";
-import {toast} from "sonner";
-import {Plus} from "lucide-react";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {HuginNewspaperService} from "@/generated/endpoints";
-import {format, addDays, parseISO} from "date-fns";
+import {Plus, Save, Trash2} from "lucide-react";
+import {format, addDays, parseISO, isValid} from "date-fns";
 import {nb} from "date-fns/locale";
-import Box from "@/generated/no/nb/bikube/hugin/model/Box";
+import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import Newspaper from "@/generated/no/nb/bikube/hugin/model/Newspaper";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {useAddNewspapers} from "@/hooks/use-create-item";
 
-type NewspaperRow = {
+type NewspaperRow = Omit<Newspaper, "date"> & {
     date: string;
-    edition?: string;
-    received: boolean;
-    notes?: string;
+    _tmpId: string;
 };
 
-export default function BoxNewspapersEditor({
-                                                box,
-                                                existingDates = [],
-                                            }: {
-    box: Box;
-    existingDates?: string[];
-}) {
-    const qc = useQueryClient();
 
-    // Compute next date: last existing + 1 day, else startDate
-    const nextDate: string = useMemo(() => {
-        if (existingDates.length === 0) return box.dateFrom!;
-        const last = existingDates.slice().sort().at(-1)!;
-        return format(addDays(parseISO(last), 1), "yyyy-MM-dd");
-    }, [existingDates, box.dateFrom]);
+export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
 
-    const [row, setRow] = useState<NewspaperRow>({
-        date: nextDate,
-        edition: undefined,
-        received: false,
-        notes: "",
-    });
+    if (title.releasePattern === undefined) return null;
+    const activeBox = title?.boxes?.find(b => b.active);
+    if (activeBox === undefined) return null;
 
-    // Keep date in sync when nextDate changes (e.g., after add)
-    if (row.date !== nextDate) {
-        // naive sync; fine for this controlled widget
-        // eslint-disable-next-line react/no-direct-mutation-state
-        row.date = nextDate;
-    }
+    const existingDates = useMemo(
+        () =>
+            (activeBox.newspapers ?? [])
+                .map((n) => (n.date as unknown as string | undefined)?.slice(0, 10))
+                .filter(Boolean) as string[],
+        [activeBox.newspapers]
+    );
 
-    const addNewspaper = useMutation({
-        mutationFn: async (payload: NewspaperRow) => {
-            // ADDED: backend will also auto-place date if omitted;
-            // we send date to show the day label before submit.
-            return await HuginNewspaperService.addNewspaper({
-                titleId: box.title!.id,         // allows authorization/ownership checks server-side
-                boxId: box.id,
-                date: payload.date,
-                edition: payload.edition,
-                received: payload.received,
-                notes: payload.notes?.trim() || undefined,
-            });
+    const [rows, setRows] = useState<NewspaperRow[]>([]);
+
+    const isReleaseDay = useCallback(
+        (iso: string) => {
+            const d = parseISO(iso);
+            if (!isValid(d)) return true; // allow manual edits even if parse fails
+            // JS: 0=Sun..6=Sat -> Mon=0..Sun=6
+            const idx = (d.getDay() + 6) % 7;
+            return Number(title.releasePattern![idx] ?? 0) > 0;
         },
-        onSuccess: (saved) => {
-            toast.success(`Utgave ${format(parseISO(saved.date!), "d. MMMM yyyy", {locale: nb})} lagt til`);
-            // Invalidate box query so existingDates refresh
-            qc.invalidateQueries({queryKey: ["box", box.id]});
-            // Prepare next row (date will sync from nextDate when existingDates reload)
-            setRow((r) => ({...r, number: undefined, received: false, comment: ""}));
-        },
-        onError: () => toast.error("Klarte ikke å legge til avisutgave"),
-    });
+        [title.releasePattern]
+    );
 
-    const weekday = format(parseISO(row.date), "EEEE", {locale: nb}); // e.g., "mandag"
+    const suggestNextDate = useCallback((): string => {
+        // start baseline at latestBox.dateFrom ONLY (as requested)
+        let probe: string = activeBox.dateFrom!;
+
+        // if we already have any (existing or local), move to last+1
+        const all = [...existingDates, ...rows.map((r) => r.date!)].sort();
+        if (all.length > 0) {
+            const last = all.at(-1)!;
+            probe = format(addDays(parseISO(last), 1), "yyyy-MM-dd");
+        }
+
+        const any = title.releasePattern!.some((n) => Number(n) > 0);
+        if (!any) return probe;
+
+        for (let i = 0; i < 31; i++) {
+            if (isReleaseDay(probe)) return probe;
+            probe = format(addDays(parseISO(probe), 1), "yyyy-MM-dd");
+        }
+        return probe;
+    }, [activeBox.dateFrom, existingDates, rows, title.releasePattern, isReleaseDay]);
+
+    const addRow = () => {
+        const date = suggestNextDate();
+        setRows((rs) => [
+            ...rs,
+            {
+                _tmpId: crypto.randomUUID(),
+                catalogId: title.id.toString(),
+                edition: undefined,
+                date,
+                received: false,
+                username: undefined,
+                notes: "",
+                box: {id: activeBox.id} as any,
+            },
+        ]);
+    };
+
+    const setRow = (id: string, patch: Partial<NewspaperRow>) =>
+        setRows((rs) => rs.map((r) => (r._tmpId === id ? ({...r, ...patch}) : r)));
+
+    const removeRow = (id: string) => setRows((rs) => rs.filter((r) => r._tmpId !== id));
+
+    const addNewspapers = useAddNewspapers(); // <-- your React Query mutation hook
+
+    const handleSave = async () => {
+        if (rows.length === 0) return;
+        const payload = rows.map((r) => ({
+            catalogId: r.catalogId,
+            edition: r.edition?.toString() || "",
+            titleId: Number.parseInt(r.catalogId),
+            date: r.date,
+            received: r.received || false,
+            username: r.username?.trim() || "",
+            notes: r.notes?.trim() || "",
+            boxId: activeBox.id,
+        }));
+
+        // call the hook (server call(s) inside)
+        await addNewspapers.mutateAsync({
+            items: payload,
+        });
+        //setRows([]);
+    };
 
     return (
-        <div className="space-y-3">
-            <div className="flex flex-wrap items-end gap-3">
-                <div>
-                    <Label>Neste dato</Label>
-                    <div className="px-3 py-2 border rounded-md bg-muted/20">
-                        <span className="font-mono">{row.date}</span>{" "}
-                        <span className="text-muted-foreground">({weekday})</span>
-                    </div>
-                </div>
-
-                <div className="w-32">
-                    <Label htmlFor="number">Nummer</Label>
-                    <Input
-                        id="number"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        value={row.edition ?? ""}
-                        onChange={(e) => {
-                            const n = e.target.value === "" ? undefined : Math.trunc(Number(e.target.value));
-                            if (Number.isNaN(n as any)) return;
-                            setRow((r) => ({...r, number: n}));
-                        }}
-                        placeholder="—"
-                    />
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Switch
-                        id="received"
-                        checked={row.received}
-                        onCheckedChange={(v) => setRow((r) => ({...r, received: v}))}
-                    />
-                    <Label htmlFor="received">Mottatt</Label>
-                </div>
-
-                <div className="min-w-[16rem] flex-1">
-                    <Label htmlFor="comment">Kommentar</Label>
-                    <Input
-                        id="comment"
-                        value={row.notes ?? ""}
-                        onChange={(e) => setRow((r) => ({...r, comment: e.target.value}))}
-                        placeholder="Valgfri kommentar"
-                    />
-                </div>
-
-                <Button onClick={() => addNewspaper.mutate(row)} disabled={addNewspaper.isPending}>
-                    Legg til <Plus/>
+        <div className="w-full space-y-4">
+            <div className="flex items-center gap-2">
+                <Button type="button" className="bg-primary/20 text-blue-900" onClick={addRow}>
+                    Legg til ny utgave <Plus/>
                 </Button>
+                <Button type="button" className="ml-auto" onClick={handleSave} disabled={addNewspapers.isPending}>
+                    Lagre <Save/>
+                </Button>
+            </div>
+
+            <div className="rounded-xl border bg-white shadow-sm">
+                <Table className="w-full table-auto">
+                    <TableHeader>
+                        <TableRow className="bg-muted/50">
+                            <TableHead>Dag</TableHead>
+                            <TableHead>Dato</TableHead>
+                            <TableHead>Nummer</TableHead>
+                            <TableHead>Mottatt</TableHead>
+                            <TableHead>Kommentar</TableHead>
+                            <TableHead className="w-12"/>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {rows.map((r) => {
+                            const d = r.date ? parseISO(r.date) : undefined;
+                            const dag = d && isValid(d) ? format(d, "EEEE", {locale: nb}) : "—";
+                            return (
+                                <TableRow key={r._tmpId}>
+                                    <TableCell className="capitalize">{dag}</TableCell>
+                                    <TableCell>
+                                        <Input
+                                            type="date"
+                                            value={r.date ?? ""}
+                                            onChange={(e) => setRow(r._tmpId, {date: e.target.value.slice(0, 10)})}
+                                            className="w-[150px]"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={r.edition ?? ""}
+                                            onChange={(e) =>
+                                                setRow(r._tmpId, {
+                                                    edition: e.target.value === "" ? undefined : e.target.value.replace(/\D+/g, ""),
+                                                })
+                                            }
+                                            className="w-[60px]"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <Switch
+                                                checked={!!r.received}
+                                                onCheckedChange={(v) => setRow(r._tmpId, {received: v})}
+                                            />
+                                            <Label className="text-muted-foreground">
+                                                {r.received ? "Mottatt" : "Ikke mottatt"}
+                                            </Label>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input value={r.notes ?? ""}
+                                               onChange={(e) => setRow(r._tmpId, {notes: e.target.value})}/>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button
+                                            type="button"
+                                            variant="destructive"
+                                            className="h-8 w-8 p-0 rounded-full"
+                                            onClick={() => removeRow(r._tmpId)}
+                                        >
+                                            <Trash2 className="h-4 w-4"/>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+
+                        {rows.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={6}>
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-sm text-muted-foreground p-2">
+                                            Ingen utgaver lagt til.
+                                        </p>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

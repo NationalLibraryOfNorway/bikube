@@ -3,6 +3,10 @@ package no.nb.bikube.hugin.service
 import com.vaadin.hilla.BrowserCallable
 import jakarta.annotation.security.RolesAllowed
 import jakarta.transaction.Transactional
+import no.nb.bikube.api.core.model.Item
+import no.nb.bikube.api.core.model.inputDto.ItemInputDto
+import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
+import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.hugin.model.Box
 import no.nb.bikube.hugin.model.ContactInfo
 import no.nb.bikube.hugin.model.HuginTitle
@@ -14,12 +18,14 @@ import no.nb.bikube.hugin.repository.BoxRepository
 import no.nb.bikube.hugin.repository.NewspaperRepository
 import no.nb.bikube.hugin.repository.TitleRepository
 import org.springframework.data.repository.findByIdOrNull
-import java.time.LocalDate
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.core.oidc.user.OidcUser
 
 @BrowserCallable
 class HuginNewspaperService(
     private val titleRepository: TitleRepository,
     private val boxRepository: BoxRepository,
+    private val newspaperService: NewspaperService,
     private val newspaperRepository: NewspaperRepository,
 ) {
 
@@ -80,45 +86,99 @@ class HuginNewspaperService(
         return boxRepository.save(box)
     }
 
+
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
-    fun addNewspaper(dto: NewspaperUpsertDto): Newspaper {
-        val box = boxRepository.findByIdOrNull(dto.boxId)
-            ?: error("Box ${dto.boxId} not found")
+    fun upsertNewspaper(dto: List<NewspaperUpsertDto>): Item? {
 
-        if (box.title?.id != dto.titleId) error("Box/title mismatch")
+        val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
 
-        // Resolve date: dto.date -> last+1 -> box.dateFrom
-        val date: LocalDate = dto.date
-            ?: newspaperRepository.findTopByBoxIdOrderByDateDesc(box.id)?.date?.plusDays(1)
-            ?: box.dateFrom
-            ?: error("Box.dateFrom is null, cannot infer newspaper date")
+        for (newspaperDto in dto) {
+            println("Upserting newspaper: $newspaperDto")
+            println("ItemUpdateDto: $newspaperDto.toItemUpdateDto(userName)")
+            println("ItemInputDto: $newspaperDto.toItemInputDto(userName)")
+            /*
+            val existingItem =
+                if (NewspaperDto.catalogId.isNullOrEmpty().not()) {
+                    newspaperService
+                        .getSingleItem(NewspaperDto.catalogId!!)
+                        .block()
+                } else {
+                    newspaperService
+                        .getItemsByTitleAndDate(NewspaperDto.titleId.toString(), NewspaperDto.date, false)
+                        .next()
+                        .map { it as Item }
+                        .block()
+                }
 
-        // Optional: ensure one per day per box
-        if (newspaperRepository.existsByBoxIdAndDate(box.id, date)) {
-            error("Newspaper already exists for $date in box ${box.id}")
+            if (existingItem === null) {
+                val savedCatalogItem = newspaperService
+                    .createNewspaperItem(NewspaperDto.toItemInputDto(userName))
+                    .block()
+                    ?: error("Failed to create newspaper item")
+                saveNewspaperToDatabase(NewspaperDto.toNewspaper(savedCatalogItem.catalogueId))
+            }
+             */
         }
+        /*
+         val existingItem =
+             if (dto.catalogId.isNullOrEmpty().not()) {
+                 newspaperService
+                     .getSingleItem(dto.catalogId!!)
+                     .block()
+             } else {
+                 newspaperService
+                     .getItemsByTitleAndDate(dto.titleId.toString(), dto.date, false)
+                     .next()
+                     .map { it as Item }
+                     .block()
+             }
 
-        // Derive/generate catalogId if not provided
-        val catalogId = (dto.catalogId ?: "${box.id}-$date").trim()
-        require(catalogId.isNotBlank()) { "catalogId is blank" }
+         if (existingItem === null) {
+             val savedCatalogItem = newspaperService
+                 .createNewspaperItem(dto.toItemInputDto(userName))
+                 .block()
+                 ?: error("Failed to create newspaper item")
+             saveNewspaperToDatabase(dto.toNewspaper(savedCatalogItem.catalogueId))
+         }
+ */
 
-        val n = Newspaper(
+        return null;
+    }
+
+    private fun saveNewspaperToDatabase(newspaper: Newspaper): Newspaper {
+        return newspaperRepository.save(newspaper)
+    }
+
+    private fun NewspaperUpsertDto.toItemInputDto(username: String) = ItemInputDto(
+        date = date,
+        titleCatalogueId = titleId.toString(),
+        digital = false,
+        containerId = boxId,
+        notes = notes,
+        number = edition,
+        username = username,
+    )
+
+    private fun NewspaperUpsertDto.toItemUpdateDto(username: String) = ItemUpdateDto(
+        manifestationId = catalogId!!,
+        username = username,
+        notes = notes,
+        number = edition,
+    )
+
+    private fun NewspaperUpsertDto.toNewspaper(catalogId: String): Newspaper {
+        val box = boxRepository.findByIdOrNull(boxId)
+            ?: error("Box $boxId not found")
+
+        return Newspaper(
             catalogId = catalogId,
-            edition = dto.edition?.trim(),
+            box = box,
             date = date,
-            received = dto.received,
-            username = null,
-            notes = dto.notes?.trim().takeUnless { it.isNullOrBlank() },
-            box = box
+            edition = edition,
+            received = received,
+            notes = notes,
         )
 
-        // No cascade on Box.newspapers → save via repo
-        val saved = newspaperRepository.save(n)
-
-        // Keep inverse list in memory (optional, for UI freshness)
-        box.newspapers.add(saved)
-
-        return saved
     }
 }

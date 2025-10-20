@@ -16,11 +16,11 @@ data class Newspaper(
     @Column(name = "edition")
     var edition: String? = null,
 
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     var date: LocalDate? = null,
 
-    @Column(name = "received")
-    var received: Boolean? = null,
+    @Column(name = "received", nullable = false)
+    var received: Boolean? = false,
 
     @Column(name = "username")
     var username: String? = null,
