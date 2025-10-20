@@ -1,4 +1,3 @@
-
 package no.nb.bikube.api.catalogue.alma.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper

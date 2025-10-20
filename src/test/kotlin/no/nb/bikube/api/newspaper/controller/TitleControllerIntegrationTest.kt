@@ -48,7 +48,7 @@ class TitleControllerIntegrationTest (
     private fun createTitle(title: TitleInputDto): ResponseSpec {
         return webClient
             .post()
-            .uri("/api/newspapers/titles/")
+            .uri("/newspapers/titles/")
             .bodyValue(title)
             .exchange()
     }
