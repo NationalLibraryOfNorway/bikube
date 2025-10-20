@@ -1,31 +1,19 @@
-package no.nb.bikube.newspaper.controller
+package no.nb.bikube.api.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.serialization.json.Json
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationB
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationC
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationD
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationE
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.erroneousCollectionsModelMock
-import no.nb.bikube.catalogue.collections.DtoMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
+import no.nb.bikube.api.catalogue.collections.DtoMock
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.catalogue.collections.model.*
 import no.nb.bikube.api.catalogue.collections.repository.CollectionsRepository
 import no.nb.bikube.api.core.model.Item
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
+import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.newspaper.service.UniqueIdService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -53,10 +41,10 @@ class ItemControllerIntegrationTest {
     @MockkBean
     private lateinit var uniqueIdService: UniqueIdService
 
-    private val titleId = collectionsModelMockTitleA.getFirstId()!!
-    private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
-    private val manifestationId2 = collectionsModelMockManifestationA.getFirstId()!!
-    private val itemId = collectionsModelMockItemA.getFirstId()!!
+    private val titleId = CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstId()!!
+    private val manifestationId = CollectionsModelMockData.Companion.collectionsModelMockManifestationC.getFirstId()!!
+    private val manifestationId2 = CollectionsModelMockData.Companion.collectionsModelMockManifestationA.getFirstId()!!
+    private val itemId = CollectionsModelMockData.Companion.collectionsModelMockItemA.getFirstId()!!
 
     private fun createItem(item: ItemInputDto): ResponseSpec {
         return webClient
@@ -73,44 +61,52 @@ class ItemControllerIntegrationTest {
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(manifestationId2) } returns Mono.just(collectionsModelMockManifestationB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
-        every { collectionsRepository.updateNewspaperRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { collectionsRepository.deleteNewspaperRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId2) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockItemA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockItemA.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+        )
+        every { collectionsRepository.updateNewspaperRecord(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockManifestationB)
+        every { collectionsRepository.deleteNewspaperRecord(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
         every { collectionsRepository.createNewspaperRecord(capture(encodedBody)) } answers {
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
-                CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
-                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationC)
-                CollectionsRecordType.WORK.value -> Mono.just(collectionsModelMockTitleA)
-                else -> Mono.just(collectionsModelEmptyRecordListMock)
+                CollectionsRecordType.ITEM.value -> Mono.just(CollectionsModelMockData.Companion.collectionsModelMockItemA)
+                CollectionsRecordType.MANIFESTATION.value -> Mono.just(CollectionsModelMockData.Companion.collectionsModelMockManifestationC)
+                CollectionsRecordType.WORK.value -> Mono.just(CollectionsModelMockData.Companion.collectionsModelMockTitleA)
+                else -> Mono.just(CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock)
             }
         }
     }
 
     @Test
     fun `post-newspapers-items endpoint should return 201 Created with item`() {
-        createItem(newspaperItemMockCValidForCreation)
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
             .expectBody<Item>()
     }
 
     @Test
     fun `post-newspapers-items endpoint should return correctly mapped item`() {
-        val testReturn = collectionsModelMockItemA.getFirstObject()
+        val testReturn = CollectionsModelMockData.Companion.collectionsModelMockItemA.getFirstObject()
 
-        createItem(newspaperItemMockCValidForCreation)
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
             .returnResult<Item>()
             .responseBody
@@ -132,32 +128,32 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspapers-items endpoint should return 400 bad request if digital is missing`() {
-        createItem(newspaperItemMockCValidForCreation.copy(digital = null))
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(digital = null))
             .expectStatus().isBadRequest
     }
 
     @Test
     fun `post-newspapers-items endpoint should return 400 bad request if digital is true and urn is missing`() {
-        createItem(newspaperItemMockCValidForCreation.copy(digital = true, urn = null))
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(digital = true, urn = null))
             .expectStatus().isBadRequest
     }
 
     @Test
     fun `post-newspapers-items endpoint should return 404 not found if title ID is not a title`() {
-        createItem(newspaperItemMockCValidForCreation.copy(titleCatalogueId = itemId))
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(titleCatalogueId = itemId))
             .expectStatus().isNotFound
     }
 
     @Test
     fun `post-newspapers-items endpoint should return 404 not found if title ID is not found`() {
-        createItem(newspaperItemMockCValidForCreation.copy(titleCatalogueId = "82822828"))
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(titleCatalogueId = "82822828"))
             .expectStatus().isNotFound
     }
 
 
     @Test
     fun `post-newspapers-items endpoint should use manifestation if it exists`() {
-        createItem(newspaperItemMockCValidForCreation.copy())
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
         verify(exactly = 1) { collectionsRepository.createNewspaperRecord(any()) }
@@ -165,12 +161,15 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspapers-items endpoint should create correct manifestation if not found`() {
-        val item = newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
+        val item = NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
 
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationE.copy())
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockManifestationE.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
+        )
 
         createItem(item)
             .expectStatus().isCreated
@@ -180,12 +179,14 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspaper-items endpoint should return 409 conflict if manifestation already has item with given format`() {
-        val item = newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
+        val item = NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(date = LocalDate.parse("2000-01-01"))
 
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
 
         createItem(item)
             .expectStatus().isEqualTo(409)
@@ -193,20 +194,20 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post-newspapers-items endpoint should link item to manifestation and title`() {
-        createItem(newspaperItemMockCValidForCreation)
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation)
             .expectStatus().isCreated
             .returnResult<Item>()
             .responseBody
             .test()
             .assertNext {
-                Assertions.assertEquals(collectionsPartOfObjectMockSerialWorkA.partOfReference!!.priRef, it.titleCatalogueId)
+                Assertions.assertEquals(CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA.partOfReference!!.priRef, it.titleCatalogueId)
             }
             .verifyComplete()
     }
 
     @Test
     fun `post-newspapers-items endpoint should give 400 bad request if item status is provided for a physical item`() {
-        createItem(newspaperItemMockCValidForCreation.copy(digital = false))
+        createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy(digital = false))
             .expectStatus().isBadRequest
     }
 
@@ -215,7 +216,7 @@ class ItemControllerIntegrationTest {
         webClient
             .post()
             .uri("/newspapers/items/missing")
-            .bodyValue(missingItemDtoMock)
+            .bodyValue(NewspaperMockData.Companion.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
             .expectBody<Item>()
@@ -223,12 +224,12 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post missing-item should return correctly mapped item`() {
-        val testReturn = collectionsModelMockManifestationB.getFirstObject()
+        val testReturn = CollectionsModelMockData.Companion.collectionsModelMockManifestationB.getFirstObject()
 
         webClient
             .post()
             .uri("/newspapers/items/missing")
-            .bodyValue(missingItemDtoMock)
+            .bodyValue(NewspaperMockData.Companion.missingItemDtoMock)
             .exchange()
             .returnResult<Item>()
             .responseBody
@@ -253,7 +254,7 @@ class ItemControllerIntegrationTest {
         webClient
             .post()
             .uri("/newspapers/items/missing")
-            .bodyValue(missingItemDtoMock.copy(titleCatalogueId = "489653148"))
+            .bodyValue(NewspaperMockData.Companion.missingItemDtoMock.copy(titleCatalogueId = "489653148"))
             .exchange()
             .expectStatus().isNotFound
     }
@@ -263,7 +264,7 @@ class ItemControllerIntegrationTest {
         webClient
             .post()
             .uri("/newspapers/items/missing")
-            .bodyValue(missingItemDtoMock)
+            .bodyValue(NewspaperMockData.Companion.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
 
@@ -272,13 +273,15 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `post missing-item create correct manifestation if not found`() {
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockTitleB.copy())
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
+        )
 
         webClient
             .post()
             .uri("/newspapers/items/missing")
-            .bodyValue(missingItemDtoMock)
+            .bodyValue(NewspaperMockData.Companion.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
 
@@ -290,7 +293,7 @@ class ItemControllerIntegrationTest {
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
             .expectStatus().isNoContent
     }
@@ -300,7 +303,7 @@ class ItemControllerIntegrationTest {
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
 
         verify(exactly = 1) { collectionsRepository.updateNewspaperRecord(withArg {
@@ -308,17 +311,17 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
             Assertions.assertTrue(it.contains("edit.name"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
+            Assertions.assertTrue(it.contains(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.username))
             Assertions.assertTrue(it.contains("notes"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
+            Assertions.assertTrue(it.contains(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.notes.toString()))
             Assertions.assertTrue(it.contains("Alternative_number"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.number.toString()))
+            Assertions.assertTrue(it.contains(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.number.toString()))
         })}
     }
 
     @Test
     fun `put item should not update null-values`() {
-        val dto = newspaperItemUpdateDtoMockA.copy(
+        val dto = NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(
             manifestationId = manifestationId,
             number = null
         )
@@ -334,9 +337,9 @@ class ItemControllerIntegrationTest {
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
             Assertions.assertTrue(it.contains("edit.name"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.username))
+            Assertions.assertTrue(it.contains(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.username))
             Assertions.assertTrue(it.contains("notes"))
-            Assertions.assertTrue(it.contains(newspaperItemUpdateDtoMockA.notes.toString()))
+            Assertions.assertTrue(it.contains(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.notes.toString()))
 
             Assertions.assertFalse(it.contains("Alternative_number"))
         })}
@@ -345,12 +348,12 @@ class ItemControllerIntegrationTest {
     @Test
     fun `put item should return 404 NOT FOUND when id is not found`() {
         val dummyId = "123123123"
-        every { collectionsRepository.getSingleCollectionsModel(dummyId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModel(dummyId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock.copy())
 
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = dummyId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = dummyId))
             .exchange()
             .expectStatus().isNotFound
     }
@@ -360,26 +363,28 @@ class ItemControllerIntegrationTest {
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = itemId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = itemId))
             .exchange()
             .expectStatus().isBadRequest
 
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = titleId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = titleId))
             .exchange()
             .expectStatus().isBadRequest
     }
 
     @Test
     fun `put item should return 500 Server Error if the catalog returns an error`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(erroneousCollectionsModelMock)
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(
+            CollectionsModelMockData.Companion.erroneousCollectionsModelMock
+        )
 
         webClient
             .put()
             .uri("/newspapers/items")
-            .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
+            .bodyValue(NewspaperMockData.Companion.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
             .expectStatus().is5xxServerError
     }
@@ -419,7 +424,8 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `delete item should return 500 when manifestation has more than 1 physical item`() {
-        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationD.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationD.copy())
 
         webClient
             .delete()

@@ -1,9 +1,9 @@
-package no.nb.bikube.catalogue.collections
+package no.nb.bikube.api.catalogue.collections
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.core.enum.MaterialType
 
 class CollectionsModelMockData {
     companion object {

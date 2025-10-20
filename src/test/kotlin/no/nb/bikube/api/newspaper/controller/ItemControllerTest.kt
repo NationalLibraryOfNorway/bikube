@@ -1,11 +1,9 @@
-package no.nb.bikube.newspaper.controller
+package no.nb.bikube.api.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.core.service.DtoValidationService
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockA
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -29,16 +27,16 @@ class ItemControllerTest {
 
     @Test
     fun `create item should return 200 OK with created item`() {
-        every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
-        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(NewspaperMockData.Companion.newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperItem(any()) } returns Mono.just(NewspaperMockData.Companion.newspaperItemMockA.copy())
         every { dtoValidationService.validateItemInputDto(any()) } returns Unit
 
-        itemController.createItem(newspaperItemMockCValidForCreation.copy())
+        itemController.createItem(NewspaperMockData.Companion.newspaperItemMockCValidForCreation.copy())
             .test()
             .expectSubscription()
             .assertNext {
                 Assertions.assertEquals(
-                    newspaperItemMockA.copy(),
+                    NewspaperMockData.Companion.newspaperItemMockA.copy(),
                     it.body
                 )
             }

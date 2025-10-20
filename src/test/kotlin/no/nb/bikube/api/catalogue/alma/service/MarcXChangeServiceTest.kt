@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.service
+package no.nb.bikube.api.catalogue.alma.service
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test

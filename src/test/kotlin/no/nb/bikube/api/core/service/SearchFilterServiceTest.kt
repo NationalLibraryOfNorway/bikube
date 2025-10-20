@@ -1,4 +1,4 @@
-package no.nb.bikube.core.service
+package no.nb.bikube.api.core.service
 
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Title
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate
+import kotlin.collections.get
 
 @SpringBootTest
 @ActiveProfiles("test")

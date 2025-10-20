@@ -1,11 +1,9 @@
-package no.nb.bikube.catalogue.collections.mapper
+package no.nb.bikube.api.catalogue.collections.mapper
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemC
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.catalogue.collections.model.CollectionsModel
 import no.nb.bikube.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
@@ -28,8 +26,8 @@ class ItemMapperTests {
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingleDigital.json")
     private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
-    private val collectionsPartsObjWithDateInTitle = collectionsPartsObjectMockItemA.partsReference!!
-    private val collectionsPartsObjWithoutDateInTitle = collectionsPartsObjectMockItemC.partsReference!!
+    private val collectionsPartsObjWithDateInTitle = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!
+    private val collectionsPartsObjWithoutDateInTitle = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemC.partsReference!!
     @Test
     fun `Item mapper should map catalogueId`() { Assertions.assertEquals("1601048433", genericItem.catalogueId) }
 

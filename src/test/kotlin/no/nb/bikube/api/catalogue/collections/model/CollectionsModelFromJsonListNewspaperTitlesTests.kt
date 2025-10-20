@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.collections.model
+package no.nb.bikube.api.catalogue.collections.model
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
+import kotlin.collections.get
 
 @SpringBootTest
 @ActiveProfiles("test")

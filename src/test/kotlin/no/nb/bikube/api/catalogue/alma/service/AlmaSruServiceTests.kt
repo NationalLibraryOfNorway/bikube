@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.alma.service
+package no.nb.bikube.api.catalogue.alma.service
 
 import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
 import okhttp3.mockwebserver.MockResponse

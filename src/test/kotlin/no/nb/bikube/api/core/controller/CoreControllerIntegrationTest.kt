@@ -1,16 +1,9 @@
-package no.nb.bikube.core.controller
+package no.nb.bikube.api.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockAllTitles
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.catalogue.collections.model.*
@@ -29,13 +22,12 @@ import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
-import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.returnResult
-import org.springframework.web.util.UriBuilder
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration
 import java.time.LocalDate
+import kotlin.collections.get
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -57,15 +49,20 @@ class CoreControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
 
-        every { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestations(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getManifestations(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(CollectionsModelMockData.Companion.collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockTitleA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(
+            CollectionsModelMockData.Companion.collectionsModelMockItemA.copy())
+        every { collectionsRepository.getManifestations(any(), any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock.copy())
+        every { collectionsRepository.getManifestations(any(), titleId) } returns Mono.just(CollectionsModelMockData.Companion.collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
-                collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
+                CollectionsModelMockData.Companion.collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
@@ -139,7 +136,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-item endpoint should return correctly mapped item`() {
-        val testItem = collectionsModelMockItemA.getFirstObject()
+        val testItem = CollectionsModelMockData.Companion.collectionsModelMockItemA.getFirstObject()
 
         getItem(itemId, MaterialType.NEWSPAPER)
             .expectStatus().isOk
@@ -223,7 +220,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title endpoint should return correctly mapped title`() {
-        val testTitle = collectionsModelMockTitleA.getFirstObject()
+        val testTitle = CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstObject()
 
         getTitle(titleId, MaterialType.NEWSPAPER)
             .expectStatus().isOk
@@ -286,7 +283,7 @@ class CoreControllerIntegrationTest (
             .responseBody
             .test()
             .expectSubscription()
-            .expectNextCount(collectionsModelMockAllTitles.getObjects()!!.size.toLong())
+            .expectNextCount(CollectionsModelMockData.Companion.collectionsModelMockAllTitles.getObjects()!!.size.toLong())
             .verifyComplete()
     }
 
@@ -296,9 +293,9 @@ class CoreControllerIntegrationTest (
             .returnResult<Title>()
             .responseBody
             .test()
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![0]))
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![1]))
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockAllTitles.getObjects()!![2]))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockAllTitles.getObjects()!![0]))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockAllTitles.getObjects()!![1]))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockAllTitles.getObjects()!![2]))
             .verifyComplete()
     }
 
@@ -340,7 +337,7 @@ class CoreControllerIntegrationTest (
             .responseBody
             .test()
             .expectSubscription()
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleA.getFirstObject()))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstObject()))
             .verifyComplete()
     }
 
@@ -351,8 +348,8 @@ class CoreControllerIntegrationTest (
             .responseBody
             .test()
             .expectSubscription()
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleA.getFirstObject()))
-            .expectNext(mapCollectionsObjectToGenericTitle(collectionsModelMockTitleB.getFirstObject()))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstObject()))
+            .expectNext(mapCollectionsObjectToGenericTitle(CollectionsModelMockData.Companion.collectionsModelMockTitleB.getFirstObject()))
             .verifyComplete()
     }
 
@@ -374,22 +371,22 @@ class CoreControllerIntegrationTest (
             .responseBody
             .test()
             .expectSubscription()
-            .expectNextCount(collectionsModelMockItemA.getObjects()!!.size.toLong())
+            .expectNextCount(CollectionsModelMockData.Companion.collectionsModelMockItemA.getObjects()!!.size.toLong())
             .verifyComplete()
     }
 
     @Test
     fun `search-item endpoint should return mapped items`() {
         val expectedItem = Item(
-            catalogueId = collectionsPartsObjectMockItemA.partsReference!!.priRef,
-            name = collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
+            catalogueId = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!.priRef,
+            name = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
             date = DateUtils.parseYearOrDate(
-                collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)
+                CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)
             )!!,
             materialType = MaterialType.NEWSPAPER.value,
-            titleCatalogueId = collectionsModelMockTitleA.getFirstId(),
-            titleName = collectionsPartsObjectMockManifestationA.partsReference!!.titleList!!.first().title!!,
-            digital = collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
+            titleCatalogueId = CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstId(),
+            titleName = CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA.partsReference!!.titleList!!.first().title!!,
+            digital = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!.getFormat() == CollectionsFormat.DIGITAL,
             urn = null,
             parentCatalogueId = null
         )
@@ -412,7 +409,7 @@ class CoreControllerIntegrationTest (
             .verifyComplete()
 
         verify(exactly = 1) { collectionsRepository.getManifestations(any(), "1") }
-        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) }
+        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(CollectionsModelMockData.Companion.collectionsModelMockManifestationA.getFirstId()!!) }
     }
 
     @Test

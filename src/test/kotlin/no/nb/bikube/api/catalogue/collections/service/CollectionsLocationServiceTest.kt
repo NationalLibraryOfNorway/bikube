@@ -1,11 +1,9 @@
-package no.nb.bikube.catalogue.collections.service
+package no.nb.bikube.api.catalogue.collections.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationModelMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.emptyCollectionsLocationModelMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -30,14 +28,14 @@ class CollectionsLocationServiceTest {
         // Given a container with given barcode exists
         val barcode = "barcode"
         val username = "username"
-        every { collectionsRepository.searchLocationAndContainers(barcode) } returns Mono.just(collectionsLocationModelMock)
+        every { collectionsRepository.searchLocationAndContainers(barcode) } returns Mono.just(CollectionsModelMockData.Companion.collectionsLocationModelMock)
 
         // When trying to create a container
         collectionsLocationService.createContainerIfNotExists(barcode, username)
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(collectionsLocationObjectMock, it)
+                Assertions.assertEquals(CollectionsModelMockData.Companion.collectionsLocationObjectMock, it)
             }
             .verifyComplete()
 
@@ -51,15 +49,15 @@ class CollectionsLocationServiceTest {
         // Given a container with given barcode does not exist
         val barcode = "barcode"
         val username = "username"
-        every { collectionsRepository.searchLocationAndContainers(barcode) } returns Mono.just(emptyCollectionsLocationModelMock)
-        every { collectionsRepository.createLocationRecord(any()) } returns Mono.just(collectionsLocationModelMock)
+        every { collectionsRepository.searchLocationAndContainers(barcode) } returns Mono.just(CollectionsModelMockData.Companion.emptyCollectionsLocationModelMock)
+        every { collectionsRepository.createLocationRecord(any()) } returns Mono.just(CollectionsModelMockData.Companion.collectionsLocationModelMock)
 
         // When trying to create a container
         collectionsLocationService.createContainerIfNotExists(barcode, username)
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(collectionsLocationObjectMock, it)
+                Assertions.assertEquals(CollectionsModelMockData.Companion.collectionsLocationObjectMock, it)
             }
             .verifyComplete()
 
