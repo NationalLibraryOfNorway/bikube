@@ -9,7 +9,8 @@ import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.api.core.model.Language
 import no.nb.bikube.api.core.model.Publisher
 import no.nb.bikube.api.core.model.PublisherPlace
-import no.nb.bikube.api.newspaper.NewspaperMockData
+import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
+import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -34,20 +35,20 @@ class TitleControllerTest {
         every { newspaperService.createPublisher(any(), any()) } returns Mono.empty()
         every { newspaperService.createPublisherPlace(any(), any()) } returns Mono.empty()
         every { newspaperService.createLanguage(any(), any()) } returns Mono.empty()
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
 
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA)
+        titleController.createTitle(newspaperTitleInputDtoMockA)
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
 
     @Test
     fun `createTitle should return 400 bad request if request body object title is empty`() {
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(name = ""))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(name = ""))
             .test()
             .expectErrorMatches {
                 it is BadRequestBodyException &&
@@ -60,7 +61,7 @@ class TitleControllerTest {
     fun `createTitle should return BadRequestBodyException if startDate is after endDate`() {
         val startDate = LocalDate.of(2020, 1, 1)
         val endDate = LocalDate.of(2019, 1, 1)
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(startDate = startDate, endDate = endDate))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(startDate = startDate, endDate = endDate))
             .test()
             .expectErrorMatches {
                 it is BadRequestBodyException &&
@@ -72,14 +73,14 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call create publisher if publisher is present on request body`() {
         every { newspaperService.createPublisher(any(), any()) } returns Mono.just(Publisher("Pub", "1"))
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         every { newspaperService.createLanguage(any(), any()) } returns Mono.just(Language("nob", "1"))
 
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(publisher = "Pub", publisherPlace = null))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Pub", publisherPlace = null))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
@@ -87,14 +88,14 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call createPublisherPlace if publisherPlace is present on request body`() {
         every { newspaperService.createPublisherPlace(any(), any()) } returns Mono.just(PublisherPlace("Pub", "1"))
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
         every { newspaperService.createLanguage(any(), any()) } returns Mono.just(Language("nob", "1"))
 
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(publisherPlace = "Pub"))
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Pub"))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
@@ -102,20 +103,20 @@ class TitleControllerTest {
     @Test
     fun `createTitle should call createLanguage if language is present on request body`() {
         every { newspaperService.createLanguage(any(), any()) } returns Mono.just(Language("nob", "1"))
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(language = "nob", publisherPlace = null))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob", publisherPlace = null))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
 
     @Test
     fun `createTitle should not call on createPublisher, createPublisherPlace or createLanguage if not present on request body`() {
-        val titleInput = NewspaperMockData.newspaperTitleInputDtoMockA.copy(publisher = null, publisherPlace = null, language = null)
-        val title = NewspaperMockData.newspaperTitleMockA.copy(publisher = null, publisherPlace = null, language = null)
+        val titleInput = newspaperTitleInputDtoMockA.copy(publisher = null, publisherPlace = null, language = null)
+        val title = newspaperTitleMockA.copy(publisher = null, publisherPlace = null, language = null)
         every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(title)
         titleController.createTitle(titleInput)
             .test()
@@ -137,12 +138,12 @@ class TitleControllerTest {
         )
         every { newspaperService.createPublisherPlace(any(), any()) } returns Mono.just(PublisherPlace("Oslo", "1"))
         every { newspaperService.createLanguage(any(), any()) } returns Mono.just(Language("nob", "1"))
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(publisher = "Schibsted"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisher = "Schibsted"))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
@@ -154,12 +155,12 @@ class TitleControllerTest {
             RecordAlreadyExistsException("Publisher place 'Oslo' already exists")
         )
         every { newspaperService.createLanguage(any(), any()) } returns Mono.just(Language("nob", "1"))
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(publisherPlace = "Oslo"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Oslo"))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }
@@ -171,12 +172,12 @@ class TitleControllerTest {
         every { newspaperService.createLanguage(any(), any()) } returns Mono.error(
             RecordAlreadyExistsException("Language 'nob' already exists")
         )
-        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
-        titleController.createTitle(NewspaperMockData.newspaperTitleInputDtoMockA.copy(language = "nob"))
+        every { newspaperService.createNewspaperTitle(any()) } returns Mono.just(newspaperTitleMockA.copy())
+        titleController.createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it.body)
+                Assertions.assertEquals(newspaperTitleMockA, it.body)
             }
             .verifyComplete()
     }

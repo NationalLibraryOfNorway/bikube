@@ -22,7 +22,7 @@ class DtoValidationServiceTest {
     private val validDigitalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
         titleCatalogueId = "1",
-        username = CollectionsModelMockData.TEST_USERNAME,
+        username = TEST_USERNAME,
         digital = true,
         urn = "avis_null_null_20200101_1_1_1",
         containerId = null,
@@ -34,7 +34,7 @@ class DtoValidationServiceTest {
     private val validPhysicalItem = ItemInputDto(
         date = LocalDate.parse("2020-01-01"),
         titleCatalogueId = "1",
-        username = CollectionsModelMockData.TEST_USERNAME,
+        username = TEST_USERNAME,
         digital = false,
         urn = null,
         containerId = "1"
@@ -72,18 +72,18 @@ class DtoValidationServiceTest {
     @Test
     fun `validateItemUpdateDto should throw exception if neither notes or number is provided`() {
         assertThrows<BadRequestBodyException> { dtoValidationService.validateItemUpdateDto(
-            ItemUpdateDto(username = CollectionsModelMockData.TEST_USERNAME, manifestationId = "1")
+            ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1")
         )}
     }
 
     @Test
     fun `validateItemUpdateDto should not throw exception if only notes or number is provided`() {
         assertDoesNotThrow { dtoValidationService.validateItemUpdateDto(
-            ItemUpdateDto(username = CollectionsModelMockData.TEST_USERNAME, manifestationId = "1", notes = "notes")
+            ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1", notes = "notes")
         )}
 
         assertDoesNotThrow { dtoValidationService.validateItemUpdateDto(
-            ItemUpdateDto(username = CollectionsModelMockData.TEST_USERNAME, manifestationId = "1", number = "1")
+            ItemUpdateDto(username = TEST_USERNAME, manifestationId = "1", number = "1")
         )}
     }
 
@@ -97,7 +97,7 @@ class DtoValidationServiceTest {
     @Test
     fun `validateItemUpdateDto should throw exception if manifestationId is blank`() {
         assertThrows<BadRequestBodyException> { dtoValidationService.validateItemUpdateDto(
-            ItemUpdateDto(username = CollectionsModelMockData.TEST_USERNAME, manifestationId = "", notes = "notes")
+            ItemUpdateDto(username = TEST_USERNAME, manifestationId = "", notes = "notes")
         )}
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
 import java.time.LocalDate
+import kotlin.collections.get
 
 @SpringBootTest
 @ActiveProfiles("test")

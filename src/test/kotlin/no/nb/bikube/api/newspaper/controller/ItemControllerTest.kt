@@ -3,8 +3,8 @@ package no.nb.bikube.api.newspaper.controller
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.api.core.service.DtoValidationService
-import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockA
+import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
@@ -33,12 +33,12 @@ class ItemControllerTest {
         every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA.copy())
         every { dtoValidationService.validateItemInputDto(any()) } returns Unit
 
-        itemController.createItem(NewspaperMockData.newspaperItemMockCValidForCreation.copy())
+        itemController.createItem(newspaperItemMockCValidForCreation.copy())
             .test()
             .expectSubscription()
             .assertNext {
                 Assertions.assertEquals(
-                    NewspaperMockData.newspaperItemMockA.copy(),
+                    newspaperItemMockA.copy(),
                     it.body
                 )
             }
