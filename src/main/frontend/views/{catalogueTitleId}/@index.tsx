@@ -67,9 +67,9 @@ export default function CatalogueTitleView() {
     }
 
     return (
-        <div>
+        <div className="max-w-7xl w-full">
             <div className="flex flex-row gap-5">
-                <div className="flex flex-col gap-y-5">
+                <div className="flex flex-col gap-y-5 w-full">
                     <div className="flex flex-col gap-y-2 border-1 p-5 bg-gray-50 rounded-lg">
                         <p className="text-4xl font-medium">
                             <Tooltip>
@@ -102,7 +102,7 @@ export default function CatalogueTitleView() {
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-y-2 border-1 p-5 bg-gray-50 rounded-lg">
+                    <div className="flex flex-col w-full gap-y-2 border-1 p-5 bg-gray-50 rounded-lg">
                         <div className="flex items-center">
                             {!hasBoxes && (
                                 <p className="text-center me-3">Ingen eske registrert, legg til eske for å legge til
@@ -120,11 +120,9 @@ export default function CatalogueTitleView() {
                             )}
                             <BoxCreateModal/>
                         </div>
-                        <div>
-                            <BoxNewspapersEditor
-                                box={activeBox!}
-                            />
-                        1</div>
+                    </div>
+                    <div className="flex w-full flex-col gap-y-2 border-1 p-5 bg-gray-50 rounded-lg">
+                        <BoxNewspapersEditor title={title!}/>
                     </div>
                 </div>
 

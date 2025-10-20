@@ -8,7 +8,6 @@ import {useParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {HuginNewspaperService} from "@/generated/endpoints";
 import {Calendar} from "@/components/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {format, isValid, parseISO} from "date-fns";
 import {nb} from "date-fns/locale";
 
