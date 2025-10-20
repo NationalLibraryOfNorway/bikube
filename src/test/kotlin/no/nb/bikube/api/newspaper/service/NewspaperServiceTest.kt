@@ -26,6 +26,8 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsException
@@ -42,6 +44,7 @@ import no.nb.bikube.api.core.exception.NotSupportedException
 import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.api.core.model.*
 import no.nb.bikube.api.core.util.DateUtils
+import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockB
@@ -101,10 +104,10 @@ class NewspaperServiceTest {
         date = newspaperItemMockB.date.toString(),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "newspaper",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "newspaper"
+        dataset = CollectionsDatabase.NEWSPAPER.value
     ))
 
     private val itemEncodedDto = Json.encodeToString(ItemDto(
@@ -115,10 +118,10 @@ class NewspaperServiceTest {
         alternativeNumberList = listOf(urnMock),
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "newspaper",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "newspaper",
+        dataset = CollectionsDatabase.NEWSPAPER.value,
         partOfReference = newspaperItemMockB.catalogueId,
         urn = urnMock.name
     ))
@@ -131,10 +134,10 @@ class NewspaperServiceTest {
         alternativeNumberList = null,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "newspaper",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "newspaper",
+        dataset = CollectionsDatabase.NEWSPAPER.value,
         partOfReference = newspaperItemMockB.catalogueId,
         currentLocationName = collectionsLocationObjectMock.priRef
     ))
@@ -153,10 +156,10 @@ class NewspaperServiceTest {
         subMedium = "Aviser",
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "newspaper",
+        inputSource = CollectionsDatabase.NEWSPAPER.value,
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "newspaper")
+        dataset = CollectionsDatabase.NEWSPAPER.value)
     )
 
     @Test
@@ -644,10 +647,10 @@ class NewspaperServiceTest {
                 edition = TEST_NUMBER,
                 inputName = TEST_USERNAME,
                 inputNotes = INPUT_NOTES,
-                inputSource = "newspaper",
+                inputSource = CollectionsDatabase.NEWSPAPER.value,
                 inputDate = LocalDate.now().toString(),
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-                dataset = "newspaper",
+                dataset = CollectionsDatabase.NEWSPAPER.value,
                 notes = TEST_NOTES,
                 alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, "Nummer"))
             )

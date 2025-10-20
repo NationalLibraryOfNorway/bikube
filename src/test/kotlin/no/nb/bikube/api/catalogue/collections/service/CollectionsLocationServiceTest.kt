@@ -1,10 +1,11 @@
-package no.nb.bikube.api.catalogue.collections.service
+package no.nb.bikube.catalogue.collections.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.api.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.api.catalogue.collections.service.CollectionsLocationService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
