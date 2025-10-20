@@ -13,9 +13,8 @@ import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.ResultActionsDsl
 
-// CHANGED: use MOCK, not RANDOM_PORT, since MockMvc does not need a server
+// use MOCK, not RANDOM_PORT, since MockMvc does not need a server
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
@@ -77,7 +76,6 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateISSN(issn: String) {
-        // CHANGED: moved from WebTestClient to MockMvc helper
         expectProblemDetail(
             "/api/alma/issn/$issn",
             "getMarcRecordsByISSN.issn: ${AlmaController.ISSN_MESSAGE}"

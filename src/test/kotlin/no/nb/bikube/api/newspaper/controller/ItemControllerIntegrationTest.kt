@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.serialization.json.Json
-import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
