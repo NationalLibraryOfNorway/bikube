@@ -20,6 +20,7 @@ type NewspaperRow = Omit<Newspaper, "date"> & {
 
 export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
     const activeBox = title?.boxes?.find(b => b.active);
+    if (activeBox === undefined) return null;
 
     const existingDates = useMemo(
         () =>
@@ -215,7 +216,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                                             type="button"
                                             variant="destructive"
                                             className="h-8 w-8 p-0 rounded-full"
-                                            onClick={() => handleDelete(r._tmpId)}
+                                            onClick={() => removeRow(r._tmpId)}
                                         >
                                             <Trash2 className="h-4 w-4"/>
                                         </Button>
