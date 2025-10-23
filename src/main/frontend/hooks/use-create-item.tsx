@@ -14,14 +14,10 @@ export function useAddNewspapers() {
     return useMutation({
         mutationFn: async (args: Args) => {
             await HuginNewspaperService.upsertNewspaper(args.items)
-    /*        for (const n of args.items) {
-
-            }*/
         },
         onSuccess: (_data, vars) => {
             toast.success("Utgaver lagret");
-            //qc.invalidateQueries({queryKey: });
-            //qc.invalidateQueries({queryKey: ["box", vars.boxId]});
+            qc.invalidateQueries({queryKey: keys.huginTitle(vars.items[0].titleId)});
         },
         onError: () => toast.error("Klarte ikke å lagre utgaver"),
     });
