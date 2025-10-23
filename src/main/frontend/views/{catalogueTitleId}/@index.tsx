@@ -76,7 +76,7 @@ export default function CatalogueTitleView() {
                                 <TooltipTrigger asChild>
                                     <NavLink to={'create'}
                                              className={"inline-flex whitespace-nowrap gap-2 items-center"}>
-                                        {title?.vendor}
+                                        {catalogueTitle?.name}
                                         <Button size="icon" className="p-0 m-0">
                                             <Edit/>
                                         </Button>
