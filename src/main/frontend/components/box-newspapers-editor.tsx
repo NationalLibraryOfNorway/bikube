@@ -77,15 +77,29 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
         return probe;
     }, [activeBox.dateFrom, existingDates, rows, title.releasePattern, isReleaseDay]);
 
+    const suggestNextEditionNumber = useCallback((): string | undefined => {
+        // find highest existing edition number (existing or local)
+        const allEditions = [
+            ...activeBox.newspapers,
+            ...rows,
+        ]
+            .map((n) => Number(n.edition))
+            .filter((n) => !isNaN(n));
+        if (allEditions.length === 0) return undefined;
+        const max = Math.max(...allEditions);
+        return (max + 1).toString();
+    }, [activeBox.newspapers, rows]);
+
     const addRow = () => {
         const date = suggestNextDate();
+        const editionSuggestion = suggestNextEditionNumber();
         setRows((rs) => [
             ...rs,
             {
                 _tmpId: crypto.randomUUID(),
                 catalogId: "",
                 titleId: title.id!,
-                edition: undefined,
+                edition: editionSuggestion,
                 date,
                 received: false,
                 username: undefined,
