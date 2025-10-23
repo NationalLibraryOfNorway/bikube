@@ -89,7 +89,7 @@ class HuginNewspaperService(
 
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
-    fun upsertNewspaper(dto: List<NewspaperUpsertDto>): Item? {
+    fun upsertNewspaper(dto: List<NewspaperUpsertDto>): Newspaper? {
 
         val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
 
@@ -97,52 +97,40 @@ class HuginNewspaperService(
             println("Upserting newspaper: $newspaperDto")
             println("ItemUpdateDto: $newspaperDto.toItemUpdateDto(userName)")
             println("ItemInputDto: $newspaperDto.toItemInputDto(userName)")
-            /*
-            val existingItem =
-                if (NewspaperDto.catalogId.isNullOrEmpty().not()) {
+
+            val existingCatalogueItem =
+                if (newspaperDto.catalogId.isNullOrEmpty().not()) {
                     newspaperService
-                        .getSingleItem(NewspaperDto.catalogId!!)
+                        .getSingleItem(newspaperDto.catalogId!!)
                         .block()
                 } else {
                     newspaperService
-                        .getItemsByTitleAndDate(NewspaperDto.titleId.toString(), NewspaperDto.date, false)
+                        .getItemsByTitleAndDate(newspaperDto.titleId.toString(), newspaperDto.date, false)
                         .next()
                         .map { it as Item }
                         .block()
                 }
-
-            if (existingItem === null) {
+            println("Existing item from catalog: $existingCatalogueItem")
+            if (existingCatalogueItem === null) {
+                // Utgave eksisterer ikke i katalogen, opprett ny i katalog og database
                 val savedCatalogItem = newspaperService
-                    .createNewspaperItem(NewspaperDto.toItemInputDto(userName))
+                    .createNewspaperItem(newspaperDto.toItemInputDto(userName))
                     .block()
                     ?: error("Failed to create newspaper item")
-                saveNewspaperToDatabase(NewspaperDto.toNewspaper(savedCatalogItem.catalogueId))
+                println("Created new catalog item with ID: $savedCatalogItem")
+                return saveNewspaperToDatabase(newspaperDto.toNewspaper(savedCatalogItem.catalogueId))
             }
-             */
+            else {
+                // Utgave finnes allerede i katalogen, oppdater eksisterende i katalog og database
+                // Hent først eksisterende avis i database, i alle normale fall skal denne eksistere
+                val existingNewspaper = newspaperRepository.findById(existingCatalogueItem.catalogueId).get()
+
+                if (newspaperDto.received === false && existingNewspaper.received === true) {
+                            println("test")
+                }
+
+            }
         }
-        /*
-         val existingItem =
-             if (dto.catalogId.isNullOrEmpty().not()) {
-                 newspaperService
-                     .getSingleItem(dto.catalogId!!)
-                     .block()
-             } else {
-                 newspaperService
-                     .getItemsByTitleAndDate(dto.titleId.toString(), dto.date, false)
-                     .next()
-                     .map { it as Item }
-                     .block()
-             }
-
-         if (existingItem === null) {
-             val savedCatalogItem = newspaperService
-                 .createNewspaperItem(dto.toItemInputDto(userName))
-                 .block()
-                 ?: error("Failed to create newspaper item")
-             saveNewspaperToDatabase(dto.toNewspaper(savedCatalogItem.catalogueId))
-         }
- */
-
         return null;
     }
 

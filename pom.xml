@@ -19,7 +19,7 @@
 		<serialization.version>1.7.3</serialization.version>
 		<fasterxml.version>2.18.2</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
-        <vaadin.version>24.9.1</vaadin.version>
+        <vaadin.version>24.9.2</vaadin.version>
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
 

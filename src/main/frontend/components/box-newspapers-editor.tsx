@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -18,20 +18,32 @@ type NewspaperRow = Omit<Newspaper, "date"> & {
 
 
 export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
-
-    if (title.releasePattern === undefined) return null;
+    console.debug(title)
     const activeBox = title?.boxes?.find(b => b.active);
-    if (activeBox === undefined) return null;
 
     const existingDates = useMemo(
         () =>
-            (activeBox.newspapers ?? [])
+            (activeBox?.newspapers ?? [])
                 .map((n) => (n.date as unknown as string | undefined)?.slice(0, 10))
                 .filter(Boolean) as string[],
-        [activeBox.newspapers]
+        [activeBox?.newspapers]
     );
 
     const [rows, setRows] = useState<NewspaperRow[]>([]);
+
+    useEffect(() => {
+        const newspapers = title.boxes.find(b => b.active)?.newspapers;
+        if (newspapers && newspapers.length > 0) {
+            setRows(newspapers.map(n => ({
+                ...n,
+                date: (n.date as unknown as string)?.slice(0, 10) ?? "",
+                _tmpId: crypto.randomUUID(),
+            })));
+        }
+    }, [title.boxes]);
+
+    if (activeBox === undefined) return null;
+    if (title.releasePattern === undefined) return null;
 
     const isReleaseDay = useCallback(
         (iso: string) => {
@@ -71,7 +83,8 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
             ...rs,
             {
                 _tmpId: crypto.randomUUID(),
-                catalogId: title.id.toString(),
+                catalogId: "",
+                titleId: title.id!,
                 edition: undefined,
                 date,
                 received: false,
@@ -94,7 +107,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
         const payload = rows.map((r) => ({
             catalogId: r.catalogId,
             edition: r.edition?.toString() || "",
-            titleId: Number.parseInt(r.catalogId),
+            titleId: title.id,
             date: r.date,
             received: r.received || false,
             username: r.username?.trim() || "",

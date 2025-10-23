@@ -37,7 +37,7 @@ class NewspaperService (
         val id = uniqueIdService.getUniqueId()
         val dto: TitleDto = createNewspaperTitleDto(id, title)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createNewspaperRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -214,7 +214,7 @@ class NewspaperService (
         val id = uniqueIdService.getUniqueId()
         val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, date, username, notes, number)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createNewspaperRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -318,13 +318,13 @@ class NewspaperService (
 
         return if (physicalItems?.size == 1 && firstPhysicalItem?.partsReference != null) {
             if (allItems.size == 1 && deleteManifestation) {
-                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
-                    .then(collectionsRepository.deleteTextsRecord(manifestation.priRef))
+                collectionsRepository.deleteNewspaperRecord(firstPhysicalItem.partsReference.priRef)
+                    .then(collectionsRepository.deleteNewspaperRecord(manifestation.priRef))
             } else {
-                collectionsRepository.deleteTextsRecord(firstPhysicalItem.partsReference.priRef)
+                collectionsRepository.deleteNewspaperRecord(firstPhysicalItem.partsReference.priRef)
             }
         } else if (allItems.isNullOrEmpty() && deleteManifestation) {
-            collectionsRepository.deleteTextsRecord(manifestation.priRef)
+            collectionsRepository.deleteNewspaperRecord(manifestation.priRef)
         } else if (allItems.isNullOrEmpty()) {
             Mono.error(CollectionsException("Manifestation had no items, expected at least 1"))
         } else {
@@ -339,7 +339,7 @@ class NewspaperService (
         val uniqueId = uniqueIdService.getUniqueId()
         val dto: ItemDto = createNewspaperItemDto(uniqueId, item, parentId)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createTextsRecord(encodedBody)
+        return collectionsRepository.createNewspaperRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -372,7 +372,7 @@ class NewspaperService (
     ): Mono<CollectionsObject> {
         val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.updateTextsRecord(encodedBody)
+        return collectionsRepository.updateNewspaperRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
