@@ -28,7 +28,7 @@ class NewspaperMockData {
         // Minimum valid for creation
         val newspaperTitleInputDtoMockA = TitleInputDto(
             name = "Avis A",
-            username = CollectionsModelMockData.Companion.TEST_USERNAME,
+            username = CollectionsModelMockData.TEST_USERNAME,
             startDate = null,
             endDate = null,
             publisher = null,
@@ -51,7 +51,7 @@ class NewspaperMockData {
         // Equal to collectionsModelMockTitleE, valid for insert
         val newspaperTitleInputDtoMockB = TitleInputDto(
             name = "Avis B",
-            username = CollectionsModelMockData.Companion.TEST_USERNAME,
+            username = CollectionsModelMockData.TEST_USERNAME,
             startDate = LocalDate.parse("2020-01-01"),
             endDate = LocalDate.parse("2020-01-31"),
             publisher = "B-Forlaget",
@@ -88,7 +88,7 @@ class NewspaperMockData {
         val newspaperInputDtoItemMockB = ItemInputDto(
             date = LocalDate.parse("2020-01-05"),
             titleCatalogueId = newspaperTitleMockA.catalogueId,
-            username = CollectionsModelMockData.Companion.TEST_USERNAME,
+            username = CollectionsModelMockData.TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1",
             containerId = null,
@@ -101,7 +101,7 @@ class NewspaperMockData {
         val newspaperItemMockCValidForCreation = ItemInputDto(
             date = LocalDate.parse("2020-01-01"),
             titleCatalogueId = "1",
-            username = CollectionsModelMockData.Companion.TEST_USERNAME,
+            username = CollectionsModelMockData.TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
             itemStatus = "Digitalisert",
@@ -130,7 +130,7 @@ class NewspaperMockData {
         val missingItemDtoMock = MissingPeriodicalItemDto(
             date = LocalDate.parse("2020-01-01"),
             titleCatalogueId = "1",
-            username = CollectionsModelMockData.Companion.TEST_USERNAME
+            username = CollectionsModelMockData.TEST_USERNAME
         )
 
         // Equals to collectionsModelMockManifestationB
@@ -149,8 +149,8 @@ class NewspaperMockData {
         // ID equals collectionsModelMockManifestationB
         val newspaperItemUpdateDtoMockA = ItemUpdateDto(
             manifestationId = "24",
-            username = CollectionsModelMockData.Companion.TEST_USERNAME,
-            notes = CollectionsModelMockData.Companion.TEST_NOTES,
+            username = CollectionsModelMockData.TEST_USERNAME,
+            notes = CollectionsModelMockData.TEST_NOTES,
             number = "1"
         )
     }

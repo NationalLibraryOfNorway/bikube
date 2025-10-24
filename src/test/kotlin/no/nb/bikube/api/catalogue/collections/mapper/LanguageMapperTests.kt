@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class LanguageMapperTests {
 
-    val languageMockA = CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA.getFirstObject()
+    val languageMockA = CollectionsModelMockData.collectionsTermModelMockLanguageA.getFirstObject()
 
     @Test
     fun `Language mapper should map catalogueId`() {

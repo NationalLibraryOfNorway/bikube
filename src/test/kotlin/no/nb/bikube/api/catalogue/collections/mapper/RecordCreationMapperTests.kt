@@ -12,7 +12,7 @@ class RecordCreationMapperTests {
 
     @Test
     fun `RecordCreation mapper should map collectionsObject to collectionsPartObject`() {
-        val original = CollectionsModelMockData.Companion.collectionsModelMockTitleA.getFirstObject()
+        val original = CollectionsModelMockData.collectionsModelMockTitleA.getFirstObject()
         val mappedObj = mapCollectionsObjectToCollectionsPartObject(original).partsReference!!
 
         Assertions.assertEquals(original.priRef, mappedObj.priRef)

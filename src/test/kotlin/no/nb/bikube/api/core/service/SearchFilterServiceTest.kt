@@ -1,7 +1,7 @@
 package no.nb.bikube.api.core.service
 
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Title
+import no.nb.bikube.api.core.enum.MaterialType
+import no.nb.bikube.api.core.model.Title
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

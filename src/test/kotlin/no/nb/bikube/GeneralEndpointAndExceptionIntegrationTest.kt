@@ -1,56 +1,57 @@
 package no.nb.bikube
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
-import no.nb.bikube.catalogue.collections.service.CollectionsService
+import no.nb.bikube.catalogue.collections.repository.CollectionsService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
-import org.springframework.test.web.reactive.server.returnResult
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import reactor.core.publisher.Mono
-import reactor.kotlin.test.test
 import java.net.URI
-import java.time.Duration
 import java.time.LocalDate
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-class GeneralEndpointAndExceptionIntegrationTest (
-    @Autowired private var webClient: WebTestClient
-){
+class GeneralEndpointAndExceptionIntegrationTest(
+    @Autowired private val mockMvc: MockMvc,
+    @Autowired private val objectMapper: ObjectMapper,
+) {
+
     @MockkBean
     private lateinit var collectionsService: CollectionsService
 
-    private fun getItem(): ResponseSpec {
-        return webClient
-            .get()
-            .uri { uri ->
-                uri.pathSegment("item")
-                    .queryParam("catalogueId", 1)
-                    .queryParam("materialType", MaterialType.NEWSPAPER)
-                    .build()
+    private fun getItemProblem(): Pair<Int, ProblemDetail> {
+        val res = mockMvc
+            .get("/bikube/item") {
+                param("catalogueId", "1")
+                param("materialType", MaterialType.NEWSPAPER.name)
             }
-            .exchange()
+            .andReturn()
+
+        val status = res.response.status
+        val problem = objectMapper.readValue(res.response.contentAsString, ProblemDetail::class.java)
+        return status to problem
     }
 
-    private fun parseTimestamp(timestamp: String): LocalDate {
-        return LocalDate.parse(timestamp.take(10))
-    }
+    private fun parseTimestamp(timestamp: String): LocalDate =
+        LocalDate.parse(timestamp.take(10))
 
     /*
         Modern APIs return ProblemDetail as their problem response, and it is generally considered as best practice.
@@ -74,167 +75,120 @@ class GeneralEndpointAndExceptionIntegrationTest (
     private val type409 = URI("https://produksjon.nb.no/bikube/error/conflict")
     private val type500 = URI("https://produksjon.nb.no/bikube/error/internal-server-error")
 
-    @BeforeEach
-    fun beforeEach( ){
-        // Needed to run properly in GitHub Actions
-        webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
-    }
-
     @Test
     fun `CollectionsException should return 500 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsException(null))
-        getItem()
-            .expectStatus().is5xxServerError
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type500, it.type)
-                Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), it.status)
-                Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("error"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), status)
+        Assertions.assertEquals(type500, problem.type)
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("error"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("collections"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `CollectionsTitleNotFound should return 404 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsTitleNotFound(null))
-        getItem()
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type404, it.type)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), it.status)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("not found"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status)
+        Assertions.assertEquals(type404, problem.type)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("not found"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("collections"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `NotSupportedException should return 400 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(NotSupportedException(null))
-        getItem()
-            .expectStatus().isBadRequest
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type400, it.type)
-                Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), it.status)
-                Assertions.assertEquals(HttpStatus.BAD_REQUEST.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("not supported"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status)
+        Assertions.assertEquals(type400, problem.type)
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("not supported"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `BadRequestBodyException should return 400 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(BadRequestBodyException(null))
-        getItem()
-            .expectStatus().isBadRequest
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type400, it.type)
-                Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), it.status)
-                Assertions.assertEquals(HttpStatus.BAD_REQUEST.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("body is malformed"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status)
+        Assertions.assertEquals(type400, problem.type)
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("body is malformed"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `RecordAlreadyExistsException should return 409 conflict with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(RecordAlreadyExistsException(null))
-        getItem()
-            .expectStatus().is4xxClientError
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type409, it.type)
-                Assertions.assertEquals(HttpStatus.CONFLICT.value(), it.status)
-                Assertions.assertEquals(HttpStatus.CONFLICT.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("already exists"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.CONFLICT.value(), status)
+        Assertions.assertEquals(type409, problem.type)
+        Assertions.assertEquals(HttpStatus.CONFLICT.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.CONFLICT.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("already exists"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `CollectionsItemNotFound should return 404 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsItemNotFound(null))
-        getItem()
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type404, it.type)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), it.status)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("not found"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("item"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status)
+        Assertions.assertEquals(type404, problem.type)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("not found"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("item"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("collections"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `CollectionsManifestationNotFound should return 404 with proper ProblemDetail`() {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
-        getItem()
-            .expectStatus().isNotFound
-            .returnResult<ProblemDetail>()
-            .responseBody
-            .test()
-            .assertNext {
-                Assertions.assertEquals(type404, it.type)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), it.status)
-                Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, it.title)
-                Assertions.assertTrue(it.detail!!.lowercase().contains("not found"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("manifestation"))
-                Assertions.assertTrue(it.detail!!.lowercase().contains("collections"))
-                Assertions.assertEquals(expectedInstance, it.instance)
-                Assertions.assertEquals(LocalDate.now(), parseTimestamp(it.properties!!["timestamp"] as String))
-            }
-            .verifyComplete()
+
+        val (status, problem) = getItemProblem()
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status)
+        Assertions.assertEquals(type404, problem.type)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), problem.status)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.reasonPhrase, problem.title)
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("not found"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("manifestation"))
+        Assertions.assertTrue(problem.detail!!.lowercase().contains("collections"))
+        Assertions.assertEquals(expectedInstance, problem.instance)
+        Assertions.assertEquals(LocalDate.now(), parseTimestamp(problem.properties!!["timestamp"] as String))
     }
 
     @Test
     fun `should redirect from base path to swagger without login`() {
-        webClient
-            .get()
-            .uri("/")
-            .exchange()
-            .expectStatus().is3xxRedirection
-            .expectBody()
-            .consumeWith { Assertions.assertEquals("/bikube/swagger-ui.html", it.responseHeaders.location.toString()) }
+        mockMvc
+            .get("/")
+            .andExpect { status { is3xxRedirection() } }
+            .andExpect { redirectedUrl("/bikube/swagger-ui.html") }
 
-        webClient
-            .get()
-            .uri("/swagger-ui.html")
-            .exchange()
-            .expectStatus().is3xxRedirection
-            .expectBody()
-            .consumeWith { Assertions.assertEquals("/bikube/webjars/swagger-ui/index.html", it.responseHeaders.location.toString()) }
+        mockMvc
+            .get("/swagger-ui.html")
+            .andExpect { status { is3xxRedirection() } }
+            .andExpect { redirectedUrl("/bikube/webjars/swagger-ui/index.html") }
     }
 }

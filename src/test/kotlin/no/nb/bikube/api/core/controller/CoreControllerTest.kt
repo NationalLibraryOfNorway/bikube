@@ -5,13 +5,13 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.api.newspaper.NewspaperMockData
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.exception.BadRequestBodyException
-import no.nb.bikube.core.exception.NotSupportedException
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.service.SearchFilterService
-import no.nb.bikube.newspaper.service.NewspaperService
-import no.nb.bikube.newspaper.service.TitleIndexService
+import no.nb.bikube.api.core.enum.MaterialType
+import no.nb.bikube.api.core.exception.BadRequestBodyException
+import no.nb.bikube.api.core.exception.NotSupportedException
+import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.service.SearchFilterService
+import no.nb.bikube.api.newspaper.service.NewspaperService
+import no.nb.bikube.api.newspaper.service.TitleIndexService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -39,13 +39,13 @@ class CoreControllerTest {
 
     @Test
     fun `get single item for newspaper should return item in body`() {
-        every { newspaperService.getSingleItem(any()) } returns Mono.just(NewspaperMockData.Companion.newspaperItemMockA.copy())
+        every { newspaperService.getSingleItem(any()) } returns Mono.just(NewspaperMockData.newspaperItemMockA.copy())
 
         coreController.getSingleItem("1", MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.Companion.newspaperItemMockA, it)
+                Assertions.assertEquals(NewspaperMockData.newspaperItemMockA, it)
             }
             .verifyComplete()
     }
@@ -67,13 +67,13 @@ class CoreControllerTest {
 
     @Test
     fun `get single title for newspaper should return title in body`() {
-        every { newspaperService.getSingleTitle(any()) } returns Mono.just(NewspaperMockData.Companion.newspaperTitleMockA.copy())
+        every { newspaperService.getSingleTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
 
         coreController.getSingleTitle("1", MaterialType.NEWSPAPER).body!!
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.Companion.newspaperTitleMockA, it)
+                Assertions.assertEquals(NewspaperMockData.newspaperTitleMockA, it)
             }
             .verifyComplete()
     }
@@ -96,17 +96,17 @@ class CoreControllerTest {
     @Test
     fun `search title should return a list of titles matching name`() {
         every { titleIndexService.searchTitle(any()) } returns listOf(
-            NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+            NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
         )
 
         every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns listOf(
-            NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+            NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
         )
 
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
             listOf(
-                NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+                NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
             )
         )
     }
@@ -136,16 +136,16 @@ class CoreControllerTest {
     @Test
     fun `search title should call on searchFilterService function when materialType is NEWSPAPER`() {
         every { titleIndexService.searchTitle(any()) } returns listOf(
-            NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+            NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
         )
         every { searchFilterService.filterSearchResults(any(), any(), any(), any()) } returns listOf(
-            NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+            NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
         )
 
         Assertions.assertEquals(
             coreController.searchTitle("Avis", MaterialType.NEWSPAPER).body!!,
             listOf(
-                NewspaperMockData.Companion.newspaperTitleMockA.copy(), NewspaperMockData.Companion.newspaperTitleMockB.copy()
+                NewspaperMockData.newspaperTitleMockA.copy(), NewspaperMockData.newspaperTitleMockB.copy()
             )
         )
         verify(exactly = 1) { searchFilterService.filterSearchResults(any(), any(), any(), any()) }
@@ -154,17 +154,17 @@ class CoreControllerTest {
     @Test
     fun `search item should return a list of items matching criteria`() {
         every { newspaperService.getItemsByTitleAndDate(any(), any(), any()) } returns Flux.just(
-            NewspaperMockData.Companion.newspaperItemMockA.copy(), NewspaperMockData.Companion.newspaperItemMockA.copy()
+            NewspaperMockData.newspaperItemMockA.copy(), NewspaperMockData.newspaperItemMockA.copy()
         )
 
         coreController.searchItem("1", MaterialType.NEWSPAPER, "2020-01-01", true).body!!
             .test()
             .expectSubscription()
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.Companion.newspaperItemMockA, it)
+                Assertions.assertEquals(NewspaperMockData.newspaperItemMockA, it)
             }
             .assertNext {
-                Assertions.assertEquals(NewspaperMockData.Companion.newspaperItemMockA, it)
+                Assertions.assertEquals(NewspaperMockData.newspaperItemMockA, it)
             }
             .verifyComplete()
     }
