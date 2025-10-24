@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional
 import no.nb.bikube.api.core.model.Item
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
+import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.hugin.model.Box
 import no.nb.bikube.hugin.model.ContactInfo
@@ -20,6 +21,8 @@ import no.nb.bikube.hugin.repository.TitleRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
+import reactor.core.publisher.Mono
+import java.time.LocalDate
 
 @BrowserCallable
 class HuginNewspaperService(
@@ -86,53 +89,69 @@ class HuginNewspaperService(
         return boxRepository.save(box)
     }
 
+    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @Transactional
+    fun upsertNewspaper(dto: List<NewspaperUpsertDto>): List<Newspaper> {
+        val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
+        val results = mutableListOf<Newspaper>()
+
+        for (d in dto) {
+            val existingManifestation: Item? =
+                newspaperService.getSingleManifestationAsItem(
+                    d.catalogId ?: ""
+                ).onErrorResume { Mono.empty() }.block()
+
+            if (existingManifestation === null) {
+                if (d.received === true) {
+                    var item = newspaperService.createNewspaperItem(d.toItemInputDto(userName)).block()
+                        ?: error("Failed to create physical item")
+                    results += saveNewspaperToDatabase(d.toNewspaper(item.parentCatalogueId!!))
+                } else {
+                    var missingItem = newspaperService.createMissingItem(d.toMissingDto(userName)).block()
+                        ?: error("Failed to create missing manifestation")
+                    results += saveNewspaperToDatabase(d.toNewspaper(missingItem.catalogueId))
+                }
+            } else {
+                var existingNewspaper = newspaperRepository.findByIdOrNull(existingManifestation.parentCatalogueId!!)
+                    ?: d.catalogId?.let { newspaperRepository.findByIdOrNull(it) }
+                if (existingNewspaper == null) { // just in case vi er i usync med katalog
+                    existingNewspaper = newspaperRepository.save(d.toNewspaper(existingManifestation.catalogueId!!))
+                }
+                if(d.received === existingNewspaper.received) {
+                    results += saveNewspaperToDatabase(d.toNewspaper(existingNewspaper.catalogId))
+                    newspaperService.updatePhysicalNewspaper(d.toItemUpdateDto(userName)).block()
+                }
+                else if (existingNewspaper.received === false && d.received === true) {
+                   newspaperService.createNewspaperItem(d.toItemInputDto(userName)).block()
+                        ?: error("Failed to create physical item")
+                    results += saveNewspaperToDatabase(d.toNewspaper(existingNewspaper.catalogId))
+                }
+                else if (existingNewspaper.received === true && d.received === false) {
+                    newspaperService.deletePhysicalItemByManifestationId(existingNewspaper.catalogId, false)
+                        .onErrorResume { Mono.empty() }
+                        .block()
+                    results += saveNewspaperToDatabase(d.toNewspaper(existingManifestation.catalogueId))
+                }
+            }
+        }
+        return results;
+    }
 
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
-    fun upsertNewspaper(dto: List<NewspaperUpsertDto>): Newspaper? {
-
-        val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
-
-        for (newspaperDto in dto) {
-            println("Upserting newspaper: $newspaperDto")
-            println("ItemUpdateDto: $newspaperDto.toItemUpdateDto(userName)")
-            println("ItemInputDto: $newspaperDto.toItemInputDto(userName)")
-
-            val existingCatalogueItem =
-                if (newspaperDto.catalogId.isNullOrEmpty().not()) {
-                    newspaperService
-                        .getSingleItem(newspaperDto.catalogId!!)
-                        .block()
-                } else {
-                    newspaperService
-                        .getItemsByTitleAndDate(newspaperDto.titleId.toString(), newspaperDto.date, false)
-                        .next()
-                        .map { it as Item }
-                        .block()
-                }
-            println("Existing item from catalog: $existingCatalogueItem")
-            if (existingCatalogueItem === null) {
-                // Utgave eksisterer ikke i katalogen, opprett ny i katalog og database
-                val savedCatalogItem = newspaperService
-                    .createNewspaperItem(newspaperDto.toItemInputDto(userName))
-                    .block()
-                    ?: error("Failed to create newspaper item")
-                println("Created new catalog item with ID: $savedCatalogItem")
-                return saveNewspaperToDatabase(newspaperDto.toNewspaper(savedCatalogItem.catalogueId))
-            }
-            else {
-                // Utgave finnes allerede i katalogen, oppdater eksisterende i katalog og database
-                // Hent først eksisterende avis i database, i alle normale fall skal denne eksistere
-                val existingNewspaper = newspaperRepository.findById(existingCatalogueItem.catalogueId).get()
-
-                if (newspaperDto.received === false && existingNewspaper.received === true) {
-                            println("test")
-                }
-
-            }
+    fun deleteNewspaper(manifestationId: String): Boolean {
+        //delete physical item in catalog; tolerate "not found"
+        newspaperService
+            .deletePhysicalItemByManifestationId(manifestationId, true)
+            .onErrorResume { Mono.empty() }
+            .block()
+        // delete DB row; tolerate missing row
+        if (newspaperRepository.existsById(manifestationId)) {
+            newspaperRepository.deleteById(manifestationId)
         }
-        return null;
+        return true
     }
+
 
     private fun saveNewspaperToDatabase(newspaper: Newspaper): Newspaper {
         return newspaperRepository.save(newspaper)
@@ -158,7 +177,6 @@ class HuginNewspaperService(
     private fun NewspaperUpsertDto.toNewspaper(catalogId: String): Newspaper {
         val box = boxRepository.findByIdOrNull(boxId)
             ?: error("Box $boxId not found")
-
         return Newspaper(
             catalogId = catalogId,
             box = box,
@@ -167,6 +185,13 @@ class HuginNewspaperService(
             received = received,
             notes = notes,
         )
-
     }
+
+    private fun NewspaperUpsertDto.toMissingDto(username: String) = MissingPeriodicalItemDto(
+        date = date,
+        titleCatalogueId = titleId.toString(),
+        username = username,
+        notes = notes,
+        number = edition
+    )
 }
