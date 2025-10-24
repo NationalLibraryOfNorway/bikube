@@ -7,6 +7,7 @@ import {Plus, Save, Trash2} from "lucide-react";
 import {format, addDays, parseISO, isValid} from "date-fns";
 import {nb} from "date-fns/locale";
 import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import {HuginNewspaperService} from "@/generated/endpoints";
 import Newspaper from "@/generated/no/nb/bikube/hugin/model/Newspaper";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useAddNewspapers} from "@/hooks/use-create-item";
@@ -18,7 +19,6 @@ type NewspaperRow = Omit<Newspaper, "date"> & {
 
 
 export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
-    console.debug(title)
     const activeBox = title?.boxes?.find(b => b.active);
 
     const existingDates = useMemo(
@@ -112,8 +112,6 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
     const setRow = (id: string, patch: Partial<NewspaperRow>) =>
         setRows((rs) => rs.map((r) => (r._tmpId === id ? ({...r, ...patch}) : r)));
 
-    const removeRow = (id: string) => setRows((rs) => rs.filter((r) => r._tmpId !== id));
-
     const addNewspapers = useAddNewspapers(); // <-- your React Query mutation hook
 
     const handleSave = async () => {
@@ -129,12 +127,22 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
             boxId: activeBox.id,
         }));
 
-        // call the hook (server call(s) inside)
-        await addNewspapers.mutateAsync({
-            items: payload,
-        });
-        //setRows([]);
+        const result = await addNewspapers.mutateAsync({items: payload});
+        if (Array.isArray(result)) {
+            setRows(result.map((n: any) => ({
+                ...n,
+                date: (n.date as string)?.slice(0, 10) ?? "",
+                _tmpId: crypto.randomUUID(),
+            })));
+        }
+
     };
+
+    const handleDelete = async (id: string) => {
+        const catalogueId = rows.find((r) => r._tmpId === id)?.catalogId;
+        await HuginNewspaperService.deleteNewspaper(catalogueId!);
+        setRows((rs) => rs.filter((r) => r._tmpId !== id));
+    }
 
     return (
         <div className="w-full space-y-4">
@@ -207,7 +215,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                                             type="button"
                                             variant="destructive"
                                             className="h-8 w-8 p-0 rounded-full"
-                                            onClick={() => removeRow(r._tmpId)}
+                                            onClick={() => handleDelete(r._tmpId)}
                                         >
                                             <Trash2 className="h-4 w-4"/>
                                         </Button>
