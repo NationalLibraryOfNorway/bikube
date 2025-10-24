@@ -1,6 +1,6 @@
 package no.nb.bikube.api.catalogue.alma.service
 
-import no.nb.bikube.catalogue.alma.exception.AlmaRecordNotFoundException
+import no.nb.bikube.api.catalogue.alma.exception.AlmaRecordNotFoundException
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.MatcherAssert

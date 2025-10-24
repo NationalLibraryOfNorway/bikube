@@ -1,21 +1,43 @@
+
 package no.nb.bikube.api.catalogue.alma.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.ResultActionsDsl
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// CHANGED: use MOCK, not RANDOM_PORT, since MockMvc does not need a server
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
 class AlmaControllerTests(
-    @Autowired private var webClient: WebTestClient
+    @Autowired private val mockMvc: MockMvc,
+    @Autowired private val objectMapper: ObjectMapper,
 ) {
+
+    private fun expectProblemDetail(path: String, expectedDetail: String) {
+        val result = mockMvc
+            .get(path)
+            .andExpect {
+                status { isBadRequest() }
+                content { contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON) }
+            }
+            .andReturn()
+
+        val problem = objectMapper.readValue(result.response.contentAsString, ProblemDetail::class.java)
+        Assertions.assertEquals(expectedDetail, problem.detail)
+    }
 
     @ParameterizedTest
     @ValueSource(
@@ -26,16 +48,10 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateMMS(mms: String) {
-        webClient.get().uri("/alma/mms/$mms")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody(ProblemDetail::class.java)
-            .consumeWith { problemDetail ->
-                Assertions.assertEquals(
-                    problemDetail.responseBody!!.detail,
-                    "getAlmaItemByMMS.mms: ${AlmaController.MMS_MESSAGE}"
-                )
-            }
+        expectProblemDetail(
+            "/alma/mms/$mms",
+            "getAlmaItemByMMS.mms: ${AlmaController.MMS_MESSAGE}"
+        )
     }
 
     @ParameterizedTest
@@ -47,16 +63,10 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateBarcode(barcode: String) {
-        webClient.get().uri("/alma/barcode/$barcode")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody(ProblemDetail::class.java)
-            .consumeWith { problemDetail ->
-                Assertions.assertEquals(
-                    problemDetail.responseBody!!.detail,
-                    "getAlmaItemByBarcode.barcode: ${AlmaController.BARCODE_MESSAGE}"
-                )
-            }
+        expectProblemDetail(
+            "/alma/barcode/$barcode",
+            "getAlmaItemByBarcode.barcode: ${AlmaController.BARCODE_MESSAGE}"
+        )
     }
 
     @ParameterizedTest
@@ -68,16 +78,11 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateISSN(issn: String) {
-        webClient.get().uri("/alma/issn/$issn")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody(ProblemDetail::class.java)
-            .consumeWith { problemDetail ->
-                Assertions.assertEquals(
-                    problemDetail.responseBody!!.detail,
-                    "getMarcRecordsByISSN.issn: ${AlmaController.ISSN_MESSAGE}"
-                )
-            }
+        // CHANGED: moved from WebTestClient to MockMvc helper
+        expectProblemDetail(
+            "/alma/issn/$issn",
+            "getMarcRecordsByISSN.issn: ${AlmaController.ISSN_MESSAGE}"
+        )
     }
 
     @ParameterizedTest
@@ -89,16 +94,10 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateISBN(isbn: String) {
-        webClient.get().uri("/alma/isbn/$isbn")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody(ProblemDetail::class.java)
-            .consumeWith { problemDetail ->
-                Assertions.assertEquals(
-                    problemDetail.responseBody!!.detail,
-                    "getMarcRecordsByISBN.isbn: ${AlmaController.ISBN_MESSAGE}"
-                )
-            }
+        expectProblemDetail(
+            "/alma/isbn/$isbn",
+            "getMarcRecordsByISBN.isbn: ${AlmaController.ISBN_MESSAGE}"
+        )
     }
 
     @ParameterizedTest
@@ -110,15 +109,9 @@ class AlmaControllerTests(
         ]
     )
     fun shouldValidateISMN(ismn: String) {
-        webClient.get().uri("/alma/ismn/$ismn")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody(ProblemDetail::class.java)
-            .consumeWith { problemDetail ->
-                Assertions.assertEquals(
-                    problemDetail.responseBody!!.detail,
-                    "getMarcRecordsByISMN.ismn: ${AlmaController.ISMN_MESSAGE}"
-                )
-            }
+        expectProblemDetail(
+            "/alma/ismn/$ismn",
+            "getMarcRecordsByISMN.ismn: ${AlmaController.ISMN_MESSAGE}"
+        )
     }
 }

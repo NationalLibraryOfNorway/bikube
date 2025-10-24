@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Item
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.core.enum.MaterialType
+import no.nb.bikube.api.core.model.Item
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

@@ -17,7 +17,6 @@
 		<java.version>21</java.version>
 		<kotlin.version>2.1.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
-		<fasterxml.version>2.18.2</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
         <vaadin.version>24.9.2</vaadin.version>
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
@@ -29,6 +28,13 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
                 <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.19.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -120,19 +126,16 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<!-- For serialization of the weird attribute names of Collection models -->

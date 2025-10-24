@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 class PublisherMapperTests {
 
-    val publisherPlaceMock = CollectionsModelMockData.Companion.collectionsNameModelMockA.getFirstObject()
+    val publisherPlaceMock = CollectionsModelMockData.collectionsNameModelMockA.getFirstObject()
 
     @Test
     fun `Publisher mapper should map catalogueId`() {

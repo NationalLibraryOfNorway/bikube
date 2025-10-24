@@ -1,5 +1,6 @@
 package no.nb.bikube.api.catalogue.collections.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CollectionsModel(
@@ -13,6 +14,7 @@ data class CollectionsRecordList(
     val diagnostic: CollectionDiagnostic? = null
 ) : CollectionsGenericRecordList<CollectionsObject>
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class CollectionsObject(
     @JsonProperty("@priref")
     override val priRef: String,

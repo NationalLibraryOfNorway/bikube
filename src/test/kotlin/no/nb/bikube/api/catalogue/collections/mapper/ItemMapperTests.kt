@@ -2,10 +2,11 @@ package no.nb.bikube.api.catalogue.collections.mapper
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
-import no.nb.bikube.catalogue.collections.model.CollectionsModel
-import no.nb.bikube.core.enum.MaterialType
+import no.nb.bikube.api.catalogue.collections.model.CollectionsObject
+import no.nb.bikube.api.core.enum.MaterialType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -24,30 +25,58 @@ class ItemMapperTests {
     }
 
     private val singleItemJson = File("src/test/resources/CollectionsJsonTestFiles/NewspaperItemSingleDigital.json")
-    private val singleItem = mapper().readValue<CollectionsModel>(singleItemJson).getFirstObject()
+    private val singleItem: CollectionsObject = run {
+        val m = mapper()
+        val root = m.readTree(singleItemJson)
+        val node: ObjectNode = when {
+            root.isObject -> root as ObjectNode
+            root.isArray && root.size() > 0 && root[0].isObject -> root[0] as ObjectNode
+            else -> error("Unexpected JSON shape for test input")
+        }
+        if (!node.has("@priref")) node.put("@priref", "__test_priref__")
+        m.treeToValue(node, CollectionsObject::class.java)
+    }
+
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
-    private val collectionsPartsObjWithDateInTitle = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA.partsReference!!
-    private val collectionsPartsObjWithoutDateInTitle = CollectionsModelMockData.Companion.collectionsPartsObjectMockItemC.partsReference!!
-    @Test
-    fun `Item mapper should map catalogueId`() { Assertions.assertEquals("1601048433", genericItem.catalogueId) }
+    private val collectionsPartsObjWithDateInTitle =
+        CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!
+    private val collectionsPartsObjWithoutDateInTitle =
+        CollectionsModelMockData.collectionsPartsObjectMockItemC.partsReference!!
 
     @Test
-    fun `Item mapper should map name`() { Assertions.assertEquals("Bikubetestavisen 123", genericItem.name) }
+    fun `Item mapper should map catalogueId`() {
+        Assertions.assertEquals("1601048433", genericItem.catalogueId)
+    }
 
     @Test
-    fun `Item mapper should map date`() { Assertions.assertEquals(LocalDate.parse("2024-01-01"), genericItem.date) }
+    fun `Item mapper should map name`() {
+        Assertions.assertEquals("Bikubetestavisen 123", genericItem.name)
+    }
 
     @Test
-    fun `Item mapper should map material type`() { Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericItem.materialType) }
+    fun `Item mapper should map date`() {
+        Assertions.assertEquals(LocalDate.parse("2024-01-01"), genericItem.date)
+    }
 
     @Test
-    fun `Item mapper should map title ID`() { Assertions.assertEquals("1601048426", genericItem.titleCatalogueId) }
+    fun `Item mapper should map material type`() {
+        Assertions.assertEquals(MaterialType.NEWSPAPER.norwegian, genericItem.materialType)
+    }
 
     @Test
-    fun `Item mapper should map title name`() { Assertions.assertEquals("Bikubetestavisen", genericItem.titleName) }
+    fun `Item mapper should map title ID`() {
+        Assertions.assertEquals("1601048426", genericItem.titleCatalogueId)
+    }
 
     @Test
-    fun `Item mapper should map if digital`() { Assertions.assertEquals(true, genericItem.digital) }
+    fun `Item mapper should map title name`() {
+        Assertions.assertEquals("Bikubetestavisen", genericItem.titleName)
+    }
+
+    @Test
+    fun `Item mapper should map if digital`() {
+        Assertions.assertEquals(true, genericItem.digital)
+    }
 
     @Test
     fun `Item mapper should use date field if provided`() {

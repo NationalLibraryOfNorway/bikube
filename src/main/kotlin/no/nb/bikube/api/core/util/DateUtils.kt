@@ -10,6 +10,7 @@ val dateWithDotsRegex = Regex("^\\d{4}\\.\\d{2}\\.\\d{2}$")
 
 class DateUtils {
     companion object {
+        @JvmStatic
         fun parseYearOrDate(date: String?): LocalDate? {
             return if (date.isNullOrBlank()) {
                 null

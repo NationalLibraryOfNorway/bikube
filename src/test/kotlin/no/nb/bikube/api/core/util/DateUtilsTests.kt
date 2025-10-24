@@ -1,6 +1,7 @@
 package no.nb.bikube.api.core.util
 
-import no.nb.bikube.core.util.DateUtils.Companion.parseYearOrDate
+import no.nb.bikube.api.core.util.DateUtils.Companion.parseYearOrDate
+
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
