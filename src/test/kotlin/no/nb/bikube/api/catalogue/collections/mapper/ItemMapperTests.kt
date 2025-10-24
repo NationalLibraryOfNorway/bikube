@@ -39,13 +39,13 @@ class ItemMapperTests {
     }
 
     private val genericItem = mapCollectionsObjectToGenericItem(singleItem)
-    private val collectionsPartsObjWithDateInTitle = collectionsPartsObjectMockItemA.partsReference!!
-    private val collectionsPartsObjWithoutDateInTitle = collectionsPartsObjectMockItemC.partsReference!!
+    private val collectionsPartsObjWithDateInTitle =
+        CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!
+    private val collectionsPartsObjWithoutDateInTitle =
+        CollectionsModelMockData.collectionsPartsObjectMockItemC.partsReference!!
 
     @Test
     fun `Item mapper should map catalogueId`() {
-        logger().info("Single item: ")
-        logger().info(singleItemJson.readText())
         Assertions.assertEquals("1601048433", genericItem.catalogueId)
     }
 
