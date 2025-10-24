@@ -514,7 +514,7 @@ class NewspaperServiceTest {
             .expectSubscription()
             .expectErrorMatches {
                 it is CollectionsException &&
-                        it.message!!.contains("Error creating item")
+                it.message!!.contains("Error creating item")
             }
             .verify()
     }
