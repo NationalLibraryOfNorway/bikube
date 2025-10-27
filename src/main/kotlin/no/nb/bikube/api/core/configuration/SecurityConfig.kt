@@ -147,10 +147,14 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
     override fun configure(http: HttpSecurity) {
 
         super.configure(http)
-        setOAuth2LoginPage(http, "/oauth2/authorization/keycloak-hugin") // ???
-        http.oauth2Login { oauth2 ->
-            oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
-        }
+        setOAuth2LoginPage(http, "/oauth2/authorization/keycloak-hugin")
+        http
+            .authorizeHttpRequests { auth ->
+                auth.requestMatchers("/").permitAll() // Allow root path for redirect controller
+            }
+            .oauth2Login { oauth2 ->
+                oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
+            }
             .csrf { csrf -> csrf.disable() }
             .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
     }

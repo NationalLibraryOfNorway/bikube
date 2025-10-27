@@ -49,7 +49,7 @@ class ItemControllerIntegrationTest {
     private fun createItem(item: ItemInputDto): ResponseSpec {
         return webClient
             .post()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(item)
             .exchange()
     }
@@ -215,7 +215,7 @@ class ItemControllerIntegrationTest {
     fun `post missing-item should return 201 Created with item`() {
         webClient
             .post()
-            .uri("/newspapers/items/missing")
+            .uri("/api/newspapers/items/missing")
             .bodyValue(NewspaperMockData.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
@@ -228,7 +228,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .post()
-            .uri("/newspapers/items/missing")
+            .uri("/api/newspapers/items/missing")
             .bodyValue(NewspaperMockData.missingItemDtoMock)
             .exchange()
             .returnResult<Item>()
@@ -253,7 +253,7 @@ class ItemControllerIntegrationTest {
     fun `post missing-item should return 404 not found if title ID is not found`() {
         webClient
             .post()
-            .uri("/newspapers/items/missing")
+            .uri("/api/newspapers/items/missing")
             .bodyValue(NewspaperMockData.missingItemDtoMock.copy(titleCatalogueId = "489653148"))
             .exchange()
             .expectStatus().isNotFound
@@ -263,7 +263,7 @@ class ItemControllerIntegrationTest {
     fun `post missing-item should use manifestation if it exists`() {
         webClient
             .post()
-            .uri("/newspapers/items/missing")
+            .uri("/api/newspapers/items/missing")
             .bodyValue(NewspaperMockData.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
@@ -280,7 +280,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .post()
-            .uri("/newspapers/items/missing")
+            .uri("/api/newspapers/items/missing")
             .bodyValue(NewspaperMockData.missingItemDtoMock)
             .exchange()
             .expectStatus().isCreated
@@ -292,7 +292,7 @@ class ItemControllerIntegrationTest {
     fun `put item should return 204 No Content on success`() {
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
             .expectStatus().isNoContent
@@ -302,7 +302,7 @@ class ItemControllerIntegrationTest {
     fun `put item should update values`() {
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
 
@@ -328,7 +328,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(dto)
             .exchange()
 
@@ -352,7 +352,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = dummyId))
             .exchange()
             .expectStatus().isNotFound
@@ -362,14 +362,14 @@ class ItemControllerIntegrationTest {
     fun `put item should return 400 BAD REQUEST when id is not manifestation`() {
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = itemId))
             .exchange()
             .expectStatus().isBadRequest
 
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = titleId))
             .exchange()
             .expectStatus().isBadRequest
@@ -383,7 +383,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .put()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(NewspaperMockData.newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
             .expectStatus().is5xxServerError
@@ -393,7 +393,7 @@ class ItemControllerIntegrationTest {
     fun `delete item should return 204 when deleted`() {
         webClient
             .delete()
-            .uri("/newspapers/items/physical/$manifestationId")
+            .uri("/api/newspapers/items/physical/$manifestationId")
             .exchange()
             .expectStatus().isNoContent
     }
@@ -402,13 +402,13 @@ class ItemControllerIntegrationTest {
     fun `delete item should return 400 when item is item or title`() {
         webClient
             .delete()
-            .uri("/newspapers/items/physical/$itemId")
+            .uri("/api/newspapers/items/physical/$itemId")
             .exchange()
             .expectStatus().isBadRequest
 
         webClient
             .delete()
-            .uri("/newspapers/items/physical/$titleId")
+            .uri("/api/newspapers/items/physical/$titleId")
             .exchange()
             .expectStatus().isBadRequest
     }
@@ -417,7 +417,7 @@ class ItemControllerIntegrationTest {
     fun `delete item should return 404 when item is not found`() {
         webClient
             .delete()
-            .uri("/newspapers/items/physical/123123123")
+            .uri("/api/newspapers/items/physical/123123123")
             .exchange()
             .expectStatus().isNotFound
     }
@@ -429,7 +429,7 @@ class ItemControllerIntegrationTest {
 
         webClient
             .delete()
-            .uri("/newspapers/items/physical/$manifestationId")
+            .uri("/api/newspapers/items/physical/$manifestationId")
             .exchange()
             .expectStatus().is5xxServerError
     }

@@ -30,9 +30,9 @@ import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class CoreControllerIntegrationTest (
+class CoreControllerIntegrationTest(
     @Autowired private var webClient: WebTestClient
-){
+) {
     @MockkBean
     private lateinit var collectionsRepository: CollectionsRepository
 
@@ -49,26 +49,42 @@ class CoreControllerIntegrationTest (
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
 
         every { collectionsRepository.getSingleCollectionsModel(CollectionsModelMockData.collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(
-            CollectionsModelMockData.collectionsModelMockManifestationA.copy())
+            CollectionsModelMockData.collectionsModelMockManifestationA.copy()
+        )
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
-            CollectionsModelMockData.collectionsModelEmptyRecordListMock.copy())
+            CollectionsModelMockData.collectionsModelEmptyRecordListMock.copy()
+        )
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(
-            CollectionsModelMockData.collectionsModelMockTitleA.copy())
+            CollectionsModelMockData.collectionsModelMockTitleA.copy()
+        )
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(
-            CollectionsModelMockData.collectionsModelMockManifestationA.copy())
+            CollectionsModelMockData.collectionsModelMockManifestationA.copy()
+        )
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(
-            CollectionsModelMockData.collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestations(any(), any()) } returns Mono.just(CollectionsModelMockData.collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getManifestations(any(), titleId) } returns Mono.just(CollectionsModelMockData.collectionsModelMockManifestationA.copy())
+            CollectionsModelMockData.collectionsModelMockItemA.copy()
+        )
+        every {
+            collectionsRepository.getManifestations(
+                any(),
+                any()
+            )
+        } returns Mono.just(CollectionsModelMockData.collectionsModelEmptyRecordListMock.copy())
+        every {
+            collectionsRepository.getManifestations(
+                any(),
+                titleId
+            )
+        } returns Mono.just(CollectionsModelMockData.collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
-                CollectionsModelMockData.collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
+                CollectionsModelMockData.collectionsModelMockAllTitles.getObjects()!!
+                    .map { mapCollectionsObjectToGenericTitle(it) }
     }
 
     private fun getItem(itemId: String, materialType: MaterialType): ResponseSpec {
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item")
+                uri.pathSegment("api", "item")
                     .queryParam("catalogueId", itemId)
                     .queryParam("materialType", materialType)
                     .build()
@@ -80,7 +96,7 @@ class CoreControllerIntegrationTest (
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("title")
+                uri.pathSegment("api", "title")
                     .queryParam("catalogueId", titleId)
                     .queryParam("materialType", materialType)
                     .build()
@@ -88,11 +104,16 @@ class CoreControllerIntegrationTest (
             .exchange()
     }
 
-    private fun searchTitle(search: String, materialType: MaterialType, date: LocalDate? = null, selectBestMatch: Boolean? = null): ResponseSpec {
+    private fun searchTitle(
+        search: String,
+        materialType: MaterialType,
+        date: LocalDate? = null,
+        selectBestMatch: Boolean? = null
+    ): ResponseSpec {
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("title", "search")
+                uri.pathSegment("api", "title", "search")
                     .queryParam("searchTerm", search)
                     .queryParam("materialType", materialType)
                     .apply {
@@ -357,7 +378,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -380,7 +401,9 @@ class CoreControllerIntegrationTest (
             catalogueId = CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!.priRef,
             name = CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!,
             date = DateUtils.parseYearOrDate(
-                CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(10)
+                CollectionsModelMockData.collectionsPartsObjectMockItemA.partsReference!!.titleList!!.first().title!!.takeLast(
+                    10
+                )
             )!!,
             materialType = MaterialType.NEWSPAPER.value,
             titleCatalogueId = CollectionsModelMockData.collectionsModelMockTitleA.getFirstId(),
@@ -393,7 +416,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -416,7 +439,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.MANUSCRIPT)
                     .queryParam("date", "2020-01-01")
@@ -432,7 +455,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.MONOGRAPH)
                     .queryParam("date", "2020-01-01")
@@ -448,7 +471,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.PERIODICAL)
                     .queryParam("date", "2020-01-01")
@@ -464,7 +487,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "no match")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -485,7 +508,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "9999-99-99")
@@ -502,7 +525,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("isDigital", "true")
@@ -515,7 +538,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
                     .queryParam("isDigital", "true")
@@ -528,7 +551,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("date", "2020-01-01")
                     .queryParam("isDigital", "true")
