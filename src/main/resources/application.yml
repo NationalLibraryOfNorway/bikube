@@ -54,7 +54,7 @@ spring:
 springdoc:
   swagger-ui:
     enabled: true
-    use-root-path: true
+    use-root-path: false
 
 security:
   enabled: false

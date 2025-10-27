@@ -49,7 +49,7 @@ class AlmaControllerTests(
     )
     fun shouldValidateMMS(mms: String) {
         expectProblemDetail(
-            "/alma/mms/$mms",
+            "/api/alma/mms/$mms",
             "getAlmaItemByMMS.mms: ${AlmaController.MMS_MESSAGE}"
         )
     }
@@ -64,7 +64,7 @@ class AlmaControllerTests(
     )
     fun shouldValidateBarcode(barcode: String) {
         expectProblemDetail(
-            "/alma/barcode/$barcode",
+            "/api/alma/barcode/$barcode",
             "getAlmaItemByBarcode.barcode: ${AlmaController.BARCODE_MESSAGE}"
         )
     }
@@ -80,7 +80,7 @@ class AlmaControllerTests(
     fun shouldValidateISSN(issn: String) {
         // CHANGED: moved from WebTestClient to MockMvc helper
         expectProblemDetail(
-            "/alma/issn/$issn",
+            "/api/alma/issn/$issn",
             "getMarcRecordsByISSN.issn: ${AlmaController.ISSN_MESSAGE}"
         )
     }
@@ -95,7 +95,7 @@ class AlmaControllerTests(
     )
     fun shouldValidateISBN(isbn: String) {
         expectProblemDetail(
-            "/alma/isbn/$isbn",
+            "/api/alma/isbn/$isbn",
             "getMarcRecordsByISBN.isbn: ${AlmaController.ISBN_MESSAGE}"
         )
     }
@@ -110,7 +110,7 @@ class AlmaControllerTests(
     )
     fun shouldValidateISMN(ismn: String) {
         expectProblemDetail(
-            "/alma/ismn/$ismn",
+            "/api/alma/ismn/$ismn",
             "getMarcRecordsByISMN.ismn: ${AlmaController.ISMN_MESSAGE}"
         )
     }

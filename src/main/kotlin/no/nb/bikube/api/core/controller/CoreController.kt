@@ -34,7 +34,7 @@ import java.time.LocalDate
 
 @RestController
 @Tag(name = "Catalogue objects", description = "Endpoints related to catalog data for all text material")
-@RequestMapping("")
+@RequestMapping("/api")
 class CoreController (
     private val newspaperService: NewspaperService,
     private val titleIndexService: TitleIndexService,

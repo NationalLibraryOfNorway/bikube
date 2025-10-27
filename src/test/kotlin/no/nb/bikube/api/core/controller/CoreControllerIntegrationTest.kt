@@ -1,25 +1,25 @@
-package no.nb.bikube.core.controller
+package no.nb.bikube.api.core.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockAllTitles
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
-import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.catalogue.collections.service.CollectionsService
-import no.nb.bikube.core.enum.MaterialType
-import no.nb.bikube.core.model.Item
-import no.nb.bikube.core.model.Title
-import no.nb.bikube.core.util.DateUtils
-import no.nb.bikube.newspaper.service.TitleIndexService
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockAllTitles
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
+import no.nb.bikube.api.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.catalogue.collections.service.CollectionsService
+import no.nb.bikube.api.core.enum.MaterialType
+import no.nb.bikube.api.core.model.Item
+import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.util.DateUtils
+import no.nb.bikube.api.newspaper.service.TitleIndexService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -72,7 +72,7 @@ class CoreControllerIntegrationTest (
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item")
+                uri.pathSegment("api", "item")
                     .queryParam("catalogueId", itemId)
                     .queryParam("materialType", materialType)
                     .build()
@@ -84,7 +84,7 @@ class CoreControllerIntegrationTest (
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("title")
+                uri.pathSegment("api", "title")
                     .queryParam("catalogueId", titleId)
                     .queryParam("materialType", materialType)
                     .build()
@@ -92,11 +92,16 @@ class CoreControllerIntegrationTest (
             .exchange()
     }
 
-    private fun searchTitle(search: String, materialType: MaterialType, date: LocalDate? = null, selectBestMatch: Boolean? = null): ResponseSpec {
+    private fun searchTitle(
+        search: String,
+        materialType: MaterialType,
+        date: LocalDate? = null,
+        selectBestMatch: Boolean? = null
+    ): ResponseSpec {
         return webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("title", "search")
+                uri.pathSegment("api", "title", "search")
                     .queryParam("searchTerm", search)
                     .queryParam("materialType", materialType)
                     .apply {
@@ -361,7 +366,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -397,7 +402,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -420,7 +425,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.MANUSCRIPT)
                     .queryParam("date", "2020-01-01")
@@ -436,7 +441,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.MONOGRAPH)
                     .queryParam("date", "2020-01-01")
@@ -452,7 +457,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.PERIODICAL)
                     .queryParam("date", "2020-01-01")
@@ -468,7 +473,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "no match")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
@@ -489,7 +494,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "9999-99-99")
@@ -506,7 +511,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("isDigital", "true")
@@ -519,7 +524,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("materialType", MaterialType.NEWSPAPER)
                     .queryParam("date", "2020-01-01")
                     .queryParam("isDigital", "true")
@@ -532,7 +537,7 @@ class CoreControllerIntegrationTest (
         webClient
             .get()
             .uri { uri ->
-                uri.pathSegment("item", "search")
+                uri.pathSegment("api", "item", "search")
                     .queryParam("titleCatalogueId", "1")
                     .queryParam("date", "2020-01-01")
                     .queryParam("isDigital", "true")

@@ -28,11 +28,10 @@ class ItemMapperTests {
     private val singleItem: CollectionsObject = run {
         val m = mapper()
         val root = m.readTree(singleItemJson)
-        val node: ObjectNode = when {
-            root.isObject -> root as ObjectNode
-            root.isArray && root.size() > 0 && root[0].isObject -> root[0] as ObjectNode
-            else -> error("Unexpected JSON shape for test input")
-        }
+        val node = m.readTree(singleItemJson)
+            .at("/adlibJSON/recordList/0")
+            .also { require(!it.isMissingNode) { "recordList[0] not found" } }
+                as ObjectNode
         if (!node.has("@priref")) node.put("@priref", "__test_priref__")
         m.treeToValue(node, CollectionsObject::class.java)
     }
@@ -45,6 +44,8 @@ class ItemMapperTests {
 
     @Test
     fun `Item mapper should map catalogueId`() {
+        println("Single item: ")
+        println(singleItemJson.readText())
         Assertions.assertEquals("1601048433", genericItem.catalogueId)
     }
 
