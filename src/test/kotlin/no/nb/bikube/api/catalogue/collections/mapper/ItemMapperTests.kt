@@ -46,6 +46,8 @@ class ItemMapperTests {
 
     @Test
     fun `Item mapper should map catalogueId`() {
+        println("Single item: ")
+        println(singleItemJson.readText())
         Assertions.assertEquals("1601048433", genericItem.catalogueId)
     }
 

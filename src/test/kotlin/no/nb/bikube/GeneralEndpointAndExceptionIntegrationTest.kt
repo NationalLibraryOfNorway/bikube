@@ -22,11 +22,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.get
 import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.LocalDate
@@ -38,6 +34,7 @@ class GeneralEndpointAndExceptionIntegrationTest(
     @Autowired private val mockMvc: MockMvc,
     @Autowired private val objectMapper: ObjectMapper,
 ) {
+
     @MockkBean
     private lateinit var collectionsService: CollectionsService
 
@@ -64,6 +61,22 @@ class GeneralEndpointAndExceptionIntegrationTest(
         val problem = objectMapper.readValue(body, ProblemDetail::class.java)
         return status to problem
     }
+
+    /*
+        Modern APIs return ProblemDetail as their problem response, and it is generally considered as best practice.
+        RFC 9457 describes ProblemDetail, and what it should always contain:
+
+        type: URI reference (default "about:blank", preferably a URI describing the problem. Could be a non-resolvable URI)
+        status: HTTP status code
+        title: Short, human-readable summary of the problem type
+        detail: Human-readable explanation specific to this occurrence of the problem
+        instance: URI reference that identifies the specific occurrence of the problem (the endpoint that was called)
+
+        Other properties are allowed, but not required. We have decided to always add timestamp as it is useful for debugging and more.
+        These integration checks should check that all these 6 properties are present and according to our standards.
+
+        RFC reference: https://www.rfc-editor.org/rfc/rfc9457
+    */
 
     private fun parseTimestamp(timestamp: String): LocalDate =
         LocalDate.parse(timestamp.take(10))
@@ -186,5 +199,4 @@ class GeneralEndpointAndExceptionIntegrationTest(
             .andExpect(status().isMovedPermanently())
             .andExpect(redirectedUrl("/bikube/swagger-ui/index.html"))
     }
-
 }
