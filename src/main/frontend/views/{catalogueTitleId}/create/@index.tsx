@@ -25,7 +25,6 @@ export default function CatalogueTitleCreateView() {
     const {title} = useHuginTitle(Number.parseInt(catalogueTitleId!))
     const navigate = useNavigate();
 
-    console.log(title);
 
     return (
         <div className="flex w-9/12 flex-col max-w-screen-lg items-start">

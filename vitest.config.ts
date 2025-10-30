@@ -8,10 +8,6 @@ const customConfig: UserConfigFn = (env) => ({
     resolve: {
         alias: [
             { find: "@", replacement: path.resolve(__dirname, "src/main/frontend") },
-            {
-                find: '@vaadin/hilla-react-i18n',
-                replacement: path.resolve(__dirname, 'src/main/frontend/tests/shims/hilla-react-i18n.tsx')
-            },
         ],
     },
     optimizeDeps: {
@@ -27,8 +23,12 @@ const customConfig: UserConfigFn = (env) => ({
         force: true,
     },
     test: {
-        include: ['./tests/**/*.{test,spec}.ts?(x)'],
+        include: [
+            './tests/**/*.{test,spec}.ts?(x)',
+            './tests/**/*-{test,spec}.ts?(x)'
+        ],
         globals: true,
+        setupFiles: ['./tests/setup/setup.ts'],
         browser: {
             enabled: true,
             provider: 'playwright',
@@ -36,7 +36,6 @@ const customConfig: UserConfigFn = (env) => ({
                 { browser: 'chromium', headless: true },
             ]
         },
-        setupFiles: [ './tests/setup/setup.tsx' ],
     },
 });
 
