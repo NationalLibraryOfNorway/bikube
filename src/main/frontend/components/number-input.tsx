@@ -1,4 +1,4 @@
-import {CircleMinus, CirclePlus, Minus, Plus} from "lucide-react";
+import {Minus, Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 export type NumberInputWithButtonsProps = {
