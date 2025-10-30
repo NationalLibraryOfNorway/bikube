@@ -8,7 +8,7 @@ import {Badge} from "@/components/ui/badge";
 import React, {useMemo, useRef, useState} from "react";
 import {useCatalogueTitles} from "@/hooks/use-catalogue-title";
 import {useNavigate} from "react-router";
-import {useQueries, useQueryClient} from "@tanstack/react-query";
+import {useQueryClient} from "@tanstack/react-query";
 import {keys} from "@/query/keys";
 
 export default function TitleSearch({ className }:{ className?: string }) {
