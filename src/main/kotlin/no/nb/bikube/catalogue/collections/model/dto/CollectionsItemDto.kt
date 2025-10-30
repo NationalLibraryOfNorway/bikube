@@ -2,6 +2,7 @@ package no.nb.bikube.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsItemStatus
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
@@ -70,21 +71,22 @@ data class AlternativeNumberInput (
 fun createNewspaperItemDto(
     id: String,
     item: ItemInputDto,
+    database: CollectionsDatabase,
     manifestationCatalogueId: String
 ): ItemDto {
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
         priRef = id,
-        objectNumber = "TE-$id",
+        objectNumber = "NP-$id",
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = "texts",
+        inputSource = database.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts",
+        dataset = database.value,
         partOfReference = manifestationCatalogueId,
         alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
         urn = if (useUrn) item.urn else null,

@@ -54,7 +54,7 @@
                         "title": "Bikubetestavisen"
                       }
                     ],
-                    "object_number": "TE-1601048426",
+                    "object_number": "NP-1601048426",
                     "priref": "1601048426",
                     "record_type": [
                       [
@@ -97,7 +97,7 @@
                   "title": "Bikubetestavisen"
                 }
               ],
-              "object_number": "TE-1601048429",
+              "object_number": "NP-1601048429",
               "priref": "1601048429",
               "record_type": [
                 [
@@ -132,7 +132,7 @@
         "input.time": [
           "12:33:44"
         ],
-        "object_number": "TE-1601048433",
+        "object_number": "NP-1601048433",
         "PID_data_URN": [
           "digavis_test"
         ],

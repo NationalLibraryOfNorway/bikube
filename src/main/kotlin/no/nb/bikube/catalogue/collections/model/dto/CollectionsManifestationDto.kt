@@ -2,6 +2,7 @@ package no.nb.bikube.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import java.time.LocalDate
 import java.time.LocalTime
@@ -55,6 +56,7 @@ class ManifestationDto (
 fun createManifestationDto(
     id: String,
     parentCatalogueId: String,
+    database: CollectionsDatabase,
     date: LocalDate,
     username: String,
     notes: String? = null,
@@ -64,17 +66,17 @@ fun createManifestationDto(
 
     return ManifestationDto(
         priRef = id,
-        objectNumber = "TE-$id",
+        objectNumber = "NP-$id",
         partOfReference = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
         edition = number,
         inputName = username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = "texts",
+        inputSource = database.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "texts",
+        dataset = database.value,
         notes = notes,
         alternativeNumbers = altNumbers
     )
