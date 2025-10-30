@@ -45,7 +45,7 @@ export default function TitleCommentForm({ title }: { title: HuginTitle | null |
         },
     });
 
-    const { values, handleSubmit, getFieldProps, resetForm, isSubmitting, dirty } = formik;
+    const { handleSubmit, getFieldProps, resetForm, isSubmitting, dirty } = formik;
 
     return (
         <FormikProvider value={formik}>
