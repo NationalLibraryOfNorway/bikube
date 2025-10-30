@@ -142,7 +142,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
         const catalogueId = rows.find((r) => r._tmpId === id)?.catalogId;
         await HuginNewspaperService.deleteNewspaper(catalogueId!);
         setRows((rs) => rs.filter((r) => r._tmpId !== id));
-    }
+    };
 
     return (
         <div className="w-full space-y-4">
