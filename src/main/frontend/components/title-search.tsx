@@ -14,7 +14,6 @@ import {keys} from "@/query/keys";
 export default function TitleSearch({ className }:{ className?: string }) {
     const [term, setTerm] = useState("")
     const [open, setOpen] = useState(false)
-    const contentRef = useRef<HTMLDivElement>(null)
     const {catalogueTitlesList, isLoading } = useCatalogueTitles(term.trim());
     const navigate = useNavigate();
 
