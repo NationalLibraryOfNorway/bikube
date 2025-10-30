@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {toast} from "sonner";
-import {CalendarIcon, SaveIcon} from "lucide-react";
+import {SaveIcon} from "lucide-react";
 import {useParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {HuginNewspaperService} from "@/generated/endpoints";
