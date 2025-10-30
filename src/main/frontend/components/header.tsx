@@ -1,7 +1,7 @@
 import {NavLink, useLocation} from "react-router";
 import {HorizontalLayout} from "@vaadin/react-components";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {LogOut, Sun, Moon} from "lucide-react";
+import {LogOut} from "lucide-react";
 import Logo from "@/components/logo";
 import TitleSearch from "@/components/title-search";
 import {Button} from "@/components/ui/button";
