@@ -75,20 +75,20 @@ class ItemControllerIntegrationTest {
 
         every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationC.copy())
         every { collectionsRepository.getSingleCollectionsModel(manifestationId2) } returns Mono.just(collectionsModelMockManifestationB.copy())
         every { collectionsRepository.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationC.copy())
         every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
-        every { collectionsRepository.updateTextsRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { collectionsRepository.deleteTextsRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.updateNewspaperRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsRepository.deleteNewspaperRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
-        every { collectionsRepository.createTextsRecord(capture(encodedBody)) } answers {
+        every { collectionsRepository.createNewspaperRecord(capture(encodedBody)) } answers {
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
@@ -160,7 +160,7 @@ class ItemControllerIntegrationTest {
         createItem(newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 1) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -169,13 +169,22 @@ class ItemControllerIntegrationTest {
 
         every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsRepository.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationE.copy())
+        every { collectionsRepository.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB.copy())
         every { collectionsRepository.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsRepository.createNewspaperRecord(any()) } answers {
+            val dto = json.decodeFromString<DtoMock>(firstArg<String>())
+            when (dto.recordType) {
+                CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
+                CollectionsRecordType.MANIFESTATION.value -> Mono.just(collectionsModelMockManifestationB)
+                CollectionsRecordType.WORK.value -> Mono.just(collectionsModelMockTitleA)
+                else -> Mono.just(collectionsModelEmptyRecordListMock)
+            }
+        }
 
         createItem(item)
             .expectStatus().isCreated
 
-        verify(exactly = 2) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 2) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -267,7 +276,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 0) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -282,7 +291,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.createTextsRecord(any()) }
+        verify(exactly = 1) { collectionsRepository.createNewspaperRecord(any()) }
     }
 
     @Test
@@ -303,7 +312,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
 
-        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+        verify(exactly = 1) { collectionsRepository.updateNewspaperRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
@@ -329,7 +338,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(dto)
             .exchange()
 
-        verify(exactly = 1) { collectionsRepository.updateTextsRecord(withArg {
+        verify(exactly = 1) { collectionsRepository.updateNewspaperRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
@@ -386,6 +395,8 @@ class ItemControllerIntegrationTest {
 
     @Test
     fun `delete item should return 204 when deleted`() {
+        every { collectionsRepository.getSingleCollectionsModel(manifestationId) } returns Mono.just(collectionsModelMockManifestationE.copy())
+
         webClient
             .delete()
             .uri("/newspapers/items/physical/$manifestationId")
