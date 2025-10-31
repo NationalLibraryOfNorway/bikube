@@ -62,7 +62,7 @@ class ItemControllerIntegrationTest {
     private fun createItem(item: ItemInputDto): ResponseSpec {
         return webClient
             .post()
-            .uri("/newspapers/items")
+            .uri("/api/newspapers/items")
             .bodyValue(item)
             .exchange()
     }
