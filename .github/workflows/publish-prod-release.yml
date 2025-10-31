@@ -1,4 +1,4 @@
-name: Test tekst-workflows
+name: Publish prod release
 on:
   push:
     tags:
