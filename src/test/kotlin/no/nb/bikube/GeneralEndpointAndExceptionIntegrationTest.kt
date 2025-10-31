@@ -198,11 +198,9 @@ class GeneralEndpointAndExceptionIntegrationTest(
     @Test
     fun `should redirect from base path to swagger without login`() {
         mockMvc
-            .perform(
-                get("/")
-                    .contextPath("/bikube")
-            )
+            .perform(get("/"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/swagger-ui/index.html"))
     }
+
 }
