@@ -1,4 +1,4 @@
-package no.nb.bikube.api.catalogue.collections.enum
+package no.nb.bikube.catalogue.collections.enum
 
 enum class CollectionsDatabase (val value: String) {
     NEWSPAPER("newspaper"),
