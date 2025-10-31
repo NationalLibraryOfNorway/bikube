@@ -170,6 +170,7 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
             .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
     }
 
+
     @Bean(name = ["VaadinSecurityFilterChainBean"])
     override fun filterChain(http: HttpSecurity): SecurityFilterChain {
         // For logging purposes, we add a filter that logs the filter used and the request URI
