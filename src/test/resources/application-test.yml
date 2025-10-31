@@ -7,3 +7,38 @@ search-index:
 app.scheduling.enabled: false
 
 collections.direct-link: http://collections.com/link/{id}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak-collections:
+            client-id: tekst-collections-stage
+            client-secret: ONwedTwYoig5GAJ5PWaTWpTkWAAJ3LLs
+            authorization-grant-type: client_credentials
+            provider: keycloak
+          keycloak-hugin:
+            client-id: tekst
+            client-secret: sUSYuVgwdrEez9vCERdnT5s9nLzM3OdV
+            authorization-grant-type: authorization_code
+            scope: openid
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            provider: keycloak
+        provider:
+          keycloak:
+            issuer-uri: https://www.nb.no/authn/realms/nbauth
+  datasource:
+    url: jdbc:postgresql://pgres3.lx.nb.no:5432/text_stage?currentSchema=maxit
+    username: text_stage_admin
+    password: KnurrerKatte12
+    driver-class-name: org.postgresql.Driver
+
+collections:
+  url: https://api.collections.stage.nb.no/webapi_tekst/wwwopac.ashx
+  username: bikube-admin
+  password: BertulfOgCo31
+  direct-link: http://collections.com/link/{id}

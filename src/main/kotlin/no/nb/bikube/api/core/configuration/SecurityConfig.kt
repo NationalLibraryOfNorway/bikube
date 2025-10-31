@@ -111,12 +111,27 @@ class ApiSecurityConfig {
 @Order(2)
 @EnableWebSecurity
 @Configuration
+class RootPathSecurityConfig {
+    @Bean
+    fun rootPathSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/")
+            .authorizeHttpRequests { auth ->
+                auth.anyRequest().permitAll()
+            }
+            .csrf { csrf -> csrf.disable() }
+        return http.build()
+    }
+}
+
+@Order(3)
+@EnableWebSecurity
+@Configuration
 @Profile("!no-vaadin")
 class VaadinSecurityConfig : VaadinWebSecurity() {
 
     companion object {
         fun vaadinSecurityMatcher() = listOf(
-            "/",
             "/login/**",
             "/oauth2/**",
             "/hugin/**",
@@ -145,19 +160,16 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
     }
 
     override fun configure(http: HttpSecurity) {
-
         super.configure(http)
         setOAuth2LoginPage(http, "/oauth2/authorization/keycloak-hugin")
         http
-            .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/").permitAll() // Allow root path for redirect controller
-            }
             .oauth2Login { oauth2 ->
                 oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
             }
             .csrf { csrf -> csrf.disable() }
             .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
     }
+
 
     @Bean(name = ["VaadinSecurityFilterChainBean"])
     override fun filterChain(http: HttpSecurity): SecurityFilterChain {
