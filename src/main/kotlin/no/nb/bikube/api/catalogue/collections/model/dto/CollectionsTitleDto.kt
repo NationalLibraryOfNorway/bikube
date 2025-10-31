@@ -1,10 +1,10 @@
-package no.nb.bikube.api.catalogue.collections.model.dto
+package no.nb.bikube.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.api.core.model.inputDto.TitleInputDto
+import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
+import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -74,10 +74,10 @@ class CollectionsTitleDto(
     val titleNotes: String? = null
 )
 
-fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
+fun createTitleDto(id: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
     return TitleDto(
         priRef = id,
-        objectNumber = "TE-$id",
+        objectNumber = "NP-$id",
         titles = listOf(CollectionsTitleDto(title.name, "Originaltittel")),
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),
@@ -89,9 +89,9 @@ fun createNewspaperTitleDto(id: String, title: TitleInputDto): TitleDto {
         subMedium = "Aviser",
         inputName = title.username,
         inputNotes = "Registrert i Bikube API",
-        inputSource = CollectionsDatabase.NEWSPAPER.value,
+        inputSource = database.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = CollectionsDatabase.NEWSPAPER.value
+        dataset = database.value
     )
 }

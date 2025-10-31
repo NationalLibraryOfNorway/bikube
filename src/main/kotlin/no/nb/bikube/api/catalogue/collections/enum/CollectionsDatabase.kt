@@ -1,7 +1,7 @@
-package no.nb.bikube.api.catalogue.collections.enum
+package no.nb.bikube.catalogue.collections.enum
 
 enum class CollectionsDatabase (val value: String) {
-    NEWSPAPER("newspaper"), //TODO: Endre til newspaper når det er på plass i stage
+    NEWSPAPER("newspaper"),
     PEOPLE("people"),
     LANGUAGES("thesau"),
     GEO_LOCATIONS("thesaugeo"),
