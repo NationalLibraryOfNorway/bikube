@@ -1,4 +1,4 @@
-name: Test tekst-workflows
+name: Publish stage release
 on:
   push:
     branches:
