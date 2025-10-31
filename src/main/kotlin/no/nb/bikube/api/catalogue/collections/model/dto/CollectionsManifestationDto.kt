@@ -6,6 +6,7 @@ import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.api.catalogue.collections.model.dto.AlternativeNumberInput
 import java.time.LocalDate
 import java.time.LocalTime
