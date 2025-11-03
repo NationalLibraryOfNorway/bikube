@@ -7,6 +7,7 @@ import no.nb.bikube.api.core.model.Item
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
+import no.nb.bikube.api.core.util.logger
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.hugin.model.Box
 import no.nb.bikube.hugin.model.ContactInfo
@@ -53,7 +54,7 @@ class HuginNewspaperService(
             entity.contactInfos.clear()
             titleRepository.flush() // Ensure deletion of orphaned contact infos in DB
             incoming.forEach { ciDto ->
-                System.out.println("Adding contact info: ${ciDto.contactType} -> ${ciDto.contactValue}")
+                logger().info("Adding contact info: ${ciDto.contactType} -> ${ciDto.contactValue}")
                 val ci = ContactInfo(
                     title = entity,
                     contactType = ciDto.contactType,
