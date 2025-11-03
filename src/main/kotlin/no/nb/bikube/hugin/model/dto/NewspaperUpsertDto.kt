@@ -3,7 +3,7 @@ package no.nb.bikube.hugin.model.dto
 import java.time.LocalDate
 
 data class NewspaperUpsertDto(
-    val titleId: Int?? = null,
+    val titleId: Int? = null,
     val boxId: String,
     val date: LocalDate,
     val edition: String? = null,
