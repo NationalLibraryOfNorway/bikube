@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
 import no.nb.bikube.api.catalogue.collections.model.CollectionsObject
 import no.nb.bikube.api.core.enum.MaterialType
+import no.nb.bikube.api.core.util.logger
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -44,8 +45,8 @@ class ItemMapperTests {
 
     @Test
     fun `Item mapper should map catalogueId`() {
-        println("Single item: ")
-        println(singleItemJson.readText())
+        logger().info("Single item: ")
+        logger().info(singleItemJson.readText())
         Assertions.assertEquals("1601048433", genericItem.catalogueId)
     }
 

@@ -2,6 +2,7 @@ package no.nb.bikube.api.core.service
 
 import no.nb.bikube.api.core.enum.MaterialType
 import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.util.logger
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -93,7 +94,7 @@ class SearchFilterServiceTest {
 
         val date4 = LocalDate.parse("2006-01-01")
         val filteredResults4 = searchFilterService.filterSearchResults(results, "", date4, false)
-        println("filteredResults4: $filteredResults4")
+        logger().info("filteredResults4: $filteredResults4")
         Assertions.assertEquals(filteredResults4.size, 2)
         Assertions.assertTrue(filteredResults4.contains(titleD))
         Assertions.assertTrue(filteredResults4.contains(titleE))
