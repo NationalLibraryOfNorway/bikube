@@ -1,4 +1,4 @@
-package no.nb.bikube.newspaper.service
+package no.nb.bikube.api.newspaper.service
 
 import jakarta.annotation.PreDestroy
 import no.nb.bikube.api.core.exception.SearchIndexNotAvailableException

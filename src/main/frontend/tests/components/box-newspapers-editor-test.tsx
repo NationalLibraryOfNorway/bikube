@@ -81,5 +81,6 @@ describe('BoxNewspapersEditor', () => {
         // Component will throw error with undefined boxes
         expect(() => renderComponent(titleWithUndefinedBoxes)).toThrow();
     });
+
 });
 
