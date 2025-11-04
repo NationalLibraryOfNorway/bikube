@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.api.catalogue.collections.model.dto.AlternativeNumberInput
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
