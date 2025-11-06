@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.collections.repository
+package no.nb.bikube.catalogue.collections.service
 
 import no.nb.bikube.catalogue.collections.config.CollectionsWebClientConfig
 import no.nb.bikube.catalogue.collections.enum.*
@@ -6,15 +6,15 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.core.util.logger
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@Repository
-class CollectionsRepository(
+@Service
+class CollectionsService(
     private val collectionsWebClient: CollectionsWebClientConfig
 ) {
     fun collectionsWebClient() = collectionsWebClient.collectionsWebClient()

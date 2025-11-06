@@ -11,7 +11,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
 import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsService
 import no.nb.bikube.core.model.Title
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
@@ -37,7 +37,7 @@ class TitleControllerIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var collectionsRepository: CollectionsRepository
+    private lateinit var collectionsService: CollectionsService
 
     @MockkBean
     private lateinit var uniqueIdService: UniqueIdService
@@ -57,17 +57,17 @@ class TitleControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(1000)).build()
 
-        every { collectionsRepository.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsRepository.createNewspaperRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
-        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
-        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
-        every { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
-        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
-        every { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsService.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsService.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsService.createNewspaperRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsService.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsService.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsService.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
         every { uniqueIdService.getUniqueId() } returns "123"
     }
 
@@ -97,24 +97,24 @@ class TitleControllerIntegrationTest (
 
     @Test
     fun `post-newspapers-titles should use publisher if present and in Collections`() {
-        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
+        every { collectionsService.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = "publisher"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchPublisher(any()) }
-        verify(exactly = 0) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
+        verify(exactly = 1) { collectionsService.searchPublisher(any()) }
+        verify(exactly = 0) { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
     fun `post-newspapers-titles should create publisher if present and not in Collections`() {
-        every { collectionsRepository.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA.copy())
+        every { collectionsService.searchPublisher(any()) } returns Mono.just(collectionsNameModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = "publisher"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchPublisher(any()) }
-        verify(exactly = 1) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
+        verify(exactly = 1) { collectionsService.searchPublisher(any()) }
+        verify(exactly = 1) { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
@@ -122,30 +122,30 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(publisher = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsRepository.searchPublisher(any()) }
-        verify(exactly = 0) { collectionsRepository.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
+        verify(exactly = 0) { collectionsService.searchPublisher(any()) }
+        verify(exactly = 0) { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) }
     }
 
     @Test
     fun `post-newspapers-titles should use publisherPlace if present and in Collections`() {
-        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
+        every { collectionsService.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Mo"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
+        verify(exactly = 1) { collectionsService.searchPublisherPlace(any()) }
+        verify(exactly = 0) { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
     fun `post-newspapers-titles should create publisherPlace if present and not in Collections`() {
-        every { collectionsRepository.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
+        every { collectionsService.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = "Mo"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
+        verify(exactly = 1) { collectionsService.searchPublisherPlace(any()) }
+        verify(exactly = 1) { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
@@ -153,30 +153,30 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(publisherPlace = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsRepository.searchPublisherPlace(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
+        verify(exactly = 0) { collectionsService.searchPublisherPlace(any()) }
+        verify(exactly = 0) { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) }
     }
 
     @Test
     fun `post-newspapers-titles should use language if present and in Collections`() {
-        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
+        every { collectionsService.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchLanguage(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
+        verify(exactly = 1) { collectionsService.searchLanguage(any()) }
+        verify(exactly = 0) { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test
     fun `post-newspapers-titles should create language if present and not in Collections`() {
-        every { collectionsRepository.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
+        every { collectionsService.searchLanguage(any()) } returns Mono.just(collectionsTermModelWithEmptyRecordListA.copy())
 
         createTitle(newspaperTitleInputDtoMockA.copy(language = "nob"))
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsRepository.searchLanguage(any()) }
-        verify(exactly = 1) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
+        verify(exactly = 1) { collectionsService.searchLanguage(any()) }
+        verify(exactly = 1) { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test
@@ -184,8 +184,8 @@ class TitleControllerIntegrationTest (
         createTitle(newspaperTitleInputDtoMockA.copy(language = null))
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsRepository.searchLanguage(any()) }
-        verify(exactly = 0) { collectionsRepository.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
+        verify(exactly = 0) { collectionsService.searchLanguage(any()) }
+        verify(exactly = 0) { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) }
     }
 
     @Test
