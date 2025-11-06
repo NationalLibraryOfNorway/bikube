@@ -13,6 +13,9 @@ class ManifestationDto (
     @SerialName("priref")
     val priRef: String,
 
+    @SerialName("Title")
+    val title: List<CollectionsTitleDto>? = null,
+
     @SerialName("object_number")
     val objectNumber: String,
 
@@ -62,9 +65,7 @@ fun createManifestationDto(
     notes: String? = null,
     number: String? = null
 ): ManifestationDto {
-    val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
-
-    return ManifestationDto(
+    return ManifestationDto( // TODO add årgang etc??
         priRef = id,
         objectNumber = "NP-$id",
         partOfReference = parentCatalogueId,
@@ -77,7 +78,6 @@ fun createManifestationDto(
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = database.value,
-        notes = notes,
-        alternativeNumbers = altNumbers
+        notes = notes
     )
 }

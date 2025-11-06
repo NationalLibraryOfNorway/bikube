@@ -88,7 +88,11 @@ fun createNewspaperItemDto(
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = database.value,
         partOfReference = manifestationCatalogueId,
-        alternativeNumberList = if (useUrn) listOf(AlternativeNumberInput(item.urn!!, "URN")) else null,
+        alternativeNumberList = listOfNotNull( // TODO: passer dette i komponenten?? må kanskje endres til å være i manifestasjon?
+            item.number?.let { AlternativeNumberInput(it, "Årgang") },
+            item.volume?.let { AlternativeNumberInput(it, "Avisnr") },
+            //item.version?.let { AlternativeNumberInput(it, "Versjon") } // TODO: decide on if we want to use version
+        ).ifEmpty { null },
         urn = if (useUrn) item.urn else null,
         itemStatus = if (item.digital == true) CollectionsItemStatus.fromString(item.itemStatus)?.value else null,
         currentLocationName = if (item.digital == false) item.containerId else null

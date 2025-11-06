@@ -11,5 +11,7 @@ data class ItemInputDto(
     val containerId: String? = null,
     val notes: String? = null,
     val number: String? = null,
+    val volume: String? = null,
+    val version: String? = null,
     val itemStatus: String? = null
 )

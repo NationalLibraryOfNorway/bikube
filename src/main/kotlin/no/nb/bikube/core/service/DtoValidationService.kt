@@ -10,28 +10,33 @@ import org.springframework.stereotype.Service
 class DtoValidationService {
     @Throws(BadRequestBodyException::class)
     fun validateItemInputDto(item: ItemInputDto) {
+        val errorMessageList = mutableListOf<String>()
+
         if (item.titleCatalogueId.isBlank()) {
-            throw BadRequestBodyException("Need to provide title ID")
+            errorMessageList.add("Need to provide title ID")
         }
 
         if (item.digital == null) {
-            throw BadRequestBodyException("Need to provide if item is digital or not (physical)")
+            errorMessageList.add("Need to provide if item is digital or not (physical)")
         }
 
-        if (item.digital == true && item.urn.isNullOrBlank()) {
-            throw BadRequestBodyException("Need to provide URN for digital item")
+        if (item.digital == true) {
+            if (item.urn.isNullOrBlank()) errorMessageList.add("Need to provide URN for digital item")
+            if (item.number.isNullOrBlank()) errorMessageList.add("Need to provide number for digital item")
+            if (item.volume.isNullOrBlank()) errorMessageList.add("Need to provide volume for digital item")
         }
 
-        if (!item.digital && item.containerId.isNullOrBlank()) {
-            throw BadRequestBodyException("Need to provide container ID for physical item")
-        }
-
-        if (!item.digital && item.itemStatus != null) {
-            throw BadRequestBodyException("Cannot provide item status for physical item")
+        if (item.digital == false) {
+            if (item.containerId.isNullOrBlank()) errorMessageList.add("Need to provide container ID for physical item")
+            if (item.itemStatus != null) errorMessageList.add("Cannot provide item status for physical item")
         }
 
         if (item.itemStatus != null && CollectionsItemStatus.fromString(item.itemStatus) == null) {
-            throw BadRequestBodyException("Need to provide a valid item status. Expected: ${CollectionsItemStatus.entries.joinToString(" OR ") { it.value }}, received: ${item.itemStatus}")
+            errorMessageList.add("Need to provide a valid item status. Expected: ${CollectionsItemStatus.entries.joinToString(" OR ") { it.value }}, received: ${item.itemStatus}")
+        }
+
+        if (errorMessageList.isNotEmpty()) {
+            throw BadRequestBodyException(errorMessageList.joinToString("; "))
         }
     }
 
