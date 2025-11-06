@@ -83,12 +83,12 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationC.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { collectionsService.updateNewspaperRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
-        every { collectionsService.deleteNewspaperRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.updateRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsService.deleteRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { uniqueIdService.getUniqueId() } returns itemId
 
         val encodedBody = slot<String>()
-        every { collectionsService.createNewspaperRecord(capture(encodedBody)) } answers {
+        every { collectionsService.createRecord(capture(encodedBody)) } answers {
             val dto = json.decodeFromString<DtoMock>(encodedBody.captured)
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
@@ -160,7 +160,7 @@ class ItemControllerIntegrationTest {
         createItem(newspaperItemMockCValidForCreation.copy())
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsService.createNewspaperRecord(any()) }
+        verify(exactly = 1) { collectionsService.createRecord(any()) }
     }
 
     @Test
@@ -171,7 +171,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB.copy())
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { collectionsService.createNewspaperRecord(any()) } answers {
+        every { collectionsService.createRecord(any()) } answers {
             val dto = json.decodeFromString<DtoMock>(firstArg<String>())
             when (dto.recordType) {
                 CollectionsRecordType.ITEM.value -> Mono.just(collectionsModelMockItemA)
@@ -184,7 +184,7 @@ class ItemControllerIntegrationTest {
         createItem(item)
             .expectStatus().isCreated
 
-        verify(exactly = 2) { collectionsService.createNewspaperRecord(any()) }
+        verify(exactly = 2) { collectionsService.createRecord(any()) }
     }
 
     @Test
@@ -276,7 +276,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 0) { collectionsService.createNewspaperRecord(any()) }
+        verify(exactly = 0) { collectionsService.createRecord(any()) }
     }
 
     @Test
@@ -291,7 +291,7 @@ class ItemControllerIntegrationTest {
             .exchange()
             .expectStatus().isCreated
 
-        verify(exactly = 1) { collectionsService.createNewspaperRecord(any()) }
+        verify(exactly = 1) { collectionsService.createRecord(any()) }
     }
 
     @Test
@@ -312,7 +312,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(newspaperItemUpdateDtoMockA.copy(manifestationId = manifestationId))
             .exchange()
 
-        verify(exactly = 1) { collectionsService.updateNewspaperRecord(withArg {
+        verify(exactly = 1) { collectionsService.updateRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))
@@ -338,7 +338,7 @@ class ItemControllerIntegrationTest {
             .bodyValue(dto)
             .exchange()
 
-        verify(exactly = 1) { collectionsService.updateNewspaperRecord(withArg {
+        verify(exactly = 1) { collectionsService.updateRecord(withArg {
             Assertions.assertTrue(it.contains(manifestationId))
             Assertions.assertTrue(it.contains("edit.date"))
             Assertions.assertTrue(it.contains("edit.time"))

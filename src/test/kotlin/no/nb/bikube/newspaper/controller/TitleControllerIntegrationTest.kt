@@ -61,7 +61,7 @@ class TitleControllerIntegrationTest (
         every { collectionsService.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsService.createNewspaperRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
+        every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsService.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsService.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsService.searchLanguage(any()) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
