@@ -92,50 +92,55 @@ class HuginNewspaperService(
 
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
-    fun upsertNewspaper(newspaperUpsertDto: List<NewspaperUpsertDto>): List<Newspaper> {
+    fun upsertNewspaper(upserts: List<NewspaperUpsertDto>): List<Newspaper> {
         val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
-        val results = mutableListOf<Newspaper>()
 
-        for (newspaperUpsert in newspaperUpsertDto) {
-            val existingManifestation: Item? =
-                newspaperService.getSingleManifestationAsItem(
-                    newspaperUpsert.catalogId ?: ""
-                ).onErrorResume { Mono.empty() }.block()
-
-            if (existingManifestation === null) {
-                if (newspaperUpsert.received === true) {
-                    var item = newspaperService.createNewspaperItem(newspaperUpsert.toItemInputDto(userName)).block()
-                        ?: error("Failed to create physical item")
-                    results += saveNewspaperToDatabase(newspaperUpsert.toNewspaper(item.parentCatalogueId!!))
-                } else {
-                    var missingItem = newspaperService.createMissingItem(newspaperUpsert.toMissingDto(userName)).block()
-                        ?: error("Failed to create missing manifestation")
-                    results += saveNewspaperToDatabase(newspaperUpsert.toNewspaper(missingItem.catalogueId))
-                }
+        return upserts.map { upsert ->
+            if (upsert.catalogId == null) {
+                handleNewManifestation(upsert, userName).block()!!
             } else {
-                var existingNewspaper = newspaperRepository.findByIdOrNull(existingManifestation.parentCatalogueId!!)
-                    ?: newspaperUpsert.catalogId?.let { newspaperRepository.findByIdOrNull(it) }
-                if (existingNewspaper == null) { // just in case vi er i usync med katalog
-                    existingNewspaper =
-                        newspaperRepository.save(newspaperUpsert.toNewspaper(existingManifestation.catalogueId!!))
-                }
-                if (newspaperUpsert.received === existingNewspaper.received) {
-                    results += saveNewspaperToDatabase(newspaperUpsert.toNewspaper(existingNewspaper.catalogId))
-                    newspaperService.updatePhysicalNewspaper(newspaperUpsert.toItemUpdateDto(userName)).block()
-                } else if (existingNewspaper.received === false && newspaperUpsert.received === true) {
-                    newspaperService.createNewspaperItem(newspaperUpsert.toItemInputDto(userName)).block()
-                        ?: error("Failed to create physical item")
-                    results += saveNewspaperToDatabase(newspaperUpsert.toNewspaper(existingNewspaper.catalogId))
-                } else if (existingNewspaper.received === true && newspaperUpsert.received === false) {
-                    newspaperService.deletePhysicalItemByManifestationId(existingNewspaper.catalogId, false)
-                        .onErrorResume { Mono.empty() }
-                        .block()
-                    results += saveNewspaperToDatabase(newspaperUpsert.toNewspaper(existingManifestation.catalogueId))
-                }
+                newspaperService.getSingleManifestationAsItem(upsert.catalogId!!)
+                    .onErrorResume { Mono.empty() }
+                    .flatMap { existing -> handleExistingManifestation(upsert, existing, userName) }
+                    .switchIfEmpty(Mono.defer { handleNewManifestation(upsert, userName) })
+                    .block()!!
             }
         }
-        return results;
     }
+
+    private fun handleExistingManifestation(upsert: NewspaperUpsertDto, existing: Item, userName: String): Mono<Newspaper> {
+        val existingNewspaper = newspaperRepository.findByIdOrNull(existing.parentCatalogueId!!)
+            ?: upsert.catalogId?.let { newspaperRepository.findByIdOrNull(it) }
+            ?: return Mono.just(saveNewspaperToDatabase(upsert.toNewspaper(existing.catalogueId)))
+
+        return when {
+            upsert.received == existingNewspaper.received ->
+                newspaperService.updatePhysicalNewspaper(upsert.toItemUpdateDto(userName))
+                    .thenReturn(saveNewspaperToDatabase(upsert.toNewspaper(existingNewspaper.catalogId)))
+
+            !existingNewspaper.received!! ->
+                newspaperService.createNewspaperItem(upsert.toItemInputDto(userName))
+                    .map { saveNewspaperToDatabase(upsert.toNewspaper(existingNewspaper.catalogId)) }
+
+            else -> // existingNewspaper.received && d.received == false
+                newspaperService.deletePhysicalItemByManifestationId(existingNewspaper.catalogId, false)
+                    .onErrorResume { Mono.empty() }
+                    .thenReturn(saveNewspaperToDatabase(upsert.toNewspaper(existing.catalogueId)))
+        }
+    }
+
+    private fun handleNewManifestation(upsert: NewspaperUpsertDto, userName: String): Mono<Newspaper> {
+        return if (upsert.received) {
+            newspaperService.createNewspaperItem(upsert.toItemInputDto(userName))
+                .map { it.parentCatalogueId!! }
+        } else {
+            newspaperService.createMissingItem(upsert.toMissingDto(userName))
+                .map { it.catalogueId }
+        }.map { catalogId ->
+            saveNewspaperToDatabase(upsert.toNewspaper(catalogId))
+        }
+    }
+
 
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
