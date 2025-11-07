@@ -6,7 +6,7 @@ import {toast} from "sonner";
 
 export function useCatalogueTitles(query: string) {
 
-  const q = useQuery({
+  const queryResult = useQuery({
     queryKey: keys.catalogueTitles(query),
     enabled: query?.trim().length > 0,
     retry: false,
@@ -25,14 +25,14 @@ export function useCatalogueTitles(query: string) {
   });
 
   return {
-    catalogueTitlesList: q.data ?? [],
-    isLoading: q.isLoading,
-    search: q.refetch,
+    catalogueTitlesList: queryResult.data ?? [],
+    isLoading: queryResult.isLoading,
+    search: queryResult.refetch,
   };
 }
 
 export function useCatalogueTitle(id: string) {
-    const q = useQuery({
+    const query = useQuery({
         queryKey: keys.catalogueTitle(id),
         retry: false,
         queryFn: async () => {
@@ -50,8 +50,8 @@ export function useCatalogueTitle(id: string) {
     });
 
     return {
-        catalogueTitle: q.data ?? undefined,
-        isLoading: q.isLoading,
-        search: q.refetch,
+        catalogueTitle: query.data ?? undefined,
+        isLoading: query.isLoading,
+        search: query.refetch,
     };
 }

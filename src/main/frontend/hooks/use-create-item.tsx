@@ -9,7 +9,7 @@ type Args = {
 };
 
 export function useAddNewspapers() {
-    const qc = useQueryClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (args: Args) => {
@@ -17,7 +17,7 @@ export function useAddNewspapers() {
         },
         onSuccess: (_data, vars) => {
             toast.success("Utgaver lagret");
-            qc.invalidateQueries({queryKey: keys.huginTitle(vars.items[0].titleId)});
+            queryClient.invalidateQueries({queryKey: keys.huginTitle(vars.items[0].titleId)});
         },
         onError: () => toast.error("Klarte ikke å lagre utgaver"),
     });

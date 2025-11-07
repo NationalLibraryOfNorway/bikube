@@ -175,10 +175,10 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                     <TableBody>
                         {rows.map((r) => {
                             const d = r.date ? parseISO(r.date) : undefined;
-                            const dag = d && isValid(d) ? format(d, "EEEE", {locale: nb}) : "—";
+                            const day = d && isValid(d) ? format(d, "EEEE", {locale: nb}) : "—";
                             return (
                                 <TableRow key={r._tmpId}>
-                                    <TableCell className="capitalize">{dag}</TableCell>
+                                    <TableCell className="capitalize">{day}</TableCell>
                                     <TableCell>
                                         <Input
                                             type="date"

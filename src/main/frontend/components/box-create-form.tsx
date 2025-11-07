@@ -19,14 +19,13 @@ type CreateBoxFormValues = {
 
 export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
     const {catalogueTitleId} = useParams();
-    const qc = useQueryClient();
+    const queryClient = useQueryClient();
 
     const titleId = Number.parseInt(catalogueTitleId ?? "", 10);
     if (!Number.isFinite(titleId)) return null;
 
     const createBox = useMutation({
         mutationFn: async (payload: CreateBoxFormValues) => {
-            // ADDED: endpoint; implement server below
             return await HuginNewspaperService.createBox({
                 titleId: payload.titleId,
                 id: payload.boxId,
@@ -35,7 +34,7 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
         },
         onSuccess: (box) => {
             toast.success(`Eske '${box.id}' opprettet`);
-            qc.invalidateQueries({queryKey: ["huginTitle", titleId]});
+            queryClient.invalidateQueries({queryKey: ["huginTitle", titleId]});
             onSuccess?.();
         },
         onError: () => toast.error("Klarte ikke å opprette eske"),

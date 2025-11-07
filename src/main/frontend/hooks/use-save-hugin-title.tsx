@@ -35,17 +35,16 @@ function normalize(p: SavePayload): ContactUpdateDto {
 }
 
 export function useSaveHuginTitle() {
-    const qc = useQueryClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationKey: keys.saveHuginTitle(),
         mutationFn: async (payload: SavePayload) => {
             const body = normalize(payload);
-            console.debug("upsertContactInformation payload:", body); // ADDED
             return await HuginNewspaperService.upsertContactInformation(body);
         },
         onSuccess: (saved) => {
-            qc.setQueryData(keys.huginTitle(saved.id), saved);
+            queryClient.setQueryData(keys.huginTitle(saved.id), saved);
         },
     });
 }

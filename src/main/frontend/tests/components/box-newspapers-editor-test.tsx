@@ -53,12 +53,6 @@ describe('BoxNewspapersEditor', () => {
         );
     };
 
-    it('renders the component', () => {
-        const { container } = renderComponent();
-        // Component may return null if no active box, so just check it renders without error
-        expect(container).toBeTruthy();
-    });
-
     it('renders with title containing boxes', () => {
         const { container } = renderComponent();
         expect(container).toBeTruthy();

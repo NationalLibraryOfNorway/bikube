@@ -49,7 +49,7 @@ export default function TitleCommentForm({ title }: { title: HuginTitle | null |
 
     return (
         <FormikProvider value={formik}>
-            <Form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">{/* ADDED */}
+            <Form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
                 <div className="space-y-1">
                     <textarea
                         rows={4}
@@ -65,7 +65,7 @@ export default function TitleCommentForm({ title }: { title: HuginTitle | null |
                     </Button>
 
                     <Button
-                        type="button"                                    // ✅ avoid submit on cancel
+                        type="button"
                         variant="outline"
                         size="lg"
                         onClick={() => {
