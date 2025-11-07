@@ -103,7 +103,7 @@ export default function ContactForm({title, fields}: {
                             <input
                                 className="w-full rounded-lg border py-3 ps-3 pr-10 bg-white"
                                 name={`contactInfos[${idx}].contactValue`}
-                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
+                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}
                                 onChange={formik.handleChange}
                                 type="tel"
                             />

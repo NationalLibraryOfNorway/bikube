@@ -16,13 +16,13 @@ export default function TitleSearch({ className }:{ className?: string }) {
     const [open, setOpen] = useState(false)
     const {catalogueTitlesList, isLoading } = useCatalogueTitles(term.trim());
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const handleSelect = (item: Title) => {
-        qc.setQueryData( keys.catalogueTitle(item.catalogueId), item)
+        queryClient.setQueryData( keys.catalogueTitle(item.catalogueId), item)
         navigate(`${item.catalogueId}`);
         setOpen(false);
     };
-    const qc = useQueryClient();
     const rows: Title[] = useMemo(() => catalogueTitlesList as Title[], [catalogueTitlesList]);
 
     return (

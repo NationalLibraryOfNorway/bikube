@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { cn, isActive, redirect } from '@/lib/utils';
 
 describe('cn (className utility)', () => {
@@ -232,38 +232,5 @@ describe('redirect', () => {
         expect(typeof redirect).toBe('function');
     });
 
-    it('can be called with a string argument', () => {
-        // Just verify it doesn't throw - we can't actually test the redirect in browser mode
-        // without causing navigation
-        expect(() => {
-            const testPath = '/test-path';
-            // Verify the function signature works
-            if (false) { // Never actually execute to avoid navigation
-                redirect(testPath);
-            }
-        }).not.toThrow();
-    });
-
-    it('accepts various URL formats as valid arguments', () => {
-        // Test that different URL formats are valid arguments
-        const validUrls = [
-            '/test-path',
-            'https://example.com',
-            '../relative/path',
-            '/path?query=value',
-            '/path#section',
-            '/',
-            '/path/with spaces and-special_chars',
-            '/path?param=%20encoded%20value'
-        ];
-
-        validUrls.forEach(url => {
-            expect(typeof url).toBe('string');
-            // Verify redirect function signature
-            if (false) { // Never execute to avoid navigation
-                redirect(url);
-            }
-        });
-    });
 });
 
