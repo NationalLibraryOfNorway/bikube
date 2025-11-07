@@ -1,4 +1,4 @@
-package no.nb.bikube.hugin.model
+package no.nb.bikube.hugin.model.dbo
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.Column

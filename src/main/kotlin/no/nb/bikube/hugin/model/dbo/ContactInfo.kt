@@ -1,4 +1,4 @@
-package no.nb.bikube.hugin.model
+package no.nb.bikube.hugin.model.dbo
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.Column
@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import no.nb.bikube.hugin.model.ContactType
 import java.util.UUID
 
 @Entity
