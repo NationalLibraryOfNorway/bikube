@@ -70,6 +70,7 @@ data class AlternativeNumberInput (
 
 fun createNewspaperItemDto(
     id: String,
+    objectNumber: String,
     item: ItemInputDto,
     database: CollectionsDatabase,
     manifestationCatalogueId: String
@@ -77,8 +78,8 @@ fun createNewspaperItemDto(
     val useUrn = item.digital == true && !item.urn.isNullOrBlank()
 
     return ItemDto(
-        priRef = id,
-        objectNumber = "NP-$id",
+        priRef = id, // TODO: After migration this will be generated automatically by collections itself
+        objectNumber = objectNumber, // TODO: After migration this will be generated automatically by collections itself
         format = if (item.digital == true) CollectionsFormat.DIGITAL.value else CollectionsFormat.PHYSICAL.value,
         recordType = CollectionsRecordType.ITEM.value,
         inputName = item.username,
@@ -88,11 +89,7 @@ fun createNewspaperItemDto(
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = database.value,
         partOfReference = manifestationCatalogueId,
-        alternativeNumberList = listOfNotNull( // TODO: passer dette i komponenten?? må kanskje endres til å være i manifestasjon?
-            item.number?.let { AlternativeNumberInput(it, "Årgang") },
-            item.volume?.let { AlternativeNumberInput(it, "Avisnr") },
-            //item.version?.let { AlternativeNumberInput(it, "Versjon") } // TODO: decide on if we want to use version
-        ).ifEmpty { null },
+        alternativeNumberList = null,
         urn = if (useUrn) item.urn else null,
         itemStatus = if (item.digital == true) CollectionsItemStatus.fromString(item.itemStatus)?.value else null,
         currentLocationName = if (item.digital == false) item.containerId else null

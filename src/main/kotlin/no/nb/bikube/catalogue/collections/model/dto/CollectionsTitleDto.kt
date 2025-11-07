@@ -74,10 +74,10 @@ class CollectionsTitleDto(
     val titleNotes: String? = null
 )
 
-fun createTitleDto(id: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
+fun createTitleDto(id: String, objectNumber: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
     return TitleDto(
-        priRef = id,
-        objectNumber = "NP-$id",
+        priRef = id, // TODO: After migration this will be generated automatically by collections itself
+        objectNumber = objectNumber, // TODO: After migration this will be generated automatically by collections itself
         titles = listOf(CollectionsTitleDto(title.name, "Originaltittel")),
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),

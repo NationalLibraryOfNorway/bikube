@@ -29,13 +29,13 @@ class NewspaperService (
     private val collectionsConfig: CollectionsConfig,
     @param:Qualifier("collectionsNewspaperService")
     private val collectionsService: CollectionsService,
-    private val uniqueIdService: UniqueIdService
+    private val maxitService: MaxitService
 ) {
 
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
-        val id = uniqueIdService.getUniqueId()
-        val dto: TitleDto = createTitleDto(id, title, CollectionsDatabase.NEWSPAPER)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: TitleDto = createTitleDto(idResponse.priref, idResponse.objectNumber, title, CollectionsDatabase.NEWSPAPER)
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
@@ -209,10 +209,23 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        number: String?
+        argang: String?,
+        avisnr: String?,
+        versjon: String?
     ): Mono<CollectionsObject> {
-        val id = uniqueIdService.getUniqueId()
-        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, CollectionsDatabase.NEWSPAPER, date, username, notes, number)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: ManifestationDto = createManifestationDto(
+            idResponse.priref,
+            idResponse.objectNumber,
+            titleCatalogueId,
+            CollectionsDatabase.NEWSPAPER,
+            date,
+            username,
+            notes,
+            argang,
+            avisnr,
+            versjon
+        )
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
@@ -246,13 +259,13 @@ class NewspaperService (
             }
     }
 
-    fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
+    fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> { // TODO: Årgang, avisnr, versjon ???
         return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes)
                 }
             }.map { mapCollectionsObjectToGenericItem(it) }
     }
@@ -332,8 +345,8 @@ class NewspaperService (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val uniqueId = uniqueIdService.getUniqueId()
-        val dto: ItemDto = createNewspaperItemDto(uniqueId, item, CollectionsDatabase.NEWSPAPER, parentId)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: ItemDto = createNewspaperItemDto(idResponse.priref, idResponse.objectNumber, item, CollectionsDatabase.NEWSPAPER, parentId)
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
@@ -350,13 +363,23 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        number: String?
+        argang: String? = null,
+        avisnr: String? = null,
+        versjon: String? = null
     ): Mono<CollectionsObject> {
         return collectionsService.getManifestations(
-            date, titleId, number
+            date, titleId, argang, avisnr, versjon
         ).flatMap {
             if (!it.hasObjects()) {
-                createManifestation(titleId, date, username, notes, number)
+                createManifestation(
+                    titleId,
+                    date,
+                    username,
+                    notes,
+                    argang,
+                    avisnr,
+                    versjon
+                )
             } else {
                 Mono.just(it.getFirstObject())
             }

@@ -49,15 +49,31 @@ class CollectionsService(
         ).bodyToMono<CollectionsModel>()
     }
 
-    fun getManifestations(date: LocalDate, titleCatalogId: String, number: String? = null, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
+    fun getManifestations(
+        date: LocalDate,
+        titleCatalogId: String,
+        argang: String? = null,
+        avisnr: String? = null,
+        versjon: String? = null,
+        db: CollectionsDatabase = collectionsDatabase
+    ): Mono<CollectionsModel> {
         val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
+        val edition = listOfNotNull(
+            argang?.takeIf { it.isNotBlank() } ?: "U",
+            avisnr?.takeIf { it.isNotBlank() } ?: "U",
+            versjon?.takeIf { it.isNotBlank() } ?: "U"
+        ).joinToString("-")
+        val editionQuery = if (edition == "U-U-U") {
+            " and not edition='*'" // equivalent to " and edition = null", but that isn't supported in Collections
+        } else {
+            " and edition='$edition'"
+        }
+
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
             "part_of_reference.lref=${titleCatalogId} and " +
             "edition.date='${dateString}'" +
-            (number.takeIf { !it.isNullOrBlank() }
-                ?. let { " and edition='${it}'" }
-                ?: " and not edition='*'"), // equivalent to " and edition = null", but that isn't supported in Collections
+            editionQuery,
             db
         ).bodyToMono<CollectionsModel>()
     }

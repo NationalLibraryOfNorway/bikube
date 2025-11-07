@@ -58,26 +58,39 @@ class ManifestationDto (
 
 fun createManifestationDto(
     id: String,
+    objectNumber: String,
     parentCatalogueId: String,
     database: CollectionsDatabase,
     date: LocalDate,
     username: String,
     notes: String? = null,
-    number: String? = null
+    argang: String? = null,
+    avisnr: String? = null,
+    versjon: String? = null
 ): ManifestationDto {
-    return ManifestationDto( // TODO add årgang etc??
+    val edition = listOfNotNull(
+        argang?.takeIf { it.isNotBlank() } ?: "U",
+        avisnr?.takeIf { it.isNotBlank() } ?: "U",
+        versjon?.takeIf { it.isNotBlank() } ?: "U"
+    ).joinToString("-")
+    return ManifestationDto(
         priRef = id,
-        objectNumber = "NP-$id",
+        objectNumber = objectNumber,
         partOfReference = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
-        edition = number,
+        edition = edition,
         inputName = username,
         inputNotes = "Registrert i Bikube API",
         inputSource = database.value,
         inputDate = LocalDate.now().toString(),
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = database.value,
-        notes = notes
+        notes = notes,
+        alternativeNumbers = listOfNotNull(
+            argang?.let { AlternativeNumberInput(it, "Årgang") },
+            avisnr?.let { AlternativeNumberInput(it, "Avisnr") },
+            versjon?.let { AlternativeNumberInput(it, "Versjon") },
+        )
     )
 }
