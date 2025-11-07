@@ -9,10 +9,10 @@ import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.core.util.logger
 import no.nb.bikube.api.newspaper.service.NewspaperService
-import no.nb.bikube.hugin.model.Box
-import no.nb.bikube.hugin.model.ContactInfo
-import no.nb.bikube.hugin.model.HuginTitle
-import no.nb.bikube.hugin.model.Newspaper
+import no.nb.bikube.hugin.model.dbo.Box
+import no.nb.bikube.hugin.model.dbo.ContactInfo
+import no.nb.bikube.hugin.model.dbo.HuginTitle
+import no.nb.bikube.hugin.model.dbo.Newspaper
 import no.nb.bikube.hugin.model.dto.ContactUpdateDto
 import no.nb.bikube.hugin.model.dto.CreateBoxDto
 import no.nb.bikube.hugin.model.dto.NewspaperUpsertDto
