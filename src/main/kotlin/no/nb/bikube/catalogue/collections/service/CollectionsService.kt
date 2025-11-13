@@ -52,16 +52,16 @@ class CollectionsService(
     fun getManifestations(
         date: LocalDate,
         titleCatalogId: String,
-        argang: String? = null,
-        avisnr: String? = null,
-        versjon: String? = null,
+        volume: String? = null,
+        number: String? = null,
+        version: String? = null,
         db: CollectionsDatabase = collectionsDatabase
     ): Mono<CollectionsModel> {
         val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
         val edition = listOfNotNull(
-            argang?.takeIf { it.isNotBlank() } ?: "U",
-            avisnr?.takeIf { it.isNotBlank() } ?: "U",
-            versjon?.takeIf { it.isNotBlank() } ?: "U"
+            volume?.takeIf { it.isNotBlank() } ?: "U",
+            number?.takeIf { it.isNotBlank() } ?: "U",
+            version?.takeIf { it.isNotBlank() } ?: "U"
         ).joinToString("-")
         val editionQuery = if (edition == "U-U-U") {
             " and not edition='*'" // equivalent to " and edition = null", but that isn't supported in Collections

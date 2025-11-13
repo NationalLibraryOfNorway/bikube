@@ -17,7 +17,8 @@ import no.nb.bikube.core.model.inputDto.TitleInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.service.UniqueIdService
+import no.nb.bikube.newspaper.model.ParsedIdResponse
+import no.nb.bikube.newspaper.service.MaxitService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +41,7 @@ class TitleControllerIntegrationTest (
     private lateinit var collectionsService: CollectionsService
 
     @MockkBean
-    private lateinit var uniqueIdService: UniqueIdService
+    private lateinit var maxitService: MaxitService
 
     private val titleId = "1"
 
@@ -68,7 +69,7 @@ class TitleControllerIntegrationTest (
         every { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
-        every { uniqueIdService.getUniqueId() } returns "123"
+        every { maxitService.getUniqueIds() } returns ParsedIdResponse("123", "NP-123")
     }
 
     @Test

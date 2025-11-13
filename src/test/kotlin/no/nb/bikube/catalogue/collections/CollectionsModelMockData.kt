@@ -231,7 +231,8 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        alternativeNumberList = listOf(CollectionsAlternativeNumber("URN", "avisa_null_null_20200105_1_1_1")),
+                        urn = listOf("avisa_null_null_20200105_1_1_1"),
+                        alternativeNumberList = null,
                         inputName = listOf(TEST_USERNAME)
                     )
                 )
@@ -280,7 +281,11 @@ class CollectionsModelMockData {
                         languageList = null,
                         placeOfPublicationList = null,
                         partsList = null,
-                        alternativeNumberList = null,
+                        alternativeNumberList = listOf(
+                            CollectionsAlternativeNumber("Årgang", "1"),
+                            CollectionsAlternativeNumber("Avisnr", "2"),
+                            CollectionsAlternativeNumber("Versjon", "3")
+                        ),
                         inputName = listOf(TEST_USERNAME)
                     )
                 )

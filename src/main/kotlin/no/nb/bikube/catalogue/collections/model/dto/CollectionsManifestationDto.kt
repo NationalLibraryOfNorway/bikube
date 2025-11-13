@@ -64,14 +64,14 @@ fun createManifestationDto(
     date: LocalDate,
     username: String,
     notes: String? = null,
-    argang: String? = null,
-    avisnr: String? = null,
-    versjon: String? = null
+    volume: String? = null,
+    number: String? = null,
+    version: String? = null
 ): ManifestationDto {
     val edition = listOfNotNull(
-        argang?.takeIf { it.isNotBlank() } ?: "U",
-        avisnr?.takeIf { it.isNotBlank() } ?: "U",
-        versjon?.takeIf { it.isNotBlank() } ?: "U"
+        volume?.takeIf { it.isNotBlank() } ?: "U",
+        number?.takeIf { it.isNotBlank() } ?: "U",
+        version?.takeIf { it.isNotBlank() } ?: "U"
     ).joinToString("-")
     return ManifestationDto(
         priRef = id,
@@ -88,9 +88,9 @@ fun createManifestationDto(
         dataset = database.value,
         notes = notes,
         alternativeNumbers = listOfNotNull(
-            argang?.let { AlternativeNumberInput(it, "Årgang") },
-            avisnr?.let { AlternativeNumberInput(it, "Avisnr") },
-            versjon?.let { AlternativeNumberInput(it, "Versjon") },
+            volume?.let { AlternativeNumberInput(it, "Årgang") },
+            number?.let { AlternativeNumberInput(it, "Avisnr") },
+            version?.let { AlternativeNumberInput(it, "Versjon") },
         )
     )
 }

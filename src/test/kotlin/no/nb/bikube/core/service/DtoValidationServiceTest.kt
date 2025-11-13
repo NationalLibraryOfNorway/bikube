@@ -25,7 +25,10 @@ class DtoValidationServiceTest {
         username = TEST_USERNAME,
         digital = true,
         urn = "avis_null_null_20200101_1_1_1",
-        containerId = null
+        containerId = null,
+        number = "1",
+        volume = "2",
+        version = "3"
     )
 
     private val validPhysicalItem = ItemInputDto(

@@ -26,6 +26,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
+import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
@@ -42,6 +43,7 @@ import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.util.DateUtils
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperAlternativeNumbers
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockDNoItem
@@ -49,6 +51,7 @@ import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.urnMock
+import no.nb.bikube.newspaper.model.ParsedIdResponse
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -74,11 +77,11 @@ class NewspaperServiceTest {
     @Autowired
     private lateinit var newspaperService: NewspaperService
 
-    @MockkBean
+    @MockkBean(name = "collectionsNewspaperService")
     private lateinit var collectionsService: CollectionsService
 
     @MockkBean
-    private lateinit var uniqueIdService: UniqueIdService
+    private lateinit var maxitService: MaxitService
 
     private val mockedTime = LocalTime.of(9, 30, 0)
 
@@ -86,7 +89,7 @@ class NewspaperServiceTest {
     fun mockLocalTime() {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
-        every { uniqueIdService.getUniqueId() } returns "1600000000"
+        every { maxitService.getUniqueIds() } returns ParsedIdResponse("1600000000", "NP-1600000000")
     }
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
@@ -108,7 +111,7 @@ class NewspaperServiceTest {
         objectNumber = "NP-1600000000",
         format = CollectionsFormat.DIGITAL.value,
         recordType = CollectionsRecordType.ITEM.value,
-        alternativeNumberList = listOf(urnMock),
+        alternativeNumberList = null,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
         inputSource = "newspaper",
@@ -158,6 +161,7 @@ class NewspaperServiceTest {
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         val body = newspaperTitleInputDtoMockB.copy()
@@ -173,6 +177,7 @@ class NewspaperServiceTest {
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
         every { collectionsService.createRecord(any()) } returns Mono.error(CollectionsException("Error creating title"))
+        every { collectionsService.createRecord(any(), any()) } returns Mono.error(CollectionsException("Error creating title"))
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
@@ -348,6 +353,7 @@ class NewspaperServiceTest {
     @Test
     fun `createTitle should return correctly mapped record`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
@@ -360,6 +366,7 @@ class NewspaperServiceTest {
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
@@ -467,6 +474,7 @@ class NewspaperServiceTest {
     @Test
     fun `createNewspaperItem should return correctly mapped item record`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
@@ -480,25 +488,23 @@ class NewspaperServiceTest {
 
     @Test
     fun `createNewspaperItem should correctly encode the item object sent to json string`() {
-        every { collectionsService.createRecord(itemEncodedDto) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsService.createRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any<String>(), any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
 
         newspaperService.createNewspaperItem(newspaperInputDtoItemMockB)
             .test()
-            .expectSubscription()
-            .assertNext { Assertions.assertEquals(newspaperItemMockB.copy(titleCatalogueId = null, date = null), it) }
+            .expectNext(newspaperItemMockB.copy(titleCatalogueId = null, date = null))
             .verifyComplete()
 
-        verify { collectionsService.createRecord(itemEncodedDto) }
+        // Verify with the expected JSON string
+        verify { collectionsService.createRecord(itemEncodedDto, any()) }
     }
 
     @Test
     fun `createNewspaperItem should throw CollectionsItemNotFound if item could not be found`() {
-        every { collectionsService.createRecord(itemEncodedDto) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { collectionsService.createRecord(manifestationEncodedDto) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock) andThen Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
@@ -508,7 +514,7 @@ class NewspaperServiceTest {
             .expectSubscription()
             .expectErrorMatches {
                 it is CollectionsException &&
-                it.message!!.contains("Error creating item")
+                        it.message!!.contains("Error creating item")
             }
             .verify()
     }
@@ -516,6 +522,7 @@ class NewspaperServiceTest {
     @Test
     fun `createNewspaperItem should ignore URN if is is a physical item`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
@@ -539,6 +546,7 @@ class NewspaperServiceTest {
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.createContainerIfNotExists(any(), any()) } returns Mono.just(collectionsLocationObjectMock)
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockItemB)
 
         // Given that the item is physical and has a container ID
         val barcode = "123"
@@ -561,6 +569,7 @@ class NewspaperServiceTest {
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockItemB)
 
         // Given that the item is digital
         val testItem = newspaperInputDtoItemMockB.copy(digital = true, containerId = "123")
@@ -582,6 +591,7 @@ class NewspaperServiceTest {
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockItemB)
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockItemB)
 
         // Given that the item is physical and does not have a container ID
         val testItem = newspaperInputDtoItemMockB.copy(digital = false, containerId = null)
@@ -600,8 +610,9 @@ class NewspaperServiceTest {
     @Test
     fun `createManifestation should throw CollectionsManifestationNotFound if manifestation could not be found`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER, null, null)
             .test()
             .expectSubscription()
             .expectErrorMatches {
@@ -614,9 +625,10 @@ class NewspaperServiceTest {
     @Test
     fun `createManifestation should return correctly mapped manifestation record`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER, null, null)
             .test()
             .expectSubscription()
             .assertNext {
@@ -628,6 +640,7 @@ class NewspaperServiceTest {
     @Test
     fun `createManifestation should correctly encode the manifestation object sent to json string`() {
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockManifestationA)
+        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
         val encodedValue = Json.encodeToString(
@@ -637,7 +650,7 @@ class NewspaperServiceTest {
                 partOfReference = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
                 date = LocalDate.now().toString(),
-                edition = TEST_NUMBER,
+                edition = "$TEST_NUMBER-U-U",
                 inputName = TEST_USERNAME,
                 inputNotes = INPUT_NOTES,
                 inputSource = "newspaper",
@@ -645,11 +658,11 @@ class NewspaperServiceTest {
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                 dataset = "newspaper",
                 notes = TEST_NOTES,
-                alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, "Nummer"))
+                alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, "Årgang"))
             )
         )
 
-        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER)
+        newspaperService.createManifestation("1", LocalDate.now(), TEST_USERNAME, TEST_NOTES, TEST_NUMBER, null, null)
             .test()
             .expectSubscription()
             .assertNext {

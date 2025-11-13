@@ -209,9 +209,9 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        argang: String?,
-        avisnr: String?,
-        versjon: String?
+        volume: String?,
+        number: String?,
+        version: String?
     ): Mono<CollectionsObject> {
         val idResponse = maxitService.getUniqueIds()
         val dto: ManifestationDto = createManifestationDto(
@@ -222,9 +222,9 @@ class NewspaperService (
             date,
             username,
             notes,
-            argang,
-            avisnr,
-            versjon
+            volume,
+            number,
+            version
         )
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.createRecord(encodedBody)
@@ -259,13 +259,13 @@ class NewspaperService (
             }
     }
 
-    fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> { // TODO: Årgang, avisnr, versjon ???
+    fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
         return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.volume, item.number, item.version)
                 }
             }.map { mapCollectionsObjectToGenericItem(it) }
     }
@@ -363,12 +363,12 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        argang: String? = null,
-        avisnr: String? = null,
-        versjon: String? = null
+        volume: String? = null,
+        number: String? = null,
+        version: String? = null
     ): Mono<CollectionsObject> {
         return collectionsService.getManifestations(
-            date, titleId, argang, avisnr, versjon
+            date, titleId, volume, number, version
         ).flatMap {
             if (!it.hasObjects()) {
                 createManifestation(
@@ -376,9 +376,9 @@ class NewspaperService (
                     date,
                     username,
                     notes,
-                    argang,
-                    avisnr,
-                    versjon
+                    volume,
+                    number,
+                    version
                 )
             } else {
                 Mono.just(it.getFirstObject())

@@ -26,7 +26,8 @@ import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
-import no.nb.bikube.newspaper.service.UniqueIdService
+import no.nb.bikube.newspaper.model.ParsedIdResponse
+import no.nb.bikube.newspaper.service.MaxitService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,7 +52,7 @@ class ItemControllerIntegrationTest {
     private lateinit var collectionsService: CollectionsService
 
     @MockkBean
-    private lateinit var uniqueIdService: UniqueIdService
+    private lateinit var maxitService: MaxitService
 
     private val titleId = collectionsModelMockTitleA.getFirstId()!!
     private val manifestationId = collectionsModelMockManifestationC.getFirstId()!!
@@ -85,7 +86,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.updateRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.deleteRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { uniqueIdService.getUniqueId() } returns itemId
+        every { maxitService.getUniqueIds() } returns ParsedIdResponse(itemId, "NP-$itemId")
 
         val encodedBody = slot<String>()
         every { collectionsService.createRecord(capture(encodedBody)) } answers {
