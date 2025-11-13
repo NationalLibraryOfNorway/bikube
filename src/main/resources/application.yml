@@ -48,6 +48,9 @@ security:
 collections:
   url: ${COLLECTIONS_URL}
 
+maxit:
+  url: ${MAXIT_URL}
+
 alma:
   alma-sru-url: ${ALMA_SRU_URL}
   alma-ws-url: ${ALMA_WS_URL}

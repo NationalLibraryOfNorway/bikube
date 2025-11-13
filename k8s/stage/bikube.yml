@@ -37,6 +37,8 @@ spec:
                 secretKeyRef:
                   name: bikube-secrets
                   key: password
+            - name: MAXIT_URL
+              value: https://k8s.stage.nb.no/maxit
             - name: COLLECTIONS_URL
               valueFrom:
                 secretKeyRef:

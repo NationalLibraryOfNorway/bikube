@@ -14,7 +14,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
 import no.nb.bikube.core.model.Title
@@ -31,7 +31,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.returnResult
-import org.springframework.web.util.UriBuilder
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration
@@ -43,7 +42,7 @@ class CoreControllerIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var collectionsRepository: CollectionsRepository
+    private lateinit var collectionsService: CollectionsService
 
     @MockkBean
     private lateinit var titleIndexService: TitleIndexService
@@ -57,13 +56,13 @@ class CoreControllerIntegrationTest (
         // Needed to run properly in GitHub Actions
         webClient = webClient.mutate().responseTimeout(Duration.ofSeconds(60)).build()
 
-        every { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsRepository.getManifestations(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsRepository.getManifestations(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
+        every { collectionsService.getManifestations(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsService.getManifestations(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
                 collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -411,8 +410,8 @@ class CoreControllerIntegrationTest (
             .expectNext(expectedItem)
             .verifyComplete()
 
-        verify(exactly = 1) { collectionsRepository.getManifestations(any(), "1") }
-        verify(exactly = 1) { collectionsRepository.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) }
+        verify(exactly = 1) { collectionsService.getManifestations(any(), "1") }
+        verify(exactly = 1) { collectionsService.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) }
     }
 
     @Test

@@ -92,7 +92,10 @@ class NewspaperMockData {
             username = TEST_USERNAME,
             digital = true,
             urn = "avisa_null_null_20200105_1_1_1",
-            containerId = null
+            containerId = null,
+            number = "12",
+            volume = "13",
+            version = "14"
         )
 
         // Minimum valid for creating digital item
@@ -103,7 +106,10 @@ class NewspaperMockData {
             digital = true,
             urn = "avisa_null_null_20200101_1_1_1",
             itemStatus = "Digitalisert",
-            containerId = null
+            containerId = null,
+            number = "15",
+            volume = "16",
+            version = "17"
         )
 
         val language: Language = Language(
@@ -114,6 +120,12 @@ class NewspaperMockData {
         val urnMock = AlternativeNumberInput(
             name = newspaperItemMockB.urn!!,
             type = "URN"
+        )
+
+        val newspaperAlternativeNumbers = listOf(
+            AlternativeNumberInput("1", "Årgang"),
+            AlternativeNumberInput("1", "Avisnr"),
+            AlternativeNumberInput("1", "Versjon"),
         )
 
         val missingItemDtoMock = MissingPeriodicalItemDto(

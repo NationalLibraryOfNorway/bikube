@@ -8,8 +8,7 @@ import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.catalogue.collections.mapper.*
 import no.nb.bikube.catalogue.collections.model.*
 import no.nb.bikube.catalogue.collections.model.dto.*
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
-import no.nb.bikube.catalogue.collections.service.CollectionsLocationService
+import no.nb.bikube.catalogue.collections.service.CollectionsService
 import no.nb.bikube.core.enum.*
 import no.nb.bikube.core.exception.*
 import no.nb.bikube.core.model.*
@@ -17,6 +16,7 @@ import no.nb.bikube.core.model.inputDto.ItemInputDto
 import no.nb.bikube.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -27,17 +27,17 @@ import java.time.LocalDate
 @Service
 class NewspaperService (
     private val collectionsConfig: CollectionsConfig,
-    private val collectionsRepository: CollectionsRepository,
-    private val collectionsLocationService: CollectionsLocationService,
-    private val uniqueIdService: UniqueIdService
+    @param:Qualifier("collectionsNewspaperService")
+    private val collectionsService: CollectionsService,
+    private val maxitService: MaxitService
 ) {
 
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
-        val id = uniqueIdService.getUniqueId()
-        val dto: TitleDto = createTitleDto(id, title, CollectionsDatabase.NEWSPAPER)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: TitleDto = createTitleDto(idResponse.priref, idResponse.objectNumber, title, CollectionsDatabase.NEWSPAPER)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createNewspaperRecord(encodedBody)
+        return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -49,21 +49,21 @@ class NewspaperService (
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleItem(catalogId: String): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.ITEM) }
             .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleManifestationAsItem(catalogId: String): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModel(catalogId)
+        return collectionsService.getSingleCollectionsModel(catalogId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION) }
             .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
-        return collectionsRepository.getSingleCollectionsModelWithoutChildren(catalogId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
             .map { mapCollectionsObjectToGenericTitle(it) }
     }
@@ -75,7 +75,7 @@ class NewspaperService (
     }
 
     fun getTitlesPage(pageNumber: Int): Mono<Tuple2<List<Title>, Int>> {
-        val pageContent = collectionsRepository.getAllNewspaperTitles(pageNumber)
+        val pageContent = collectionsService.getAllWorks(pageNumber)
             .mapNotNull { model ->
                 model.getObjects()
                     ?. map { mapCollectionsObjectToGenericTitle(it) }
@@ -95,10 +95,10 @@ class NewspaperService (
         date: LocalDate,
         isDigital: Boolean?
     ): Flux<CatalogueRecord> {
-        return collectionsRepository.getManifestations(date, titleCatalogId)
+        return collectionsService.getManifestations(date, titleCatalogId)
             .flatMapIterable { it.getObjects() ?: emptyList() }
             .flatMap { briefManifestation ->
-                collectionsRepository.getSingleCollectionsModel(briefManifestation.priRef)
+                collectionsService.getSingleCollectionsModel(briefManifestation.priRef)
                     .flatMapIterable { it.getObjects() ?: emptyList() }
                     .flatMapIterable { it.getParts() ?: emptyList() }
                     .filter { if (isDigital != null) filterByFormat(it, isDigital) else true }
@@ -121,12 +121,12 @@ class NewspaperService (
     ): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
         val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher, username))
-        return collectionsRepository.searchPublisher(publisher)
+        return collectionsService.searchPublisher(publisher)
             .flatMap { collectionsModel ->
                 if (collectionsModel.hasObjects()) {
                     Mono.error(RecordAlreadyExistsException("Publisher '$publisher' already exists"))
                 } else {
-                    collectionsRepository.createNameRecord(serializedBody, CollectionsDatabase.PEOPLE)
+                    collectionsService.createNameRecord(serializedBody, CollectionsDatabase.PEOPLE)
                         .map { mapCollectionsObjectToGenericPublisher(it.getFirstObject()) }
                 }
             }
@@ -137,7 +137,7 @@ class NewspaperService (
         username: String
     ): Mono<PublisherPlace> {
         if (publisherPlace.isEmpty()) throw BadRequestBodyException("Publisher place cannot be empty.")
-        return collectionsRepository.searchPublisherPlace(publisherPlace)
+        return collectionsService.searchPublisherPlace(publisherPlace)
             .handle { collectionsTermModel, synchronousSink ->
                 if (collectionsTermModel.hasObjects())
                     synchronousSink.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
@@ -153,7 +153,7 @@ class NewspaperService (
                     )
             }
             .flatMap { serializedBody ->
-                collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
+                collectionsService.createTermRecord(serializedBody, CollectionsDatabase.GEO_LOCATIONS)
                     .map { mapCollectionsObjectToGenericPublisherPlace(it.getFirstObject()) }
             }
     }
@@ -165,7 +165,7 @@ class NewspaperService (
         if (!Regex("^[a-z]{3}$").matches(language)) {
             throw BadRequestBodyException("Language code must be a valid ISO-639-2 language code.")
         }
-        return collectionsRepository.searchLanguage(language)
+        return collectionsService.searchLanguage(language)
             .handle { collectionsTermModel, synchronousSink ->
                 if (collectionsTermModel.hasObjects())
                     synchronousSink.error(RecordAlreadyExistsException("Language '$language' already exists"))
@@ -181,7 +181,7 @@ class NewspaperService (
                     )
             }
             .flatMap { serializedBody ->
-                collectionsRepository.createTermRecord(serializedBody, CollectionsDatabase.LANGUAGES)
+                collectionsService.createTermRecord(serializedBody, CollectionsDatabase.LANGUAGES)
                     .map { mapCollectionsObjectToGenericLanguage(it.getFirstObject()) }
             }
     }
@@ -209,12 +209,25 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        number: String?
+        volume: String?,
+        number: String?,
+        version: String?
     ): Mono<CollectionsObject> {
-        val id = uniqueIdService.getUniqueId()
-        val dto: ManifestationDto = createManifestationDto(id, titleCatalogueId, CollectionsDatabase.NEWSPAPER, date, username, notes, number)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: ManifestationDto = createManifestationDto(
+            idResponse.priref,
+            idResponse.objectNumber,
+            titleCatalogueId,
+            CollectionsDatabase.NEWSPAPER,
+            date,
+            username,
+            notes,
+            volume,
+            number,
+            version
+        )
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createNewspaperRecord(encodedBody)
+        return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -225,7 +238,7 @@ class NewspaperService (
 
     @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
@@ -237,7 +250,7 @@ class NewspaperService (
                     if (item.digital == true) {
                         createLinkedNewspaperItem(item, manifestation.priRef)
                     } else if (!item.containerId.isNullOrBlank()) {
-                        collectionsLocationService.createContainerIfNotExists(item.containerId, item.username)
+                        collectionsService.createContainerIfNotExists(item.containerId, item.username)
                             .then(createLinkedNewspaperItem(item, manifestation.priRef))
                     } else {
                         Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
@@ -247,18 +260,18 @@ class NewspaperService (
     }
 
     fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
-        return collectionsRepository.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
             .flatMap { title ->
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
+                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.volume, item.number, item.version)
                 }
             }.map { mapCollectionsObjectToGenericItem(it) }
     }
 
     fun updatePhysicalNewspaper(updateDto: ItemUpdateDto): Mono<CollectionsObject> {
-        return collectionsRepository.getSingleCollectionsModelWithoutChildren(updateDto.manifestationId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(updateDto.manifestationId)
             .flatMap { manifestation ->
                 if (manifestation.hasError()) {
                     Mono.error(CollectionsException("Error when updating manifestation: ${manifestation.getError()}"))
@@ -273,7 +286,7 @@ class NewspaperService (
     }
 
     fun deletePhysicalItemByManifestationId(manifestationId: String, deleteManifestation: Boolean): Mono<CollectionsModel> {
-        return collectionsRepository.getSingleCollectionsModel(manifestationId)
+        return collectionsService.getSingleCollectionsModel(manifestationId)
             .flatMap { manifestation ->
                 if (manifestation.hasObjects() && manifestation.getFirstObject().getRecordType() == CollectionsRecordType.MANIFESTATION) {
                     deleteItemAndManifestationIfNoOtherItems(manifestation.getFirstObject(), deleteManifestation)
@@ -314,13 +327,13 @@ class NewspaperService (
 
         return if (physicalItems?.size == 1 && firstPhysicalItem?.partsReference != null) {
             if (allItems.size == 1 && deleteManifestation) {
-                collectionsRepository.deleteNewspaperRecord(firstPhysicalItem.partsReference.priRef)
-                    .then(collectionsRepository.deleteNewspaperRecord(manifestation.priRef))
+                collectionsService.deleteRecord(firstPhysicalItem.partsReference.priRef)
+                    .then(collectionsService.deleteRecord(manifestation.priRef))
             } else {
-                collectionsRepository.deleteNewspaperRecord(firstPhysicalItem.partsReference.priRef)
+                collectionsService.deleteRecord(firstPhysicalItem.partsReference.priRef)
             }
         } else if (allItems.isNullOrEmpty() && deleteManifestation) {
-            collectionsRepository.deleteNewspaperRecord(manifestation.priRef)
+            collectionsService.deleteRecord(manifestation.priRef)
         } else if (allItems.isNullOrEmpty()) {
             Mono.error(CollectionsException("Manifestation had no items, expected at least 1"))
         } else {
@@ -332,10 +345,10 @@ class NewspaperService (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val uniqueId = uniqueIdService.getUniqueId()
-        val dto: ItemDto = createNewspaperItemDto(uniqueId, item, CollectionsDatabase.NEWSPAPER, parentId)
+        val idResponse = maxitService.getUniqueIds()
+        val dto: ItemDto = createNewspaperItemDto(idResponse.priref, idResponse.objectNumber, item, CollectionsDatabase.NEWSPAPER, parentId)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.createNewspaperRecord(encodedBody)
+        return collectionsService.createRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())
@@ -350,13 +363,23 @@ class NewspaperService (
         date: LocalDate,
         username: String,
         notes: String?,
-        number: String?
+        volume: String? = null,
+        number: String? = null,
+        version: String? = null
     ): Mono<CollectionsObject> {
-        return collectionsRepository.getManifestations(
-            date, titleId, number
+        return collectionsService.getManifestations(
+            date, titleId, volume, number, version
         ).flatMap {
             if (!it.hasObjects()) {
-                createManifestation(titleId, date, username, notes, number)
+                createManifestation(
+                    titleId,
+                    date,
+                    username,
+                    notes,
+                    volume,
+                    number,
+                    version
+                )
             } else {
                 Mono.just(it.getFirstObject())
             }
@@ -368,7 +391,7 @@ class NewspaperService (
     ): Mono<CollectionsObject> {
         val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
-        return collectionsRepository.updateNewspaperRecord(encodedBody)
+        return collectionsService.updateRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
                     sink.next(collectionsModel.getFirstObject())

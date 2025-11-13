@@ -13,6 +13,9 @@ class ManifestationDto (
     @SerialName("priref")
     val priRef: String,
 
+    @SerialName("Title")
+    val title: List<CollectionsTitleDto>? = null,
+
     @SerialName("object_number")
     val objectNumber: String,
 
@@ -55,22 +58,28 @@ class ManifestationDto (
 
 fun createManifestationDto(
     id: String,
+    objectNumber: String,
     parentCatalogueId: String,
     database: CollectionsDatabase,
     date: LocalDate,
     username: String,
     notes: String? = null,
-    number: String? = null
+    volume: String? = null,
+    number: String? = null,
+    version: String? = null
 ): ManifestationDto {
-    val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
-
+    val edition = listOfNotNull(
+        volume?.takeIf { it.isNotBlank() } ?: "U",
+        number?.takeIf { it.isNotBlank() } ?: "U",
+        version?.takeIf { it.isNotBlank() } ?: "U"
+    ).joinToString("-")
     return ManifestationDto(
         priRef = id,
-        objectNumber = "NP-$id",
+        objectNumber = objectNumber,
         partOfReference = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
-        edition = number,
+        edition = edition,
         inputName = username,
         inputNotes = "Registrert i Bikube API",
         inputSource = database.value,
@@ -78,6 +87,10 @@ fun createManifestationDto(
         inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = database.value,
         notes = notes,
-        alternativeNumbers = altNumbers
+        alternativeNumbers = listOfNotNull(
+            volume?.let { AlternativeNumberInput(it, "Årgang") },
+            number?.let { AlternativeNumberInput(it, "Avisnr") },
+            version?.let { AlternativeNumberInput(it, "Versjon") },
+        )
     )
 }

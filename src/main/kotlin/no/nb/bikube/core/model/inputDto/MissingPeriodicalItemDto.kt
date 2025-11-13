@@ -7,5 +7,7 @@ data class MissingPeriodicalItemDto(
     val titleCatalogueId: String,
     val username: String,
     val notes: String? = null,
-    val number: String? = null
+    val volume: String? = null,
+    val number: String? = null,
+    val version: String? = null
 )

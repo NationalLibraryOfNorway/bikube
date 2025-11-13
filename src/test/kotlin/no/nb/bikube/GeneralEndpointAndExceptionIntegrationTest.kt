@@ -6,7 +6,7 @@ import no.nb.bikube.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsManifestationNotFound
 import no.nb.bikube.catalogue.collections.exception.CollectionsTitleNotFound
-import no.nb.bikube.catalogue.collections.repository.CollectionsRepository
+import no.nb.bikube.catalogue.collections.service.CollectionsService
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.exception.BadRequestBodyException
 import no.nb.bikube.core.exception.NotSupportedException
@@ -34,7 +34,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
     @Autowired private var webClient: WebTestClient
 ){
     @MockkBean
-    private lateinit var collectionsRepository: CollectionsRepository
+    private lateinit var collectionsService: CollectionsService
 
     private fun getItem(): ResponseSpec {
         return webClient
@@ -82,7 +82,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsException should return 500 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsException(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsException(null))
         getItem()
             .expectStatus().is5xxServerError
             .returnResult<ProblemDetail>()
@@ -102,7 +102,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsTitleNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsTitleNotFound(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsTitleNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -122,7 +122,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `NotSupportedException should return 400 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(NotSupportedException(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(NotSupportedException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -141,7 +141,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `BadRequestBodyException should return 400 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(BadRequestBodyException(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(BadRequestBodyException(null))
         getItem()
             .expectStatus().isBadRequest
             .returnResult<ProblemDetail>()
@@ -160,7 +160,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `RecordAlreadyExistsException should return 409 conflict with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(RecordAlreadyExistsException(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(RecordAlreadyExistsException(null))
         getItem()
             .expectStatus().is4xxClientError
             .returnResult<ProblemDetail>()
@@ -179,7 +179,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsItemNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsItemNotFound(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsItemNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
@@ -200,7 +200,7 @@ class GeneralEndpointAndExceptionIntegrationTest (
 
     @Test
     fun `CollectionsManifestationNotFound should return 404 with proper ProblemDetail`() {
-        every { collectionsRepository.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
+        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.error(CollectionsManifestationNotFound(null))
         getItem()
             .expectStatus().isNotFound
             .returnResult<ProblemDetail>()
