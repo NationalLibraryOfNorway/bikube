@@ -1,14 +1,14 @@
-package no.nb.bikube.catalogue.collections.service
+package no.nb.bikube.api.catalogue.collections.service
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationModelMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
-import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.emptyCollectionsLocationModelMock
-import no.nb.bikube.catalogue.collections.config.CollectionsWebClientConfig
-import no.nb.bikube.catalogue.collections.model.CollectionsLocationModel
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationModelMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsLocationObjectMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.emptyCollectionsLocationModelMock
+import no.nb.bikube.api.catalogue.collections.config.CollectionsWebClientConfig
+import no.nb.bikube.api.catalogue.collections.model.CollectionsLocationModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

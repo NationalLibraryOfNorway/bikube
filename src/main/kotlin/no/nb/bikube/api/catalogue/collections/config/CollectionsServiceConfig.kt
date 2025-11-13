@@ -1,7 +1,7 @@
-package no.nb.bikube.catalogue.collections.config
+package no.nb.bikube.api.catalogue.collections.config
 
-import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
-import no.nb.bikube.catalogue.collections.service.CollectionsService
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.api.catalogue.collections.service.CollectionsService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/main/kotlin/no/nb/bikube/api/catalogue/collections/service/CollectionsService.kt
 package no.nb.bikube.api.catalogue.collections.service
 
 import kotlinx.serialization.encodeToString
@@ -250,3 +251,5 @@ class CollectionsService(
             )
     }
 }
+========
+>>>>>>>> 06a689e (Feat: Use new values for newspapers (TT-2079) (#114)):src/main/kotlin/no/nb/bikube/api/catalogue/collections/repository/CollectionsRepository.kt

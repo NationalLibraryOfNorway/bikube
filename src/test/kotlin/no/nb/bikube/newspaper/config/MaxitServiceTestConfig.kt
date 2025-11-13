@@ -2,7 +2,7 @@ package no.nb.bikube.newspaper.config
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nb.bikube.newspaper.model.ParsedIdResponse
+import no.nb.bikube.api.newspaper.model.ParsedIdResponse
 import no.nb.bikube.newspaper.service.MaxitService
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
