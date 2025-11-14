@@ -9,6 +9,8 @@ management:
     port: 8088
 
 spring:
+  application:
+    name: bikube
   webflux:
     base-path: /bikube
   security:
