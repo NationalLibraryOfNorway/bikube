@@ -1,15 +1,15 @@
-package no.nb.bikube.newspaper.controller
+package no.nb.bikube.api.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.verify
-import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.core.exception.BadRequestBodyException
 import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.api.core.model.Language
 import no.nb.bikube.api.core.model.Publisher
 import no.nb.bikube.api.core.model.PublisherPlace
+import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
