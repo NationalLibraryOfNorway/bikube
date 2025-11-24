@@ -1,10 +1,12 @@
-<<<<<<<< HEAD:src/main/kotlin/no/nb/bikube/api/catalogue/collections/service/CollectionsService.kt
 package no.nb.bikube.api.catalogue.collections.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.api.catalogue.collections.config.CollectionsWebClientConfig
-import no.nb.bikube.api.catalogue.collections.enum.*
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsNameType
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsTermType
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.api.catalogue.collections.model.*
@@ -251,5 +253,3 @@ class CollectionsService(
             )
     }
 }
-========
->>>>>>>> 06a689e (Feat: Use new values for newspapers (TT-2079) (#114)):src/main/kotlin/no/nb/bikube/api/catalogue/collections/repository/CollectionsRepository.kt
