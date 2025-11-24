@@ -1,10 +1,9 @@
-package no.nb.bikube.newspaper.service
+package no.nb.bikube.api.newspaper.service
 
 import no.nb.bikube.api.newspaper.model.IdResponse
 import no.nb.bikube.api.newspaper.model.ParsedIdResponse
 import no.nb.bikube.api.newspaper.model.toParsedIdResponse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 

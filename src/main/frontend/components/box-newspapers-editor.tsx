@@ -6,9 +6,9 @@ import {Switch} from "@/components/ui/switch";
 import {Plus, Save, Trash2} from "lucide-react";
 import {format, addDays, parseISO, isValid} from "date-fns";
 import {nb} from "date-fns/locale";
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
 import {HuginNewspaperService} from "@/generated/endpoints";
-import Newspaper from "@/generated/no/nb/bikube/hugin/model/Newspaper";
+import Newspaper from "@/generated/no/nb/bikube/hugin/model/dbo/Newspaper";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useAddNewspapers} from "@/hooks/use-create-item";
 

@@ -1,6 +1,6 @@
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {HuginNewspaperService} from '@/generated/endpoints';
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
 import {keys} from "@/query/keys";
 
 export function useHuginTitle(titleId: number) {

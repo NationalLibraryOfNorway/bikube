@@ -9,7 +9,7 @@ import TitleCommentForm from "@/components/title-comment-form";
 import ContactForm from "@/components/contact-form";
 import ReleasePatternForm from "@/components/release-pattern-form";
 import BoxCreateModal from "@/components/box-create-modal";
-import Box from "@/generated/no/nb/bikube/hugin/model/Box";
+import Box from "@/generated/no/nb/bikube/hugin/model/dbo/Box";
 import BoxNewspapersEditor from "@/components/box-newspapers-editor";
 
 export const config: ViewConfig = {
@@ -26,7 +26,7 @@ export default function CatalogueTitleView() {
     const {catalogueTitle} = useCatalogueTitle(catalogueTitleId!)
     const navigate = useNavigate();
     const hasBoxes = Boolean(title?.boxes?.length);
-    const activeBox: Box | undefined = title?.boxes?.find(b => b.active);
+    const activeBox: Box | undefined = title?.boxes?.find((b: { active: any; }) => b.active);
 
     if (title === null && !isLoading) {
         return (

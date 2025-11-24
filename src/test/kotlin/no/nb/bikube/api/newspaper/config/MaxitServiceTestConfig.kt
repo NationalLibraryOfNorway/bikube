@@ -1,9 +1,9 @@
-package no.nb.bikube.newspaper.config
+package no.nb.bikube.api.newspaper.config
 
 import io.mockk.every
 import io.mockk.mockk
 import no.nb.bikube.api.newspaper.model.ParsedIdResponse
-import no.nb.bikube.newspaper.service.MaxitService
+import no.nb.bikube.api.newspaper.service.MaxitService
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary

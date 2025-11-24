@@ -1,6 +1,6 @@
 import {Table, TableBody, TableCell, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import NumberInputWithButtons from "@/components/number-input";
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
 import { Form, FormikProvider, useFormik } from "formik";
 import { Button } from "@/components/ui/button";
 import { SaveIcon, Undo } from "lucide-react";

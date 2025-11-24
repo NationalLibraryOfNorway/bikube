@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {keys} from "@/query/keys";
 import {HuginNewspaperService} from "@/generated/endpoints";
-import ContactInfo from "@/generated/no/nb/bikube/hugin/model/ContactInfo";
+import ContactInfo from "@/generated/no/nb/bikube/hugin/model/dbo/ContactInfo";
 import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactType";
 import ContactUpdateDto from "@/generated/no/nb/bikube/hugin/model/dto/ContactUpdateDto";
 

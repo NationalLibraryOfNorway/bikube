@@ -34,6 +34,3 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate.globally_quoted_identifiers: true
-
-maxit:
-  base-url: http://localhost:8080/maxit

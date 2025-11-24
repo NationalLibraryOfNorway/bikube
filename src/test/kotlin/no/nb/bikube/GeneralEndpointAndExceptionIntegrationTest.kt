@@ -22,7 +22,10 @@ import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.LocalDate
@@ -195,7 +198,7 @@ class GeneralEndpointAndExceptionIntegrationTest(
     @Test
     fun `should redirect from base path to swagger without login`() {
         mockMvc
-            .perform(get("/"))
+            .perform(MockMvcRequestBuilders.get("/"))
             .andExpect(status().isMovedPermanently())
             .andExpect(redirectedUrl("/bikube/swagger-ui/index.html"))
     }

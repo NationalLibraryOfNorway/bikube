@@ -1,4 +1,4 @@
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/HuginTitle";
+import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
 import {Form, FormikProvider, useFormik} from "formik";
 import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactType";
 import {Info, MessageCirclePlus, MailPlus, Minus, SaveIcon, Undo} from "lucide-react";

@@ -2,8 +2,10 @@ package no.nb.bikube.api.newspaper.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import no.nb.bikube.api.newspaper.NewspaperMockData
 import no.nb.bikube.api.core.service.DtoValidationService
+import no.nb.bikube.api.newspaper.NewspaperMockData
+import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockA
+import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
