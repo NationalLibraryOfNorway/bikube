@@ -1,15 +1,15 @@
-package no.nb.bikube.catalogue.collections.service
+package no.nb.bikube.api.catalogue.collections.service
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.nb.bikube.catalogue.collections.config.CollectionsWebClientConfig
-import no.nb.bikube.catalogue.collections.enum.*
-import no.nb.bikube.catalogue.collections.exception.CollectionsException
-import no.nb.bikube.catalogue.collections.exception.CollectionsItemNotFound
-import no.nb.bikube.catalogue.collections.model.*
-import no.nb.bikube.catalogue.collections.model.dto.CollectionsLocationDto
-import no.nb.bikube.catalogue.collections.model.dto.createContainerDto
-import no.nb.bikube.core.util.logger
+import no.nb.bikube.api.catalogue.collections.config.CollectionsWebClientConfig
+import no.nb.bikube.api.catalogue.collections.enum.*
+import no.nb.bikube.api.catalogue.collections.exception.CollectionsException
+import no.nb.bikube.api.catalogue.collections.exception.CollectionsItemNotFound
+import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.catalogue.collections.model.dto.CollectionsLocationDto
+import no.nb.bikube.api.catalogue.collections.model.dto.createContainerDto
+import no.nb.bikube.api.core.util.logger
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
