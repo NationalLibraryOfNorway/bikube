@@ -86,7 +86,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.updateRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.deleteRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
-        every { maxitService.getUniqueIds() } returns ParsedIdResponse(itemId, "NP-$itemId")
+        every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse(itemId, "NP-$itemId"))
 
         val encodedBody = slot<String>()
         every { collectionsService.createRecord(capture(encodedBody)) } answers {
