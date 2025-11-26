@@ -61,8 +61,8 @@ class CoreControllerIntegrationTest (
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsService.getManifestations(any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-        every { collectionsService.getManifestations(any(), titleId) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
+        every { collectionsService.getManifestations(any(), titleId, any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { titleIndexService.searchTitle(any()) } returns
                 collectionsModelMockAllTitles.getObjects()!!.map { mapCollectionsObjectToGenericTitle(it) }
     }
