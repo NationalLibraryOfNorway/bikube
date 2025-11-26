@@ -69,7 +69,7 @@ class TitleControllerIntegrationTest (
         every { collectionsService.createNameRecord(any(), CollectionsDatabase.PEOPLE) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsService.createTermRecord(any(), CollectionsDatabase.GEO_LOCATIONS) } returns Mono.just(collectionsTermModelMockLocationB.copy())
         every { collectionsService.createTermRecord(any(), CollectionsDatabase.LANGUAGES) } returns Mono.just(collectionsTermModelMockLanguageA.copy())
-        every { maxitService.getUniqueIds() } returns ParsedIdResponse("123", "NP-123")
+        every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse("123", "NP-123"))
     }
 
     @Test
