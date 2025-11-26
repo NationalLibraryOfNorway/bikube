@@ -89,7 +89,7 @@ class NewspaperServiceTest {
     fun mockLocalTime() {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
-        every { maxitService.getUniqueIds() } returns ParsedIdResponse("1600000000", "NP-1600000000")
+        every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse("1600000000", "NP-1600000000"))
     }
 
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
