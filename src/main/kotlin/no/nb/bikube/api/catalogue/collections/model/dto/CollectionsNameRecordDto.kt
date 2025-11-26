@@ -1,0 +1,45 @@
+package no.nb.bikube.api.catalogue.collections.model.dto
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import no.nb.bikube.api.catalogue.collections.enum.CollectionsNameType
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+
+@Serializable
+class CollectionsNameRecordDto(
+    val name: String,
+
+    @SerialName("name.type")
+    val nameType: String? = null,
+
+    @SerialName("input.date")
+    val inputDate: String? = null,
+
+    @SerialName("input.time")
+    val inputTime: String? = null,
+
+    @SerialName("input.name")
+    val inputName: String? = null,
+
+    @SerialName("input.notes")
+    val inputNotes: String? = null,
+
+    @SerialName("priref")
+    val priRef: String? = null
+)
+
+fun createNameRecordDtoFromString(
+    name: String,
+    username: String
+): CollectionsNameRecordDto {
+    return CollectionsNameRecordDto(
+        name = name,
+        nameType = CollectionsNameType.PUBLISHER.value,
+        inputDate = LocalDate.now().toString(),
+        inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+        inputName = username,
+        inputNotes = "Registrert i Bikube API"
+    )
+}
