@@ -25,6 +25,9 @@ class MaxitService(
             .uri("/id/priref-and-objectnumber")
             .retrieve()
             .bodyToMono(IdResponse::class.java)
+            .onErrorMap {
+                RuntimeException("Failed to get unique id from Maxit API", it)
+            }
             .map {
                 it.toParsedIdResponse()
             }
