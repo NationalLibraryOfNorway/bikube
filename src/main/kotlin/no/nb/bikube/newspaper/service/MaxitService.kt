@@ -4,7 +4,6 @@ import no.nb.bikube.newspaper.model.IdResponse
 import no.nb.bikube.newspaper.model.ParsedIdResponse
 import no.nb.bikube.newspaper.model.toParsedIdResponse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
@@ -12,11 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient
 // Entirely temporary service while we migrate. Will be removed when collections does the id generation for us.
 @Service
 class MaxitService(
-    @Value("\${maxit.base-url}") private val maxitBaseUrl: String
+    @Value("\${maxit.url}") private val maxitUrl: String
 ) {
     private val webClient: WebClient by lazy {
         WebClient.builder()
-            .baseUrl(maxitBaseUrl)
+            .baseUrl(maxitUrl)
             .build()
     }
 
