@@ -39,17 +39,19 @@ class NewspaperService (
 
     @Throws(CollectionsException::class)
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
-        val idResponse = maxitService.getUniqueIds()
-        val dto: TitleDto = createTitleDto(idResponse.priref, idResponse.objectNumber, title, CollectionsDatabase.NEWSPAPER)
-        val encodedBody = Json.encodeToString(dto)
-        return collectionsService.createRecord(encodedBody)
-            .handle { collectionsModel, sink ->
-                if (collectionsModel.hasObjects())
-                    sink.next(collectionsModel.getFirstObject())
-                else
-                    sink.error(CollectionsException("Error creating title: ${collectionsModel.getError()}"))
+        return maxitService.getUniqueIds()
+            .flatMap {
+                val dto: TitleDto = createTitleDto(it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
+                val encodedBody = Json.encodeToString(dto)
+                collectionsService.createRecord(encodedBody)
+                    .handle { collectionsModel, sink ->
+                        if (collectionsModel.hasObjects())
+                            sink.next(collectionsModel.getFirstObject())
+                        else
+                            sink.error(CollectionsException("Error creating title: ${collectionsModel.getError()}"))
+                    }
+                    .flatMap { getSingleTitle(it.priRef) }
             }
-            .flatMap { getSingleTitle(it.priRef) }
     }
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
@@ -218,27 +220,30 @@ class NewspaperService (
         number: String?,
         version: String?
     ): Mono<CollectionsObject> {
-        val idResponse = maxitService.getUniqueIds()
-        val dto: ManifestationDto = createManifestationDto(
-            idResponse.priref,
-            idResponse.objectNumber,
-            titleCatalogueId,
-            CollectionsDatabase.NEWSPAPER,
-            date,
-            username,
-            notes,
-            volume,
-            number,
-            version
-        )
-        val encodedBody = Json.encodeToString(dto)
-        return collectionsService.createRecord(encodedBody)
-            .handle { collectionsModel, sink ->
-                if (collectionsModel.hasObjects())
-                    sink.next(collectionsModel.getFirstObject())
-                else
-                    sink.error(CollectionsException("Error creating manifestation: ${collectionsModel.getError()}"))
+        return maxitService.getUniqueIds()
+            .flatMap {
+                val dto: ManifestationDto = createManifestationDto(
+                    it.priref,
+                    it.objectNumber,
+                    titleCatalogueId,
+                    CollectionsDatabase.NEWSPAPER,
+                    date,
+                    username,
+                    notes,
+                    volume,
+                    number,
+                    version
+                )
+                val encodedBody = Json.encodeToString(dto)
+                collectionsService.createRecord(encodedBody)
+                    .handle { collectionsModel, sink ->
+                        if (collectionsModel.hasObjects())
+                            sink.next(collectionsModel.getFirstObject())
+                        else
+                            sink.error(CollectionsException("Error creating manifestation: ${collectionsModel.getError()}"))
+                    }
             }
+
     }
 
     @Throws(CollectionsItemNotFound::class)
@@ -350,17 +355,20 @@ class NewspaperService (
         item: ItemInputDto,
         parentId: String
     ): Mono<Item> {
-        val idResponse = maxitService.getUniqueIds()
-        val dto: ItemDto = createNewspaperItemDto(idResponse.priref, idResponse.objectNumber, item, CollectionsDatabase.NEWSPAPER, parentId)
-        val encodedBody = Json.encodeToString(dto)
-        return collectionsService.createRecord(encodedBody)
-            .handle { collectionsModel, sink ->
-                if (collectionsModel.hasObjects())
-                    sink.next(collectionsModel.getFirstObject())
-                else
-                    sink.error(CollectionsException("Error creating item: ${collectionsModel.getError()}"))
+        return maxitService.getUniqueIds()
+            .flatMap {
+                val dto: ItemDto = createNewspaperItemDto(it.priref, it.objectNumber, item, CollectionsDatabase.NEWSPAPER, parentId)
+                val encodedBody = Json.encodeToString(dto)
+                collectionsService.createRecord(encodedBody)
+                    .handle { collectionsModel, sink ->
+                        if (collectionsModel.hasObjects())
+                            sink.next(collectionsModel.getFirstObject())
+                        else
+                            sink.error(CollectionsException("Error creating item: ${collectionsModel.getError()}"))
+                    }
+                    .flatMap { getSingleItem(it.priRef) }
             }
-            .flatMap { getSingleItem(it.priRef) }
+
     }
 
     private fun findOrCreateManifestationRecord(
