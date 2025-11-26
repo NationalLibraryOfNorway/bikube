@@ -9,4 +9,4 @@ app.scheduling.enabled: false
 collections.direct-link: http://collections.com/link/{id}
 
 maxit:
-  base-url: http://localhost:8080/maxit
+  url: http://localhost:8080/maxit
