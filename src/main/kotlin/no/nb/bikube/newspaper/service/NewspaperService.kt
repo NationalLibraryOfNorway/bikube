@@ -248,7 +248,14 @@ class NewspaperService (
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.number)
+                    findOrCreateManifestationRecord(
+                        titleId = item.titleCatalogueId,
+                        date = item.date,
+                        username = item.username,
+                        notes = item.notes,
+                        volume = item.volume,
+                        number = item.number,
+                        version = item.version)
                 }
             }.flatMap { manifestation ->
                 checkForExistingItems(manifestation, item).then(
@@ -270,7 +277,15 @@ class NewspaperService (
                 if (title.hasError() || !title.hasObjects()) {
                     Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
                 } else {
-                    findOrCreateManifestationRecord(item.titleCatalogueId, item.date, item.username, item.notes, item.volume, item.number, item.version)
+                    findOrCreateManifestationRecord(
+                        titleId = item.titleCatalogueId,
+                        date = item.date,
+                        username = item.username,
+                        notes = item.notes,
+                        volume = item.volume,
+                        number = item.number,
+                        version = item.version
+                    )
                 }
             }.map { mapCollectionsObjectToGenericItem(it) }
     }

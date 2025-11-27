@@ -83,7 +83,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationC.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
-        every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.updateRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.deleteRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse(itemId, "NP-$itemId"))
@@ -171,7 +171,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB.copy())
-        every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { collectionsService.createRecord(any()) } answers {
             val dto = json.decodeFromString<DtoMock>(firstArg<String>())
             when (dto.recordType) {
@@ -195,7 +195,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
-        every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
 
         createItem(item)
             .expectStatus().isEqualTo(409)
@@ -283,7 +283,7 @@ class ItemControllerIntegrationTest {
     @Test
     fun `post missing-item create correct manifestation if not found`() {
         every { collectionsService.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
-        every { collectionsService.getManifestations(any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         webClient
             .post()
