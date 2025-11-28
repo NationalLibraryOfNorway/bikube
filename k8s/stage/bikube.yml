@@ -44,16 +44,6 @@ spec:
                 secretKeyRef:
                   name: collections-secret
                   key: COLLECTIONS_URL
-            - name: COLLECTIONS_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: collections-secret
-                  key: COLLECTIONS_USERNAME
-            - name: COLLECTIONS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: collections-secret
-                  key: COLLECTIONS_PASSWORD
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 secretKeyRef:
