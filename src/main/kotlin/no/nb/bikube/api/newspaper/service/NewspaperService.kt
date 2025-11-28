@@ -5,10 +5,6 @@ import kotlinx.serialization.json.Json
 import no.nb.bikube.api.catalogue.collections.config.CollectionsConfig
 import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.api.catalogue.collections.enum.*
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsTermType
 import no.nb.bikube.api.catalogue.collections.exception.*
 import no.nb.bikube.api.catalogue.collections.mapper.*
 import no.nb.bikube.api.catalogue.collections.model.*
