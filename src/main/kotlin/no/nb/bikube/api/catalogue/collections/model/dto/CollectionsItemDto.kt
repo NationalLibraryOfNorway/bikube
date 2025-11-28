@@ -64,8 +64,8 @@ data class AlternativeNumberInput (
     @SerialName("alternative_number")
     val name: String,
 
-    @SerialName("alternative_number.type")
-    val type: String
+    @SerialName("alternative_number.type.lref")
+    val typeLref: String
 )
 
 fun createNewspaperItemDto(

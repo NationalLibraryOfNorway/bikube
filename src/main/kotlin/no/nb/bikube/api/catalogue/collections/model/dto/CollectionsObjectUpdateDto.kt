@@ -1,6 +1,7 @@
 package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.*
+import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.api.core.util.DateUtils
 import java.time.LocalDate
 import java.time.LocalTime
@@ -33,12 +34,13 @@ class CollectionsObjectUpdateDto @OptIn(ExperimentalSerializationApi::class) con
 )
 
 fun createUpdateManifestationDto(
+    lrefConfig: CollectionsLrefConfig,
     id: String,
     username: String,
     notes: String?,
     number: String?
 ): CollectionsObjectUpdateDto {
-    val altNumbers = number?.let { listOf(AlternativeNumberInput(it, "Nummer")) }
+    val altNumbers = number?.let { listOf(AlternativeNumberInput(it, lrefConfig.avisnr)) }
 
     return CollectionsObjectUpdateDto(
         priRef = id,

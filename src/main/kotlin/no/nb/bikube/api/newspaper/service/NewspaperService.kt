@@ -3,23 +3,24 @@ package no.nb.bikube.api.newspaper.service
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.api.catalogue.collections.config.CollectionsConfig
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
+import no.nb.bikube.api.catalogue.collections.enum.*
+import no.nb.bikube.api.catalogue.collections.exception.*
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.api.catalogue.collections.enum.CollectionsTermType
-import no.nb.bikube.api.catalogue.collections.exception.*
 import no.nb.bikube.api.catalogue.collections.mapper.*
 import no.nb.bikube.api.catalogue.collections.model.*
 import no.nb.bikube.api.catalogue.collections.model.dto.*
 import no.nb.bikube.api.catalogue.collections.service.CollectionsService
-import no.nb.bikube.api.core.enum.MaterialType
-import no.nb.bikube.api.core.exception.BadRequestBodyException
-import no.nb.bikube.api.core.exception.NotSupportedException
-import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
+import no.nb.bikube.api.core.enum.*
+import no.nb.bikube.api.core.exception.*
 import no.nb.bikube.api.core.model.*
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
+import no.nb.bikube.api.core.exception.BadRequestBodyException
+import no.nb.bikube.api.core.exception.NotSupportedException
+import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.api.core.model.inputDto.TitleInputDto
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
@@ -34,6 +35,7 @@ class NewspaperService (
     private val collectionsConfig: CollectionsConfig,
     @param:Qualifier("collectionsNewspaperService")
     private val collectionsService: CollectionsService,
+    private val collectionsLrefConfig: CollectionsLrefConfig,
     private val maxitService: MaxitService
 ) {
 
@@ -41,7 +43,7 @@ class NewspaperService (
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         return maxitService.getUniqueIds()
             .flatMap {
-                val dto: TitleDto = createTitleDto(it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
+                val dto: TitleDto = createTitleDto(collectionsLrefConfig, it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
                 val encodedBody = Json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
                     .handle { collectionsModel, sink ->
@@ -223,6 +225,7 @@ class NewspaperService (
         return maxitService.getUniqueIds()
             .flatMap {
                 val dto: ManifestationDto = createManifestationDto(
+                    collectionsLrefConfig,
                     it.priref,
                     it.objectNumber,
                     titleCatalogueId,
@@ -417,7 +420,7 @@ class NewspaperService (
     private fun updateManifestation(
         item: ItemUpdateDto
     ): Mono<CollectionsObject> {
-        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
+        val dto = createUpdateManifestationDto(collectionsLrefConfig, item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.updateRecord(encodedBody)
             .handle { collectionsModel, sink ->

@@ -61,6 +61,16 @@ security:
 
 collections:
   url: ${COLLECTIONS_URL}
+  lref:
+    mavisId: 2792
+    argang: 5992
+    avisnr: 8041
+    versjon: 8056
+    original-tittel: 5936
+    alternativ-tittel: 8025
+    medium-tekst: 8022
+    submedium-aviser: 8023
+    item-status-pliktavlevert: 22222222
 
 maxit:
   url: ${MAXIT_URL}

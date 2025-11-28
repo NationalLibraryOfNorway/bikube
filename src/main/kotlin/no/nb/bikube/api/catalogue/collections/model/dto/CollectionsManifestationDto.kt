@@ -2,9 +2,9 @@ package no.nb.bikube.api.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsRecordType
-import no.nb.bikube.api.catalogue.collections.model.dto.AlternativeNumberInput
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -58,6 +58,7 @@ class ManifestationDto (
 )
 
 fun createManifestationDto(
+    lrefConfig: CollectionsLrefConfig,
     id: String,
     objectNumber: String,
     parentCatalogueId: String,
@@ -89,9 +90,9 @@ fun createManifestationDto(
         dataset = database.value,
         notes = notes,
         alternativeNumbers = listOfNotNull(
-            volume?.let { AlternativeNumberInput(it, "Årgang") },
-            number?.let { AlternativeNumberInput(it, "Avisnr") },
-            version?.let { AlternativeNumberInput(it, "Versjon") },
+            volume?.let { AlternativeNumberInput(it, lrefConfig.argang) },
+            number?.let { AlternativeNumberInput(it, lrefConfig.avisnr) },
+            version?.let { AlternativeNumberInput(it, lrefConfig.versjon) },
         )
     )
 }
