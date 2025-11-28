@@ -10,3 +10,15 @@ collections.direct-link: http://collections.com/link/{id}
 
 maxit:
   url: http://localhost:8080/maxit
+
+collections:
+  lref:
+    mavisId: mavisIdLref
+    argang: argangLref
+    avisnr: avisnrLref
+    versjon: versjonLref
+    original-tittel: originalTittelLref
+    alternativ-tittel: alternativTittelLref
+    medium-tekst: mediumTekstLref
+    submedium-aviser: submediumAviserLref
+    item-status-pliktavlevert: itemStatusPliktavlevertLref

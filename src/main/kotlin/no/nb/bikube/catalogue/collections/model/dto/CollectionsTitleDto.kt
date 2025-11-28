@@ -2,6 +2,7 @@ package no.nb.bikube.catalogue.collections.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nb.bikube.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.core.model.inputDto.TitleInputDto
@@ -23,11 +24,11 @@ class TitleDto(
     @SerialName("record_type")
     val recordType: String?,
 
-    @SerialName("medium")
-    val medium: String? = null,
+    @SerialName("medium.lref")
+    val mediumLref: String? = null,
 
-    @SerialName("submedium")
-    val subMedium: String? = null,
+    @SerialName("submedium.lref")
+    val subMediumLref: String? = null,
 
     @SerialName("dating.date.start")
     val dateStart: String? = null,
@@ -67,26 +68,26 @@ class TitleDto(
 class CollectionsTitleDto(
     val title: String?,
 
-    @SerialName("title.type")
-    val titleType: String? = null,
+    @SerialName("title.type.lref")
+    val titleTypeLref: String? = null,
 
     @SerialName("title.notes")
     val titleNotes: String? = null
 )
 
-fun createTitleDto(id: String, objectNumber: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
+fun createTitleDto(lrefConfig: CollectionsLrefConfig, id: String, objectNumber: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
     return TitleDto(
         priRef = id, // TODO: After migration this will be generated automatically by collections itself
         objectNumber = objectNumber, // TODO: After migration this will be generated automatically by collections itself
-        titles = listOf(CollectionsTitleDto(title.name, "Originaltittel")),
+        titles = listOf(CollectionsTitleDto(title.name, lrefConfig.originalTittel)),
         dateStart = title.startDate?.toString(),
         dateEnd = title.endDate?.toString(),
         publisher = title.publisher,
         placeOfPublication = title.publisherPlace,
         language = title.language,
         recordType = CollectionsRecordType.WORK.value,
-        medium = "Tekst",
-        subMedium = "Aviser",
+        mediumLref = lrefConfig.mediumTekst,
+        subMediumLref = lrefConfig.submediumAviser,
         inputName = title.username,
         inputNotes = "Registrert i Bikube API",
         inputSource = database.value,

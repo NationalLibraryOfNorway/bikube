@@ -3,6 +3,14 @@ security:
 
 collections:
   url: ${COLLECTIONS_URL}
-  username: ${COLLECTIONS_USERNAME}
-  password: ${COLLECTIONS_PASSWORD}
   direct-link: ${COLLECTIONS_DIRECTLINK}
+  lref:
+    mavisId: 2792
+    argang: 5992
+    avisnr: 8041
+    versjon: 8040
+    original-tittel: 5936
+    alternativ-tittel: 8044
+    medium-tekst: 6099
+    submedium-aviser: 6326
+    item-status-pliktavlevert: 8042

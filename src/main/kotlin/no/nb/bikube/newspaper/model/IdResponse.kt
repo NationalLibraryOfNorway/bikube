@@ -8,7 +8,7 @@ data class IdResponse(
 fun IdResponse.toParsedIdResponse(): ParsedIdResponse {
     return ParsedIdResponse(
         priref = priref.toString(),
-        objectNumber = objectNumber.toString().padStart(9, '0')
+        objectNumber = "NP-" + objectNumber.toString().padStart(9, '0')
     )
 }
 

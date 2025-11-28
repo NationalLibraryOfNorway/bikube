@@ -38,22 +38,12 @@ spec:
                   name: bikube-secrets
                   key: password
             - name: MAXIT_URL
-              value: https://produksjon.nb.no/maxit
+              value: https://k8s.nb.no/maxit
             - name: COLLECTIONS_URL
               valueFrom:
                 secretKeyRef:
                   name: collections-secret
                   key: COLLECTIONS_URL
-            - name: COLLECTIONS_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: collections-secret
-                  key: COLLECTIONS_USERNAME
-            - name: COLLECTIONS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: collections-secret
-                  key: COLLECTIONS_PASSWORD
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 secretKeyRef:

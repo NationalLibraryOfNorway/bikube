@@ -2,6 +2,7 @@ package no.nb.bikube.newspaper
 
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_NOTES
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
+import no.nb.bikube.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.catalogue.collections.model.dto.AlternativeNumberInput
 import no.nb.bikube.core.enum.MaterialType
 import no.nb.bikube.core.model.Item
@@ -13,8 +14,21 @@ import no.nb.bikube.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.core.model.inputDto.TitleInputDto
 import java.time.LocalDate
 
-class NewspaperMockData {
+class NewspaperMockData (
+    private val collectionsLrefConfig: CollectionsLrefConfig
+) {
     companion object {
+        val mavisIdLref: String = "mavisIdLref"
+        val argangLref: String = "argangLref"
+        val avisnrLref: String = "avisnrLref"
+        val versjonLref: String = "versjonLref"
+        val originalTittelLref: String = "originalTittelLref"
+        val alternativTittelLref: String = "alternativTittelLref"
+        val mediumTekstLref: String = "mediumTekstLref"
+        val submediumAviserLref: String = "submediumAviserLref"
+        val itemStatusPliktavlevertLref: String = "itemStatusPliktavlevertLref"
+
+
         val newspaperTitleMockA = Title(
             name = "Avis A",
             startDate = null,
@@ -117,15 +131,10 @@ class NewspaperMockData {
             catalogueId = "1"
         )
 
-        val urnMock = AlternativeNumberInput(
-            name = newspaperItemMockB.urn!!,
-            type = "URN"
-        )
-
         val newspaperAlternativeNumbers = listOf(
-            AlternativeNumberInput("1", "Årgang"),
-            AlternativeNumberInput("1", "Avisnr"),
-            AlternativeNumberInput("1", "Versjon"),
+            AlternativeNumberInput("1", argangLref),
+            AlternativeNumberInput("1", avisnrLref),
+            AlternativeNumberInput("1", versjonLref),
         )
 
         val missingItemDtoMock = MissingPeriodicalItemDto(

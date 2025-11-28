@@ -96,6 +96,9 @@ class CollectionsService(
     @Throws(CollectionsException::class)
     fun createRecord(serializedBody: String, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
         return createRecordWebClientRequest(serializedBody, db).bodyToMono<CollectionsModel>()
+        // .bodyToMono(String::class.java)
+        //            .doOnNext { logger().info("Raw response body: $it") }
+        //            .map { Json.decodeFromString<CollectionsModel>(it) }
     }
 
     fun updateRecord(serializedBody: String, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
@@ -195,6 +198,7 @@ class CollectionsService(
     }
 
     protected fun createRecordWebClientRequest(serializedBody: String, db: CollectionsDatabase): WebClient.ResponseSpec {
+        logger().debug(serializedBody)
         return collectionsWebClient()
             .post()
             .uri {
