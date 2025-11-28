@@ -26,7 +26,7 @@ import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.col
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
-import no.nb.bikube.catalogue.collections.enum.CollectionsDatabase
+import no.nb.bikube.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.catalogue.collections.enum.CollectionsRecordType
 import no.nb.bikube.catalogue.collections.exception.CollectionsException
@@ -42,15 +42,18 @@ import no.nb.bikube.core.exception.NotSupportedException
 import no.nb.bikube.core.exception.RecordAlreadyExistsException
 import no.nb.bikube.core.model.*
 import no.nb.bikube.core.util.DateUtils
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.argangLref
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.avisnrLref
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.mediumTekstLref
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.originalTittelLref
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.missingItemDtoMock
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperAlternativeNumbers
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperInputDtoItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemMockDNoItem
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperItemUpdateDtoMockA
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleInputDtoMockB
 import no.nb.bikube.newspaper.NewspaperMockData.Companion.newspaperTitleMockB
-import no.nb.bikube.newspaper.NewspaperMockData.Companion.urnMock
+import no.nb.bikube.newspaper.NewspaperMockData.Companion.submediumAviserLref
 import no.nb.bikube.newspaper.model.ParsedIdResponse
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -119,7 +122,7 @@ class NewspaperServiceTest {
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
         dataset = "newspaper",
         partOfReference = newspaperItemMockB.catalogueId,
-        urn = urnMock.name
+        urn = newspaperItemMockB.urn
     ))
 
     private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
@@ -141,15 +144,15 @@ class NewspaperServiceTest {
     private val titleEncodedDto = Json.encodeToString(TitleDto(
         priRef = "1600000000",
         objectNumber = "NP-1600000000",
-        titles = listOf(CollectionsTitleDto(newspaperTitleMockB.name!!, "Originaltittel")),
+        titles = listOf(CollectionsTitleDto(newspaperTitleMockB.name!!, originalTittelLref)),
         dateStart = newspaperTitleMockB.startDate.toString(),
         dateEnd = newspaperTitleMockB.endDate.toString(),
         publisher = newspaperTitleMockB.publisher,
         placeOfPublication = newspaperTitleMockB.publisherPlace,
         language = newspaperTitleMockB.language,
         recordType = CollectionsRecordType.WORK.value,
-        medium = "Tekst",
-        subMedium = "Aviser",
+        mediumLref = mediumTekstLref,
+        subMediumLref = submediumAviserLref,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
         inputSource = "newspaper",
@@ -658,7 +661,7 @@ class NewspaperServiceTest {
                 inputTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                 dataset = "newspaper",
                 notes = TEST_NOTES,
-                alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, "Årgang"))
+                alternativeNumbers = listOf(AlternativeNumberInput(TEST_NUMBER, argangLref))
             )
         )
 
@@ -825,7 +828,7 @@ class NewspaperServiceTest {
         val dto = CollectionsObjectUpdateDto(
             priRef = newspaperItemUpdateDtoMockA.manifestationId,
             notes = TEST_NOTES,
-            alternativeNumbers = listOf(AlternativeNumberInput(name = newspaperItemUpdateDtoMockA.number!!, type = "Nummer")),
+            alternativeNumbers = listOf(AlternativeNumberInput(name = newspaperItemUpdateDtoMockA.number!!, typeLref = avisnrLref)),
             editName = TEST_USERNAME,
             editTime = LocalTime.now().toString(),
             editDate = DateUtils.createDateString(LocalDate.now())

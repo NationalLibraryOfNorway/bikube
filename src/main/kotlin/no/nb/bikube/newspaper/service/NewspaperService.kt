@@ -3,6 +3,7 @@ package no.nb.bikube.newspaper.service
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.catalogue.collections.config.CollectionsConfig
+import no.nb.bikube.catalogue.collections.config.CollectionsLrefConfig
 import no.nb.bikube.catalogue.collections.enum.*
 import no.nb.bikube.catalogue.collections.exception.*
 import no.nb.bikube.catalogue.collections.mapper.*
@@ -29,6 +30,7 @@ class NewspaperService (
     private val collectionsConfig: CollectionsConfig,
     @param:Qualifier("collectionsNewspaperService")
     private val collectionsService: CollectionsService,
+    private val collectionsLrefConfig: CollectionsLrefConfig,
     private val maxitService: MaxitService
 ) {
 
@@ -36,7 +38,7 @@ class NewspaperService (
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         return maxitService.getUniqueIds()
             .flatMap {
-                val dto: TitleDto = createTitleDto(it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
+                val dto: TitleDto = createTitleDto(collectionsLrefConfig, it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
                 val encodedBody = Json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
                     .handle { collectionsModel, sink ->
@@ -218,6 +220,7 @@ class NewspaperService (
         return maxitService.getUniqueIds()
             .flatMap {
                 val dto: ManifestationDto = createManifestationDto(
+                    collectionsLrefConfig,
                     it.priref,
                     it.objectNumber,
                     titleCatalogueId,
@@ -412,7 +415,7 @@ class NewspaperService (
     private fun updateManifestation(
         item: ItemUpdateDto
     ): Mono<CollectionsObject> {
-        val dto = createUpdateManifestationDto(item.manifestationId, item.username, item.notes, item.number)
+        val dto = createUpdateManifestationDto(collectionsLrefConfig, item.manifestationId, item.username, item.notes, item.number)
         val encodedBody = Json.encodeToString(dto)
         return collectionsService.updateRecord(encodedBody)
             .handle { collectionsModel, sink ->
