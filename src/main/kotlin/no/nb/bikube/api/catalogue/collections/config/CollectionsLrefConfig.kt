@@ -1,4 +1,4 @@
-package no.nb.bikube.catalogue.collections.config
+package no.nb.bikube.api.catalogue.collections.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

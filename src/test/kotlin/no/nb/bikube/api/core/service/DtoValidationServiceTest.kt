@@ -1,6 +1,6 @@
 package no.nb.bikube.api.core.service
 
-import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.TEST_USERNAME
 import no.nb.bikube.api.core.exception.BadRequestBodyException
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
