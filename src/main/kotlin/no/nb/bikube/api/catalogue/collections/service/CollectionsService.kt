@@ -38,7 +38,9 @@ class CollectionsService(
                 "and dating.date.start and dating.date.end and edition.date and publisher " +
                 "and association.geographical_keyword and language and submedium " +
                 "and format and alternative_number and alternative_number.type " +
-                "and part_of_reference and PID_data_URN and current_location.barcode"
+                "and part_of_reference and PID_data_URN and current_location.barcode " +
+                "and related_object.title and related_object.association and related_object.reference " +
+                "and related_object.reference.lref and related_object.record_type"
 
         return getRecordsWebClientRequest("priref=${titleCatalogId}", db, fields).bodyToMono<CollectionsModel>()
     }

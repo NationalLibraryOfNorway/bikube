@@ -112,6 +112,40 @@
             "publisher": "Nasjonalbiblioteket"
           }
         ],
+        "Related_object": [
+          {
+            "related_object.association": "Fortsettelse av",
+            "related_object.record_type": [
+              {
+                "@lang": "neutral",
+                "#text": "WORK"
+              },
+              {
+                "@lang": 0,
+                "#text": "Work"
+              },
+              {
+                "@lang": 1,
+                "#text": "Werk"
+              },
+              {
+                "@lang": 3,
+                "#text": "Werk"
+              },
+              {
+                "@lang": 9,
+                "#text": "Verk"
+              },
+              {
+                "@lang": 12,
+                "#text": "Verk/uttrykk"
+              }
+            ],
+            "related_object.reference": "NP-000000536",
+            "related_object.reference.lref": "1611000536",
+            "related_object.title": "Akers Avis (Lillestrøm)"
+          }
+        ],
         "Submedium": [
           {
             "submedium": "Aviser"

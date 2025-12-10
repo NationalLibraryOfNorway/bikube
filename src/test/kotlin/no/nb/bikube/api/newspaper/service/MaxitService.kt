@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 // Entirely temporary service while we migrate. Will be removed when collections does the id generation for us.
 @Service
 class MaxitService(
-    @Value("\${maxit.base-url}") private val maxitBaseUrl: String
+    @Value("\${maxit.url}") private val maxitBaseUrl: String
 ) {
     private val webClient: WebClient by lazy {
         WebClient.builder()
