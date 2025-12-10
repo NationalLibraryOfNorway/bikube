@@ -9,34 +9,7 @@ app.scheduling.enabled: false
 collections.direct-link: http://collections.com/link/{id}
 
 maxit:
-  base-url: http://localhost:8080/maxit
-
-spring:
-  datasource:
-    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate.globally_quoted_identifiers: true
-
-maxit:
   url: http://localhost:8080/maxit
-
-spring:
-  datasource:
-    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate.globally_quoted_identifiers: true
 
 collections:
   lref:
@@ -49,3 +22,16 @@ collections:
     medium-tekst: mediumTekstLref
     submedium-aviser: submediumAviserLref
     item-status-pliktavlevert: itemStatusPliktavlevertLref
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate.globally_quoted_identifiers: true
