@@ -23,6 +23,7 @@ function Calendar({
 }) {
   const defaultClassNames = getDefaultClassNames()
 
+  /* eslint-disable react/prop-types */
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -120,42 +121,34 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Root: ({ className, rootRef, ...props }: {
-          className?: string;
-          rootRef?: React.Ref<HTMLDivElement>;
-          [key: string]: unknown;
-        }) => {
+        Root: (props) => {
           return (
             <div
               data-slot="calendar"
-              ref={rootRef}
-              className={cn(className)}
+              ref={props.rootRef}
+              className={cn(props.className)}
               {...props}
             />
           )
         },
-        Chevron: ({ className, orientation, ...props }: {
-          className?: string;
-          orientation?: "left" | "right" | "up" | "down";
-          [key: string]: unknown;
-        }) => {
-          if (orientation === "left") {
+        Chevron: (props) => {
+          if (props.orientation === "left") {
             return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4", props.className)} {...props} />
             )
           }
 
-          if (orientation === "right") {
+          if (props.orientation === "right") {
             return (
               <ChevronRightIcon
-                className={cn("size-4", className)}
+                className={cn("size-4", props.className)}
                 {...props}
               />
             )
           }
 
           return (
-            <ChevronDownIcon className={cn("size-4", className)} {...props} />
+            <ChevronDownIcon className={cn("size-4", props.className)} {...props} />
           )
         },
         DayButton: CalendarDayButton,
@@ -173,6 +166,7 @@ function Calendar({
       {...props}
     />
   )
+  /* eslint-enable react/prop-types */
 }
 
 function CalendarDayButton({

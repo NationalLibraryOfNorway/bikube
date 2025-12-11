@@ -38,14 +38,14 @@ describe('useCatalogueTitles', () => {
 
     it('returns empty array when query is empty', () => {
         const { result } = renderHook(() => useCatalogueTitles(''), { wrapper });
-        
+
         expect(result.current.catalogueTitlesList).toEqual([]);
         expect(result.current.isLoading).toBe(false);
     });
 
     it('returns empty array when query is only whitespace', () => {
         const { result } = renderHook(() => useCatalogueTitles('   '), { wrapper });
-        
+
         expect(result.current.catalogueTitlesList).toEqual([]);
         expect(result.current.isLoading).toBe(false);
     });
@@ -155,7 +155,7 @@ describe('useCatalogueTitle', () => {
     });
 
     it('returns undefined when service returns nothing', async () => {
-        vi.mocked(HuginCollectionsService.findById).mockResolvedValue(undefined as any);
+        vi.mocked(HuginCollectionsService.findById).mockResolvedValue(null as any);
 
         const { result } = renderHook(() => useCatalogueTitle('456'), { wrapper });
 
