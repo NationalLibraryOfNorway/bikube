@@ -365,6 +365,12 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>npm-lint</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run lint</arguments></configuration>
+                            </execution>
+                            <execution>
                                 <id>npm-test</id>
                                 <phase>test</phase>
                                 <goals><goal>npm</goal></goals>
@@ -437,6 +443,12 @@
                                 <configuration>
                                     <arguments>run playwright-install</arguments>
                                 </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-lint</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run lint</arguments></configuration>
                             </execution>
                             <execution>
                                 <id>npm-test</id>
