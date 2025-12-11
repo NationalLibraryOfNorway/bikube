@@ -2,7 +2,7 @@ import type { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 import path from "path";
 
-const customConfig: UserConfigFn = (env) => ({
+const customConfig: UserConfigFn = () => ({
     root: path.resolve(__dirname, "src/main/frontend"),
     cacheDir: path.resolve(__dirname, "node_modules/.vite-vitest"),
     resolve: {

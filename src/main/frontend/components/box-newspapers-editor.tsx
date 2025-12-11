@@ -11,6 +11,7 @@ import {HuginNewspaperService} from "@/generated/endpoints";
 import Newspaper from "@/generated/no/nb/bikube/hugin/model/dbo/Newspaper";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useAddNewspapers} from "@/hooks/use-create-item";
+import Box from "@/generated/no/nb/bikube/hugin/model/dbo/Box";
 
 type NewspaperRow = Omit<Newspaper, "date"> & {
     date: string;
@@ -109,7 +110,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                 received: false,
                 username: undefined,
                 notes: "",
-                box: {id: activeBox.id} as any,
+                box: {id: activeBox.id} as Box,
             },
         ]);
     };
@@ -134,7 +135,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
 
         const result = await addNewspapers.mutateAsync({items: payload});
         if (Array.isArray(result)) {
-            setRows(result.map((n: any) => ({
+            setRows(result.map((n: Newspaper) => ({
                 ...n,
                 date: (n.date as string)?.slice(0, 10) ?? "",
                 _tmpId: crypto.randomUUID(),

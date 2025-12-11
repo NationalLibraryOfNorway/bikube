@@ -1,6 +1,6 @@
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BoxCreateForm from '@/components/box-create-form';
@@ -26,7 +26,7 @@ vi.mock('@/components/ui/label', () => ({
 }));
 
 vi.mock('@/components/ui/calendar', () => ({
-    Calendar: ({ selected, onSelect }: any) => (
+    Calendar: ({ onSelect }: any) => (
         <div data-testid="calendar" onClick={() => onSelect?.(new Date())}>
             Calendar
         </div>

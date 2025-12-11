@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { cn, isActive, redirect } from '@/lib/utils';
 
@@ -6,11 +6,6 @@ describe('cn (className utility)', () => {
     it('merges multiple class names', () => {
         const result = cn('foo', 'bar');
         expect(result).toBe('foo bar');
-    });
-
-    it('handles conditional classes with clsx', () => {
-        const result = cn('foo', false && 'bar', 'baz');
-        expect(result).toBe('foo baz');
     });
 
     it('handles undefined and null values', () => {

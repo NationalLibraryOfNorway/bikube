@@ -5,7 +5,27 @@ import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  { files: ["src/main/frontend/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
+  {
+      files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+      plugins: { js },
+      extends: ["js/recommended"],
+      languageOptions: { globals: globals.browser }
+  },
   tseslint.configs.recommended,
+  {
+    ignores: [
+        'src/main/frontend/generated/**/*',
+    ]
+  },
   pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
+    {
+        files: [
+            'src/main/frontend/tests/**/*'
+        ],
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off',
+        },
+    },
+
 ]);

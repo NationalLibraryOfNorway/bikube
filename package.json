@@ -174,7 +174,7 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "36c7ac73d9e9ad678b0e82086480091af75647e860d054cc0f1818c287b695f1"
+    "hash": "75e266ab5ad7c2b3e782a225995ece560623ddf747523f20ababd093bd4d5eb3"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -308,7 +308,7 @@
     "playwright-install": "npx playwright install-deps && npx playwright install chromium",
     "test": "vitest run && rm file-routes.json",
     "test-watch": "vitest watch && rm file-routes.json",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   }
 }

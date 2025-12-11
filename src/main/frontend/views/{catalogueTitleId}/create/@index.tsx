@@ -2,13 +2,9 @@ import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
 import {useNavigate, useParams} from "react-router";
 import {useHuginTitle} from "@/hooks/use-hugin-title";
 import {Button} from "@/components/ui/button";
-import {ArrowLeft, CircleQuestionMark, LoaderCircle, SaveIcon} from "lucide-react";
+import {ArrowLeft} from "lucide-react";
 import {useCatalogueTitle} from "@/hooks/use-catalogue-title";
 import ReleasePatternForm from "@/components/release-pattern-form";
-import {Field, Form, Formik} from "formik";
-import {Tooltip} from "@/components/ui/tooltip";
-import {TextArea} from "@vaadin/react-components";
-import {toast} from "sonner";
 import ContactForm from "@/components/contact-form";
 
 export const config: ViewConfig = {

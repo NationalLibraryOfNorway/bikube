@@ -1,7 +1,7 @@
 // filepath: /home/gardgu/projects/bikube/src/main/frontend/tests/views/{catalogueTitleId}/@index-test.tsx
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import CatalogueTitleView from '@/views/{catalogueTitleId}/@index';
 import userEvent from '@testing-library/user-event';
@@ -57,7 +57,7 @@ vi.mock('@/components/ui/button', () => ({
 
 vi.mock('@/components/ui/tooltip', () => ({
     Tooltip: ({ children }: any) => <>{children}</>,
-    TooltipTrigger: ({ children, asChild }: any) => <>{children}</>,
+    TooltipTrigger: ({ children }: any) => <>{children}</>,
     TooltipContent: ({ children }: any) => <span>{children}</span>
 }));
 

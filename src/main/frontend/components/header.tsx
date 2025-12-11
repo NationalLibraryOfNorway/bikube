@@ -12,7 +12,7 @@ type HeaderProps = {
     onLogout: () => void;
 };
 
-export default function Header({onToggleTheme, user, onLogout}: HeaderProps) {
+export default function Header({user, onLogout}: HeaderProps) {
     const location = useLocation();
 
     return (

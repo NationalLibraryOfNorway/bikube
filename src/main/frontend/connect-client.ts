@@ -1,5 +1,5 @@
 import { ConnectClient as ConnectClient_1 } from "@vaadin/hilla-frontend";
-import {MaybePromise, MiddlewareContext, MiddlewareNext} from "@vaadin/hilla-frontend/Connect.js";
+import {MiddlewareContext, MiddlewareNext} from "@vaadin/hilla-frontend/Connect.js";
 
 const mwareFunction = async (context: MiddlewareContext, next: MiddlewareNext) => {
     if (["GET", "POST"].includes(context.request.method) && (context.request.url.includes("/hugin/connect/"))) {
