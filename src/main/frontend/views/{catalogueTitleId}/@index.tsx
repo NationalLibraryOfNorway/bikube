@@ -26,7 +26,7 @@ export default function CatalogueTitleView() {
     const {catalogueTitle} = useCatalogueTitle(catalogueTitleId!)
     const navigate = useNavigate();
     const hasBoxes = Boolean(title?.boxes?.length);
-    const activeBox: Box | undefined = title?.boxes?.find((b: { active: any; }) => b.active);
+    const activeBox: Box | undefined = title?.boxes?.find((b: { active: boolean; }) => b.active);
 
     if (title === null && !isLoading) {
         return (

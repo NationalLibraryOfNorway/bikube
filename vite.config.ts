@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 
-const customConfig: UserConfigFn = (env) => ({
+const customConfig: UserConfigFn = () => ({
   plugins: [
     tailwindcss(),
   ],

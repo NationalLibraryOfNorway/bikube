@@ -16,7 +16,6 @@ export default function NumberInputWithButtons({
    min,
    max,
    step = 1,
-   className,
 }: NumberInputWithButtonsProps) {
     const inc = () => {
         const next = (value ?? 0) + step;

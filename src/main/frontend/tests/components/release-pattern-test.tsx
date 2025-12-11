@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import ReleasePattern from '@/components/release-pattern';

@@ -51,7 +51,6 @@ export default function ContactForm({title, fields}: {
 
         validateOnChange: true,
     })
-    const {values, handleSubmit, setFieldValue, resetForm} = formik;
 
     const phoneContacts = formik.values.contactInfos
         .map((ci, i) => [ci, i] as const)

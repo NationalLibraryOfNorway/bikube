@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -17,9 +17,9 @@ vi.mock('@/hooks/use-catalogue-title', () => ({
 vi.mock('@/components/ui/command', () => ({
     Command: ({ children, className }: any) => <div className={className}>{children}</div>,
     CommandInput: ({ placeholder, value, onValueChange }: any) => (
-        <input 
-            placeholder={placeholder} 
-            value={value} 
+        <input
+            placeholder={placeholder}
+            value={value}
             onChange={(e) => onValueChange?.(e.target.value)}
             data-testid="command-input"
         />
@@ -33,7 +33,7 @@ vi.mock('@/components/ui/command', () => ({
 
 vi.mock('@/components/ui/popover', () => ({
     Popover: ({ children }: any) => <div>{children}</div>,
-    PopoverTrigger: ({ children, asChild }: any) => <div>{children}</div>,
+    PopoverTrigger: ({ children }: any) => <div>{children}</div>,
     PopoverContent: ({ children }: any) => <div>{children}</div>
 }));
 

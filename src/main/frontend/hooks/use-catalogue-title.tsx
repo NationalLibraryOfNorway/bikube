@@ -13,8 +13,9 @@ export function useCatalogueTitles(query: string) {
     queryFn: async () => {
       try {
         return await HuginCollectionsService.findByTitle(query);
-      } catch (e: any) {
-        if (e?.response?.status === 401 || String(e?.message ?? '').includes('401')) {
+      } catch (e: unknown) {
+        if ((e as { response?: { status?: number } })?.response?.status === 401 ||
+            (e instanceof Error && e.message.includes('401'))) {
           redirect('/bikube/hugin');
           return [];
         }
@@ -38,8 +39,9 @@ export function useCatalogueTitle(id: string) {
         queryFn: async () => {
             try {
                 return await HuginCollectionsService.findById(id);
-            } catch (e: any) {
-                if (e?.response?.status === 401 || String(e?.message ?? '').includes('401')) {
+            } catch (e: unknown) {
+                if ((e as { response?: { status?: number } })?.response?.status === 401 ||
+                    (e instanceof Error && e.message.includes('401'))) {
                     redirect('/bikube/hugin');
                     return undefined;
                 }

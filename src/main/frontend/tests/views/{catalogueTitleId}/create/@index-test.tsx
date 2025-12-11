@@ -1,7 +1,7 @@
 // filepath: /home/gardgu/projects/bikube/src/main/frontend/tests/views/{catalogueTitleId}/create/@index-test.tsx
-/// <reference types="vitest" />
+import 'vitest';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import CatalogueTitleCreateView from '@/views/{catalogueTitleId}/create/@index';
 import userEvent from '@testing-library/user-event';

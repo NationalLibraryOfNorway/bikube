@@ -11,7 +11,7 @@ import Header from "@/components/header";
 
 
 function MainLayout() {
-    const {theme, toggleTheme} = useUserSettings()
+    const {toggleTheme} = useUserSettings()
     const {logout, state} = useAuth();
 
     return (<>

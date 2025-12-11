@@ -1,11 +1,11 @@
 import {clsx, type ClassValue} from "clsx"
-import {ClassNameValue, twMerge} from "tailwind-merge"
+import {twMerge} from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]): string {
     return twMerge(clsx(inputs))
 }
 
-export const isActive = (endDate?: string | null): Boolean => {
+export const isActive = (endDate?: string | null): boolean => {
     if (!endDate) return true;
     const end = new Date(endDate);
     const today = new Date();

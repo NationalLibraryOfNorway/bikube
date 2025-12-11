@@ -5,7 +5,7 @@ import Title from "@/generated/no/nb/bikube/api/core/model/Title";
 import {isActive} from "@/lib/utils";
 import {clsx} from "clsx";
 import {Badge} from "@/components/ui/badge";
-import React, {useMemo, useRef, useState} from "react";
+import {useMemo, useState} from "react";
 import {useCatalogueTitles} from "@/hooks/use-catalogue-title";
 import {useNavigate} from "react-router";
 import {useQueryClient} from "@tanstack/react-query";
