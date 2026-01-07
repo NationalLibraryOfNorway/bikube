@@ -1,5 +1,7 @@
 server:
   port: 8087
+  servlet:
+    context-path: /bikube
 
 management:
   endpoint:
@@ -9,6 +11,8 @@ management:
     port: 8088
 
 spring:
+  application:
+    name: bikube
   webflux:
     base-path: /bikube
   security:
@@ -18,10 +22,18 @@ spring:
           jwk-set-uri: https://tools.nb.no/authn/realms/tekst/protocol/openid-connect/certs
       client:
         registration:
-          keycloak:
+          keycloak-collections:
             client-id: ${KEYCLOAK_CLIENT_ID}
             client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: client_credentials
+            provider: keycloak
+          keycloak-hugin:
+            client-id: ${KEYCLOAK_HUGIN_CLIENT_ID}
+            client-secret: ${KEYCLOAK_HUGIN_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            provider: keycloak
         provider:
           keycloak:
             issuer-uri: ${KEYCLOAK_ISSUER_URI}
@@ -30,17 +42,19 @@ spring:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
-        hibernate:
-            dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: maxit
 
 springdoc:
   swagger-ui:
     enabled: true
-    use-root-path: true
+    use-root-path: false
 
 security:
   enabled: false
@@ -77,3 +91,13 @@ search-index:
   initial-delay: 1000
   rebuild-index-delay: 1800000
   searcher-refresh-delay: 600000
+
+vaadin:
+  copilot:
+    enable: false
+  url-mapping: /hugin/*
+
+logging:
+  level:
+    org.springframework.security: debug
+    com.vaadin: debug

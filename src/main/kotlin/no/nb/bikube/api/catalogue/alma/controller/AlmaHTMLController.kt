@@ -1,0 +1,60 @@
+package no.nb.bikube.api.catalogue.alma.controller
+
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
+import no.nb.bikube.api.catalogue.alma.enum.OtherField
+import no.nb.bikube.api.catalogue.alma.model.MarcRecord
+import no.nb.bikube.api.catalogue.alma.service.AlmaService
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import reactor.core.publisher.Mono
+import java.util.*
+
+/**
+ * Controller for handling requests for bibliographic records in HTML format.
+ */
+@Controller
+@Tag(
+    name = "MarcXchange HTML",
+    description = "Get bibliographic records as MarcXchange encoded MARC-21 in HTML"
+)
+@RequestMapping("/api/alma/html")
+class AlmaHTMLController(
+    private val almaService: AlmaService
+) {
+
+    @RequestMapping("/barcode/{barcode}", method = [RequestMethod.GET])
+    @Operation(
+        summary = "Get bibliographic record by barcode",
+        description = "Returns a bibliographic record in HTML format for the given barcode"
+    )
+    fun getHTMLByBarcode(
+        model: Model,
+        @PathVariable barcode: String
+    ): Mono<String> {
+        return almaService.getRecordByBarcode(barcode).map {
+            model.addAttribute("id", barcode)
+            OtherField.entries.forEach { field ->
+                mapMetadata(it, field)?.let { value ->
+                    model.addAttribute(field.name.lowercase(Locale.getDefault()), value)
+                }
+            }
+            "marc_record"
+        }.onErrorResume { e ->
+            model.addAttribute("error", e.message)
+            Mono.just("error")
+        }
+    }
+
+
+    companion object {
+        fun mapMetadata(metadata: MarcRecord, otherField: OtherField): String? {
+            return metadata.datafield.find { df ->
+                df.tag == otherField.tag
+            }?.subfield?.find { sf -> sf.code == otherField.code }?.content
+        }
+    }
+}

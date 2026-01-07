@@ -5,38 +5,59 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
+		<version>3.5.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
 	<artifactId>bikube</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bikube</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Bikube (BIbliografisk Katalog for Uthenting og BEhandling) er et API for kommunikasjon med kataloger for tekstmateriale</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<kotlin.version>2.1.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
-		<fasterxml.version>2.18.2</fasterxml.version>
 		<lucene.version>9.10.0</lucene.version>
+        <vaadin.version>24.9.3</vaadin.version>
 		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
 	</properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.19.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 	<dependencies>
 		<!-- Spring dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -46,12 +67,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
 
 		<!-- Kotlin dependencies -->
 		<dependency>
@@ -88,18 +109,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-oauth2-jose</artifactId>
-			<version>${spring-security.version}</version>
 		</dependency>
 
 		<!-- Swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.7.0</version>
 		</dependency>
 
@@ -107,19 +126,16 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>${fasterxml.version}</version>
 		</dependency>
 
 		<!-- For serialization of the weird attribute names of Collection models -->
@@ -162,11 +178,28 @@
 			<version>42.7.4</version>
 		</dependency>
 
+        <!-- Vaadin -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-core</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-spring-boot-starter</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+
+        <!-- Oauth2 for Vaadin frontend -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
 		<!-- Dependencies only for tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -210,6 +243,11 @@
 			<version>2.10.0</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -220,7 +258,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${project.parent.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -265,7 +302,194 @@
 					<runOrder>random</runOrder>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-frontend</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
 		</plugins>
 	</build>
+
+
+    <profiles>
+        <profile>
+            <id>production</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <version>${vaadin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                                <phase>compile</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.1</version>
+                        <configuration>
+                            <workingDirectory>src/main/frontend</workingDirectory>
+                            <nodeVersion>v22.16.0</nodeVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install-node</id>
+                                <goals><goal>install-node-and-npm</goal></goals>
+                            </execution>
+                            <execution>
+                                <id>npm-ci</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>ci</arguments></configuration>
+                            </execution>
+                            <execution>
+                                <id>playwright-install</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration>
+                                    <arguments>run playwright-install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-lint</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run lint</arguments></configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-test</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run test</arguments></configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-core</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>vaadin-dev</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>CI</id>
+            <activation>
+                <property>
+                    <name>env.CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <version>${vaadin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                                <phase>compile</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.1</version>
+                        <configuration>
+                            <workingDirectory>src/main/frontend</workingDirectory>
+                            <nodeVersion>v22.16.0</nodeVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install-node</id>
+                                <goals><goal>install-node-and-npm</goal></goals>
+                            </execution>
+                            <execution>
+                                <id>npm-ci</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>ci</arguments></configuration>
+                            </execution>
+                            <execution>
+                                <id>playwright-install</id>
+                                <phase>generate-resources</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration>
+                                    <arguments>run playwright-install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-lint</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run lint</arguments></configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-test</id>
+                                <phase>test</phase>
+                                <goals><goal>npm</goal></goals>
+                                <configuration><arguments>run test</arguments></configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-core</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>vaadin-dev</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <!-- Hent fra NB artifactory -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Cache av alle repos, både interne og eksterne</name>
+            <url>https://tools.nb.no/artifactory/repo</url>
+        </repository>
+        <!-- Vaadin -->
+        <repository>
+            <id>vaadin-directory</id>
+            <url>https://maven.vaadin.com/vaadin-addons</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
