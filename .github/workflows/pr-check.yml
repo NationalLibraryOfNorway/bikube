@@ -9,7 +9,7 @@ jobs:
     uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-check.yml@main
     with:
       JDK_VERSION: 21
-      MAVEN_VERSION: 3.9.11
+      MAVEN_VERSION: 3.9
       USE_MAVEN_SETTINGS_FILE: true
     secrets:
       VAULT_URL: ${{ secrets.NB_VAULT_URL }}
