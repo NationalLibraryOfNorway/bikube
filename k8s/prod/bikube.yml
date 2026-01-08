@@ -27,16 +27,6 @@ spec:
               value: PROD
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
-            - name: PROD_BIKUBE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: bikube-secrets
-                  key: username
-            - name: PROD_BIKUBE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: bikube-secrets
-                  key: password
             - name: MAXIT_URL
               value: https://k8s.nb.no/maxit
             - name: COLLECTIONS_URL
@@ -44,6 +34,11 @@ spec:
                 secretKeyRef:
                   name: collections-secret
                   key: COLLECTIONS_URL
+            - name: COLLECTIONS_DIRECTLINK
+              valueFrom:
+                secretKeyRef:
+                  name: collections-secret
+                  key: COLLECTIONS_DIRECTLINK
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -59,51 +54,56 @@ spec:
                 secretKeyRef:
                   name: collections-secret
                   key: KEYCLOAK_ISSUER_URI
-            - name: COLLECTIONS_DIRECTLINK
+            - name: KEYCLOAK_HUGIN_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: collections_directlink
+                  name: bikube-secret
+                  key: KEYCLOAK_HUGIN_CLIENT_ID
+            - name: KEYCLOAK_HUGIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secret
+                  key: KEYCLOAK_HUGIN_CLIENT_SECRET
             - name: ALMA_SRU_URL
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: alma_sru_url
+                  name: bikube-secret
+                  key: ALMA_SRU_URL
             - name: ALMA_WS_URL
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: alma_ws_url
+                  name: bikube-secret
+                  key: ALMA_WS_URL
             - name: ALMA_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: alma_api_key
+                  name: bikube-secret
+                  key: ALMA_API_KEY
             - name: HTTP_PROXY_HOST
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: http_proxy_host
+                  name: proxy1-secret
+                  key: HTTP_PROXY_URL
             - name: HTTP_PROXY_PORT
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: http_proxy_port
+                  name: proxy1-secret
+                  key: HTTP_PROXY_PORT
             - name: POSTGRES_URL
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: postgres_url
+                  name: bikube-secret
+                  key: POSTGRES_URL
             - name: POSTGRES_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: postgres_username
+                  name: bikube-secret
+                  key: POSTGRES_USERNAME
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: bikube-secrets
-                  key: postgres_password
+                  name: bikube-secret
+                  key: POSTGRES_PASSWORD
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
