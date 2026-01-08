@@ -89,6 +89,21 @@ spec:
                 secretKeyRef:
                   name: bikube-secrets
                   key: http_proxy_port
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: postgres_url
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: postgres_username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bikube-secrets
+                  key: postgres_password
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
