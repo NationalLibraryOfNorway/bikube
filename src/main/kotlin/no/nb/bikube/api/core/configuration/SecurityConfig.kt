@@ -1,6 +1,5 @@
 package no.nb.bikube.api.core.configuration
 
-import com.vaadin.flow.spring.security.VaadinWebSecurity
 import jakarta.servlet.http.HttpServletRequest
 import no.nb.bikube.api.core.util.logger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -128,14 +127,15 @@ class RootPathSecurityConfig {
 @EnableWebSecurity
 @Configuration
 @Profile("!no-vaadin")
-class VaadinSecurityConfig : VaadinWebSecurity() {
+class VaadinSecurityConfig {
 
     companion object {
         fun vaadinSecurityMatcher() = listOf(
             "/login/**",
             "/oauth2/**",
             "/hugin/**",
-            "/connect/**"
+            "/connect/**",
+            "/VAADIN/**"
         )
     }
 
@@ -144,6 +144,7 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
     fun vaadinChainLoggingFilter(): jakarta.servlet.Filter {
         val matcher = vaadinSecurityMatcher()
         val pathMatcher = AntPathMatcher()
+        val log = this.logger()
         return jakarta.servlet.Filter { request, response, chain ->
             if (matcher.any { pattern ->
                     pathMatcher.match(
@@ -151,33 +152,51 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
                         (request as HttpServletRequest).servletPath
                     )
                 }) {
-                logger().debug("VaadinSecurityFilterChain handling: ${(request as HttpServletRequest).servletPath}")
+                log.debug("VaadinSecurityFilterChain handling: ${(request as HttpServletRequest).servletPath}")
             } else {
-                logger().debug("VaadinSecurityFilterChain skipping: ${(request as HttpServletRequest).servletPath}")
+                log.debug("VaadinSecurityFilterChain skipping: ${(request as HttpServletRequest).servletPath}")
             }
             chain.doFilter(request, response)
         }
     }
 
-    override fun configure(http: HttpSecurity) {
-        super.configure(http)
-        setOAuth2LoginPage(http, "/oauth2/authorization/keycloak-hugin")
-        http
-            .oauth2Login { oauth2 ->
-                oauth2.userInfoEndpoint { userInfoEndpoint -> userInfoEndpoint.userAuthoritiesMapper(this.userAuthoritiesMapper()) }
-            }
-            .csrf { csrf -> csrf.disable() }
-            .logout { it.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)) }
-    }
-
-
     @Bean(name = ["VaadinSecurityFilterChainBean"])
-    override fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        // For logging purposes, we add a filter that logs the filter used and the request URI
-        http
-            .addFilterBefore(vaadinChainLoggingFilter(), SecurityContextHolderFilter::class.java)
-            .securityMatcher(*vaadinSecurityMatcher().toTypedArray())
-        return super.filterChain(http)
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        // Configure security matcher for Vaadin-specific paths
+        http.securityMatcher(*vaadinSecurityMatcher().toTypedArray())
+
+        // Add logging filter before security context
+        http.addFilterBefore(vaadinChainLoggingFilter(), SecurityContextHolderFilter::class.java)
+
+        // Disable CSRF for simplicity (Hilla handles CSRF via connect client)
+        http.csrf { csrf -> csrf.disable() }
+
+        // Configure authorization
+        http.authorizeHttpRequests { auth ->
+            auth
+                .requestMatchers("/VAADIN/**").permitAll()        // Allow Vaadin static resources
+                .requestMatchers("/hugin/VAADIN/**").permitAll()   // Allow Vaadin resources under /hugin
+                .requestMatchers("/hugin/**").authenticated()
+                .requestMatchers("/connect/**").authenticated()
+                .anyRequest().authenticated()
+        }
+
+        // Configure OAuth2 login with custom user authorities mapper and success handler
+        http.oauth2Login { oauth2 ->
+            oauth2
+                .loginPage("/oauth2/authorization/keycloak-hugin")
+                .defaultSuccessUrl("/hugin/", true)  // Always redirect to /hugin/ after successful login
+                .userInfoEndpoint { userInfoEndpoint ->
+                    userInfoEndpoint.userAuthoritiesMapper(userAuthoritiesMapper())
+                }
+        }
+
+        // Configure logout
+        http.logout { logout ->
+            logout.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+        }
+
+        return http.build()
     }
 
     @Bean
@@ -185,14 +204,20 @@ class VaadinSecurityConfig : VaadinWebSecurity() {
         return GrantedAuthoritiesMapper { authorities: Collection<GrantedAuthority?> ->
             authorities.stream()
                 .filter { authority: GrantedAuthority? -> OidcUserAuthority::class.java.isInstance(authority) }
-                .map { authority: GrantedAuthority? ->
+                .flatMap { authority: GrantedAuthority? ->
                     val oidcUserAuthority = authority as OidcUserAuthority?
                     val userInfo = oidcUserAuthority!!.userInfo
-                    val roles = userInfo.getClaim<List<String>>("groups")
-                    roles.stream().map { r: String? -> SimpleGrantedAuthority("ROLE_$r") }
-                }
-                .reduce(Stream.empty()) { joinedAuthorities: Stream<SimpleGrantedAuthority>, roleAuthorities: Stream<SimpleGrantedAuthority> ->
-                    Stream.concat(joinedAuthorities, roleAuthorities)
+                    val roles = userInfo.getClaim<List<String>>("groups") ?: emptyList()
+                    // Add both with and without ROLE_ prefix for compatibility
+                    // Vaadin/Hilla checks exact role names, Spring Security uses ROLE_ prefix
+                    roles.stream()
+                        .filter { r -> r != null }
+                        .flatMap { r ->
+                            Stream.of(
+                                SimpleGrantedAuthority(r!!),           // Without prefix for @RolesAllowed
+                                SimpleGrantedAuthority("ROLE_$r")      // With prefix for Spring Security
+                            )
+                        }
                 }
                 .collect(Collectors.toList())
         }

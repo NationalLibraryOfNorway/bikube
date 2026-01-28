@@ -1,6 +1,5 @@
 package no.nb.bikube
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.api.core.enum.MaterialType
@@ -10,8 +9,8 @@ import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMock
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -23,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import tools.jackson.databind.json.JsonMapper
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -33,7 +33,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 ])
 class SecurityTests(
     @Autowired private val mockMvc: MockMvc,
-    @Autowired private val objectMapper: ObjectMapper
+    @Autowired private val jsonMapper: JsonMapper
 ) {
     @MockkBean
     private lateinit var newspaperService: NewspaperService
@@ -61,7 +61,7 @@ class SecurityTests(
             post("/api/newspapers/items")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
         ).andExpect(status().isUnauthorized)
     }
 
@@ -75,7 +75,7 @@ class SecurityTests(
                 .with(jwt().authorities(SimpleGrantedAuthority("bikube-create")))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
         ).andExpect(status().isOk)
     }
 
@@ -86,7 +86,7 @@ class SecurityTests(
                 .header("Authorization", "Bearer eyIkkeEnToken")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
         ).andExpect(status().isUnauthorized)
     }
 }

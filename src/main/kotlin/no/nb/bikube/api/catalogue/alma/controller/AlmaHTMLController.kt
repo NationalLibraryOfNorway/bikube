@@ -22,7 +22,8 @@ import java.util.*
     description = "Get bibliographic records as MarcXchange encoded MARC-21 in HTML"
 )
 @RequestMapping("/api/alma/html")
-class AlmaHTMLController(
+class
+AlmaHTMLController(
     private val almaService: AlmaService
 ) {
 
@@ -45,7 +46,7 @@ class AlmaHTMLController(
             "marc_record"
         }.onErrorResume { e ->
             model.addAttribute("error", e.message)
-            Mono.just("error")
+            Mono.just("marc_error")
         }
     }
 

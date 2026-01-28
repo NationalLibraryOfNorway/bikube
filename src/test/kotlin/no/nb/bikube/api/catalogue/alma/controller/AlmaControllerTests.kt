@@ -1,18 +1,18 @@
 package no.nb.bikube.api.catalogue.alma.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import tools.jackson.databind.json.JsonMapper
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.get
 @AutoConfigureMockMvc
 class AlmaControllerTests(
     @Autowired private val mockMvc: MockMvc,
-    @Autowired private val objectMapper: ObjectMapper,
+    @Autowired private val jsonMapper: JsonMapper,
 ) {
 
     private fun expectProblemDetail(path: String, expectedDetail: String) {
@@ -32,7 +32,7 @@ class AlmaControllerTests(
             }
             .andReturn()
 
-        val problem = objectMapper.readValue(result.response.contentAsString, ProblemDetail::class.java)
+        val problem = jsonMapper.readValue(result.response.contentAsString, ProblemDetail::class.java)
         Assertions.assertEquals(expectedDetail, problem.detail)
     }
 

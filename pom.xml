@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>4.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
@@ -15,11 +15,12 @@
 	<description>Bikube (BIbliografisk Katalog for Uthenting og BEhandling) er et API for kommunikasjon med kataloger for tekstmateriale</description>
 	<properties>
 		<java.version>21</java.version>
-		<kotlin.version>2.1.0</kotlin.version>
+		<kotlin.version>2.2.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<lucene.version>9.10.0</lucene.version>
-        <vaadin.version>24.9.3</vaadin.version>
-		<!-- Fasterxml version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
+        <vaadin.version>25.0.4</vaadin.version>
+		<!-- Jackson version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
+        <nvd.repo.url>${env.NVD_URL}</nvd.repo.url>
 	</properties>
 
     <dependencyManagement>
@@ -28,13 +29,6 @@
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
                 <version>${vaadin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>2.19.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -71,6 +65,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
 
@@ -190,6 +185,20 @@
             <version>${vaadin.version}</version>
         </dependency>
 
+        <!-- Hilla (separated from vaadin-spring-boot-starter in v25) -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>hilla-spring-boot-starter</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+
+        <!-- Vaadin development tools (required in v25+) -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-dev</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Oauth2 for Vaadin frontend -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,6 +211,21 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test-autoconfigure</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-webtestclient</artifactId>
+          <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -313,6 +337,23 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.owasp</groupId>
+              <artifactId>dependency-check-maven</artifactId>
+              <version>12.2.0</version>
+              <configuration>
+                <nvdDatafeedUrl>https://${nvd.repo.url}/nvdcve-{0}.json.gz</nvdDatafeedUrl>
+                <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                <failBuildOnCVSS>8</failBuildOnCVSS>
+              </configuration>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>check</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
 
 		</plugins>
