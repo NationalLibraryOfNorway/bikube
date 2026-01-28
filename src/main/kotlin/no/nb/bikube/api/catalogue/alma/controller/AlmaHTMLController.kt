@@ -22,8 +22,7 @@ import java.util.*
     description = "Get bibliographic records as MarcXchange encoded MARC-21 in HTML"
 )
 @RequestMapping("/api/alma/html")
-class
-AlmaHTMLController(
+class AlmaHTMLController(
     private val almaService: AlmaService
 ) {
 
