@@ -229,7 +229,7 @@ function statsExtracterPlugin(): PluginOption {
       generatedImports
         .filter((line: string) => line.includes('generated/jar-resources'))
         .forEach((line: string) => {
-          let filename = line.substring(line.indexOf('generated'));
+          const filename = line.substring(line.indexOf('generated'));
           // \r\n from windows made files may be used ro remove to be only \n
           const fileBuffer = readFileSync(path.resolve(frontendFolder, filename), { encoding: 'utf-8' }).replace(
             /\r\n/g,
@@ -242,7 +242,7 @@ function statsExtracterPlugin(): PluginOption {
         });
       // collects and hash rest of the Frontend resources excluding files in /generated/ and /themes/
       // and files already in frontendFiles.
-      let frontendFolderAlias = "Frontend";
+      const frontendFolderAlias = "Frontend";
       generatedImports
         .filter((line: string) => line.startsWith(frontendFolderAlias + '/'))
         .filter((line: string) => !line.startsWith(frontendFolderAlias + '/generated/'))
@@ -318,7 +318,7 @@ function themePlugin(opts: { devMode: boolean }): PluginOption {
       function handleThemeFileCreateDelete(themeFile: string, stats?: Stats) {
         if (themeFile.startsWith(themeFolder)) {
           const changed = path.relative(themeFolder, themeFile);
-          console.debug('Theme file ' + (!!stats ? 'created' : 'deleted'), changed);
+          console.debug('Theme file ' + (stats ? 'created' : 'deleted'), changed);
           processThemeResources(fullThemeOptions, console);
         }
       }

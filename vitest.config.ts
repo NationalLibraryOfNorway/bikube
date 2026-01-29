@@ -1,6 +1,7 @@
 import type { UserConfigFn } from 'vite';
 import { overrideVaadinConfig } from './vite.generated';
 import path from "path";
+import { webdriverio } from '@vitest/browser-webdriverio';
 
 const customConfig: UserConfigFn = () => ({
     root: path.resolve(__dirname, "src/main/frontend"),
@@ -31,10 +32,10 @@ const customConfig: UserConfigFn = () => ({
         setupFiles: ['./tests/setup/setup.ts'],
         browser: {
             enabled: true,
-            provider: 'playwright',
+            provider: webdriverio(),
             instances: [
-                { browser: 'chromium', headless: true },
-            ]
+                { browser: 'chrome' }
+            ],
         },
     },
 });

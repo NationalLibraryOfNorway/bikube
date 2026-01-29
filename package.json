@@ -78,8 +78,6 @@
   "devDependencies": {
     "@babel/preset-react": "7.28.5",
     "@eslint/js": "^9.39.2",
-    "@playwright/browser-chromium": "^1.58.0",
-    "@playwright/test": "^1.58.0",
     "@preact/signals-react-transform": "0.6.0",
     "@rollup/plugin-replace": "6.0.3",
     "@rollup/pluginutils": "5.3.0",
@@ -105,6 +103,7 @@
     "@vaadin/hilla-generator-utils": "25.0.4",
     "@vitejs/plugin-react": "5.1.2",
     "@vitest/browser": "^4.0.18",
+    "@vitest/browser-webdriverio": "^4.0.18",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -113,7 +112,6 @@
     "jiti": "^2.6.1",
     "jsdom": "^27.4.0",
     "magic-string": "0.30.21",
-    "playwright": "^1.58.0",
     "postcss": "^8.5.6",
     "prettier": "3.8.1",
     "pretty-format": "^30.2.0",
@@ -128,6 +126,7 @@
     "vite": "7.3.1",
     "vite-plugin-checker": "0.12.0",
     "vitest": "^4.0.18",
+    "webdriverio": "^9.23.2",
     "workbox-build": "7.4.0"
   },
   "vaadin": {
@@ -183,7 +182,7 @@
       "vite-plugin-checker": "0.12.0",
       "workbox-build": "7.4.0"
     },
-    "hash": "d9431912f5a7c939d5d2796d9b0cd97d0d1299afae91b06939475006daea6494"
+    "hash": "ff561fac87da7887f23d06743f6f9aa3eeafb11a8cbc85386874e1fe2a65e6b8"
   },
   "overrides": {
     "@vaadin/vaadin-development-mode-detector": "$@vaadin/vaadin-development-mode-detector",
@@ -310,10 +309,9 @@
     "date-fns": "2.30.0"
   },
   "scripts": {
-    "playwright-install": "npx playwright install-deps && npx playwright install chromium",
     "test": "vitest run && rm file-routes.json",
     "test-watch": "vitest watch && rm file-routes.json",
     "lint": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx --fix"
   }
 }

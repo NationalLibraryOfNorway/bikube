@@ -17,6 +17,6 @@ describe('Home / login', () => {
                 <Login/>
             </MemoryRouter>
         );
-        expect(redirect).toHaveBeenCalledWith('/bikube/hugin');
+        expect(redirect).toHaveBeenCalledWith('/hugin/');
     });
 });

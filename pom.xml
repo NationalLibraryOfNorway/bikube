@@ -20,7 +20,7 @@
 		<lucene.version>9.10.0</lucene.version>
         <vaadin.version>25.0.4</vaadin.version>
 		<!-- Jackson version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
-        <nvd.repo.url>${env.NVD_URL}</nvd.repo.url>
+        <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
     <dependencyManagement>
@@ -400,7 +400,7 @@
                         <version>1.15.1</version>
                         <configuration>
                             <workingDirectory>src/main/frontend</workingDirectory>
-                            <nodeVersion>v22.16.0</nodeVersion>
+                            <nodeVersion>v25.5.0</nodeVersion>
                         </configuration>
                         <executions>
                             <execution>
@@ -412,14 +412,6 @@
                                 <phase>generate-resources</phase>
                                 <goals><goal>npm</goal></goals>
                                 <configuration><arguments>ci</arguments></configuration>
-                            </execution>
-                            <execution>
-                                <id>playwright-install</id>
-                                <phase>generate-resources</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration>
-                                    <arguments>run playwright-install</arguments>
-                                </configuration>
                             </execution>
                             <execution>
                                 <id>npm-lint</id>
