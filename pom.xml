@@ -423,7 +423,10 @@
                                 <id>playwright-install</id>
                                 <phase>test</phase>
                                 <goals><goal>npx</goal></goals>
-                                <configuration><arguments>playwright install --with-deps chromium</arguments></configuration>
+                                <configuration>
+									<npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+									<arguments>playwright install --with-deps chromium</arguments>
+								</configuration>
                             </execution>
                             <execution>
                                 <id>npm-test</id>
