@@ -308,6 +308,7 @@
     "date-fns": "2.30.0"
   },
   "scripts": {
+    "playwright-install": "playwright install --with-deps chromium",
     "test": "vitest run && rm file-routes.json",
     "test-watch": "vitest watch && rm file-routes.json",
     "lint": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx",
