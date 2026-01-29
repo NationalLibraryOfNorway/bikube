@@ -15,11 +15,11 @@ class AuthContextService {
     @NonNull
     fun getUserInfo(): @org.jspecify.annotations.NonNull User {
         val context = SecurityContextHolder.getContext()
-        val principal = context.authentication.principal
+        val principal = context.authentication?.principal
 
         if (principal is OidcUser) {
             val roles: List<String> =
-                context.authentication.authorities.stream().map<String> { obj: GrantedAuthority -> obj.authority }.toList()
+                context.authentication?.authorities?.stream()?.map<String> { obj: GrantedAuthority -> obj.authority }?.toList() ?: emptyList()
             return User(
                 username = principal.preferredUsername,
                 firstName = principal.givenName,

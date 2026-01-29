@@ -1,6 +1,5 @@
 package no.nb.bikube
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsException
@@ -15,8 +14,8 @@ import no.nb.bikube.api.core.exception.RecordAlreadyExistsException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
@@ -27,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.async
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import reactor.core.publisher.Mono
+import tools.jackson.databind.json.JsonMapper
 import java.net.URI
 import java.time.LocalDate
 
@@ -35,7 +35,7 @@ import java.time.LocalDate
 @ActiveProfiles("test")
 class GeneralEndpointAndExceptionIntegrationTest(
     @Autowired private val mockMvc: MockMvc,
-    @Autowired private val objectMapper: ObjectMapper,
+    @Autowired private val jsonMapper: JsonMapper,
 ) {
 
     @MockkBean
@@ -61,7 +61,7 @@ class GeneralEndpointAndExceptionIntegrationTest(
         val body = dispatched.response.contentAsString
         require(body.isNotBlank()) { "Expected ProblemDetail JSON but got empty body. status=$status" }
 
-        val problem = objectMapper.readValue(body, ProblemDetail::class.java)
+        val problem = jsonMapper.readValue(body, ProblemDetail::class.java)
         return status to problem
     }
 

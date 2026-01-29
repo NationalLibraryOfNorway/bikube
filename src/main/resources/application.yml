@@ -96,6 +96,9 @@ vaadin:
   copilot:
     enable: false
   url-mapping: /hugin/*
+  devmode:
+    usageStatistics:
+      enabled: false
 
 logging:
   level:

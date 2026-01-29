@@ -45,7 +45,7 @@ class AlmaHTMLController(
             "marc_record"
         }.onErrorResume { e ->
             model.addAttribute("error", e.message)
-            Mono.just("error")
+            Mono.just("marc_error")
         }
     }
 
