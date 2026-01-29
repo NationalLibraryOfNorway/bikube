@@ -355,88 +355,14 @@
                 </execution>
               </executions>
             </plugin>
-
 		</plugins>
 	</build>
 
 
     <profiles>
+        <!-- Activated in CI environments (GitHub Actions sets CI=true) or manually with -Pproduction -->
         <profile>
             <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
-                        <version>${vaadin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                                <phase>compile</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.15.1</version>
-                        <configuration>
-                            <workingDirectory>src/main/frontend</workingDirectory>
-                            <nodeVersion>v22.16.0</nodeVersion>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>install-node</id>
-                                <goals><goal>install-node-and-npm</goal></goals>
-                            </execution>
-                            <execution>
-                                <id>npm-ci</id>
-                                <phase>generate-resources</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>ci</arguments></configuration>
-                            </execution>
-                            <execution>
-                                <id>playwright-install</id>
-                                <phase>generate-resources</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration>
-                                    <arguments>run playwright-install</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm-lint</id>
-                                <phase>test</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>run lint</arguments></configuration>
-                            </execution>
-                            <execution>
-                                <id>npm-test</id>
-                                <phase>test</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>run test</arguments></configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-core</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>com.vaadin</groupId>
-                            <artifactId>vaadin-dev</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>CI</id>
             <activation>
                 <property>
                     <name>env.CI</name>
