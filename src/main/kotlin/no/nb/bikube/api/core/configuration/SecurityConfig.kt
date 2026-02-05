@@ -132,6 +132,7 @@ class VaadinSecurityConfig {
     companion object {
         fun vaadinSecurityMatcher() = listOf(
             "/login/**",
+            "/logout",
             "/oauth2/**",
             "/hugin/**",
             "/connect/**",
@@ -176,6 +177,7 @@ class VaadinSecurityConfig {
             auth
                 .requestMatchers("/VAADIN/**").permitAll()        // Allow Vaadin static resources
                 .requestMatchers("/hugin/VAADIN/**").permitAll()   // Allow Vaadin resources under /hugin
+                .requestMatchers("/logout").permitAll()            // Allow logout endpoint
                 .requestMatchers("/hugin/**").authenticated()
                 .requestMatchers("/connect/**").authenticated()
                 .anyRequest().authenticated()
@@ -191,10 +193,17 @@ class VaadinSecurityConfig {
                 }
         }
 
-        // Configure logout
+        // Configure logout - return 200 OK instead of redirect to avoid CORS issues with XHR
         http.logout { logout ->
-            logout.logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+            logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
         }
+
 
         return http.build()
     }
