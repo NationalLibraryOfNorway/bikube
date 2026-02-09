@@ -35,4 +35,5 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate.globally_quoted_identifiers: true
+      hibernate.globally_quoted_identifiers_skip_column_definitions: true
       hibernate.hbm2ddl.create_namespaces: true
