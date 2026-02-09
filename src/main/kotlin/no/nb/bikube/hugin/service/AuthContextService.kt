@@ -37,7 +37,7 @@ class AuthContextService(
                 email = principal.email,
                 roles = roles
             )
-        } else throw kotlin.RuntimeException("Not a valid OidcUser")
+`        } else throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated")`
     }
 
     @PermitAll
