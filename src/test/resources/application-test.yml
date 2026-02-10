@@ -26,7 +26,7 @@ collections:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS HUGIN\;CREATE SCHEMA IF NOT EXISTS MAXIT
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -34,4 +34,16 @@ spring:
     hibernate:
       ddl-auto: create-drop
     properties:
-      hibernate.globally_quoted_identifiers: true
+      hibernate.hbm2ddl.create_namespaces: true
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: PLACEHOLDER_ISSUER_URI
+        registration:
+          keycloak-hugin:
+            client-id: PLACEHOLDER_KEYCLOAK_CLIENT_ID
+
+vaadin:
+  launch-browser: false
