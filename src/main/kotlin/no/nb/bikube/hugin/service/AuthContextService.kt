@@ -5,10 +5,12 @@ import jakarta.annotation.security.PermitAll
 import jakarta.servlet.http.HttpServletRequest
 import no.nb.bikube.hugin.model.User
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.lang.NonNull
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
+import org.springframework.web.server.ResponseStatusException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -29,7 +31,8 @@ class AuthContextService(
 
         if (principal is OidcUser) {
             val roles: List<String> =
-                context.authentication?.authorities?.stream()?.map<String> { obj: GrantedAuthority -> obj.authority }?.toList() ?: emptyList()
+                context.authentication?.authorities?.stream()?.map<String> { obj: GrantedAuthority -> obj.authority }
+                    ?.toList() ?: emptyList()
             return User(
                 username = principal.preferredUsername,
                 firstName = principal.givenName,
@@ -37,7 +40,10 @@ class AuthContextService(
                 email = principal.email,
                 roles = roles
             )
-`        } else throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated")`
+        }
+        else {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated")
+        }
     }
 
     @PermitAll
