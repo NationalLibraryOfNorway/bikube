@@ -45,7 +45,7 @@ class ItemController (
             .flatMap { newspaperService.createNewspaperItem(item) }
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
-                logger().info("Newspaper item created with id: ${responseEntity.body?.catalogueId}")
+                logger().info("Newspaper item created with id: ${responseEntity?.body?.catalogueId}")
             }
     }
 
@@ -64,7 +64,7 @@ class ItemController (
         return newspaperService.createMissingItem(item)
             .map { ResponseEntity.status(HttpStatus.CREATED).body(it) }
             .doOnSuccess { responseEntity ->
-                logger().info("Manifestation created with id: ${responseEntity.body?.catalogueId}")
+                logger().info("Manifestation created with id: ${responseEntity?.body?.catalogueId}")
             }
     }
 

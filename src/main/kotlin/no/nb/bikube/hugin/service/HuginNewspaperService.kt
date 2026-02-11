@@ -93,7 +93,8 @@ class HuginNewspaperService(
     @RolesAllowed("T_dimo_admin", "T_dimo_user")
     @Transactional
     fun upsertNewspaper(upserts: List<NewspaperUpsertDto>): List<Newspaper> {
-        val userName = (SecurityContextHolder.getContext().authentication.principal as OidcUser).preferredUsername
+        val userName = (SecurityContextHolder.getContext().authentication?.principal as? OidcUser)?.preferredUsername
+            ?: throw RuntimeException("User not authenticated")
 
         return upserts.map { upsert ->
             if (upsert.catalogId == null) {

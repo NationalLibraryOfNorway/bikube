@@ -75,7 +75,7 @@ class TitleController (
                     ResponseEntity.status(HttpStatus.CREATED).body(createdTitle)
                 }
                 .doOnSuccess { responseEntity ->
-                    logger().info("Newspaper title created with id: ${responseEntity.body?.catalogueId}")
+                    logger().info("Newspaper title created with id: ${responseEntity?.body?.catalogueId}")
                 }
         }
     }

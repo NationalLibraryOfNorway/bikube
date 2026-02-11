@@ -1,13 +1,7 @@
 package no.nb.bikube.hugin.model.dbo
 
 import com.fasterxml.jackson.annotation.JsonManagedReference
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 
@@ -25,7 +19,7 @@ data class HuginTitle(
     var vendor: String? = null,
 
     @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "release_pattern", columnDefinition = "integer[]", nullable = true)
+    @Column(name = "release_pattern", nullable = true)
     var releasePattern: Array<Int>? = arrayOf(0, 0, 0, 0, 0, 0, 0),
 
     @Column(name = "shelf")
