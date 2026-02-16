@@ -32,12 +32,12 @@ class HuginNewspaperService(
     private val newspaperRepository: NewspaperRepository,
 ) {
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     fun getTitle(titleId: Int): HuginTitle? {
         return titleRepository.findById(titleId).orElse(null)
     }
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
     fun upsertContactInformation(contactUpdateDto: ContactUpdateDto): HuginTitle {
         val huginTitle = titleRepository.findByIdOrNull(contactUpdateDto.id)
@@ -69,7 +69,7 @@ class HuginNewspaperService(
         return titleRepository.save(huginTitle)
     }
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
     fun createBox(createBoxDto: CreateBoxDto): Box {
         val title = titleRepository.findByIdOrNull(createBoxDto.titleId)
@@ -90,7 +90,7 @@ class HuginNewspaperService(
         )
     }
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
     fun upsertNewspaper(upserts: List<NewspaperUpsertDto>): List<Newspaper> {
         val userName = (SecurityContextHolder.getContext().authentication?.principal as? OidcUser)?.preferredUsername
@@ -143,7 +143,7 @@ class HuginNewspaperService(
     }
 
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
     fun deleteNewspaper(manifestationId: String): Boolean {
         //delete physical item in catalog; tolerate "not found"
