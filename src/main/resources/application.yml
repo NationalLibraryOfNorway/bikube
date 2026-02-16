@@ -32,7 +32,7 @@ spring:
             client-secret: ${KEYCLOAK_HUGIN_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             scope: openid
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak-hugin"
             provider: keycloak
         provider:
           keycloak:

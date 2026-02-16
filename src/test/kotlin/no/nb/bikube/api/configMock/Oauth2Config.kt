@@ -21,7 +21,7 @@ class MockOAuth2TestConfig {
 
     @Bean
     fun clientRegistrationRepository(): ClientRegistrationRepository {
-        val clientRegistration = ClientRegistration.withRegistrationId("keycloak")
+        val clientRegistration = ClientRegistration.withRegistrationId("keycloak-hugin")
             .clientId("test-client")
             .clientSecret("test-secret")
             .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
