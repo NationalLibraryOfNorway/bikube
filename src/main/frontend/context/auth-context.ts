@@ -4,18 +4,15 @@ import { AuthContextService } from 'Frontend/generated/endpoints';
 // Configure auth to use `AuthContextService.getUserInfo`
 const auth = configureAuth(AuthContextService.getUserInfo);
 
-// Custom logout function - calls backend to invalidate session and get Keycloak logout URL
-async function logout() {
-    try {
-        // Call backend logout which invalidates session and returns Keycloak logout URL
-        const keycloakLogoutUrl = await AuthContextService.logout();
-        // Redirect to Keycloak logout
-        window.location.href = keycloakLogoutUrl;
-    } catch (error) {
-        console.error('Logout failed:', error);
-        // Fallback - just redirect to root
-        window.location.href = '/bikube/';
-    }
+// Logout by POSTing to Spring's logout endpoint.
+// Spring handles session invalidation and redirects to Keycloak's logout endpoint,
+// which then redirects back to the app.
+function logout() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/bikube/logout';
+    document.body.appendChild(form);
+    form.submit();
 }
 
 export const useAuth = () => {
