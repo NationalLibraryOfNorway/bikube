@@ -83,6 +83,7 @@
     "@rollup/pluginutils": "5.3.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tanstack/eslint-plugin-query": "^5.91.3",
+    "@testing-library/dom": "^10.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
