@@ -104,8 +104,8 @@
     "@vitejs/plugin-react": "5.1.2",
     "@vitest/browser": "^4.0.18",
     "@vitest/browser-playwright": "^4.0.18",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react": "^7.37.5",
+    "eslint": "^10.0.2",
+    "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
     "globals": "^17.2.0",
@@ -181,7 +181,7 @@
       "vite-plugin-checker": "0.12.0",
       "workbox-build": "7.4.0"
     },
-    "hash": "22d048be2d60245d276c8d81e300848c7beade27992434b123e099ae9a0b2524"
+    "hash": "985633cb190c360fe727f82c453124f976426248cb2e788241eb2a5c5f75bb3f"
   },
   "overrides": {
     "@vaadin/vaadin-development-mode-detector": "$@vaadin/vaadin-development-mode-detector",
