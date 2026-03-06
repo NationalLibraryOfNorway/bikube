@@ -1,5 +1,5 @@
 {
-  "name": "Hugin",
+  "name": "hugin",
   "license": "UNLICENSED",
   "type": "module",
   "dependencies": {
@@ -183,7 +183,7 @@
       "vite-plugin-checker": "0.12.0",
       "workbox-build": "7.4.0"
     },
-    "hash": "985633cb190c360fe727f82c453124f976426248cb2e788241eb2a5c5f75bb3f"
+    "hash": "f8bc6b1202a9b6b33d1506dc71d16388d919e6f0f05d34f528c495d7227830da"
   },
   "overrides": {
     "@vaadin/vaadin-development-mode-detector": "$@vaadin/vaadin-development-mode-detector",
