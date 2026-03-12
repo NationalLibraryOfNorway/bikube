@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.2</version>
+		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
@@ -18,13 +18,20 @@
 		<kotlin.version>2.2.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<lucene.version>9.10.0</lucene.version>
-        <vaadin.version>25.0.4</vaadin.version>
-		<!-- Jackson version for latest spring boot here: https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html -->
+        <vaadin.version>25.0.6</vaadin.version>
+        <jackson-bom.version>3.1.0</jackson-bom.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
