@@ -16,4 +16,12 @@
     <packageUrl regex="true">^pkg:npm/ejs@.*$</packageUrl>
     <cve>CVE-2023-29827</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: vaadin-dev-bundle
+   msg: Vaadin-bundled DOMPurify CVE tracked in upstream bundle.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-dev-bundle@.*$</packageUrl>
+    <cve>CVE-2026-0540</cve>
+  </suppress>
 </suppressions>

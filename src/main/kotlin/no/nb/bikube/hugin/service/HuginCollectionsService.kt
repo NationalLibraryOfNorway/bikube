@@ -12,13 +12,13 @@ class HuginCollectionsService(
     private val newspaperService: NewspaperService,
 ) {
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     fun findByTitle(searchTerm: String): List<Title> {
         val searchResult = titleIndexService.searchTitle(searchTerm)
         return searchResult;
     }
 
-    @RolesAllowed("T_dimo_admin", "T_dimo_user")
+    @RolesAllowed("T_dimo_admin", "T_dimo_all")
     fun findById(catalogueId: String): Title? {
         return newspaperService.getSingleTitle(catalogueId).block();
     }

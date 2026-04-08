@@ -38,12 +38,12 @@ spring:
   security:
     oauth2:
       client:
-        provider:
-          keycloak:
-            issuer-uri: PLACEHOLDER_ISSUER_URI
         registration:
           keycloak-hugin:
             client-id: PLACEHOLDER_KEYCLOAK_CLIENT_ID
+        provider:
+          keycloak:
+            issuer-uri: PLACEHOLDER_ISSUER_URI
 
 vaadin:
   launch-browser: false

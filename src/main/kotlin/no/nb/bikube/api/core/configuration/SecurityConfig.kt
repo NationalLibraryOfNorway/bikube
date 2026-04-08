@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.GrantedAuthority
@@ -18,7 +17,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.web.context.SecurityContextHolderFilter
 import org.springframework.util.AntPathMatcher
 import java.util.stream.Collectors
@@ -127,7 +127,9 @@ class RootPathSecurityConfig {
 @EnableWebSecurity
 @Configuration
 @Profile("!no-vaadin")
-class VaadinSecurityConfig {
+class VaadinSecurityConfig(
+    private val clientRegistrationRepository: ClientRegistrationRepository
+) {
 
     companion object {
         fun vaadinSecurityMatcher() = listOf(
@@ -193,11 +195,14 @@ class VaadinSecurityConfig {
                 }
         }
 
-        // Configure logout - return 200 OK instead of redirect to avoid CORS issues with XHR
+        // Configure logout with OIDC provider logout (Keycloak)
+        // Spring handles session invalidation and redirects to Keycloak's end_session_endpoint
+        val oidcLogoutHandler = OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository)
+        oidcLogoutHandler.setPostLogoutRedirectUri("{baseUrl}/hugin")
         http.logout { logout ->
             logout
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                .logoutSuccessHandler(oidcLogoutHandler)
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")

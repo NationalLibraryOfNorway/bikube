@@ -31,6 +31,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.net.URL
 import java.time.LocalDate
+import no.nb.bikube.api.core.util.sanitizeSearchTerm
 
 @RestController
 @Tag(name = "Catalogue objects", description = "Endpoints related to catalog data for all text material")
@@ -103,7 +104,9 @@ class CoreController (
         if (searchTerm.isEmpty()) throw BadRequestBodyException("Search term cannot be empty.")
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> {
-                val searchResult = titleIndexService.searchTitle(searchTerm)
+                val searchResult = titleIndexService.searchTitle(
+                    sanitizeSearchTerm(searchTerm)
+                )
                 ResponseEntity.ok(searchFilterService.filterSearchResults(searchResult, searchTerm, date, selectBestMatch))
             }
             else -> throw NotSupportedException("Material type $materialType is not supported.")
