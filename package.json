@@ -125,13 +125,13 @@
     "tw-animate-css": "^1.4.0",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.54.0",
-    "vite": "7.3.2",
+    "vite": "7.3.1",
     "vite-plugin-checker": "0.12.0",
     "vitest": "^4.0.18",
     "workbox-build": "7.4.0"
   },
   "vaadin": {
-  "dependencies": {
+    "dependencies": {
       "@vaadin/aura": "25.0.4",
       "@vaadin/common-frontend": "0.0.22",
       "@vaadin/hilla-file-router": "25.0.6",
@@ -179,7 +179,7 @@
       "strip-css-comments": "5.0.0",
       "transform-ast": "2.4.4",
       "typescript": "5.9.3",
-      "vite": "7.3.2",
+      "vite": "7.3.1",
       "vite-plugin-checker": "0.12.0",
       "workbox-build": "7.4.0"
     },
