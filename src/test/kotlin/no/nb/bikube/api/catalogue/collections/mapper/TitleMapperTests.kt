@@ -83,4 +83,15 @@ class TitleMapperTests {
         Assertions.assertEquals(LocalDate.parse("1979-01-01"), testGenericTitle.startDate)
         Assertions.assertEquals(LocalDate.parse("1999-08-09"), testGenericTitle.endDate)
     }
+
+    @Test
+    fun `Title mapper should map related titles`() {
+        Assertions.assertNotNull(genericTitle.relatedTitles)
+        Assertions.assertEquals(1, genericTitle.relatedTitles?.size)
+        val relatedTitle = genericTitle.relatedTitles?.first()
+        Assertions.assertEquals("1611000536", relatedTitle?.catalogueId)
+        Assertions.assertEquals("Akers Avis (Lillestrøm)", relatedTitle?.title)
+        Assertions.assertEquals("Fortsettelse av", relatedTitle?.association)
+        Assertions.assertEquals("WORK", relatedTitle?.recordType)
+    }
 }

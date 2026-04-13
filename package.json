@@ -248,6 +248,8 @@
     "@vaadin/aura": "$@vaadin/aura",
     "@vaadin/router": "2.0.1",
     "flatted": "3.4.2",
+    "lodash": "4.18.1",
+    "lodash-es": "4.18.1",
     "minimatch": "10.2.3",
     "serialize-javascript": "7.0.3",
     "dompurify": "3.3.2",

@@ -25,6 +25,9 @@ data class CollectionsObject(
     @JsonProperty("record_type")
     val recordTypeList: List<List<CollectionsLanguageListObject>>?,
 
+    @JsonProperty("Related_object")
+    val relatedObjectList: List<CollectionsRelatedObject>? = null,
+
     @JsonProperty("format")
     val formatList: List<List<CollectionsLanguageListObject>>?,
 
@@ -97,6 +100,23 @@ data class CollectionsTitle(
 
     @JsonProperty("title.type")
     val titleType: String? = null
+)
+
+data class CollectionsRelatedObject(
+    @JsonProperty("related_object_reference")
+    val reference: String? = null,
+
+    @JsonProperty("related_object.record_type")
+    val recordTypeList: List<CollectionsLanguageListObject>?,
+
+    @JsonProperty("related_object.title")
+    val title: String? = null,
+
+    @JsonProperty("related_object.reference.lref")
+    val priRef: String? = null,
+
+    @JsonProperty("related_object.association")
+    val association: String? = null,
 )
 
 data class CollectionsPublisher(
