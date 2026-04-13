@@ -160,3 +160,27 @@ spec:
                   number: 8087
             path: /bikube
             pathType: Prefix
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bikube-hugin-redirect
+  namespace: tekst-stage
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /bikube/hugin/$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: <host_url>
+      http:
+        paths:
+          - backend:
+              service:
+                name: bikube
+                port:
+                  number: 8087
+            path: /hugin(/|$)(.*)
+            pathType: ImplementationSpecific
