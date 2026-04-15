@@ -29,6 +29,8 @@ spec:
               value: "stage"
             - name: MAXIT_URL
               value: https://k8s.stage.nb.no/maxit
+            - name: FEATUREFLAG_MAXIT_ID
+              value: "true"
             - name: COLLECTIONS_URL
               valueFrom:
                 secretKeyRef:
