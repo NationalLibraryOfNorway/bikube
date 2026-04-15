@@ -28,7 +28,7 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
         mutationFn: async (payload: CreateBoxFormValues) => {
             return await HuginNewspaperService.createBox({
                 titleId: payload.titleId,
-                id: payload.boxId,
+                id: payload.boxId || undefined,
                 dateFrom: payload.dateFrom,
             });
         },
@@ -55,7 +55,7 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
             <Form onSubmit={formik.handleSubmit} className="w-full max-w-xl space-y-4">
                 <div className="space-y-1">
                     <Label htmlFor="boxId">Eske ID</Label>
-                    <Input id="boxId" {...formik.getFieldProps("boxId")} required/>
+                    <Input id="boxId" {...formik.getFieldProps("boxId")}/>
                 </div>
 
                 <div className="space-y-1">
