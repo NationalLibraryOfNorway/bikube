@@ -11,9 +11,6 @@ collections.direct-link: http://collections.com/link/{id}
 maxit:
   url: http://localhost:8080/maxit
 
-featureflag:
-  maxit-id: false
-
 collections:
   lref:
     mavisId: mavisIdLref

@@ -8,7 +8,6 @@ import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.core.util.logger
-import no.nb.bikube.api.newspaper.service.MaxitService
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.hugin.model.dbo.Box
 import no.nb.bikube.hugin.model.dbo.ContactInfo
@@ -20,7 +19,6 @@ import no.nb.bikube.hugin.model.dto.NewspaperUpsertDto
 import no.nb.bikube.hugin.repository.BoxRepository
 import no.nb.bikube.hugin.repository.NewspaperRepository
 import no.nb.bikube.hugin.repository.TitleRepository
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
@@ -32,8 +30,6 @@ class HuginNewspaperService(
     private val boxRepository: BoxRepository,
     private val newspaperService: NewspaperService,
     private val newspaperRepository: NewspaperRepository,
-    private val maxitService: MaxitService,
-    @Value("\${featureflag.maxit-id:false}") private val maxitIdEnabled: Boolean,
 ) {
 
     @RolesAllowed("T_dimo_admin", "T_dimo_all")
@@ -78,17 +74,6 @@ class HuginNewspaperService(
     fun createBox(createBoxDto: CreateBoxDto): Box {
         val title = titleRepository.findByIdOrNull(createBoxDto.titleId)
             ?: error("Title ${createBoxDto.titleId} not found")
-
-        val boxId = if (maxitIdEnabled) {
-            val ids = maxitService.getUniqueIds().block()
-                ?: error("Failed to get unique IDs from Maxit")
-            logger().info("Generated box ID from Maxit: priref=${ids.priref}")
-            ids.priref
-        } else {
-            createBoxDto.id?.trim()
-                ?: error("Box ID must be provided when Maxit ID generation is disabled")
-        }
-
         // Deactivate all existing boxes for this title
         boxRepository.findAllByTitleIdOrderByDateFromAsc(createBoxDto.titleId)
             .onEach { it.active = false }
@@ -97,7 +82,7 @@ class HuginNewspaperService(
         // Create new active box
         return boxRepository.save(
             Box(
-                id = boxId,
+                id = createBoxDto.id.trim(),
                 dateFrom = createBoxDto.dateFrom,
                 active = true,
                 title = title
