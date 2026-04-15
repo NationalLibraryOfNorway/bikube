@@ -21,6 +21,9 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.web.context.SecurityContextHolderFilter
 import org.springframework.util.AntPathMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -50,7 +53,9 @@ class ApiSecurityConfig {
     )
     @Configuration
     @EnableWebSecurity
-    class Enabled {
+    class Enabled(
+        private val corsConfigurationSource: CorsConfigurationSource
+    ) {
         @Bean
         fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
             http.securityMatcher(*apiSecurityMatcher().toTypedArray())
@@ -60,6 +65,7 @@ class ApiSecurityConfig {
             }
 
             http
+                .cors { it.configurationSource(corsConfigurationSource) }
                 .csrf { it -> it.disable() }
                 .authorizeHttpRequests { auth ->
                     auth
@@ -92,11 +98,14 @@ class ApiSecurityConfig {
     )
     @Configuration
     @EnableWebSecurity
-    class Disabled {
+    class Disabled(
+        private val corsConfigurationSource: CorsConfigurationSource
+    ) {
         @Bean
         fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
             http
                 .securityMatcher(*apiSecurityMatcher().toTypedArray())
+                .cors { it.configurationSource(corsConfigurationSource) }
                 .csrf { csrf -> csrf.disable() }
                 .authorizeHttpRequests { auth ->
                     auth
@@ -238,3 +247,20 @@ class VaadinSecurityConfig(
     }
 
 }
+
+@Configuration
+class CorsConfig {
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            allowedOriginPatterns = listOf("https://*.nb.no*")
+            allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("*")
+            maxAge = 3600
+        }
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/api/**", configuration)
+        }
+    }
+}
+
