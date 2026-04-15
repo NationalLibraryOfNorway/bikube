@@ -20,6 +20,7 @@
 		<lucene.version>9.10.0</lucene.version>
         <vaadin.version>25.0.6</vaadin.version>
         <jackson-bom.version>3.1.0</jackson-bom.version>
+        <tomcat.version>11.0.21</tomcat.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
