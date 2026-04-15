@@ -4,6 +4,6 @@ import java.time.LocalDate
 
 data class CreateBoxDto(
     val titleId: Int,
-    val id: String,
+    val id: String? = null,
     val dateFrom: LocalDate
 )
