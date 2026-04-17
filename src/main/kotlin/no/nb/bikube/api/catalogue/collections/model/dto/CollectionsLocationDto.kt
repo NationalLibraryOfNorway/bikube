@@ -9,6 +9,12 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 class CollectionsLocationDto(
+    @SerialName("priref")
+    val priRef: String? = null,
+
+    @SerialName("object_number")
+    val objectNumber: String? = null,
+
     @SerialName("name")
     val name: String?,
 
@@ -42,8 +48,12 @@ fun createContainerDto(
     barcode: String,
     username: String,
     location: String?,
+    priRef: String? = null,
+    objectNumber: String? = null,
 ): CollectionsLocationDto {
     return CollectionsLocationDto(
+        priRef = priRef,
+        objectNumber = objectNumber,
         name = barcode,
         barcode = barcode,
         partOf = location ?: "S2",
