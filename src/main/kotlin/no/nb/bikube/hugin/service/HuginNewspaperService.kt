@@ -8,7 +8,6 @@ import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.core.util.logger
-import no.nb.bikube.api.newspaper.service.MaxitService
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.hugin.model.dbo.Box
 import no.nb.bikube.hugin.model.dbo.ContactInfo
@@ -20,7 +19,6 @@ import no.nb.bikube.hugin.model.dto.NewspaperUpsertDto
 import no.nb.bikube.hugin.repository.BoxRepository
 import no.nb.bikube.hugin.repository.NewspaperRepository
 import no.nb.bikube.hugin.repository.TitleRepository
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
