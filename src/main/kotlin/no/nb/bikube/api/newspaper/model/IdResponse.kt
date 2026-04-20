@@ -13,6 +13,6 @@ fun IdResponse.toParsedIdResponse(): ParsedIdResponse {
 }
 
 data class ParsedIdResponse(
-    val priref: String,
-    val objectNumber: String
+    val priref: String?,
+    val objectNumber: String?
 )

@@ -1,6 +1,5 @@
 package no.nb.bikube.api.catalogue.collections.service
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.api.catalogue.collections.config.CollectionsWebClientConfig
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsDatabase
@@ -14,7 +13,6 @@ import no.nb.bikube.api.catalogue.collections.model.dto.CollectionsLocationDto
 import no.nb.bikube.api.catalogue.collections.model.dto.createContainerDto
 import no.nb.bikube.api.core.util.logger
 import no.nb.bikube.api.newspaper.service.MaxitService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -26,7 +24,6 @@ import java.time.format.DateTimeFormatter
 class CollectionsService(
     val collectionsWebClient: CollectionsWebClientConfig,
     val collectionsDatabase: CollectionsDatabase,
-    @Value("\${featureflag.maxit-id:true}") private val maxitIdEnabled: Boolean,
     val maxitService: MaxitService,
 ) {
     fun collectionsWebClient() = collectionsWebClient.collectionsWebClient()
@@ -146,12 +143,8 @@ class CollectionsService(
         barcode: String,
         username: String,
     ): Mono<CollectionsLocationObject> {
-        val dto: CollectionsLocationDto = if (maxitIdEnabled) {
-            val ids = maxitService.getUniqueIds().block()
-                ?: throw CollectionsException("Failed to get unique IDs from Maxit")
-            createContainerDto(barcode, username, null, ids.priref, ids.objectNumber)
-        } else
-            createContainerDto(barcode, username, null)
+        val ids = maxitService.getUniqueIds().block() ?: throw CollectionsException("Failed to get unique IDs from Maxit")
+        val dto: CollectionsLocationDto = createContainerDto(barcode, username, null, ids.priref, ids.objectNumber)
 
         val encodedBody = Json.encodeToString(dto)
         return createRecordWebClientRequest(encodedBody, CollectionsDatabase.LOCATIONS)

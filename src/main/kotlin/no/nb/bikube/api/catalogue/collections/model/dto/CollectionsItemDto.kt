@@ -14,10 +14,10 @@ import java.time.format.DateTimeFormatter
 @Serializable
 class ItemDto (
     @SerialName("priref")
-    val priRef: String,
+    val priRef: String?,
 
     @SerialName("object_number")
-    val objectNumber: String,
+    val objectNumber: String?,
 
     @SerialName("format")
     val format: String,
@@ -69,8 +69,8 @@ data class AlternativeNumberInput (
 )
 
 fun createNewspaperItemDto(
-    id: String,
-    objectNumber: String,
+    id: String?,
+    objectNumber: String?,
     item: ItemInputDto,
     database: CollectionsDatabase,
     manifestationCatalogueId: String

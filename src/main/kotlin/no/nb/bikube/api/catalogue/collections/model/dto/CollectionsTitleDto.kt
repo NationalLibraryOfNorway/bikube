@@ -13,10 +13,10 @@ import java.time.format.DateTimeFormatter
 @Serializable
 class TitleDto(
     @SerialName("priref")
-    val priRef: String,
+    val priRef: String? = null,
 
     @SerialName("object_number")
-    val objectNumber: String,
+    val objectNumber: String? = null,
 
     @SerialName("Title")
     val titles: List<CollectionsTitleDto>?,
@@ -75,7 +75,13 @@ class CollectionsTitleDto(
     val titleNotes: String? = null
 )
 
-fun createTitleDto(lrefConfig: CollectionsLrefConfig, id: String, objectNumber: String, title: TitleInputDto, database: CollectionsDatabase): TitleDto {
+fun createTitleDto(
+    lrefConfig: CollectionsLrefConfig,
+    id: String? = null,
+    objectNumber: String? = null,
+    title: TitleInputDto,
+    database: CollectionsDatabase
+): TitleDto {
     return TitleDto(
         priRef = id, // TODO: After migration this will be generated automatically by collections itself
         objectNumber = objectNumber, // TODO: After migration this will be generated automatically by collections itself
