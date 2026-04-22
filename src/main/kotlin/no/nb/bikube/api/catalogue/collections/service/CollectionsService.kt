@@ -143,17 +143,30 @@ class CollectionsService(
         barcode: String,
         username: String,
     ): Mono<CollectionsLocationObject> {
-        val ids = maxitService.getUniqueIds().block() ?: throw CollectionsException("Failed to get unique IDs from Maxit")
-        val dto: CollectionsLocationDto = createContainerDto(barcode, username, null, ids.priref, ids.objectNumber)
-
+        val dto: CollectionsLocationDto = createContainerDto(barcode, username, null)
         val encodedBody = Json.encodeToString(dto)
+        logger().debug("Creating location record with body: {}", encodedBody)
         return createRecordWebClientRequest(encodedBody, CollectionsDatabase.LOCATIONS)
             .bodyToMono<CollectionsLocationModel>()
-            .handle { collectionsLocationModel, sink ->
-                if (collectionsLocationModel.hasObjects())
-                    sink.next(collectionsLocationModel.getFirstObject())
-                else
-                    sink.error(CollectionsItemNotFound("New container not found"))
+            .flatMap { collectionsLocationModel ->
+                if (collectionsLocationModel.hasObjects()) {
+                    Mono.just(collectionsLocationModel.getFirstObject())
+                } else {
+                    // Collections sometimes returns empty recordList even when insert succeeds.
+                    // Fall back to searching by barcode to confirm creation.
+                    logger().warn("Insert returned empty recordList for barcode '{}', searching to verify creation", barcode)
+                    getRecordsWebClientRequest("barcode=${barcode}", CollectionsDatabase.LOCATIONS)
+                        .bodyToMono<CollectionsLocationModel>()
+                        .handle { searchResult, sink ->
+                            if (searchResult.hasObjects()) {
+                                logger().info("Found existing record for barcode '{}'", barcode)
+                                sink.next(searchResult.getFirstObject())
+                            } else {
+                                logger().error("Insert returned empty recordList and search found nothing for barcode '{}'", barcode)
+                                sink.error(CollectionsItemNotFound("New container not found"))
+                            }
+                        }
+                }
             }
     }
 

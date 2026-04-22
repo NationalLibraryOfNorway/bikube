@@ -100,4 +100,23 @@ class CollectionsServiceTest {
         // Then should create a new container
         verify(exactly = 1) { mockWebClient.post() }
     }
+
+    @Test
+    fun `createLocationRecord should complete successfully`() {
+        // Given
+        val barcode = "barcode"
+        val username = "username"
+        every { mockResponseSpec.bodyToMono<CollectionsLocationModel>() } returns Mono.just(collectionsLocationModelMock)
+
+        // When creating a location record
+        collectionsService.createLocationRecord(barcode, username)
+            .test()
+            .expectSubscription()
+            .assertNext {
+                Assertions.assertEquals(collectionsLocationObjectMock, it)
+            }
+            .verifyComplete()
+
+        verify(exactly = 1) { mockWebClient.post() }
+    }
 }
