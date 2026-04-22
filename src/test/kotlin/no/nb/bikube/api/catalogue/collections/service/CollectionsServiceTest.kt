@@ -9,6 +9,8 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.emptyCollectionsLocationModelMock
 import no.nb.bikube.api.catalogue.collections.config.CollectionsWebClientConfig
 import no.nb.bikube.api.catalogue.collections.model.CollectionsLocationModel
+import no.nb.bikube.api.newspaper.model.ParsedIdResponse
+import no.nb.bikube.api.newspaper.service.MaxitService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,9 @@ import java.util.function.Function
 class CollectionsServiceTest {
     @MockkBean(relaxed = true)
     private lateinit var collectionsWebClient: CollectionsWebClientConfig
+
+    @MockkBean
+    private lateinit var maxitService: MaxitService
 
     @Autowired
     private lateinit var collectionsService: CollectionsService
@@ -50,6 +55,7 @@ class CollectionsServiceTest {
         every { mockRequestHeadersUriSpec.retrieve() } returns mockResponseSpec
         every { mockResponseSpec.onStatus(any(), any()) } returns mockResponseSpec
         every { mockResponseSpec.bodyToMono<CollectionsLocationModel>() } returns Mono.just(collectionsLocationModelMock)
+        every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse("1000", "NP-000001000"))
     }
 
     @Test
