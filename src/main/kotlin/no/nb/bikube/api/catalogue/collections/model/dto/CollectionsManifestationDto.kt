@@ -12,13 +12,13 @@ import java.time.format.DateTimeFormatter
 @Serializable
 class ManifestationDto (
     @SerialName("priref")
-    val priRef: String,
+    val priRef: String?,
 
     @SerialName("Title")
     val title: List<CollectionsTitleDto>? = null,
 
     @SerialName("object_number")
-    val objectNumber: String,
+    val objectNumber: String?,
 
     @SerialName("part_of_reference.lref")
     val partOfReference: String?,
@@ -59,8 +59,8 @@ class ManifestationDto (
 
 fun createManifestationDto(
     lrefConfig: CollectionsLrefConfig,
-    id: String,
-    objectNumber: String,
+    id: String?,
+    objectNumber: String?,
     parentCatalogueId: String,
     database: CollectionsDatabase,
     date: LocalDate,

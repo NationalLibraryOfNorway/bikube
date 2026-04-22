@@ -1,6 +1,5 @@
 package no.nb.bikube.api.newspaper.service
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.nb.bikube.api.catalogue.collections.config.CollectionsConfig
 import no.nb.bikube.api.catalogue.collections.config.CollectionsLrefConfig

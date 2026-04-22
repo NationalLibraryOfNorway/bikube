@@ -29,6 +29,8 @@ spec:
               value: "prod"
             - name: MAXIT_URL
               value: https://k8s.nb.no/maxit
+            - name: FEATUREFLAG_MAXIT_ID
+              value: "true"
             - name: COLLECTIONS_URL
               valueFrom:
                 secretKeyRef:

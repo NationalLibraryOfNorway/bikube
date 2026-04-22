@@ -44,4 +44,24 @@
     <packageUrl regex="true">^pkg:npm/vite@.*$</packageUrl>
     <vulnerabilityName>GHSA-p9ff-h696-f583</vulnerabilityName>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: vite:7.3.1
+   msg: Vaadin 25.0.6 manages vite as a direct devDependency and resets it to 7.3.1
+   on prepare-frontend. Cannot override without Vaadin platform upgrade.
+   Remove once Vaadin ships a release with vite >= 7.3.2.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:npm/vite@.*$</packageUrl>
+    <cve>CVE-2026-39363</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: vite:7.3.1
+   msg: Vaadin 25.0.6 manages vite as a direct devDependency and resets it to 7.3.1
+   on prepare-frontend. Cannot override without Vaadin platform upgrade.
+   Remove once Vaadin ships a release with vite >= 7.3.2.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:npm/vite@.*$</packageUrl>
+    <cve>CVE-2026-39364</cve>
+  </suppress>
 </suppressions>

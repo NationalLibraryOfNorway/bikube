@@ -74,6 +74,7 @@ class HuginNewspaperService(
     fun createBox(createBoxDto: CreateBoxDto): Box {
         val title = titleRepository.findByIdOrNull(createBoxDto.titleId)
             ?: error("Title ${createBoxDto.titleId} not found")
+
         // Deactivate all existing boxes for this title
         boxRepository.findAllByTitleIdOrderByDateFromAsc(createBoxDto.titleId)
             .onEach { it.active = false }

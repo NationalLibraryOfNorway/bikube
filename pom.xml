@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.3</version>
+		<version>4.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
@@ -20,6 +20,7 @@
 		<lucene.version>9.10.0</lucene.version>
         <vaadin.version>25.0.6</vaadin.version>
         <jackson-bom.version>3.1.0</jackson-bom.version>
+        <tomcat.version>11.0.21</tomcat.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
@@ -442,6 +443,23 @@
                             </execution>
                         </executions>
                     </plugin>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>12.2.0</version>
+						<configuration>
+							<nvdDatafeedUrl>https://${nvd.repo.url}/nvdcve-{0}.json.gz</nvdDatafeedUrl>
+							<suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+							<failBuildOnCVSS>8</failBuildOnCVSS>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
                 </plugins>
             </build>
             <dependencies>

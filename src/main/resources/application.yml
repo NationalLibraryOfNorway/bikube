@@ -75,6 +75,9 @@ collections:
 maxit:
   url: ${MAXIT_URL}
 
+featureflag:
+  maxit-id: ${FEATUREFLAG_MAXIT_ID:false}
+
 alma:
   alma-sru-url: ${ALMA_SRU_URL}
   alma-ws-url: ${ALMA_WS_URL}
