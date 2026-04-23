@@ -253,13 +253,14 @@ class CorsConfig {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOriginPatterns = listOf("https://*.nb.no*")
+            allowedOriginPatterns = listOf("https://*.nb.no", "https://*.nb.no:*", "http://localhost:*")
             allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
+            allowCredentials = true
             maxAge = 3600
         }
         return UrlBasedCorsConfigurationSource().apply {
-            registerCorsConfiguration("/api/**", configuration)
+            registerCorsConfiguration("/**", configuration)
         }
     }
 }
