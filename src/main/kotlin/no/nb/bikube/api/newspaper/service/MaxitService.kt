@@ -23,7 +23,7 @@ class MaxitService(
     }
 
     fun getUniqueIds(): Mono<ParsedIdResponse> {
-        return (if(maxitIdEnabled) {
+        return if(maxitIdEnabled) {
             webClient.get()
                 .uri("/id/priref-and-objectnumber")
                 .retrieve()
@@ -35,7 +35,7 @@ class MaxitService(
                     it.toParsedIdResponse()
                 }
         } else {
-            ParsedIdResponse(null, null)
-        }) as Mono<ParsedIdResponse>
+            Mono.just(ParsedIdResponse(null, null))
+        }
     }
 }

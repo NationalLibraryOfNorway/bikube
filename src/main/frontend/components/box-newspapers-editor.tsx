@@ -45,6 +45,8 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                 date: (n.date as unknown as string)?.slice(0, 10) ?? "",
                 _tmpId: crypto.randomUUID(),
             })));
+        } else {
+            setRows([]);
         }
     }, [title.boxes]);
 
