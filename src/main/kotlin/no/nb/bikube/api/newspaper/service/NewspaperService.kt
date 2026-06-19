@@ -12,7 +12,7 @@ import no.nb.bikube.api.catalogue.collections.service.CollectionsService
 import no.nb.bikube.api.core.enum.*
 import no.nb.bikube.api.core.exception.*
 import no.nb.bikube.api.core.model.*
-import no.nb.bikube.api.core.util.logger
+import no.nb.bikube.api.core.model.dublinCore.DublinCoreMetadata
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
@@ -375,6 +375,49 @@ class NewspaperService (
                     Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
                 }
             }
+    }
+
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
+    fun getItemMetadataForDPS(catalogId: String): Mono<DublinCoreMetadata> {
+        return getSingleItemWithValidation(catalogId)
+            .flatMap { itemCollectionsModel ->
+                val manifestationId = itemCollectionsModel.getParentId()
+                if (manifestationId.isNullOrBlank()) {
+                    Mono.error(CollectionsException("Item with id $catalogId does not have a parent manifestation, cannot retrieve metadata for DPS"))
+                } else {
+                    getSingleManifestationWithValidation(manifestationId)
+                        .flatMap { manifestationCollectionsModel ->
+                            val titleId = manifestationCollectionsModel.getParentId()
+                            if (titleId.isNullOrBlank()) {
+                                Mono.error(CollectionsException("Manifestation with id $manifestationId does not have a parent title, cannot retrieve metadata for DPS"))
+                            } else {
+                                getSingleTitleWithValidation(titleId)
+                                    .map { titleCollectionsModel ->
+                                        mapCollectionsObjectToDublinCoreMetadata(
+                                            itemCollectionsModel,
+                                            manifestationCollectionsModel,
+                                            titleCollectionsModel,
+                                        )
+                                    }
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun getSingleItemWithValidation(catalogId: String): Mono<CollectionsObject> {
+        return collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.ITEM) }
+    }
+
+    private fun getSingleManifestationWithValidation(manifestationId: String): Mono<CollectionsObject> {
+        return collectionsService.getSingleCollectionsModel(manifestationId)
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION) }
+    }
+
+    private fun getSingleTitleWithValidation(titleId: String): Mono<CollectionsObject> {
+        return collectionsService.getSingleCollectionsModelWithoutChildren(titleId)
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
     }
 
     private fun checkForExistingItems(

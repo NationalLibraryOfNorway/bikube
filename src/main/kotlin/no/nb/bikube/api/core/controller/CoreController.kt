@@ -18,6 +18,7 @@ import no.nb.bikube.api.core.exception.NotSupportedException
 import no.nb.bikube.api.core.model.CatalogueRecord
 import no.nb.bikube.api.core.model.Item
 import no.nb.bikube.api.core.model.Title
+import no.nb.bikube.api.core.model.dublinCore.DublinCoreMetadata
 import no.nb.bikube.api.core.service.SearchFilterService
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.api.newspaper.service.TitleIndexService
@@ -167,6 +168,23 @@ class CoreController (
     ): ResponseEntity<URL> {
         return when(materialTypeToCatalogueName(materialType)) {
             CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getLinkToSingleTitle(catalogueId))
+            else -> throw NotSupportedException("Material type $materialType is not supported.")
+        }
+    }
+
+    @GetMapping("/item/metadata/dublincore/dps")
+    @Operation(summary = "Get metadata in DublinCore format for use with Digital Preservation Services (DPS) API")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "OK"),
+        ApiResponse(responseCode = "400", description = "Bad request", content = [Content()])
+    ])
+    @Throws(NotSupportedException::class)
+    fun getItemMetadataForDPS(
+        @RequestParam catalogueId: String,
+        @RequestParam materialType: MaterialType
+    ): ResponseEntity<Mono<DublinCoreMetadata>> {
+        return when(materialTypeToCatalogueName(materialType)) {
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getItemMetadataForDPS(catalogueId))
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
