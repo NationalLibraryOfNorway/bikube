@@ -9,6 +9,7 @@ import no.nb.bikube.api.catalogue.collections.enum.CollectionsTermType
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsException
 import no.nb.bikube.api.catalogue.collections.exception.CollectionsItemNotFound
 import no.nb.bikube.api.catalogue.collections.model.*
+import no.nb.bikube.api.catalogue.collections.model.CollectionsSeriesModel
 import no.nb.bikube.api.catalogue.collections.model.dto.CollectionsLocationDto
 import no.nb.bikube.api.catalogue.collections.model.dto.createContainerDto
 import no.nb.bikube.api.core.util.logger
@@ -53,6 +54,26 @@ class CollectionsService(
             limit = 50,
             from = (page-1) * 50 + 1
         ).bodyToMono<CollectionsModel>()
+    }
+
+    fun getAllSeries(page: Int = 1): Mono<CollectionsSeriesModel> {
+        return getRecordsWebClientRequest(
+            null,
+            CollectionsDatabase.SERIES,
+            limit = 50,
+            from = (page - 1) * 50 + 1
+        ).bodyToMono<CollectionsSeriesModel>()
+    }
+
+    fun getSingleSeries(priref: String): Mono<CollectionsSeriesModel> {
+        return getRecordsWebClientRequest(
+            "priref=$priref",
+            CollectionsDatabase.SERIES
+        ).bodyToMono<CollectionsSeriesModel>()
+    }
+
+    fun createSeriesRecord(serializedBody: String): Mono<CollectionsSeriesModel> {
+        return createRecordWebClientRequest(serializedBody, CollectionsDatabase.SERIES).bodyToMono<CollectionsSeriesModel>()
     }
 
     fun getManifestations(
@@ -179,7 +200,7 @@ class CollectionsService(
     }
 
     protected fun getRecordsWebClientRequest(
-        query: String,
+        query: String?,
         db: CollectionsDatabase,
         fields: String? = null,
         limit: Int = 10,
@@ -191,9 +212,12 @@ class CollectionsService(
                 val params = it
                     .queryParam("database", db.value)
                     .queryParam("output", "json")
-                    .queryParam("search", query)
                     .queryParam("limit", limit)
                     .queryParam("startfrom", from)
+
+                if (!query.isNullOrEmpty()) {
+                    params.queryParam("search", query)
+                }
 
                 if (fields != null) {
                     params.queryParam("fields", fields)

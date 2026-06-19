@@ -23,6 +23,9 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelEmptyMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleC
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
@@ -141,31 +144,27 @@ class NewspaperServiceTest {
         currentLocationName = collectionsLocationObjectMock.priRef
     ))
 
-    private val titleEncodedDto = Json.encodeToString(TitleDto(
+    private val seriesEncodedDto = Json.encodeToString(CollectionsSeriesDto(
         priRef = "1600000000",
-        objectNumber = "NP-1600000000",
-        titles = listOf(CollectionsTitleDto(newspaperTitleMockB.name!!, originalTittelLref)),
-        dateStart = newspaperTitleMockB.startDate.toString(),
-        dateEnd = newspaperTitleMockB.endDate.toString(),
-        publisher = newspaperTitleMockB.publisher,
-        placeOfPublication = newspaperTitleMockB.publisherPlace,
-        language = newspaperTitleMockB.language,
-        recordType = CollectionsRecordType.WORK.value,
-        mediumLref = mediumTekstLref,
-        subMediumLref = submediumAviserLref,
+        series = listOf(newspaperTitleInputDtoMockB.name),
+        dating = listOf(CollectionsSeriesDatingDto(
+            dateStart = newspaperTitleInputDtoMockB.startDate.toString(),
+            dateEnd = newspaperTitleInputDtoMockB.endDate.toString()
+        )),
+        publisher = newspaperTitleInputDtoMockB.publisher,
+        placeOfPublication = newspaperTitleInputDtoMockB.publisherPlace,
+        language = newspaperTitleInputDtoMockB.language,
         inputName = TEST_USERNAME,
         inputNotes = INPUT_NOTES,
-        inputSource = "newspaper",
+        inputSource = "series",
         inputDate = LocalDate.now().toString(),
         inputTime = mockedTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
-        dataset = "newspaper")
-    )
+    ))
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
 
         val body = newspaperTitleInputDtoMockB.copy()
 
@@ -174,13 +173,12 @@ class NewspaperServiceTest {
             .expectNextMatches { it == newspaperTitleMockB }
             .verifyComplete()
 
-        verify { collectionsService.createRecord(titleEncodedDto) }
+        verify { collectionsService.createSeriesRecord(seriesEncodedDto) }
     }
 
     @Test
     fun `createTitle should throw exception with error message from repository method`() {
-        every { collectionsService.createRecord(any()) } returns Mono.error(CollectionsException("Error creating title"))
-        every { collectionsService.createRecord(any(), any()) } returns Mono.error(CollectionsException("Error creating title"))
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.error(CollectionsException("Error creating title"))
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB)
             .test()
@@ -270,8 +268,7 @@ class NewspaperServiceTest {
 
     @Test
     fun `getSingleTitle should return correctly mapped title`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleA.copy())
-        val testRecord = collectionsModelMockTitleA.getFirstObject()
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleA.copy())
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -279,14 +276,14 @@ class NewspaperServiceTest {
             .assertNext {
                 Assertions.assertEquals(
                     Title(
-                        name = testRecord.getName(),
-                        startDate = testRecord.getStartDate(),
+                        name = "Bikubeavisen",
+                        startDate = LocalDate.parse("2020-01-01"),
                         endDate = null,
-                        publisher = testRecord.getPublisher(),
-                        publisherPlace = testRecord.getPublisherPlace(),
-                        language = testRecord.getLanguage(),
-                        materialType = testRecord.getMaterialType()!!.norwegian,
-                        catalogueId = testRecord.priRef
+                        publisher = "NB",
+                        publisherPlace = "Mo I Rana",
+                        language = "nob",
+                        materialType = null,
+                        catalogueId = "1"
                     ),
                     it
                 )
@@ -295,8 +292,8 @@ class NewspaperServiceTest {
     }
 
     @Test
-    fun `getSingleTitle should throw CollectionsTitleNotFound if object is a manifestation`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockManifestationA.copy())
+    fun `getSingleTitle should throw CollectionsTitleNotFound if series is not found`() {
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelEmptyMock.copy())
 
         newspaperService.getSingleTitle("1")
             .test()
@@ -306,43 +303,26 @@ class NewspaperServiceTest {
     }
 
     @Test
-    fun `getSingleTitle should throw CollectionsTitleNotFound if object is an item`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelMockItemA.copy())
-
-        newspaperService.getSingleTitle("1")
-            .test()
-            .expectSubscription()
-            .expectError(CollectionsTitleNotFound::class.java)
-            .verify()
-    }
-
-    @Test
-    fun `getSingleTitle should throw CollectionsTitleNotFound if no items are received`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren("1") } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
-
-        newspaperService.getSingleTitle("1")
-            .test()
-            .expectSubscription()
-            .expectError(CollectionsTitleNotFound::class.java)
-            .verify()
-    }
-
-    @Test
-    fun `getSingleTitle should throw CollectionsException if multiple items are received`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(
-            CollectionsModel(adlibJson = CollectionsRecordList(
-                recordList = listOf(
-                    collectionsModelMockTitleA.getFirstObject().copy(),
-                    collectionsModelMockTitleB.getFirstObject().copy()
+    fun `getSingleTitle should return first title when multiple series are received`() {
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(
+            CollectionsSeriesModel(
+                adlibJson = CollectionsSeriesRecordList(
+                    recordList = listOf(
+                        collectionsSeriesModelMockTitleA.adlibJson.recordList!!.first().copy(),
+                        collectionsSeriesModelMockTitleC.adlibJson.recordList!!.first().copy()
+                    )
                 )
-            ))
+            )
         )
 
         newspaperService.getSingleTitle("1")
             .test()
             .expectSubscription()
-            .expectError(CollectionsException::class.java)
-            .verify()
+            .assertNext {
+                Assertions.assertEquals("1", it.catalogueId)
+                Assertions.assertEquals("Bikubeavisen", it.name)
+            }
+            .verifyComplete()
     }
 
     @Test
@@ -355,9 +335,8 @@ class NewspaperServiceTest {
 
     @Test
     fun `createTitle should return correctly mapped record`() {
-        every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -368,9 +347,8 @@ class NewspaperServiceTest {
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
-        every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockTitleC)
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -378,7 +356,7 @@ class NewspaperServiceTest {
             .assertNext { Assertions.assertEquals(newspaperTitleMockB, it) }
             .verifyComplete()
 
-        verify { collectionsService.createRecord(titleEncodedDto) }
+        verify { collectionsService.createSeriesRecord(seriesEncodedDto) }
     }
 
     @Test

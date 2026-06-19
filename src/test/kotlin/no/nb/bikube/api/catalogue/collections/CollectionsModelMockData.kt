@@ -450,5 +450,41 @@ class CollectionsModelMockData {
                 )
             )
         )
+
+        // Equal to newspaperTitleMockA
+        val collectionsSeriesModelMockTitleA = CollectionsSeriesModel(
+            adlibJson = CollectionsSeriesRecordList(
+                recordList = listOf(
+                    CollectionsSeriesObject(
+                        priRef = "1",
+                        seriesTitles = listOf("Bikubeavisen"),
+                        datingList = listOf(CollectionsSeriesDating("2020-01-01", null)),
+                        publisher = "NB",
+                        placeOfPublication = "Mo I Rana",
+                        language = "nob"
+                    )
+                )
+            )
+        )
+
+        // Equal to newspaperTitleMockB
+        val collectionsSeriesModelMockTitleC = CollectionsSeriesModel(
+            adlibJson = CollectionsSeriesRecordList(
+                recordList = listOf(
+                    CollectionsSeriesObject(
+                        priRef = "2",
+                        seriesTitles = listOf("Avis B"),
+                        datingList = listOf(CollectionsSeriesDating("2020-01-01", "2020-01-31")),
+                        publisher = "B-Forlaget",
+                        placeOfPublication = "Brakka",
+                        language = "nob"
+                    )
+                )
+            )
+        )
+
+        val collectionsSeriesModelEmptyMock = CollectionsSeriesModel(
+            adlibJson = CollectionsSeriesRecordList(recordList = null)
+        )
     }
 }

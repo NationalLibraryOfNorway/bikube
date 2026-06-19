@@ -37,14 +37,15 @@ class NewspaperService (
     fun createNewspaperTitle(title: TitleInputDto): Mono<Title> {
         return maxitService.getUniqueIds()
             .flatMap {
-                val dto: TitleDto = createTitleDto(collectionsLrefConfig, it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
+                val dto = createSeriesDto(it.priref, title)
                 val encodedBody = Json.encodeToString(dto)
-                collectionsService.createRecord(encodedBody)
-                    .handle { collectionsModel, sink ->
-                        if (collectionsModel.hasObjects())
-                            sink.next(collectionsModel.getFirstObject())
+                collectionsService.createSeriesRecord(encodedBody)
+                    .handle { model, sink ->
+                        val records = model.getObjects()
+                        if (!records.isNullOrEmpty())
+                            sink.next(records.first())
                         else
-                            sink.error(CollectionsException("Error creating title: ${collectionsModel.getError()}"))
+                            sink.error(CollectionsException("Error creating title: ${model.adlibJson.diagnostic?.error?.message ?: ""}"))
                     }
                     .flatMap { getSingleTitle(it.priRef) }
             }
@@ -66,9 +67,15 @@ class NewspaperService (
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
-        return collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
-            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
-            .map { mapCollectionsObjectToGenericTitle(it) }
+        return collectionsService.getSingleSeries(catalogId)
+            .handle { model, sink ->
+                val records = model.getObjects()
+                if (records.isNullOrEmpty())
+                    sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
+                else
+                    sink.next(records.first())
+            }
+            .map { mapCollectionsSeriesObjectToGenericTitle(it) }
     }
 
     fun getLinkToSingleTitle(catalogId: String): URL {
@@ -78,10 +85,9 @@ class NewspaperService (
     }
 
     fun getTitlesPage(pageNumber: Int): Mono<Tuple2<List<Title>, Int>> {
-        val pageContent = collectionsService.getAllWorks(pageNumber)
+        val pageContent = collectionsService.getAllSeries(pageNumber)
             .mapNotNull { model ->
-                model.getObjects()
-                    ?. map { mapCollectionsObjectToGenericTitle(it) }
+                model.getObjects()?.map { mapCollectionsSeriesObjectToGenericTitle(it) }
             }
         return Mono.zip(pageContent, Mono.just(pageNumber))
     }
