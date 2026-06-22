@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.4</version>
+		<version>4.0.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.nb</groupId>
@@ -18,9 +18,9 @@
 		<kotlin.version>2.2.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<lucene.version>9.10.0</lucene.version>
-        <vaadin.version>25.0.6</vaadin.version>
+        <vaadin.version>25.1.7</vaadin.version>
         <jackson-bom.version>3.1.0</jackson-bom.version>
-        <tomcat.version>11.0.21</tomcat.version>
+        <tomcat.version>11.0.22</tomcat.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
