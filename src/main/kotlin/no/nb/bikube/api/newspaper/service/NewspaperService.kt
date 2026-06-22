@@ -24,6 +24,8 @@ import reactor.util.function.Tuple2
 import java.net.URL
 import java.time.LocalDate
 
+private val json = Json { explicitNulls = false }
+
 @Service
 class NewspaperService (
     private val collectionsConfig: CollectionsConfig,
@@ -38,7 +40,7 @@ class NewspaperService (
         return maxitService.getUniqueIds()
             .flatMap {
                 val dto: TitleDto = createTitleDto(collectionsLrefConfig, it.priref, it.objectNumber, title, CollectionsDatabase.NEWSPAPER)
-                val encodedBody = Json.encodeToString(dto)
+                val encodedBody = json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
                     .handle { collectionsModel, sink ->
                         if (collectionsModel.hasObjects())
@@ -123,7 +125,7 @@ class NewspaperService (
         username: String
     ): Mono<Publisher> {
         if (publisher.isEmpty()) throw BadRequestBodyException("Publisher cannot be empty.")
-        val serializedBody = Json.encodeToString(createNameRecordDtoFromString(publisher, username))
+        val serializedBody = json.encodeToString(createNameRecordDtoFromString(publisher, username))
         return collectionsService.searchPublisher(publisher)
             .flatMap { collectionsModel ->
                 if (collectionsModel.hasObjects()) {
@@ -146,7 +148,7 @@ class NewspaperService (
                     synchronousSink.error(RecordAlreadyExistsException("Publisher place '$publisherPlace' already exists"))
                 else
                     synchronousSink.next(
-                        Json.encodeToString(
+                        json.encodeToString(
                             createTermRecordDtoFromString(
                                 publisherPlace,
                                 CollectionsTermType.LOCATION,
@@ -174,7 +176,7 @@ class NewspaperService (
                     synchronousSink.error(RecordAlreadyExistsException("Language '$language' already exists"))
                 else
                     synchronousSink.next(
-                        Json.encodeToString(
+                        json.encodeToString(
                             createTermRecordDtoFromString(
                                 language,
                                 CollectionsTermType.LANGUAGE,
@@ -231,7 +233,7 @@ class NewspaperService (
                     number,
                     version
                 )
-                val encodedBody = Json.encodeToString(dto)
+                val encodedBody = json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
                     .handle { collectionsModel, sink ->
                         if (collectionsModel.hasObjects())
@@ -370,7 +372,7 @@ class NewspaperService (
         return maxitService.getUniqueIds()
             .flatMap {
                 val dto: ItemDto = createNewspaperItemDto(it.priref, it.objectNumber, item, CollectionsDatabase.NEWSPAPER, parentId)
-                val encodedBody = Json.encodeToString(dto)
+                val encodedBody = json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
                     .handle { collectionsModel, sink ->
                         if (collectionsModel.hasObjects())
@@ -415,7 +417,7 @@ class NewspaperService (
         item: ItemUpdateDto
     ): Mono<CollectionsObject> {
         val dto = createUpdateManifestationDto(collectionsLrefConfig, item.manifestationId, item.username, item.notes, item.number)
-        val encodedBody = Json.encodeToString(dto)
+        val encodedBody = json.encodeToString(dto)
         return collectionsService.updateRecord(encodedBody)
             .handle { collectionsModel, sink ->
                 if (collectionsModel.hasObjects())
