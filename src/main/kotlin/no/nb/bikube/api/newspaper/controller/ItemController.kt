@@ -47,6 +47,7 @@ class ItemController (
             .doOnSuccess { responseEntity ->
                 logger().info("Newspaper item created with id: ${responseEntity?.body?.catalogueId}")
             }
+            .doOnError { logger().error("Failed to create newspaper item: $item", it) }
     }
 
     @PostMapping("/missing", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -66,6 +67,7 @@ class ItemController (
             .doOnSuccess { responseEntity ->
                 logger().info("Manifestation created with id: ${responseEntity?.body?.catalogueId}")
             }
+            .doOnError { logger().error("Failed to create missing item: $item", it) }
     }
 
     @PutMapping("")
