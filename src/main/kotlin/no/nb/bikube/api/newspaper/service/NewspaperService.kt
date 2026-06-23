@@ -230,7 +230,8 @@ class NewspaperService (
         notes: String?,
         volume: String?,
         number: String?,
-        version: String?
+        version: String?,
+        useSeriesManifestation: Boolean = seriesManifestationEnabled
     ): Mono<CollectionsObject> {
         return maxitService.getUniqueIds()
             .flatMap {
@@ -246,7 +247,7 @@ class NewspaperService (
                     volume,
                     number,
                     version,
-                    useSeriesManifestation = seriesManifestationEnabled
+                    useSeriesManifestation = useSeriesManifestation
                 )
                 val encodedBody = json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)
@@ -262,40 +263,65 @@ class NewspaperService (
 
     @Throws(CollectionsItemNotFound::class)
     fun createNewspaperItem(item: ItemInputDto): Mono<Item> {
-        return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
-            .flatMap { title ->
-                if (title.hasError() || !title.hasObjects()) {
-                    Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
-                } else {
-                    findOrCreateManifestationRecord(
-                        titleId = item.titleCatalogueId,
-                        date = item.date,
-                        username = item.username,
-                        notes = item.notes,
-                        volume = item.volume,
-                        number = item.number,
-                        version = item.version)
+        // Physical boxes always link to SERIES; digital items are feature-flagged
+        val useSeriesManifestation = item.digital != true || seriesManifestationEnabled
+
+        val manifestationMono = if (useSeriesManifestation) {
+            collectionsService.getSingleSeries(item.titleCatalogueId)
+                .flatMap { model ->
+                    if (model.hasError() || model.getObjects().isNullOrEmpty())
+                        Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found"))
+                    else
+                        findOrCreateManifestationRecord(
+                            titleId = item.titleCatalogueId,
+                            date = item.date,
+                            username = item.username,
+                            notes = item.notes,
+                            volume = item.volume,
+                            number = item.number,
+                            version = item.version,
+                            useSeriesManifestation = true
+                        )
                 }
-            }.flatMap { manifestation ->
-                checkForExistingItems(manifestation, item).then(
-                    if (item.digital == true) {
-                        createLinkedNewspaperItem(item, manifestation.priRef)
-                    } else if (!item.containerId.isNullOrBlank()) {
-                        collectionsService.createContainerIfNotExists(item.containerId, item.username)
-                            .then(createLinkedNewspaperItem(item, manifestation.priRef))
-                    } else {
-                        Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
-                    }
-                )
-            }
+        } else {
+            collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
+                .flatMap { title ->
+                    if (title.hasError() || !title.hasObjects())
+                        Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
+                    else
+                        findOrCreateManifestationRecord(
+                            titleId = item.titleCatalogueId,
+                            date = item.date,
+                            username = item.username,
+                            notes = item.notes,
+                            volume = item.volume,
+                            number = item.number,
+                            version = item.version,
+                            useSeriesManifestation = false
+                        )
+                }
+        }
+
+        return manifestationMono.flatMap { manifestation ->
+            checkForExistingItems(manifestation, item).then(
+                if (item.digital == true) {
+                    createLinkedNewspaperItem(item, manifestation.priRef)
+                } else if (!item.containerId.isNullOrBlank()) {
+                    collectionsService.createContainerIfNotExists(item.containerId, item.username)
+                        .then(createLinkedNewspaperItem(item, manifestation.priRef))
+                } else {
+                    Mono.error(CollectionsPhysicalItemMissingContainer("Physical item must have a container ID"))
+                }
+            )
+        }
     }
 
     fun createMissingItem(item: MissingPeriodicalItemDto): Mono<Item> {
-        return collectionsService.getSingleCollectionsModelWithoutChildren(item.titleCatalogueId)
-            .flatMap { title ->
-                if (title.hasError() || !title.hasObjects()) {
-                    Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found: ${title.getError()}"))
-                } else {
+        return collectionsService.getSingleSeries(item.titleCatalogueId)
+            .flatMap { model ->
+                if (model.hasError() || model.getObjects().isNullOrEmpty())
+                    Mono.error(CollectionsItemNotFound("Title with id ${item.titleCatalogueId} not found"))
+                else
                     findOrCreateManifestationRecord(
                         titleId = item.titleCatalogueId,
                         date = item.date,
@@ -303,10 +329,11 @@ class NewspaperService (
                         notes = item.notes,
                         volume = item.volume,
                         number = item.number,
-                        version = item.version
+                        version = item.version,
+                        useSeriesManifestation = true
                     )
-                }
-            }.map { mapCollectionsObjectToGenericItem(it) }
+            }
+            .map { mapCollectionsObjectToGenericItem(it) }
     }
 
     fun updatePhysicalNewspaper(updateDto: ItemUpdateDto): Mono<CollectionsObject> {
@@ -407,11 +434,15 @@ class NewspaperService (
         notes: String?,
         volume: String? = null,
         number: String? = null,
-        version: String? = null
+        version: String? = null,
+        useSeriesManifestation: Boolean = seriesManifestationEnabled
     ): Mono<CollectionsObject> {
-        return collectionsService.getManifestations(
-            date, titleId, volume, number, version
-        ).flatMap {
+        val manifestationSearch = if (useSeriesManifestation)
+            collectionsService.getManifestationsBySeries(date, titleId, volume, number, version)
+        else
+            collectionsService.getManifestations(date, titleId, volume, number, version)
+
+        return manifestationSearch.flatMap {
             if (!it.hasObjects()) {
                 createManifestation(
                     titleId,
@@ -420,7 +451,8 @@ class NewspaperService (
                     notes,
                     volume,
                     number,
-                    version
+                    version,
+                    useSeriesManifestation = useSeriesManifestation
                 )
             } else {
                 Mono.just(it.getFirstObject())

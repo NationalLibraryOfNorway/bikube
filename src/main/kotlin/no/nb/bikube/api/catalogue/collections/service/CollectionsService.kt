@@ -84,6 +84,29 @@ class CollectionsService(
         version: String? = null,
         db: CollectionsDatabase = collectionsDatabase
     ): Mono<CollectionsModel> {
+        return getManifestationsWithTitleRef(date, titleCatalogId, "part_of_reference.lref", volume, number, version, db)
+    }
+
+    fun getManifestationsBySeries(
+        date: LocalDate,
+        titleCatalogId: String,
+        volume: String? = null,
+        number: String? = null,
+        version: String? = null,
+        db: CollectionsDatabase = collectionsDatabase
+    ): Mono<CollectionsModel> {
+        return getManifestationsWithTitleRef(date, titleCatalogId, "series.title.lref", volume, number, version, db)
+    }
+
+    private fun getManifestationsWithTitleRef(
+        date: LocalDate,
+        titleCatalogId: String,
+        titleRefField: String,
+        volume: String?,
+        number: String?,
+        version: String?,
+        db: CollectionsDatabase
+    ): Mono<CollectionsModel> {
         val dateString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(date)
         val edition = listOfNotNull(
             volume?.takeIf { it.isNotBlank() } ?: "U",
@@ -98,7 +121,7 @@ class CollectionsService(
 
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.MANIFESTATION} and " +
-            "part_of_reference.lref=${titleCatalogId} and " +
+            "$titleRefField=${titleCatalogId} and " +
             "edition.date='${dateString}'" +
             editionQuery,
             db

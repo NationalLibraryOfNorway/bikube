@@ -98,6 +98,8 @@ class NewspaperServiceTest {
         mockkStatic(LocalTime::class)
         every { LocalTime.now() } returns mockedTime
         every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse("1600000000", "NP-1600000000"))
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleA.copy())
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
     }
 
     private val manifestationEncodedDto = json.encodeToString(ManifestationDto(
@@ -739,8 +741,7 @@ class NewspaperServiceTest {
 
     @Test
     fun `createMissingItem should create manifestation if it does not exist`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelMockItemB)
-        every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockItemB)
 
@@ -770,7 +771,7 @@ class NewspaperServiceTest {
 
     @Test
     fun `createMissingItem should return error if title does not exist`() {
-        every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelEmptyMock.copy())
 
         newspaperService.createMissingItem(missingItemDtoMock)
             .test()
