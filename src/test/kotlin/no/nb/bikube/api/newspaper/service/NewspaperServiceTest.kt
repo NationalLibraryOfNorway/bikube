@@ -101,7 +101,7 @@ class NewspaperServiceTest {
     private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
         priRef = "1600000000",
         objectNumber = "NP-1600000000",
-        partOfReference = newspaperItemMockB.catalogueId,
+        seriesTitleLref = newspaperItemMockB.catalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = newspaperItemMockB.date.toString(),
         inputName = TEST_USERNAME,
@@ -628,7 +628,7 @@ class NewspaperServiceTest {
             ManifestationDto(
                 priRef = "1600000000",
                 objectNumber = "NP-1600000000",
-                partOfReference = "1",
+                seriesTitleLref = "1",
                 recordType = CollectionsRecordType.MANIFESTATION.value,
                 date = LocalDate.now().toString(),
                 edition = "$TEST_NUMBER-U-U",

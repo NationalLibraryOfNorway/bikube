@@ -20,8 +20,8 @@ class ManifestationDto (
     @SerialName("object_number")
     val objectNumber: String?,
 
-    @SerialName("part_of_reference.lref")
-    val partOfReference: String?,
+    @SerialName("series.title.lref")
+    val seriesTitleLref: String?,
 
     @SerialName("record_type")
     val recordType: String?,
@@ -78,7 +78,7 @@ fun createManifestationDto(
     return ManifestationDto(
         priRef = id,
         objectNumber = objectNumber,
-        partOfReference = parentCatalogueId,
+        seriesTitleLref = parentCatalogueId,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
         edition = edition,
