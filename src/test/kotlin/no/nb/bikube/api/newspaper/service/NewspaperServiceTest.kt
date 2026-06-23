@@ -68,7 +68,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@SpringBootTest
+@SpringBootTest(properties = ["featureflag.series-manifestation=true"])
 @ActiveProfiles("test")
 class NewspaperServiceTest {
 

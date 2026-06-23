@@ -17,6 +17,7 @@ import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.core.model.inputDto.TitleInputDto
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -30,7 +31,8 @@ class NewspaperService (
     @param:Qualifier("collectionsNewspaperService")
     private val collectionsService: CollectionsService,
     private val collectionsLrefConfig: CollectionsLrefConfig,
-    private val maxitService: MaxitService
+    private val maxitService: MaxitService,
+    @Value("\${featureflag.series-manifestation:false}") private val seriesManifestationEnabled: Boolean
 ) {
 
     @Throws(CollectionsException::class)
@@ -67,15 +69,21 @@ class NewspaperService (
 
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
-        return collectionsService.getSingleSeries(catalogId)
-            .handle { model, sink ->
-                val records = model.getObjects()
-                if (records.isNullOrEmpty())
-                    sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
-                else
-                    sink.next(records.first())
-            }
-            .map { mapCollectionsSeriesObjectToGenericTitle(it) }
+        return if (seriesManifestationEnabled) {
+            collectionsService.getSingleSeries(catalogId)
+                .handle { model, sink ->
+                    val records = model.getObjects()
+                    if (records.isNullOrEmpty())
+                        sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
+                    else
+                        sink.next(records.first())
+                }
+                .map { mapCollectionsSeriesObjectToGenericTitle(it) }
+        } else {
+            collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
+                .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
+                .map { mapCollectionsObjectToGenericTitle(it) }
+        }
     }
 
     fun getLinkToSingleTitle(catalogId: String): URL {
@@ -235,7 +243,8 @@ class NewspaperService (
                     notes,
                     volume,
                     number,
-                    version
+                    version,
+                    useSeriesManifestation = seriesManifestationEnabled
                 )
                 val encodedBody = Json.encodeToString(dto)
                 collectionsService.createRecord(encodedBody)

@@ -34,7 +34,7 @@ import reactor.kotlin.test.test
 import java.time.Duration
 import java.time.LocalDate
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["featureflag.series-manifestation=true"])
 @AutoConfigureWebTestClient
 @ActiveProfiles("test")
 class TitleControllerIntegrationTest (
