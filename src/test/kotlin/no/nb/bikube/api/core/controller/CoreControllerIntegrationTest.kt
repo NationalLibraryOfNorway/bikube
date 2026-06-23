@@ -11,6 +11,8 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockItemA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartsObjectMockManifestationA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelEmptyMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleA
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
 import no.nb.bikube.api.catalogue.collections.mapper.mapCollectionsObjectToGenericTitle
 import no.nb.bikube.api.catalogue.collections.model.*
@@ -62,6 +64,8 @@ class CoreControllerIntegrationTest (
         every { collectionsService.getSingleCollectionsModel(collectionsModelMockManifestationA.getFirstId()!!) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelEmptyMock.copy())
+        every { collectionsService.getSingleSeries(titleId) } returns Mono.just(collectionsSeriesModelMockTitleA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
@@ -230,7 +234,7 @@ class CoreControllerIntegrationTest (
 
     @Test
     fun `get-title endpoint should return correctly mapped title`() {
-        val testTitle = collectionsModelMockTitleA.getFirstObject()
+        val testTitle = collectionsSeriesModelMockTitleA.getFirstObject()
 
         getTitle(titleId, MaterialType.NEWSPAPER)
             .expectStatus().isOk
@@ -242,10 +246,10 @@ class CoreControllerIntegrationTest (
                     name = testTitle.getName(),
                     startDate = testTitle.getStartDate(),
                     endDate = testTitle.getEndDate(),
-                    publisher = testTitle.getPublisher(),
-                    publisherPlace = testTitle.getPublisherPlace(),
-                    language = testTitle.getLanguage(),
-                    materialType = testTitle.getMaterialType()!!.norwegian,
+                    publisher = testTitle.publisher,
+                    publisherPlace = testTitle.placeOfPublication,
+                    language = testTitle.language,
+                    materialType = null,
                     catalogueId = testTitle.priRef
                 )
             )
@@ -267,7 +271,7 @@ class CoreControllerIntegrationTest (
             .test()
             .assertNext { problemDetail ->
                 Assertions.assertEquals("Not Found", problemDetail.title)
-                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type work"))
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("could not find series"))
                 Assertions.assertNotNull(problemDetail.instance)
             }
             .verifyComplete()
@@ -279,7 +283,7 @@ class CoreControllerIntegrationTest (
             .test()
             .assertNext { problemDetail ->
                 Assertions.assertEquals("Not Found", problemDetail.title)
-                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("object is not of type work"))
+                Assertions.assertTrue(problemDetail.detail!!.lowercase().contains("could not find series"))
                 Assertions.assertNotNull(problemDetail.instance)
             }
             .verifyComplete()
