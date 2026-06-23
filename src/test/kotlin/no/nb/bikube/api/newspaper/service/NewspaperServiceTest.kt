@@ -68,6 +68,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+private val json = Json { explicitNulls = false }
+
 @SpringBootTest(properties = ["featureflag.series-manifestation=true"])
 @ActiveProfiles("test")
 class NewspaperServiceTest {
@@ -98,7 +100,7 @@ class NewspaperServiceTest {
         every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse("1600000000", "NP-1600000000"))
     }
 
-    private val manifestationEncodedDto = Json.encodeToString(ManifestationDto(
+    private val manifestationEncodedDto = json.encodeToString(ManifestationDto(
         priRef = "1600000000",
         objectNumber = "NP-1600000000",
         seriesTitleLref = newspaperItemMockB.catalogueId,
@@ -112,7 +114,7 @@ class NewspaperServiceTest {
         dataset = "newspaper"
     ))
 
-    private val itemEncodedDto = Json.encodeToString(ItemDto(
+    private val itemEncodedDto = json.encodeToString(ItemDto(
         priRef = "1600000000",
         objectNumber = "NP-1600000000",
         format = CollectionsFormat.DIGITAL.value,
@@ -128,7 +130,7 @@ class NewspaperServiceTest {
         urn = newspaperItemMockB.urn
     ))
 
-    private val itemEncodedDtoPhysical = Json.encodeToString(ItemDto(
+    private val itemEncodedDtoPhysical = json.encodeToString(ItemDto(
         priRef = "1600000000",
         objectNumber = "NP-1600000000",
         format = CollectionsFormat.PHYSICAL.value,
@@ -144,7 +146,7 @@ class NewspaperServiceTest {
         currentLocationName = collectionsLocationObjectMock.priRef
     ))
 
-    private val seriesEncodedDto = Json.encodeToString(CollectionsSeriesDto(
+    private val seriesEncodedDto = json.encodeToString(CollectionsSeriesDto(
         priRef = "1600000000",
         series = listOf(newspaperTitleInputDtoMockB.name),
         dating = listOf(CollectionsSeriesDatingDto(
@@ -624,7 +626,7 @@ class NewspaperServiceTest {
         every { collectionsService.createRecord(any(), any()) } returns Mono.just(collectionsModelMockManifestationA)
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA)
 
-        val encodedValue = Json.encodeToString(
+        val encodedValue = json.encodeToString(
             ManifestationDto(
                 priRef = "1600000000",
                 objectNumber = "NP-1600000000",
@@ -813,7 +815,7 @@ class NewspaperServiceTest {
         )
 
         verify (exactly = 1){ collectionsService.getSingleCollectionsModelWithoutChildren(any()) }
-        verify (exactly = 1){ collectionsService.updateRecord(Json.encodeToString(dto)) }
+        verify (exactly = 1){ collectionsService.updateRecord(json.encodeToString(dto)) }
     }
 
     @Test
