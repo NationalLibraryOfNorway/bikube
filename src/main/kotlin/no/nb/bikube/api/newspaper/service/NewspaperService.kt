@@ -49,7 +49,7 @@ class NewspaperService (
                         if (!records.isNullOrEmpty())
                             sink.next(records.first())
                         else
-                            sink.error(CollectionsException("Error creating title: ${model.adlibJson.diagnostic?.error?.message ?: ""}"))
+                            sink.error(CollectionsException("Error creating title: ${model.getError() ?: ""}"))
                     }
                     .flatMap { getSingleTitle(it.priRef) }
             }

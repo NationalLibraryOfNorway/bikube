@@ -44,7 +44,9 @@ data class CollectionsSeriesDating(
     val dateTo: String?
 )
 
-fun CollectionsSeriesModel.hasError(): Boolean = this.adlibJson.diagnostic?.error?.message != null
+fun CollectionsSeriesModel.getError(): String? = this.adlibJson.diagnostic?.error?.message
+
+fun CollectionsSeriesModel.hasError(): Boolean = this.getError() != null
 
 fun CollectionsSeriesObject.getName(): String? = this.seriesTitles?.firstOrNull()
 
