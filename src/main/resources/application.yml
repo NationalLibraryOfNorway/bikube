@@ -13,6 +13,9 @@ management:
 spring:
   application:
     name: bikube
+  mvc:
+    async:
+      request-timeout: -1
   webflux:
     base-path: /bikube
   security:
