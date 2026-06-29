@@ -17,7 +17,7 @@
    release (only Beta1 as of 2026-06-29). Suppressed until stable fix ships.
    Revisit when 2.4.20 stable is released.
    ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-stdlib@.*$</packageUrl>
+    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/.*$</packageUrl>
     <cve>CVE-2026-53914</cve>
   </suppress>
 </suppressions>
