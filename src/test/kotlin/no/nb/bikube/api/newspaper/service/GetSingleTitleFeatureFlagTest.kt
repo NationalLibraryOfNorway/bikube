@@ -4,9 +4,12 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelEmptyMock
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleA
+import no.nb.bikube.api.catalogue.collections.exception.CollectionsTitleNotFound
 import no.nb.bikube.api.catalogue.collections.service.CollectionsService
 import org.junit.jupiter.api.Test
 import reactor.kotlin.test.test
@@ -50,6 +53,30 @@ class GetSingleTitleFlagOffTest {
 
         verify(exactly = 1) { collectionsService.getSingleCollectionsModelWithoutChildren("999") }
         verify(exactly = 0) { collectionsService.getSingleSeries(any()) }
+    }
+
+    @Test
+    fun `flag off - getSingleTitle should throw CollectionsTitleNotFound if object is a manifestation`() {
+        every { collectionsService.getSingleCollectionsModelWithoutChildren("1") } returns
+            Mono.just(collectionsModelMockManifestationA.copy())
+
+        newspaperService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsTitleNotFound::class.java)
+            .verify()
+    }
+
+    @Test
+    fun `flag off - getSingleTitle should throw CollectionsTitleNotFound if object is an item`() {
+        every { collectionsService.getSingleCollectionsModelWithoutChildren("1") } returns
+            Mono.just(collectionsModelMockItemA.copy())
+
+        newspaperService.getSingleTitle("1")
+            .test()
+            .expectSubscription()
+            .expectError(CollectionsTitleNotFound::class.java)
+            .verify()
     }
 }
 
