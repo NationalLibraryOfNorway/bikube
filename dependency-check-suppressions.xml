@@ -10,4 +10,14 @@
     <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-devtools@.*$</packageUrl>
     <cve>CVE-2022-31691</cve>
   </suppress>
+  <suppress until="2026-12-31">
+    <notes><![CDATA[
+   CVE-2026-53914 (CVSS 9.8): Unsafe deserialization in Kotlin build cache
+   metadata. Fixed in Kotlin 2.4.20, which is not yet available as a stable
+   release (only Beta1 as of 2026-06-29). Suppressed until stable fix ships.
+   Revisit when 2.4.20 stable is released.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-stdlib@.*$</packageUrl>
+    <cve>CVE-2026-53914</cve>
+  </suppress>
 </suppressions>
