@@ -16,6 +16,7 @@ import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
 import no.nb.bikube.api.core.model.inputDto.TitleInputDto
+import no.nb.bikube.api.core.util.logger
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -77,8 +78,11 @@ class NewspaperService (
                     val records = model.getObjects()
                     if (records.isNullOrEmpty())
                         sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
-                    else
+                    else {
+                        if (records.size > 1)
+                            logger().warn("getSingleTitle returned {} series records for id '{}', using first", records.size, catalogId)
                         sink.next(records.first())
+                    }
                 }
                 .map { mapCollectionsSeriesObjectToGenericTitle(it) }
         } else {

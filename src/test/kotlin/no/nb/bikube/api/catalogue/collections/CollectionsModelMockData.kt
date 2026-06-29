@@ -459,25 +459,25 @@ class CollectionsModelMockData {
                         priRef = "1",
                         seriesTitles = listOf("Bikubeavisen"),
                         datingList = listOf(CollectionsSeriesDating("2020-01-01", null)),
-                        publisher = "NB",
-                        placeOfPublication = "Mo I Rana",
-                        language = "nob"
+                        publisher = listOf("NB"),
+                        placeOfPublication = listOf("Mo I Rana"),
+                        language = listOf("nob")
                     )
                 )
             )
         )
 
         // Equal to newspaperTitleMockB
-        val collectionsSeriesModelMockTitleC = CollectionsSeriesModel(
+        val collectionsSeriesModelMockTitleB = CollectionsSeriesModel(
             adlibJson = CollectionsSeriesRecordList(
                 recordList = listOf(
                     CollectionsSeriesObject(
                         priRef = "2",
                         seriesTitles = listOf("Avis B"),
                         datingList = listOf(CollectionsSeriesDating("2020-01-01", "2020-01-31")),
-                        publisher = "B-Forlaget",
-                        placeOfPublication = "Brakka",
-                        language = "nob"
+                        publisher = listOf("B-Forlaget"),
+                        placeOfPublication = listOf("Brakka"),
+                        language = listOf("nob")
                     )
                 )
             )

@@ -27,13 +27,13 @@ data class CollectionsSeriesObject(
     val datingList: List<CollectionsSeriesDating>?,
 
     @JsonProperty("publisher")
-    val publisher: String? = null,
+    val publisher: List<String>? = null,
 
     @JsonProperty("place_of_publication")
-    val placeOfPublication: String? = null,
+    val placeOfPublication: List<String>? = null,
 
     @JsonProperty("language")
-    val language: String? = null,
+    val language: List<String>? = null,
 ) : CollectionsGenericObject
 
 data class CollectionsSeriesDating(
@@ -49,6 +49,12 @@ fun CollectionsSeriesModel.getError(): String? = this.adlibJson.diagnostic?.erro
 fun CollectionsSeriesModel.hasError(): Boolean = this.getError() != null
 
 fun CollectionsSeriesObject.getName(): String? = this.seriesTitles?.firstOrNull()
+
+fun CollectionsSeriesObject.getPublisher(): String? = this.publisher?.firstOrNull()
+
+fun CollectionsSeriesObject.getPublisherPlace(): String? = this.placeOfPublication?.firstOrNull()
+
+fun CollectionsSeriesObject.getLanguage(): String? = this.language?.firstOrNull()
 
 fun CollectionsSeriesObject.getStartDate(): LocalDate? =
     this.datingList?.firstOrNull()?.dateFrom?.let { parseYearOrDate(it) }

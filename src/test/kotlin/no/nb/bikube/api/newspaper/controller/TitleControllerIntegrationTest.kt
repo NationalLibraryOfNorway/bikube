@@ -7,7 +7,7 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleC
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelMockA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsNameModelWithEmptyRecordListA
-import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleC
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
@@ -65,8 +65,8 @@ class TitleControllerIntegrationTest (
         every { collectionsService.getSingleCollectionsModel("2") } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren("2") } returns Mono.just(collectionsModelMockTitleC.copy())
-        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC.copy())
-        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC.copy())
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleB.copy())
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleB.copy())
         every { collectionsService.createRecord(any()) } returns Mono.just(collectionsModelMockTitleC.copy())
         every { collectionsService.searchPublisher(any()) } returns Mono.just(collectionsNameModelMockA.copy())
         every { collectionsService.searchPublisherPlace(any()) } returns Mono.just(collectionsTermModelMockLocationB.copy())

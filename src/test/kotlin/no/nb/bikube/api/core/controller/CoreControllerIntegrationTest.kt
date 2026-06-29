@@ -246,9 +246,9 @@ class CoreControllerIntegrationTest (
                     name = testTitle.getName(),
                     startDate = testTitle.getStartDate(),
                     endDate = testTitle.getEndDate(),
-                    publisher = testTitle.publisher,
-                    publisherPlace = testTitle.placeOfPublication,
-                    language = testTitle.language,
+                    publisher = testTitle.getPublisher(),
+                    publisherPlace = testTitle.getPublisherPlace(),
+                    language = testTitle.getLanguage(),
                     materialType = null,
                     catalogueId = testTitle.priRef
                 )

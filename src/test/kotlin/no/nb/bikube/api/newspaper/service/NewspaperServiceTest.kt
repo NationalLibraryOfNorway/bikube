@@ -25,7 +25,7 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelEmptyMock
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleA
-import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleC
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLanguageA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelMockLocationB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsTermModelWithEmptyRecordListA
@@ -167,8 +167,8 @@ class NewspaperServiceTest {
 
     @Test
     fun `createTitle should return Title object with default values from Title with only name and materialType`() {
-        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
-        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
 
         val body = newspaperTitleInputDtoMockB.copy()
 
@@ -313,7 +313,7 @@ class NewspaperServiceTest {
                 adlibJson = CollectionsSeriesRecordList(
                     recordList = listOf(
                         collectionsSeriesModelMockTitleA.adlibJson.recordList!!.first().copy(),
-                        collectionsSeriesModelMockTitleC.adlibJson.recordList!!.first().copy()
+                        collectionsSeriesModelMockTitleB.adlibJson.recordList!!.first().copy()
                     )
                 )
             )
@@ -339,8 +339,8 @@ class NewspaperServiceTest {
 
     @Test
     fun `createTitle should return correctly mapped record`() {
-        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
-        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
@@ -351,8 +351,8 @@ class NewspaperServiceTest {
 
     @Test
     fun `createTitle should correctly encode the title object sent to json string`() {
-        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
-        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleC)
+        every { collectionsService.createSeriesRecord(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelMockTitleB)
 
         newspaperService.createNewspaperTitle(newspaperTitleInputDtoMockB.copy())
             .test()
