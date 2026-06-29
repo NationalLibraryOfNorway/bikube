@@ -308,12 +308,14 @@ class NewspaperServiceTest {
 
     @Test
     fun `getSingleTitle should return first title when multiple series are received`() {
+        // Use dateless objects to avoid LocalDate.parse triggering LocalTime.create internally,
+        // which MockK's static mock of LocalTime cannot intercept reflectively under JPMS.
         every { collectionsService.getSingleSeries(any()) } returns Mono.just(
             CollectionsSeriesModel(
                 adlibJson = CollectionsSeriesRecordList(
                     recordList = listOf(
-                        collectionsSeriesModelMockTitleA.adlibJson.recordList!!.first().copy(),
-                        collectionsSeriesModelMockTitleB.adlibJson.recordList!!.first().copy()
+                        CollectionsSeriesObject(priRef = "1", seriesTitles = listOf("First Title"), datingList = null),
+                        CollectionsSeriesObject(priRef = "2", seriesTitles = listOf("Second Title"), datingList = null),
                     )
                 )
             )
@@ -324,7 +326,7 @@ class NewspaperServiceTest {
             .expectSubscription()
             .assertNext {
                 Assertions.assertEquals("1", it.catalogueId)
-                Assertions.assertEquals("Bikubeavisen", it.name)
+                Assertions.assertEquals("First Title", it.name)
             }
             .verifyComplete()
     }

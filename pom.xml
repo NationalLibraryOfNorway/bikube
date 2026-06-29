@@ -342,6 +342,7 @@
 				<version>3.2.1</version>
 				<configuration>
 					<runOrder>random</runOrder>
+					<argLine>--add-opens java.base/java.time=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
             <plugin>
