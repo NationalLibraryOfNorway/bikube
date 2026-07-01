@@ -9,7 +9,7 @@ import TitleCommentForm from "@/components/title-comment-form";
 import ContactForm from "@/components/contact-form";
 import ReleasePatternForm from "@/components/release-pattern-form";
 import BoxCreateModal from "@/components/box-create-modal";
-import Box from "@/generated/no/nb/bikube/hugin/model/dbo/Box";
+import type { Box } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import BoxNewspapersEditor from "@/components/box-newspapers-editor";
 
 export const config: ViewConfig = {

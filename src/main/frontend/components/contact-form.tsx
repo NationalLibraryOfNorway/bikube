@@ -1,6 +1,5 @@
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
+import type { HuginTitle, ContactInfoContactType } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {Form, FormikProvider, useFormik} from "formik";
-import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactType";
 import {Info, MessageCirclePlus, MailPlus, Minus, SaveIcon, Undo} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
@@ -54,12 +53,12 @@ export default function ContactForm({title, fields}: {
 
     const phoneContacts = formik.values.contactInfos
         .map((ci, i) => [ci, i] as const)
-        .filter(([ci]) => ci.contactType === ContactType.phone)
+        .filter(([ci]) => ci.contactType === ContactInfoContactType.phone)
         .map(([, i]) => i);
 
     const emailContacts = formik.values.contactInfos
         .map((ci, i) => [ci, i] as const)
-        .filter(([ci]) => ci.contactType === ContactType.email)
+        .filter(([ci]) => ci.contactType === ContactInfoContactType.email)
         .map(([, i]) => i);
 
     const visible = new Set(fields ?? ALL_FIELDS);
@@ -127,7 +126,7 @@ export default function ContactForm({title, fields}: {
                         onClick={() =>
                             formik.setFieldValue("contactInfos", [
                                 ...formik.values.contactInfos,
-                                {contactType: ContactType.phone, contactValue: ""},
+                                {contactType: ContactInfoContactType.phone, contactValue: ""},
                             ])
                         }
                     >
@@ -171,7 +170,7 @@ export default function ContactForm({title, fields}: {
                         onClick={() =>
                             formik.setFieldValue("contactInfos", [
                                 ...formik.values.contactInfos,
-                                {contactType: ContactType.email, contactValue: ""},
+                                {contactType: ContactInfoContactType.email, contactValue: ""},
                             ])
                         }
                     >

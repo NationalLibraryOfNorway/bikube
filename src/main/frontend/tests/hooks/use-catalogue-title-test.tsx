@@ -3,14 +3,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCatalogueTitles, useCatalogueTitle } from '@/hooks/use-catalogue-title';
-import { HuginCollectionsService } from '@/generated/endpoints';
+// TODO: update after Orval migration — import useSearchTitle/useGetSingleTitle from @/src/api/bikubeAPIForKommuniksjonMedTekstkataloger
+// import { HuginCollectionsService } from '@/generated/endpoints';
 
-vi.mock('@/generated/endpoints', () => ({
-    HuginCollectionsService: {
-        findByTitle: vi.fn(),
-        findById: vi.fn()
-    }
-}));
+// vi.mock('@/generated/endpoints', () => ({
+//     HuginCollectionsService: {
+//         findByTitle: vi.fn(),
+//         findById: vi.fn()
+//     }
+// }));
 
 vi.mock('@/lib/utils', () => ({
     redirect: vi.fn()

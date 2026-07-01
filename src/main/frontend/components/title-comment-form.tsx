@@ -1,4 +1,4 @@
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
+import type { HuginTitle } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import { Form, FormikProvider, useFormik } from "formik";
 import { Button } from "@/components/ui/button";
 import { SaveIcon, Undo } from "lucide-react";

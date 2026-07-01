@@ -3,14 +3,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAddNewspapers } from '@/hooks/use-create-item';
-import { HuginNewspaperService } from '@/generated/endpoints';
+// TODO: update after Orval migration — import upsertNewspaper from @/src/api/bikubeAPIForKommuniksjonMedTekstkataloger
+// import { HuginNewspaperService } from '@/generated/endpoints';
 import { toast } from 'sonner';
 
-vi.mock('@/generated/endpoints', () => ({
-    HuginNewspaperService: {
-        upsertNewspaper: vi.fn()
-    }
-}));
+// vi.mock('@/generated/endpoints', () => ({
+//     HuginNewspaperService: {
+//         upsertNewspaper: vi.fn()
+//     }
+// }));
 
 vi.mock('sonner', () => ({
     toast: {

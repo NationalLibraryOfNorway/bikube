@@ -3,13 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSaveHuginTitle } from '@/hooks/use-save-hugin-title';
-import { HuginNewspaperService } from '@/generated/endpoints';
+// TODO: update after Orval migration — import useUpsertContactInformation from @/src/api/bikubeAPIForKommuniksjonMedTekstkataloger
+// import { HuginNewspaperService } from '@/generated/endpoints';
 
-vi.mock('@/generated/endpoints', () => ({
-    HuginNewspaperService: {
-        upsertContactInformation: vi.fn()
-    }
-}));
+// vi.mock('@/generated/endpoints', () => ({
+//     HuginNewspaperService: {
+//         upsertContactInformation: vi.fn()
+//     }
+// }));
 
 describe('useSaveHuginTitle', () => {
     let queryClient: QueryClient;

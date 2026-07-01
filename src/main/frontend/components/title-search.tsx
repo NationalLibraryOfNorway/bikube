@@ -1,7 +1,7 @@
 import {Command, CommandEmpty, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {LoaderCircle} from "lucide-react";
-import Title from "@/generated/no/nb/bikube/api/core/model/Title";
+import type { Title } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {isActive} from "@/lib/utils";
 import {clsx} from "clsx";
 import {Badge} from "@/components/ui/badge";
