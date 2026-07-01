@@ -18,9 +18,7 @@
 		<kotlin.version>2.4.0</kotlin.version>
 		<serialization.version>1.7.3</serialization.version>
 		<lucene.version>9.10.0</lucene.version>
-        <vaadin.version>25.1.7</vaadin.version>
         <jackson-bom.version>3.2.0</jackson-bom.version>
-        <tomcat.version>11.0.22</tomcat.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
 	</properties>
 
@@ -33,22 +31,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <version>${vaadin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
 	<dependencies>
 		<!-- Spring dependencies -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
@@ -99,16 +86,14 @@
 			<version>${kotlin.version}</version>
 		</dependency>
 
-		<!-- Reactor dependencies -->
+		<!-- Reactor / coroutines -->
 		<dependency>
 			<groupId>io.projectreactor.kotlin</groupId>
 			<artifactId>reactor-kotlin-extensions</artifactId>
-			<version>1.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlinx</groupId>
 			<artifactId>kotlinx-coroutines-reactor</artifactId>
-			<version>1.9.0</version>
 		</dependency>
 
 		<!-- Template engine -->
@@ -118,7 +103,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<!-- Dependencies for keycloak ouath2 -->
+		<!-- OAuth2 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -128,10 +117,10 @@
 			<artifactId>spring-security-oauth2-jose</artifactId>
 		</dependency>
 
-		<!-- Swagger -->
+		<!-- Swagger / OpenAPI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
 			<version>2.8.13</version>
 		</dependency>
 
@@ -191,38 +180,6 @@
 			<version>42.7.7</version>
 		</dependency>
 
-        <!-- Vaadin -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-core</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-
-        <!-- Hilla (separated from vaadin-spring-boot-starter in v25) -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>hilla-spring-boot-starter</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-
-        <!-- Vaadin development tools (required in v25+) -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-dev</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Oauth2 for Vaadin frontend -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
-
 		<!-- Dependencies only for tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -253,7 +210,6 @@
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
-			<version>3.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ninja-squad</groupId>
@@ -345,18 +301,55 @@
 					<argLine>--add-opens java.base/java.time=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-frontend</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<goals><goal>generate</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputFileName>openapi.json</outputFileName>
+					<outputDir>${project.build.directory}</outputDir>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+					<execution>
+						<id>install-bun</id>
+						<goals><goal>install-bun</goal></goals>
+						<configuration>
+							<bunVersion>v1.2.0</bunVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bun-install</id>
+						<goals><goal>bun</goal></goals>
+						<configuration><arguments>install</arguments></configuration>
+					</execution>
+					<execution>
+						<id>generate-api</id>
+						<goals><goal>bun</goal></goals>
+						<configuration><arguments>run generate</arguments></configuration>
+					</execution>
+					<execution>
+						<id>test-frontend</id>
+						<phase>test</phase>
+						<goals><goal>bun</goal></goals>
+						<configuration><arguments>run test</arguments></configuration>
+					</execution>
+					<execution>
+						<id>build-frontend</id>
+						<goals><goal>bun</goal></goals>
+						<configuration><arguments>run build</arguments></configuration>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
               <groupId>org.owasp</groupId>
               <artifactId>dependency-check-maven</artifactId>
@@ -377,121 +370,12 @@
 		</plugins>
 	</build>
 
-
-    <profiles>
-        <!-- Activated in CI environments (GitHub Actions sets CI=true) or manually with -Pproduction -->
-        <profile>
-            <id>production</id>
-            <activation>
-                <property>
-                    <name>env.CI</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
-                        <version>${vaadin.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                                <phase>compile</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>2.0.0</version>
-                        <configuration>
-                            <workingDirectory>src/main/frontend</workingDirectory>
-                            <nodeVersion>v25.5.0</nodeVersion>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>install-node</id>
-                                <goals><goal>install-node-and-npm</goal></goals>
-                            </execution>
-                            <execution>
-                                <id>npm-ci</id>
-                                <phase>generate-resources</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>ci</arguments></configuration>
-                            </execution>
-							<execution>
-								<id>playwright-install</id>
-								<phase>generate-resources</phase>
-								<goals><goal>npm</goal></goals>
-								<configuration>
-									<arguments>run playwright-install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-                                <id>npm-lint</id>
-                                <phase>test</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>run lint</arguments></configuration>
-                            </execution>
-                            <execution>
-                                <id>npm-test</id>
-                                <phase>test</phase>
-                                <goals><goal>npm</goal></goals>
-                                <configuration><arguments>run test</arguments></configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-					<plugin>
-						<groupId>org.owasp</groupId>
-						<artifactId>dependency-check-maven</artifactId>
-						<version>12.2.0</version>
-						<configuration>
-							<nvdDatafeedUrl>https://${nvd.repo.url}/nvdcve-{0}.json.gz</nvdDatafeedUrl>
-							<suppressionFile>dependency-check-suppressions.xml</suppressionFile>
-							<failBuildOnCVSS>8</failBuildOnCVSS>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-core</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>com.vaadin</groupId>
-                            <artifactId>vaadin-dev</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <!-- Hent fra NB artifactory -->
     <repositories>
         <repository>
             <id>central</id>
             <name>Cache av alle repos, både interne og eksterne</name>
             <url>https://tools.nb.no/artifactory/repo</url>
-        </repository>
-        <!-- Vaadin -->
-        <repository>
-            <id>vaadin-directory</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
 
