@@ -1,8 +1,8 @@
-import axios from 'axios'
+import Axios, { type AxiosRequestConfig } from 'axios'
 
-const apiClient = axios.create({ baseURL: '/bikube/api' })
+const instance = Axios.create({ baseURL: '/bikube/api' })
 
-apiClient.interceptors.response.use(
+instance.interceptors.response.use(
     response => response,
     error => {
         if (error.response?.status === 401) {
@@ -11,5 +11,8 @@ apiClient.interceptors.response.use(
         return Promise.reject(error)
     }
 )
+
+export const apiClient = <T>(config: AxiosRequestConfig): Promise<T> =>
+    instance(config).then(({ data }) => data)
 
 export default apiClient

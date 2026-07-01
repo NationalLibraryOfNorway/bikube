@@ -4,17 +4,15 @@ const isDev = process.env.NODE_ENV === 'development'
 
 export default defineConfig({
     api: {
-        input: isDev
-            ? 'http://localhost:8087/bikube/v3/api-docs'
-            : 'target/openapi.json',
-        validation: false,
+        input: {
+            target: isDev
+                ? 'http://localhost:8087/bikube/v3/api-docs'
+                : 'target/openapi.json',
+            validation: false,
+        },
         output: {
             target: 'src/main/frontend/src/api/',
             client: 'react-query',
-            schemas: {
-                path: 'src/main/frontend/src/api/model',
-                type: 'zod',
-            },
             override: {
                 mutator: {
                     path: 'src/main/frontend/src/api/client.ts',
