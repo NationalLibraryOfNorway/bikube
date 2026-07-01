@@ -1,17 +1,26 @@
-import path from "path";
-import tailwindcss from "@tailwindcss/vite";
-import { UserConfigFn } from 'vite';
-import { overrideVaadinConfig } from './vite.generated';
+import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
-const customConfig: UserConfigFn = () => ({
-  plugins: [
-    tailwindcss(),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src/main/frontend"),
+export default defineConfig({
+    base: '/bikube/hugin/',
+    plugins: [
+        react(),
+        tailwindcss(),
+    ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src/main/frontend'),
+        },
     },
-  },
-});
-
-export default overrideVaadinConfig(customConfig);
+    server: {
+        port: 5173,
+        proxy: {
+            '/bikube/api':    'http://localhost:8080',
+            '/bikube/oauth2': 'http://localhost:8080',
+            '/bikube/login':  'http://localhost:8080',
+            '/bikube/logout': 'http://localhost:8080',
+        },
+    },
+})
