@@ -334,6 +334,7 @@
 					</execution>
 					<execution>
 						<id>generate-api</id>
+						<phase>pre-integration-test</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration><arguments>run generate</arguments></configuration>
 					</execution>

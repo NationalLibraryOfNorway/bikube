@@ -4,7 +4,12 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+    root: path.resolve(__dirname, 'src/main/frontend'),
     base: '/bikube/hugin/',
+    build: {
+        outDir: path.resolve(__dirname, 'src/main/resources/static/hugin'),
+        emptyOutDir: true,
+    },
     plugins: [
         react(),
         tailwindcss(),

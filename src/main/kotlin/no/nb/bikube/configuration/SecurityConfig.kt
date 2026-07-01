@@ -25,7 +25,9 @@ class SecurityConfig(
                 auth
                     .pathMatchers(
                         "/oauth2/**", "/login/**", "/logout",
-                        "/hugin/assets/**", "/hugin/index.html", "/favicon.ico"
+                        "/hugin/assets/**", "/hugin/index.html", "/favicon.ico",
+                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                        "/actuator/**"
                     ).permitAll()
                     .anyExchange().authenticated()
             }

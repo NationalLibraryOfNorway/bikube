@@ -20,7 +20,7 @@ class AuthController {
             firstName = principal.givenName,
             lastName = principal.familyName,
             email = principal.email,
-            roles = authentication.authorities.map { it.authority },
+            roles = authentication.authorities.mapNotNull { it.authority },
         )
     }
 }

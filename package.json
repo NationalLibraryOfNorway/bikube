@@ -424,7 +424,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build --outDir src/main/resources/static/hugin",
+    "build": "vite build",
     "generate": "orval --config orval.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
