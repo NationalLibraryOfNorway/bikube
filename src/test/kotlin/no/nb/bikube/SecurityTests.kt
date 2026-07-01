@@ -9,60 +9,53 @@ import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMock
 import no.nb.bikube.api.newspaper.service.NewspaperService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import tools.jackson.databind.json.JsonMapper
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
 @ActiveProfiles("test")
-@TestPropertySource( properties = [
-    "server.servlet.context-path=/bikube",
+@TestPropertySource(properties = [
     "security.enabled=true"
 ])
 class SecurityTests(
-    @Autowired private val mockMvc: MockMvc,
+    @Autowired private val client: WebTestClient,
     @Autowired private val jsonMapper: JsonMapper
 ) {
     @MockkBean
     private lateinit var newspaperService: NewspaperService
 
     @Test
-    fun `should allow access to get endpoints without login`() {
-        every { newspaperService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA)
-
-        mockMvc.perform(
-            get("/api/item")
-                .param("catalogueId", "123")
-                .param("materialType", MaterialType.NEWSPAPER.name)
-        ).andExpect(status().isOk)
+    fun `should not allow access to get endpoints without login`() {
+        client.get()
+            .uri("/api/item?catalogueId=123&materialType=${MaterialType.NEWSPAPER.name}")
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 
     @Test
-    fun `should allow access to get api docs without login`() {
-        mockMvc.perform(get("/v3/api-docs"))
-            .andExpect(status().isOk)
+    fun `should not allow access to get api docs without login`() {
+        client.get()
+            .uri("/v3/api-docs")
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 
     @Test
     fun `should not allow access to post endpoints without login`() {
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isUnauthorized)
+        client.post()
+            .uri("/api/newspapers/items")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 
     @Test
@@ -70,23 +63,23 @@ class SecurityTests(
         every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA)
         every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA)
 
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .with(jwt().authorities(SimpleGrantedAuthority("bikube-create")))
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isOk)
+        client.mutateWith(mockJwt())
+            .post()
+            .uri("/api/newspapers/items")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isOk
     }
 
     @Test
     fun `should return 401 on post for invalid token`() {
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .header("Authorization", "Bearer eyIkkeEnToken")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isUnauthorized)
+        client.post()
+            .uri("/api/newspapers/items")
+            .header("Authorization", "Bearer eyIkkeEnToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 }
