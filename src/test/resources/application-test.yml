@@ -47,6 +47,3 @@ spring:
         provider:
           keycloak:
             issuer-uri: PLACEHOLDER_ISSUER_URI
-
-vaadin:
-  launch-browser: false

@@ -99,15 +99,6 @@ search-index:
   rebuild-index-delay: 1800000
   searcher-refresh-delay: 600000
 
-vaadin:
-  copilot:
-    enable: false
-  url-mapping: /hugin/*
-  devmode:
-    usageStatistics:
-      enabled: false
-
 logging:
   level:
     org.springframework.security: debug
-    com.vaadin: debug
