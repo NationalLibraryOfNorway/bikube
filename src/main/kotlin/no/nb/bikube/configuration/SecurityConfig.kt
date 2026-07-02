@@ -1,5 +1,6 @@
 package no.nb.bikube.configuration
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@ConditionalOnProperty(name = ["security.enabled"], havingValue = "true")
 class SecurityConfig(
     private val clientRegistrationRepository: ReactiveClientRegistrationRepository,
 ) {
@@ -26,7 +28,6 @@ class SecurityConfig(
                     .pathMatchers(
                         "/oauth2/**", "/login/**", "/logout",
                         "/hugin/assets/**", "/hugin/index.html", "/favicon.ico",
-                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                         "/actuator/**"
                     ).permitAll()
                     .anyExchange().authenticated()
@@ -46,4 +47,17 @@ class SecurityConfig(
     private fun oidcLogoutSuccessHandler() =
         OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository)
             .also { it.setPostLogoutRedirectUri("{baseUrl}/bikube/hugin/") }
+}
+
+@Configuration
+@EnableWebFluxSecurity
+@ConditionalOnProperty(name = ["security.enabled"], havingValue = "false", matchIfMissing = true)
+class PermissiveSecurityConfig {
+
+    @Bean
+    fun permissiveFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain =
+        http
+            .authorizeExchange { it.anyExchange().permitAll() }
+            .csrf { it.disable() }
+            .build()
 }

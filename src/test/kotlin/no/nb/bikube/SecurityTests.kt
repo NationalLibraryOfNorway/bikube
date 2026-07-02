@@ -7,30 +7,46 @@ import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import tools.jackson.databind.json.JsonMapper
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@Import(TestcontainersConfig::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-@TestPropertySource(properties = [
-    "security.enabled=true"
-])
-class SecurityTests(
-    @Autowired private val client: WebTestClient,
-    @Autowired private val jsonMapper: JsonMapper
-) {
+@TestPropertySource(properties = ["security.enabled=true"])
+class SecurityTests {
+
+    @Autowired
+    private lateinit var applicationContext: ApplicationContext
+
+    @Autowired
+    private lateinit var jsonMapper: JsonMapper
+
     @MockkBean
     private lateinit var newspaperService: NewspaperService
+
+    private lateinit var client: WebTestClient
+
+    @BeforeEach
+    fun setup() {
+        client = WebTestClient
+            .bindToApplicationContext(applicationContext)
+            .apply(springSecurity())
+            .configureClient()
+            .build()
+    }
 
     @Test
     fun `should not allow access to get endpoints without login`() {
@@ -69,7 +85,7 @@ class SecurityTests(
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
             .exchange()
-            .expectStatus().isOk
+            .expectStatus().isCreated
     }
 
     @Test
