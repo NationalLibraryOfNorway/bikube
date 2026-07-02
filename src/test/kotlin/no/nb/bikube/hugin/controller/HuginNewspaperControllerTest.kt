@@ -7,8 +7,8 @@ import no.nb.bikube.hugin.repository.TitleRepository
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.webflux.test.autoconfigure.WebFluxTest
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockOidcLogin
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.util.Optional
@@ -19,16 +19,16 @@ class HuginNewspaperControllerTest {
     @Autowired
     lateinit var client: WebTestClient
 
-    @MockBean
+    @MockitoBean
     lateinit var titleRepository: TitleRepository
 
-    @MockBean
+    @MockitoBean
     lateinit var boxRepository: BoxRepository
 
-    @MockBean
+    @MockitoBean
     lateinit var newspaperRepository: NewspaperRepository
 
-    @MockBean
+    @MockitoBean
     lateinit var newspaperService: NewspaperService
 
     @Test

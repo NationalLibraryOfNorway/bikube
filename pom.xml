@@ -191,11 +191,6 @@
 			<artifactId>spring-boot-test-autoconfigure</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-webmvc-test</artifactId>
-			<scope>test</scope>
-		</dependency>
         <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-webtestclient</artifactId>
@@ -246,6 +241,25 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+		<!-- Spring Boot 4.x WebFlux test slice (@WebFluxTest) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-webflux-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Kotlin-friendly Mockito extensions (whenever, etc.) -->
+		<dependency>
+			<groupId>org.mockito.kotlin</groupId>
+			<artifactId>mockito-kotlin</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Servlet API needed to compile legacy MockMvc integration tests -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
