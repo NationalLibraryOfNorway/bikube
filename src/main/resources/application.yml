@@ -80,6 +80,7 @@ maxit:
 
 featureflag:
   maxit-id: ${FEATUREFLAG_MAXIT_ID:false}
+  series-manifestation: ${FEATUREFLAG_SERIES_MANIFESTATION:false}
 
 alma:
   alma-sru-url: ${ALMA_SRU_URL}

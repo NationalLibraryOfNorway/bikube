@@ -59,7 +59,7 @@ class NewspaperMockData (
             publisher = "B-Forlaget",
             publisherPlace = "Brakka",
             language = "nob",
-            materialType = MaterialType.NEWSPAPER.norwegian,
+            materialType = null,
             catalogueId = "2"
         )
 

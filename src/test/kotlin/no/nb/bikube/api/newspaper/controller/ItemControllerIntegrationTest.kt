@@ -15,6 +15,8 @@ import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockTitleB
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsPartOfObjectMockSerialWorkA
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelEmptyMock
+import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsSeriesModelMockTitleA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.erroneousCollectionsModelMock
 import no.nb.bikube.api.catalogue.collections.DtoMock
 import no.nb.bikube.api.catalogue.collections.enum.CollectionsFormat
@@ -44,7 +46,7 @@ import reactor.kotlin.test.test
 import java.time.Duration
 import java.time.LocalDate
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["featureflag.series-manifestation=true"])
 @AutoConfigureWebTestClient
 @ActiveProfiles("test")
 class ItemControllerIntegrationTest {
@@ -83,9 +85,12 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(any()) } returns Mono.just(collectionsModelEmptyRecordListMock.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(titleId) } returns Mono.just(collectionsModelMockTitleA.copy())
+        every { collectionsService.getSingleSeries(any()) } returns Mono.just(collectionsSeriesModelEmptyMock.copy())
+        every { collectionsService.getSingleSeries(titleId) } returns Mono.just(collectionsSeriesModelMockTitleA.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId) } returns Mono.just(collectionsModelMockManifestationC.copy())
         every { collectionsService.getSingleCollectionsModelWithoutChildren(itemId) } returns Mono.just(collectionsModelMockItemA.copy())
         every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.updateRecord(any()) } returns Mono.just(collectionsModelMockManifestationB)
         every { collectionsService.deleteRecord(any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { maxitService.getUniqueIds() } returns Mono.just(ParsedIdResponse(itemId, "NP-$itemId"))
@@ -174,6 +179,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationB.copy())
         every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
         every { collectionsService.createRecord(any()) } answers {
             val dto = json.decodeFromString<DtoMock>(firstArg<String>())
             when (dto.recordType) {
@@ -198,6 +204,7 @@ class ItemControllerIntegrationTest {
         every { collectionsService.getSingleCollectionsModel(item.titleCatalogueId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getSingleCollectionsModel(any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
         every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelMockManifestationA.copy())
 
         createItem(item)
             .expectStatus().isEqualTo(409)
@@ -286,6 +293,7 @@ class ItemControllerIntegrationTest {
     fun `post missing-item create correct manifestation if not found`() {
         every { collectionsService.getSingleCollectionsModel(titleId) } returns Mono.just(collectionsModelMockTitleB.copy())
         every { collectionsService.getManifestations(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
+        every { collectionsService.getManifestationsBySeries(any(), any(), any(), any(), any()) } returns Mono.just(collectionsModelEmptyRecordListMock)
 
         webClient
             .post()
