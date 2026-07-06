@@ -49,9 +49,9 @@ export default function ReleasePatternForm({ title }: { title: HuginTitle | null
     return (
         <FormikProvider value={formik}>
             <Form onSubmit={formik.handleSubmit} className="w-full max-w-xl space-y-5">
-                <h2 className="text-xl font-semibold">Utgivelsesmønster</h2>
+                <h2 id="releasePatternTitle" className="text-xl font-semibold">Utgivelsesmønster</h2>
 
-                <Table className="table text-left" aria-labelledby="releaseTable">
+                <Table className="table text-left" aria-labelledby="releasePatternTitle">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Dag</TableHead>
@@ -64,6 +64,7 @@ export default function ReleasePatternForm({ title }: { title: HuginTitle | null
                                 <TableCell className="text-base p-0 w-full">{day}</TableCell>
                                 <TableCell className="m-5 py-0 pr-0 w-full">
                                     <NumberInputWithButtons
+                                        label={day}
                                         value={values.releasePattern[index] ?? 0}
                                         onChange={(v: number) => setDayValue(index, v)}
                                         min={0}
@@ -77,7 +78,7 @@ export default function ReleasePatternForm({ title }: { title: HuginTitle | null
                 </Table>
 
                 <div className="flex gap-3">
-                    <Button size="lg" type="submit">
+                    <Button size="lg" type="submit" disabled={save.isPending}>
                         Lagre
                         <SaveIcon />
                     </Button>

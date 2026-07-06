@@ -146,8 +146,11 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
     };
 
     const handleDelete = async (tmpId: string) => {
-        const catalogueId = rows.find((r) => r._tmpId === tmpId)?.catalogId;
-        await deleteNewspaper.mutateAsync({manifestationId: catalogueId!});
+        const row = rows.find((r) => r._tmpId === tmpId);
+        if (!row) return;
+        if (row.catalogId) {
+            await deleteNewspaper.mutateAsync({manifestationId: row.catalogId});
+        }
         setRows((rs) => rs.filter((r) => r._tmpId !== tmpId));
     };
 
@@ -221,6 +224,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
                                         <Button
                                             type="button"
                                             variant="destructive"
+                                            aria-label="Slett utgave"
                                             className="h-8 w-8 p-0 rounded-full"
                                             onClick={() => handleDelete(r._tmpId)}
                                         >

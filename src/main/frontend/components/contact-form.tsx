@@ -31,7 +31,7 @@ export default function ContactForm({title, fields}: {
     title: HuginTitle | null | undefined;
     fields?: ContactFormField[];
 }) {
-    const {catalogueTitleId} = useParams(); // Item id from url
+    const {catalogueTitleId} = useParams();
     const save = useSaveHuginTitle();
     const formik = useFormik({
         enableReinitialize: true,
@@ -48,7 +48,6 @@ export default function ContactForm({title, fields}: {
                 .then(() => toast.success("Lagret kontaktinformasjon"))
                 .catch(() => toast.error("Noe gikk galt ved lagring av kontaktinformasjon"));
         },
-
         validateOnChange: true,
     })
 
@@ -72,34 +71,33 @@ export default function ContactForm({title, fields}: {
             >
                 <h2 className="text-xl font-semibold">Kontaktinformasjon</h2>
 
-                {/* Avleverer (vendor) */}
                 {visible.has("vendor") && (
                 <div className="space-y-1">
-                    <label className="block text-sm font-medium">Avleverer</label>
+                    <label htmlFor="vendor" className="block text-sm font-medium">Avleverer</label>
                     <input
+                        id="vendor"
                         className="w-full rounded-lg border p-3 bg-white"
-                        placeholder=""
                         {...formik.getFieldProps('vendor')}
                     />
                 </div>)}
 
-                {/* Navn */}
                 {visible.has("contactName") && (
                 <div className="space-y-1">
-                    <label className="block text-sm font-medium">Navn</label>
+                    <label htmlFor="contactName" className="block text-sm font-medium">Navn</label>
                     <input
+                        id="contactName"
                         className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('contactName')}
                     />
                 </div>)}
 
-                {/* Telefon (+/-) */}
                 {visible.has("phone") && (
                 <div className="space-y-2">
                     <label className="block text-sm font-medium">Telefon</label>
                     {phoneContacts.map((idx) => (
                         <div key={`phone-${idx}`} className="relative">
                             <input
+                                aria-label={`Telefonnummer ${phoneContacts.indexOf(idx) + 1}`}
                                 className="w-full rounded-lg border py-3 ps-3 pr-10 bg-white"
                                 name={`contactInfos[${idx}].contactValue`}
                                 value={formik.values.contactInfos[idx]?.contactValue ?? ""}
@@ -108,6 +106,7 @@ export default function ContactForm({title, fields}: {
                             />
                             <Button
                                 type="button"
+                                aria-label="Fjern telefonnummer"
                                 className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full p-0"
                                 onClick={() =>
                                     formik.setFieldValue(
@@ -136,22 +135,22 @@ export default function ContactForm({title, fields}: {
                     </Button>
                 </div>)}
 
-                {/* E-post (+/-) */}
                 {visible.has("email") && (
                 <div className="space-y-2">
-
                     <label className="block text-sm font-medium">E-post</label>
                     {emailContacts.map((idx) => (
                         <div key={`email-${idx}`} className="relative">
                             <input
+                                aria-label={`E-postadresse ${emailContacts.indexOf(idx) + 1}`}
                                 className="w-full rounded-lg border py-3 ps-3 pr-10 bg-white"
                                 name={`contactInfos[${idx}].contactValue`}
-                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}  // 👈 always a string
+                                value={formik.values.contactInfos[idx]?.contactValue ?? ""}
                                 onChange={formik.handleChange}
                                 type="email"
                             />
                             <Button
                                 type="button"
+                                aria-label="Fjern e-postadresse"
                                 className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full p-0"
                                 onClick={() =>
                                     formik.setFieldValue(
@@ -180,10 +179,9 @@ export default function ContactForm({title, fields}: {
                     </Button>
                 </div>)}
 
-                {/* Hyllesignatur */}
                 {visible.has("shelf") && (
                 <div className="space-y-1">
-                    <label className="flex items-center gap-1 text-sm font-medium">
+                    <label htmlFor="shelf" className="flex items-center gap-1 text-sm font-medium">
                         Hyllesignatur
                         <Tooltip>
                             <TooltipTrigger>
@@ -193,18 +191,17 @@ export default function ContactForm({title, fields}: {
                                 Plassering av avis i paternoster.
                             </TooltipContent>
                         </Tooltip>
-
                     </label>
                     <input
+                        id="shelf"
                         className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('shelf')}
                     />
                 </div>)}
 
-                {/* Merknad/kommentar */}
                 {visible.has("notes") && (
                 <div className="space-y-1">
-                    <label className="flex items-center gap-1 text-sm font-medium">
+                    <label htmlFor="contact-notes" className="flex items-center gap-1 text-sm font-medium">
                         Merknad/kommentar
                         <Tooltip>
                             <TooltipTrigger>
@@ -216,6 +213,7 @@ export default function ContactForm({title, fields}: {
                         </Tooltip>
                     </label>
                     <textarea
+                        id="contact-notes"
                         rows={4}
                         className="w-full rounded-lg border p-3 bg-white"
                         {...formik.getFieldProps('notes')}
@@ -223,7 +221,7 @@ export default function ContactForm({title, fields}: {
                 </div>)}
 
                 <div className="flex gap-3">
-                    <Button size="lg" type="submit">
+                    <Button size="lg" type="submit" disabled={formik.isSubmitting}>
                         Lagre
                         <SaveIcon/>
                     </Button>
@@ -232,8 +230,12 @@ export default function ContactForm({title, fields}: {
                         variant="outline"
                         size="lg"
                         onClick={() => {
-                            formik.resetForm()
-                            toast.info('Endringer angret')
+                            if (formik.dirty) {
+                                formik.resetForm();
+                                toast.info('Endringer angret');
+                            } else {
+                                toast('Ingen endringer å angre');
+                            }
                         }}
                     >
                         Angre
