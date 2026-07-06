@@ -1,4 +1,5 @@
-import type { HuginTitle, ContactInfoContactType } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
+import type { HuginTitle } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
+import { ContactInfoDtoContactType as ContactInfoContactType } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {Form, FormikProvider, useFormik} from "formik";
 import {Info, MessageCirclePlus, MailPlus, Minus, SaveIcon, Undo} from "lucide-react";
 import {Button} from "@/components/ui/button";

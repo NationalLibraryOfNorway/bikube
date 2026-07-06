@@ -13,8 +13,11 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import tools.jackson.databind.json.JsonMapper
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
 @Disabled("Needs migration from MockMvc to WebTestClient for WebFlux")
+@Import(TestcontainersConfig::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")

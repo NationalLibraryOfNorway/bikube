@@ -1,4 +1,3 @@
-import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
 import {NavLink, useNavigate, useParams} from "react-router";
 import {useHuginTitle} from "@/hooks/use-hugin-title";
 import {ArrowLeft, Edit, ExternalLink, LoaderCircle} from "lucide-react";
@@ -11,14 +10,6 @@ import ReleasePatternForm from "@/components/release-pattern-form";
 import BoxCreateModal from "@/components/box-create-modal";
 import type { Box } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import BoxNewspapersEditor from "@/components/box-newspapers-editor";
-
-export const config: ViewConfig = {
-    menu: {
-        exclude: true
-    },
-    loginRequired: true,
-    title: "Detaljer for katalogtittel",
-};
 
 export default function CatalogueTitleView() {
     const {catalogueTitleId} = useParams(); // Item id from url

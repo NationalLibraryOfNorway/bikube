@@ -1,6 +1,6 @@
 import Axios, { type AxiosRequestConfig } from 'axios'
 
-const instance = Axios.create({ baseURL: '/bikube/api' })
+const instance = Axios.create({ baseURL: '/bikube' })
 
 instance.interceptors.response.use(
     response => response,

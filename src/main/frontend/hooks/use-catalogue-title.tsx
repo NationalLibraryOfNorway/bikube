@@ -22,9 +22,14 @@ export function useCatalogueTitles(query: string) {
     }
   );
 
+  const isIndexUnavailable =
+    queryResult.isError &&
+    (queryResult.error as unknown as { response?: { status?: number } })?.response?.status === 503;
+
   return {
     catalogueTitlesList: queryResult.data ?? [],
     isLoading: queryResult.isLoading,
+    isIndexUnavailable,
     search: queryResult.refetch,
   };
 }

@@ -12,8 +12,8 @@ import org.springframework.web.server.ResponseStatusException
 class AuthController {
 
     @GetMapping("/api/auth/me")
-    suspend fun getUserInfo(authentication: Authentication): User {
-        val principal = authentication.principal as? OidcUser
+    suspend fun getUserInfo(authentication: Authentication?): User {
+        val principal = authentication?.principal as? OidcUser
             ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         return User(
             username = principal.preferredUsername ?: "",

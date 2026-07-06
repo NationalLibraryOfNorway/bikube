@@ -45,7 +45,10 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.Duration
 import java.time.LocalDate
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["featureflag.series-manifestation=true"])
 @AutoConfigureWebTestClient
 @ActiveProfiles("test")

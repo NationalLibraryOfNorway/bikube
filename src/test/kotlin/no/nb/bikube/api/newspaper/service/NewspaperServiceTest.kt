@@ -67,9 +67,12 @@ import reactor.kotlin.test.test
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
 private val json = Json { explicitNulls = false }
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest(properties = ["featureflag.series-manifestation=true"])
 @ActiveProfiles("test")
 class NewspaperServiceTest {

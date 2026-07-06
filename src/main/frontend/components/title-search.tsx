@@ -1,6 +1,6 @@
 import {Command, CommandEmpty, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {LoaderCircle} from "lucide-react";
+import {LoaderCircle, TriangleAlert} from "lucide-react";
 import type { Title } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {isActive} from "@/lib/utils";
 import {clsx} from "clsx";
@@ -14,7 +14,7 @@ import {keys} from "@/query/keys";
 export default function TitleSearch({ className }:{ className?: string }) {
     const [term, setTerm] = useState("")
     const [open, setOpen] = useState(false)
-    const {catalogueTitlesList, isLoading } = useCatalogueTitles(term.trim());
+    const {catalogueTitlesList, isLoading, isIndexUnavailable} = useCatalogueTitles(term.trim());
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -55,10 +55,15 @@ export default function TitleSearch({ className }:{ className?: string }) {
                         className="my-2 rounded-lg w-[23rem] max-w-[90vw] p-0"
                     >
                         <CommandList onMouseDown={(e) => e.preventDefault()}>
-                            {!isLoading && <CommandEmpty>Ingen treff.</CommandEmpty>}
+                            {!isLoading && !isIndexUnavailable && <CommandEmpty>Ingen treff.</CommandEmpty>}
                             {isLoading &&
                                 <div className="p-2">
                                     <LoaderCircle className="animate-spin mx-auto size-10 text-gray-300"/>
+                                </div>}
+                            {isIndexUnavailable &&
+                                <div className="flex items-center gap-2 p-3 text-sm text-amber-700">
+                                    <TriangleAlert className="size-4 shrink-0"/>
+                                    Søkeindeksen er ikke klar ennå. Prøv igjen om litt.
                                 </div>}
 
                             {rows.map((item: Title) => {

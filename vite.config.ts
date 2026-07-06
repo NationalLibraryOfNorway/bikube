@@ -20,12 +20,21 @@ export default defineConfig({
         },
     },
     server: {
-        port: 5173,
+        port: 8087,
         proxy: {
-            '/bikube/api':    'http://localhost:8080',
-            '/bikube/oauth2': 'http://localhost:8080',
-            '/bikube/login':  'http://localhost:8080',
-            '/bikube/logout': 'http://localhost:8080',
+            '/bikube/api': { target: 'http://localhost:9000' },
+            '/bikube/oauth2': {
+                target: 'http://localhost:9000',
+                headers: { 'X-Forwarded-Host': 'localhost:8087', 'X-Forwarded-Proto': 'http' },
+            },
+            '/bikube/login': {
+                target: 'http://localhost:9000',
+                headers: { 'X-Forwarded-Host': 'localhost:8087', 'X-Forwarded-Proto': 'http' },
+            },
+            '/bikube/logout': {
+                target: 'http://localhost:9000',
+                headers: { 'X-Forwarded-Host': 'localhost:8087', 'X-Forwarded-Proto': 'http' },
+            },
         },
     },
 })

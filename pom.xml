@@ -20,6 +20,7 @@
 		<lucene.version>9.10.0</lucene.version>
         <jackson-bom.version>3.2.0</jackson-bom.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
+        <springdoc.api.docs.url>http://localhost:8087/bikube/v3/api-docs</springdoc.api.docs.url>
 	</properties>
 
     <dependencyManagement>
@@ -241,6 +242,23 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.21.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.21.3</version>
+            <scope>test</scope>
+        </dependency>
 		<!-- Spring Boot 4.x WebFlux test slice (@WebFluxTest) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -282,6 +300,7 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
+						<configuration/>
 					</execution>
 				</executions>
 				<configuration>
@@ -291,7 +310,17 @@
 					<compilerPlugins>
 						<plugin>spring</plugin>
 						<plugin>kotlinx-serialization</plugin>
+						<plugin>jpa</plugin>
+						<plugin>all-open</plugin>
 					</compilerPlugins>
+					<pluginOptions>
+						<option>all-open:annotation=javax.persistence.Entity</option>
+						<option>all-open:annotation=javax.persistence.Embeddable</option>
+						<option>all-open:annotation=javax.persistence.MappedSuperclass</option>
+						<option>all-open:annotation=jakarta.persistence.Entity</option>
+						<option>all-open:annotation=jakarta.persistence.Embeddable</option>
+						<option>all-open:annotation=jakarta.persistence.MappedSuperclass</option>
+					</pluginOptions>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -302,6 +331,11 @@
 					<dependency>
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-maven-serialization</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
@@ -325,6 +359,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<apiDocsUrl>${springdoc.api.docs.url}</apiDocsUrl>
 					<outputFileName>openapi.json</outputFileName>
 					<outputDir>${project.build.directory}</outputDir>
 				</configuration>
@@ -361,7 +396,10 @@
 					<execution>
 						<id>build-frontend</id>
 						<goals><goal>bun</goal></goals>
-						<configuration><arguments>run build</arguments></configuration>
+						<configuration>
+							<arguments>run build</arguments>
+							<skip>${frontend.build.skip}</skip>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

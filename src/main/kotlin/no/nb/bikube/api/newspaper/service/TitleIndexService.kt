@@ -79,7 +79,7 @@ class TitleIndexServiceImpl(
     override fun indexAllTitles() {
         if (indexStatus.get() == IndexStatus.INDEXING.ordinal)
             return
-        logger().debug("Start fetching all titles to index...")
+        logger().info("Start fetching all titles to index...")
         newspaperService.getAllTitles()
             .map { titles ->
                 titles.mapNotNull { makeDocument(it) }
@@ -93,7 +93,13 @@ class TitleIndexServiceImpl(
                 indexStatus.set(IndexStatus.READY.ordinal)
                 logger().info("Titles index ready")
             }
-            .subscribe()
+            .subscribe(
+                {},
+                { e ->
+                    indexStatus.set(IndexStatus.UNINITIALIZED.ordinal)
+                    logger().error("Title index build failed: {}", e.message, e)
+                }
+            )
     }
 
     override fun addTitle(title: Title) {

@@ -6,7 +6,7 @@ export default defineConfig({
     api: {
         input: {
             target: isDev
-                ? 'http://localhost:8087/bikube/v3/api-docs'
+                ? 'http://localhost:9000/bikube/v3/api-docs'
                 : 'target/openapi.json',
             validation: false,
         },

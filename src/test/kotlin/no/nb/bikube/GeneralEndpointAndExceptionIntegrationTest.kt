@@ -29,8 +29,10 @@ import reactor.core.publisher.Mono
 import tools.jackson.databind.json.JsonMapper
 import java.net.URI
 import java.time.LocalDate
+import org.springframework.context.annotation.Import
 
 @Disabled("Needs migration from MockMvc to WebTestClient for WebFlux")
+@Import(TestcontainersConfig::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class GeneralEndpointAndExceptionIntegrationTest(

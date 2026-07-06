@@ -9,8 +9,12 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
+import org.springframework.security.web.server.DefaultServerRedirectStrategy
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler
+import org.springframework.security.web.server.savedrequest.WebSessionServerRequestCache
 import reactor.core.publisher.Mono
+import java.net.URI
 
 @Configuration
 @EnableWebFluxSecurity
@@ -27,26 +31,47 @@ class SecurityConfig(
                 auth
                     .pathMatchers(
                         "/oauth2/**", "/login/**", "/logout",
-                        "/hugin/assets/**", "/hugin/index.html", "/favicon.ico",
-                        "/actuator/**"
+                        "/hugin/assets/**", "/favicon.ico",
+                        "/actuator/**",
+                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
                     ).permitAll()
                     .anyExchange().authenticated()
             }
-            .oauth2Login { }
+            .oauth2Login { oauth2 ->
+                oauth2.authenticationSuccessHandler(savedRequestAwareSuccessHandler())
+            }
             .oauth2ResourceServer { it.jwt { } }
             .exceptionHandling { ex ->
                 ex.authenticationEntryPoint { exchange, _ ->
-                    exchange.response.statusCode = HttpStatus.UNAUTHORIZED
-                    Mono.empty()
+                    val path = exchange.request.path.value()
+                    if (path.startsWith("/api/")) {
+                        exchange.response.statusCode = HttpStatus.UNAUTHORIZED
+                        Mono.empty()
+                    } else {
+                        WebSessionServerRequestCache().saveRequest(exchange)
+                            .then(DefaultServerRedirectStrategy().sendRedirect(
+                                exchange, URI.create("/oauth2/authorization/keycloak-hugin")
+                            ))
+                    }
                 }
             }
             .logout { it.logoutSuccessHandler(oidcLogoutSuccessHandler()) }
             .csrf { it.disable() }
             .build()
 
+    private fun savedRequestAwareSuccessHandler(): ServerAuthenticationSuccessHandler {
+        val requestCache = WebSessionServerRequestCache()
+        val redirectStrategy = DefaultServerRedirectStrategy()
+        return ServerAuthenticationSuccessHandler { exchange, _ ->
+            requestCache.getRedirectUri(exchange.exchange)
+                .defaultIfEmpty(URI.create("/hugin"))
+                .flatMap { uri -> redirectStrategy.sendRedirect(exchange.exchange, uri) }
+        }
+    }
+
     private fun oidcLogoutSuccessHandler() =
         OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository)
-            .also { it.setPostLogoutRedirectUri("{baseUrl}/bikube/hugin/") }
+            .also { it.setPostLogoutRedirectUri("{baseUrl}/hugin") }
 }
 
 @Configuration

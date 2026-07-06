@@ -28,22 +28,32 @@ collections:
 
 
 spring:
-  datasource:
-    url: jdbc:h2:mem:bikube;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS HUGIN\;CREATE SCHEMA IF NOT EXISTS MAXIT
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+  sql:
+    init:
+      mode: always
   jpa:
     hibernate:
       ddl-auto: create-drop
     properties:
-      hibernate.hbm2ddl.create_namespaces: true
+      hibernate:
+        hbm2ddl:
+          create_namespaces: true
   security:
     oauth2:
       client:
         registration:
           keycloak-hugin:
-            client-id: PLACEHOLDER_KEYCLOAK_CLIENT_ID
+            client-id: test-client
+            authorization-grant-type: authorization_code
+          keycloak-collections:
+            client-id: test-collections-client
+            client-secret: test-secret
+            authorization-grant-type: client_credentials
         provider:
           keycloak:
-            issuer-uri: PLACEHOLDER_ISSUER_URI
+            jwk-set-uri: http://localhost:9999/protocol/openid-connect/certs
+            authorization-uri: http://localhost:9999/protocol/openid-connect/auth
+            token-uri: http://localhost:9999/protocol/openid-connect/token
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9999/protocol/openid-connect/certs
