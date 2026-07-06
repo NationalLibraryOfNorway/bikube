@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -16,12 +18,17 @@ import org.springframework.context.annotation.Configuration
     scheme = "bearer"
 )
 class SwaggerConfig {
+
+    @Autowired(required = false)
+    private var buildProperties: BuildProperties? = null
+
     @Bean
     fun openApi(): OpenAPI {
         return OpenAPI()
             .info(
                 Info()
                     .title("Bikube - API for kommuniksjon med tekstkataloger")
+                    .version(buildProperties?.version ?: "dev")
                     .description(
                         "REST-API for kommunikasjon mot kataloger for tekstmateriale. " +
                         "Brukes av produksjonsløypene for å lettere kunne hente ut katalog-data enn ved direkteintegrering. "
