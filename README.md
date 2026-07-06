@@ -1,22 +1,25 @@
 # BIKUBE - Katalog API for tekstmateriale på nasjonalbiblioteket
 
 REST-API for kommunikasjon mot kataloger som inneholder tekstlig materiale på Nasjonalbiblioteket.
+Inkluderer et React-basert grensesnitt (Hugin) som serveres direkte fra Spring-applikasjonen i produksjon.
 
-Laget med Kotlin og Spring Boot.
+Laget med Kotlin, Spring Boot og React (Vite + TypeScript).
 
 ## Lokal utvikling
 
 ### Forutsetninger
-Maven og JDK 17 (anbefaler Temurin) må være installert
 
-### Kjøring
-For lokal utvikling må url til Axiell Collections-APIet legges inn, og man må sette verdier for Kerberos
-dersom APIet er satt opp med autentisering.
-Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vil bli ignorert av gitignore).
+- Maven og JDK 21 (anbefaler Temurin)
+- [Bun](https://bun.sh/) (pakkehåndterer og skriptmiljø for frontenden)
 
-| Påkrevde variabler       | Forklaring                       |
+### Konfigurasjon
+
+For lokal utvikling må nødvendige variabler legges inn. Anbefaler å lage en egen
+`application-local.yml` under `src/main/resources` (vil bli ignorert av gitignore).
+
+| Påkrevd variabel         | Forklaring                       |
 |--------------------------|----------------------------------|
-| COLLECTIONS_URL          | Base URL til Collections API-et  | 
+| COLLECTIONS_URL          | Base URL til Collections API-et  |
 | COLLECTIONS_USERNAME     | AD-brukernavn til Collections    |
 | COLLECTIONS_PASSWORD     | AD-passord til Collections       |
 | COLLECTIONS_DIRECTLINK   | Direkte URL til Collections      |
@@ -30,20 +33,64 @@ Anbefaler å lage en egen `application-local.yml` under `src/main/resources` (vi
 | alma.alma-ws-url         | Base URL til AlmaWS API-et       |
 | alma.api-key             | API-nøkkel til AlmaWS API-et     |
 
+### Kjøring – utvikling (`dev:all`)
 
-Kjør `java -jar target/bikube.jar` eller sett opp i din IDE. APIet kjører default på port 8080.
+```sh
+bun run dev:all
+```
+
+Starter tre prosesser parallelt via `concurrently`:
+
+1. **Spring** – `./mvnw spring-boot:run` med `local`-profil (backend på port 9000)
+2. **Orval** – watch-modus som regenererer API-klienten ved endringer i `target/openapi.json`
+3. **Vite** – dev-server med HMR for frontenden (port 5173)
+
+Frontenden er i denne modusen servert av Vite med proxy til Spring for API-kall.
+API-klienten i `src/main/frontend/src/api/` genereres av [Orval](https://orval.dev/) fra
+OpenAPI-spesifikasjonen som Spring eksponerer via springdoc.
+
+### Kjøring – produksjonslikt lokalt (`prod:local`)
+
+```sh
+bun run prod:local
+```
+
+Bygger og kjører applikasjonen slik den vil kjøre i produksjon – frontenden er bygget med
+Vite og pakket inn i JAR-filen, og serveres av Spring på `/bikube/hugin/`.
+
+Skriptet gjør følgende i riktig rekkefølge:
+
+1. Kompilerer backend og starter Spring midlertidig for å generere `target/openapi.json`
+2. Kjører Orval for å generere API-klienten fra spesifikasjonen
+3. Bygger frontenden med `bun run build`
+4. Pakker alt inn i én JAR med `./mvnw package`
+5. Starter JAR-en på port 8087
+
+Bruk `prod:local` for å verifisere at bygg-pipeline og statisk filservering fungerer som
+forventet før deploy.
 
 ### Testing
-Kjør `mvn clean verify` for å kjøre alle tester og bygge prosjektet.
+
+```sh
+nix-shell -p maven jdk21 --run "mvn clean verify"
+```
+
+## Arkitektur
+
+- **Backend:** Kotlin + Spring WebFlux
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS
+- **API-klient:** Generert av Orval fra OpenAPI-spec (springdoc-openapi)
+- **Autentisering:** OAuth2 / OIDC via Keycloak (både browser-login og JWT resource server)
+- **Frontend i produksjon:** Serveres fra JAR under `classpath:static/hugin/` med SPA-fallback
 
 ## Utrulling
-Pr. nå er applikasjonen ikke rullet ut. 
-I nær framtid blir image bygget i GitHub og lagt på dockerhub, mens utrulling på platform må gjøres selv.
 
-For NB-utviklere: deployment-filer vil ligge på det interne versjonskontroll-systemet.
+Image bygges i GitHub og legges på et internt container-register.
+For NB-utviklere: deployment-filer ligger på det interne versjonskontrollsystemet.
 
 ## Vedlikehold
+
 Tekst-teamet på Nasjonalbibliotekets IT-avdeling vedlikeholder Bikube.
 
-Alle kan lage issues, men vi kan ikke garantere at alle blir tatt tak i. 
+Alle kan lage issues, men vi kan ikke garantere at alle blir tatt tak i.
 Interne behov går foran eksterne forespørsler.
