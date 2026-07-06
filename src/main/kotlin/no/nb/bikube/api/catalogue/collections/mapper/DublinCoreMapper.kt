@@ -11,6 +11,7 @@ import no.nb.bikube.api.core.enum.materialTypeToDublinCoreMaterialType
 import no.nb.bikube.api.core.exception.DublinCoreMissingFieldException
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreIdentifier
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreMetadata
+import no.nb.bikube.api.core.model.dublinCore.DublinCoreRelation
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreSpatial
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreTypedValue
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreValue
@@ -38,17 +39,24 @@ fun mapCollectionsObjectToDublinCoreMetadata(
     val type = if (itemModel.getMaterialTypeFromParent() != null) {
         materialTypeToDublinCoreMaterialType(itemModel.getMaterialTypeFromParent()!!)
     } else {
-        throw DublinCoreMissingFieldException("Missing materialType for object with id ${itemModel.priRef}")
+        throw DublinCoreMissingFieldException("Missing materialType for item object with id ${itemModel.priRef}")
     }
 
-    val title = itemModel.getName() ?: throw DublinCoreMissingFieldException("Missing title for object with id ${itemModel.priRef}")
+    val title = itemModel.getName() ?: throw DublinCoreMissingFieldException("Missing title for item object with id ${itemModel.priRef}")
+
+    // Language is technically optional, but should be set for all text values?
+    val lang = if (titleModel.getLanguage() != null) {
+        mapCollectionsLanguageToDublinCoreLanguage(titleModel.getLanguage()!!)
+    } else {
+        throw DublinCoreMissingFieldException("Missing language for title object with id ${titleModel.priRef}")
+    }
 
     return DublinCoreMetadata(
         type = type,
         identifier = identifiers,
         title = DublinCoreValue(
             value = title,
-            lang = "nob" // Infer from language?
+            lang = lang
         ),
         alternative = null, // Not relevant?
         creator = null, // Not relevant?
@@ -65,15 +73,23 @@ fun mapCollectionsObjectToDublinCoreMetadata(
             value = itemModel.getDate()!!.toString(),
             lang = null
         ) } else null,
-        language = if (titleModel.getLanguage() != null) { DublinCoreTypedValue(
+        language = DublinCoreTypedValue(
             type = "written language",
-            value = mapCollectionsLanguageToDublinCoreLanguage(titleModel.getLanguage()!!),
+            value = lang,
             lang = null
-        ) } else null,
-        relation = null,
-        provenance = null,
-        subject = null,
-        description = null
+        ),
+        relation = listOf(
+            DublinCoreRelation(
+                id = titleModel.priRef,
+                type = "isPartOf",
+                title = titleModel.getName(),
+                lang = lang
+            )
+        ),
+        source = null,
+        provenance = null, // Not relevant?
+        subject = null, // Not relevant?
+        description = null // Not relevant?
     )
 }
 

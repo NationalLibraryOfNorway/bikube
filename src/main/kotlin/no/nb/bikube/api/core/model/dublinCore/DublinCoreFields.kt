@@ -6,7 +6,6 @@ data class DublinCoreIdentifier(
 )
 
 // lang should be ISO 639-3 (nob, nnn, eng)
-// Technically optional, but should be set for all text items?
 
 data class DublinCoreValue(
     val value: String,
@@ -35,12 +34,10 @@ data class DublinCoreAuthority(
     val uri: String
 )
 
-// The creator should also be identified using their full name (first name, last name/corporation).
-// Birth and death years may be included in parentheses after the name. Examples: Nesbø, Jo (1960– ), Shakespeare, William (1564–1616).
 data class DublinCoreContributor(
     val name: String,
-    val type: String?, // person, korporasjon, konferanse, standardtittel
-    val role: String?, // author, composer, film director, photographer, creator, etc.
+    val type: String?,
+    val role: String?,
     val authority: DublinCoreAuthority?
 )
 
@@ -53,4 +50,20 @@ data class DublinCoreSpatial(
     val coordinateReferenceSystem: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
+)
+
+// type: conformsTo, hasFormat, hasPart, hasVersion, isFormatOf, isPartOf, isReferencedBy, isReplacedBy, isRequiredBy, isVersionOf, references, replaces, requires
+data class DublinCoreRelation(
+    val id: String,
+    val type: String,
+    val title: String? = null,
+    val lang: String? = null,
+    val uri: String? = null,
+)
+
+// This element records the object(s) the described resource was derived from
+data class DublinCoreSource(
+    val identifier: DublinCoreIdentifier,
+    val description: String? = null,
+    val uri: String? = null,
 )

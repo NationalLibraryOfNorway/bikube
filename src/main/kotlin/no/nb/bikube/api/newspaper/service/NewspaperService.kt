@@ -406,12 +406,12 @@ class NewspaperService (
     }
 
     private fun getSingleItemWithValidation(catalogId: String): Mono<CollectionsObject> {
-        return collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
+        return collectionsService.getSingleCollectionsModel(catalogId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.ITEM) }
     }
 
     private fun getSingleManifestationWithValidation(manifestationId: String): Mono<CollectionsObject> {
-        return collectionsService.getSingleCollectionsModel(manifestationId)
+        return collectionsService.getSingleCollectionsModelWithoutChildren(manifestationId)
             .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.MANIFESTATION) }
     }
 
