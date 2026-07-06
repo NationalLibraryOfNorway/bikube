@@ -27,6 +27,9 @@ import no.nb.bikube.TestcontainersConfig
     properties = [
         "search-index.enabled=true",
         "search-index.path=index-data-test",
+        "search-index.initial-delay=3600000",
+        "search-index.rebuild-index-delay=3600000",
+        "search-index.searcher-refresh-delay=3600000",
     ]
 )
 class TitleIndexServiceTest(

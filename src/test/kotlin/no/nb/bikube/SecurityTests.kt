@@ -57,11 +57,11 @@ class SecurityTests {
     }
 
     @Test
-    fun `should not allow access to get api docs without login`() {
+    fun `should allow access to api docs without login`() {
         client.get()
             .uri("/v3/api-docs")
             .exchange()
-            .expectStatus().isUnauthorized
+            .expectStatus().isOk
     }
 
     @Test

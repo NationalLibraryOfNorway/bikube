@@ -43,7 +43,7 @@ class SecurityConfig(
             .oauth2ResourceServer { it.jwt { } }
             .exceptionHandling { ex ->
                 ex.authenticationEntryPoint { exchange, _ ->
-                    val path = exchange.request.path.value()
+                    val path = exchange.request.path.pathWithinApplication().value()
                     if (path.startsWith("/api/")) {
                         exchange.response.statusCode = HttpStatus.UNAUTHORIZED
                         Mono.empty()
