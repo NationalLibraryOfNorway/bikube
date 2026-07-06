@@ -45,17 +45,22 @@ export default function TitleCommentForm({ title }: { title: HuginTitle | null |
         },
     });
 
-    const { handleSubmit, getFieldProps, resetForm, isSubmitting, dirty } = formik;
+    const { handleSubmit, getFieldProps, resetForm, isSubmitting, dirty, errors, touched } = formik;
 
     return (
         <FormikProvider value={formik}>
             <Form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4">
                 <div className="space-y-1">
+                    <label htmlFor="title-notes" className="sr-only">Kommentar</label>
                     <textarea
+                        id="title-notes"
                         rows={4}
                         className="w-full rounded-lg border p-3 bg-white"
                         {...getFieldProps("notes")}
                     />
+                    {touched.notes && errors.notes && (
+                        <p className="text-sm text-red-600">{errors.notes}</p>
+                    )}
                 </div>
 
                 <div className="flex gap-3">
@@ -77,7 +82,7 @@ export default function TitleCommentForm({ title }: { title: HuginTitle | null |
                             }
                         }}
                     >
-                        Avbryt
+                        Angre
                         <Undo />
                     </Button>
                 </div>

@@ -8,6 +8,7 @@ export type NumberInputWithButtonsProps = {
     max?: number;
     step?: number;
     className?: string;
+    label?: string;
 };
 
 export default function NumberInputWithButtons({
@@ -16,6 +17,7 @@ export default function NumberInputWithButtons({
    min,
    max,
    step = 1,
+   label,
 }: NumberInputWithButtonsProps) {
     const inc = () => {
         const next = (value ?? 0) + step;
@@ -34,6 +36,7 @@ export default function NumberInputWithButtons({
                     type="button"
                     onClick={dec}
                     size="icon"
+                    aria-label={label ? `Reduser ${label}` : 'Reduser antall'}
                     className="h-7 w-7 p-0 rounded-full"
                 >
                     <Minus />
@@ -43,15 +46,16 @@ export default function NumberInputWithButtons({
                     className="min-w-12 text-center rounded-full border px-2 py-2 bg-white"
                     aria-live="polite"
                     aria-atomic="true"
+                    aria-label={label}
                 >
                     {Number.isFinite(value) ? value : 0}
                 </div>
-
 
                 <Button
                     size="icon"
                     type="button"
                     onClick={inc}
+                    aria-label={label ? `Øk ${label}` : 'Øk antall'}
                     className="h-7 w-7 p-0 rounded-full"
                 >
                     <Plus />
