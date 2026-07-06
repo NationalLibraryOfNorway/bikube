@@ -5,13 +5,6 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BoxCreateForm from '@/components/box-create-form';
 
-// TODO: update after Orval migration — mock createBox from @/src/api/bikubeAPIForKommuniksjonMedTekstkataloger
-// vi.mock('@/generated/endpoints', () => ({
-//     HuginNewspaperService: {
-//         createBox: vi.fn()
-//     }
-// }));
-
 // Mock UI components
 vi.mock('@/components/ui/button', () => ({
     Button: ({ children, type }: any) => <button type={type}>{children}</button>

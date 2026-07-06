@@ -1,16 +1,16 @@
 import 'vitest';
-/// <reference types="@testing-library/jest-dom" />
-import { afterEach } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { expect } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { server } from './server';
 
-// Extend expect with jest-dom matchers
 expect.extend(matchers);
 
-// Cleanup after each test
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
     cleanup();
+    server.resetHandlers();
 });
-
+afterAll(() => server.close());

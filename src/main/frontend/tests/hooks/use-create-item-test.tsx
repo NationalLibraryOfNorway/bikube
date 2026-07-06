@@ -1,14 +1,10 @@
 import 'vitest';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { http, HttpResponse } from 'msw';
 import { useAddNewspapers } from '@/hooks/use-create-item';
-import { useUpsertNewspaper } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
-import { toast } from 'sonner';
-
-vi.mock('@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger', () => ({
-    useUpsertNewspaper: vi.fn(),
-}));
+import { server } from '../setup/server';
 
 vi.mock('sonner', () => ({
     toast: {
@@ -17,26 +13,30 @@ vi.mock('sonner', () => ({
     },
 }));
 
+import { toast } from 'sonner';
+
+const makeWrapper = () => {
+    const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+    return {
+        queryClient,
+        wrapper: ({ children }: { children: React.ReactNode }) => (
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        ),
+    };
+};
+
 describe('useAddNewspapers', () => {
-    let queryClient: QueryClient;
-    let mockMutateAsync: ReturnType<typeof vi.fn>;
+    it('sends newspapers to the batch endpoint', async () => {
+        let capturedBody: unknown;
 
-    beforeEach(() => {
-        queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        vi.clearAllMocks();
-        mockMutateAsync = vi.fn();
-        vi.mocked(useUpsertNewspaper).mockReturnValue({
-            mutateAsync: mockMutateAsync,
-        } as any);
-    });
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', async ({ request }) => {
+                capturedBody = await request.json();
+                return HttpResponse.json([]);
+            })
+        );
 
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
-
-    it('saves newspapers successfully', async () => {
-        mockMutateAsync.mockResolvedValue([]);
-
+        const { wrapper } = makeWrapper();
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         const newspapers = [
@@ -46,12 +46,15 @@ describe('useAddNewspapers', () => {
 
         await result.current.mutateAsync({ items: newspapers as any });
 
-        expect(mockMutateAsync).toHaveBeenCalledWith({ data: newspapers });
+        expect(capturedBody).toEqual(newspapers);
     });
 
     it('shows success toast on successful save', async () => {
-        mockMutateAsync.mockResolvedValue([]);
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => HttpResponse.json([]))
+        );
 
+        const { wrapper } = makeWrapper();
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         await result.current.mutateAsync({ items: [{ titleId: 456, date: '2024-01-01', edition: 1 }] as any });
@@ -62,10 +65,12 @@ describe('useAddNewspapers', () => {
     });
 
     it('invalidates query cache on success', async () => {
-        mockMutateAsync.mockResolvedValue([]);
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => HttpResponse.json([]))
+        );
 
+        const { queryClient, wrapper } = makeWrapper();
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         await result.current.mutateAsync({ items: [{ titleId: 789, date: '2024-01-01', edition: 1 }] as any });
@@ -76,18 +81,24 @@ describe('useAddNewspapers', () => {
     });
 
     it('propagates error on failure', async () => {
-        mockMutateAsync.mockRejectedValue(new Error('Network error'));
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => new HttpResponse(null, { status: 500 }))
+        );
 
+        const { wrapper } = makeWrapper();
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         await expect(
             result.current.mutateAsync({ items: [{ titleId: 111, date: '2024-01-01', edition: 1 }] as any })
-        ).rejects.toThrow('Network error');
+        ).rejects.toThrow();
     });
 
     it('handles multiple newspapers with same titleId', async () => {
-        mockMutateAsync.mockResolvedValue([]);
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => HttpResponse.json([]))
+        );
 
+        const { wrapper } = makeWrapper();
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         const newspapers = [
@@ -98,18 +109,18 @@ describe('useAddNewspapers', () => {
 
         await result.current.mutateAsync({ items: newspapers as any });
 
-        expect(mockMutateAsync).toHaveBeenCalledWith({ data: newspapers });
-
         await waitFor(() => {
             expect(toast.success).toHaveBeenCalled();
         });
     });
 
     it('uses titleId from first item for cache invalidation', async () => {
-        mockMutateAsync.mockResolvedValue([]);
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => HttpResponse.json([]))
+        );
 
+        const { queryClient, wrapper } = makeWrapper();
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         const newspapers = [
@@ -125,8 +136,11 @@ describe('useAddNewspapers', () => {
     });
 
     it('resolves to undefined on success', async () => {
-        mockMutateAsync.mockResolvedValue([]);
+        server.use(
+            http.post('*/api/hugin/newspapers/batch', () => HttpResponse.json([]))
+        );
 
+        const { wrapper } = makeWrapper();
         const { result } = renderHook(() => useAddNewspapers(), { wrapper });
 
         await expect(

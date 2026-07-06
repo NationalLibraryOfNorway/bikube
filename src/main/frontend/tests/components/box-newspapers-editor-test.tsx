@@ -5,13 +5,6 @@ import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BoxNewspapersEditor from '@/components/box-newspapers-editor';
 
-// TODO: update after Orval migration — mock useDeleteNewspaper from @/src/api/bikubeAPIForKommuniksjonMedTekstkataloger
-// vi.mock('@/generated/endpoints', () => ({
-//     HuginNewspaperService: {
-//         saveNewspapers: vi.fn()
-//     }
-// }));
-
 vi.mock('@/components/number-input', () => ({
     default: ({ value }: any) => <input type="number" value={value} readOnly />
 }));
