@@ -22,6 +22,7 @@
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
         <springdoc.api.docs.url>http://localhost:8087/bikube/v3/api-docs</springdoc.api.docs.url>
         <openapi.generate.skip>true</openapi.generate.skip>
+        <frontend.build.skip>false</frontend.build.skip>
 	</properties>
 
     <dependencyManagement>
