@@ -7,7 +7,7 @@ export default defineConfig({
     root: path.resolve(__dirname, 'src/main/frontend'),
     base: '/bikube/hugin/',
     build: {
-        outDir: path.resolve(__dirname, 'src/main/resources/static/hugin'),
+        outDir: path.resolve(__dirname, 'target/classes/static/hugin'),
         emptyOutDir: true,
     },
     plugins: [

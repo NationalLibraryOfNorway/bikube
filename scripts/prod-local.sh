@@ -9,11 +9,11 @@ set -e
     -Dopenapi.generate.skip=false \
     -Dspringdoc.api.docs.url=http://localhost:9000/bikube/v3/api-docs
 
-# Generate API client from target/openapi.json, then build frontend into src/main/resources/static/hugin/
+# Generate API client from openapi.json, then build frontend into target/classes/static/hugin/
 bun run generate
 bun run build
 
-# Package JAR (process-resources now copies the freshly built frontend; skip tests and Vite re-run)
+# Package JAR (frontend is already in target/classes/static/hugin; skip tests and frontend re-run)
 ./mvnw package -DskipTests -Dfrontend.build.skip=true
 
 # Run the actual JAR — static files are bundled inside, no classpath ambiguity

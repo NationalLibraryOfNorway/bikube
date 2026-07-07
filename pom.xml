@@ -380,6 +380,7 @@
 				<executions>
 					<execution>
 						<id>install-bun</id>
+						<phase>prepare-package</phase>
 						<goals><goal>install-bun</goal></goals>
 						<configuration>
 							<bunVersion>v1.3.13</bunVersion>
@@ -387,12 +388,13 @@
 					</execution>
 					<execution>
 						<id>bun-install</id>
+						<phase>prepare-package</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration><arguments>install --ignore-scripts</arguments></configuration>
 					</execution>
 					<execution>
 						<id>generate-api</id>
-						<phase>generate-resources</phase>
+						<phase>prepare-package</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration>
 							<arguments>run generate</arguments>
@@ -401,7 +403,7 @@
 					</execution>
 					<execution>
 						<id>test-frontend</id>
-						<phase>test</phase>
+						<phase>prepare-package</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration>
 							<arguments>run test</arguments>
@@ -410,6 +412,7 @@
 					</execution>
 					<execution>
 						<id>build-frontend</id>
+						<phase>prepare-package</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration>
 							<arguments>run build</arguments>
