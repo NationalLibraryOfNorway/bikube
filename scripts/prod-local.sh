@@ -6,6 +6,7 @@ set -e
     -Dspring-boot.run.profiles=local \
     -Dspring-boot.run.arguments="--search-index.enabled=false" \
     -Dfrontend.build.skip=true \
+    -Dopenapi.generate.skip=false \
     -Dspringdoc.api.docs.url=http://localhost:9000/bikube/v3/api-docs
 
 # Generate API client from target/openapi.json, then build frontend into src/main/resources/static/hugin/
