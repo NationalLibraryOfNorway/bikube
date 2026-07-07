@@ -392,27 +392,37 @@
 						<id>generate-api</id>
 						<phase>generate-resources</phase>
 						<goals><goal>bun</goal></goals>
-						<configuration><arguments>run generate</arguments></configuration>
+						<configuration>
+							<arguments>run generate</arguments>
+							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
+						</configuration>
 					</execution>
 					<execution>
 						<id>test-frontend</id>
 						<phase>test</phase>
 						<goals><goal>bun</goal></goals>
-						<configuration><arguments>run test --</arguments></configuration>
+						<configuration>
+							<arguments>run test</arguments>
+							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
+						</configuration>
 					</execution>
 					<execution>
 						<id>build-frontend</id>
 						<goals><goal>bun</goal></goals>
 						<configuration>
-							<arguments>run build --</arguments>
+							<arguments>run build</arguments>
 							<skip>${frontend.build.skip}</skip>
+							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
 						</configuration>
 					</execution>
 					<execution>
 						<id>regenerate-api-from-spec</id>
 						<phase>verify</phase>
 						<goals><goal>bun</goal></goals>
-						<configuration><arguments>run generate</arguments></configuration>
+						<configuration>
+							<arguments>run generate</arguments>
+							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
