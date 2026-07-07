@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_maven_pipeline:
-    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@main
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-build-and-deploy.yml@feat/optional-node-version-maven-check
     with:
       CLUSTER_NAME: "k8s"
       ENVIRONMENT: stage
