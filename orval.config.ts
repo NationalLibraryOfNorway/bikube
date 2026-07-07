@@ -1,9 +1,11 @@
 import { defineConfig } from 'orval'
 
+const target = process.env.ORVAL_TARGET ?? 'openapi.json'
+
 export default defineConfig({
     api: {
         input: {
-            target: 'openapi.json',
+            target,
             validation: false,
         },
         output: {

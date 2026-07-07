@@ -20,8 +20,6 @@
 		<lucene.version>9.10.0</lucene.version>
         <jackson-bom.version>3.2.0</jackson-bom.version>
         <nvd.repo.url>${env.NVD_REPO}</nvd.repo.url>
-        <springdoc.api.docs.url>http://localhost:8087/bikube/v3/api-docs</springdoc.api.docs.url>
-        <openapi.generate.skip>true</openapi.generate.skip>
         <frontend.build.skip>false</frontend.build.skip>
 	</properties>
 
@@ -358,23 +356,7 @@
 					<argLine>--add-opens java.base/java.time=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.springdoc</groupId>
-				<artifactId>springdoc-openapi-maven-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<goals><goal>generate</goal></goals>
-					</execution>
-				</executions>
-				<configuration>
-					<apiDocsUrl>${springdoc.api.docs.url}</apiDocsUrl>
-					<outputFileName>openapi.json</outputFileName>
-					<outputDir>${project.basedir}</outputDir>
-					<skip>${openapi.generate.skip}</skip>
-				</configuration>
-			</plugin>
-			<plugin>
+<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>2.0.0</version>
@@ -419,16 +401,6 @@
 							<arguments>run build</arguments>
 							<skip>${frontend.build.skip}</skip>
 							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
-						</configuration>
-					</execution>
-					<execution>
-						<id>regenerate-api-from-spec</id>
-						<phase>verify</phase>
-						<goals><goal>bun</goal></goals>
-						<configuration>
-							<arguments>run generate</arguments>
-							<bunInheritsProxyConfigFromMaven>false</bunInheritsProxyConfigFromMaven>
-							<skip>${openapi.generate.skip}</skip>
 						</configuration>
 					</execution>
 				</executions>
