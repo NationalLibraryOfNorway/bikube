@@ -12,6 +12,7 @@ jobs:
       ENVIRONMENT: prod
       JDK_VERSION: 21
       MAVEN_VERSION: 3.9
+      NODE_VERSION: '22'
       USE_MAVEN_SETTINGS_FILE: true
       USE_HARBOR: true
     secrets:
