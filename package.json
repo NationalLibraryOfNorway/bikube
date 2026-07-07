@@ -84,9 +84,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build --",
+    "build": "vite build",
     "generate": "sh -c 'orval --config orval.config.ts'",
-    "test": "vitest run --",
+    "test": "vitest run",
     "test:watch": "vitest",
     "dev:all": "concurrently -n spring,orval,vite -c blue,yellow,green --kill-others-on-fail \"./mvnw spring-boot:run -Dspring-boot.run.profiles=local\" \"bun run generate --watch\" \"bun run dev\"",
     "prod:local": "bash scripts/prod-local.sh",
