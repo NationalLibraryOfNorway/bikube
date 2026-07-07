@@ -3,6 +3,7 @@ package no.nb.bikube.api.newspaper.service
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import no.nb.bikube.TestcontainersConfig
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelEmptyRecordListMock
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockItemA
 import no.nb.bikube.api.catalogue.collections.CollectionsModelMockData.Companion.collectionsModelMockManifestationA
@@ -15,9 +16,11 @@ import org.junit.jupiter.api.Test
 import reactor.kotlin.test.test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest(properties = ["featureflag.series-manifestation=false"])
 @ActiveProfiles("test")
 class GetSingleTitleFlagOffTest {
@@ -80,6 +83,7 @@ class GetSingleTitleFlagOffTest {
     }
 }
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest(properties = ["featureflag.series-manifestation=true"])
 @ActiveProfiles("test")
 class GetSingleTitleFlagOnTest {
