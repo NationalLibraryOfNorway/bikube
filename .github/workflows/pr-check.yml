@@ -10,6 +10,7 @@ jobs:
     with:
       JDK_VERSION: 21
       MAVEN_VERSION: 3.9
+      NODE_VERSION: '22'
       USE_MAVEN_SETTINGS_FILE: true
     secrets:
       VAULT_URL: ${{ secrets.NB_VAULT_URL }}

@@ -404,7 +404,7 @@
 						<id>build-frontend</id>
 						<goals><goal>bun</goal></goals>
 						<configuration>
-							<arguments>--bun run build</arguments>
+							<arguments>run build</arguments>
 							<skip>${frontend.build.skip}</skip>
 						</configuration>
 					</execution>
