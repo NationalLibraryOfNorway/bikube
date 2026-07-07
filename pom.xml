@@ -390,7 +390,7 @@
 					</execution>
 					<execution>
 						<id>generate-api</id>
-						<phase>pre-integration-test</phase>
+						<phase>generate-resources</phase>
 						<goals><goal>bun</goal></goals>
 						<configuration><arguments>run generate</arguments></configuration>
 					</execution>
