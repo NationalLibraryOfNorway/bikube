@@ -85,7 +85,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --",
-    "generate": "orval --config orval.config.ts",
+    "generate": "orval --config orval.config.ts --",
     "test": "vitest run --",
     "test:watch": "vitest",
     "dev:all": "concurrently -n spring,orval,vite -c blue,yellow,green --kill-others-on-fail \"./mvnw spring-boot:run -Dspring-boot.run.profiles=local\" \"bun run generate --watch\" \"bun run dev\"",
