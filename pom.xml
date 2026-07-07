@@ -368,7 +368,7 @@
 				<configuration>
 					<apiDocsUrl>${springdoc.api.docs.url}</apiDocsUrl>
 					<outputFileName>openapi.json</outputFileName>
-					<outputDir>${project.build.directory}</outputDir>
+					<outputDir>${project.basedir}</outputDir>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -407,6 +407,12 @@
 							<arguments>run build</arguments>
 							<skip>${frontend.build.skip}</skip>
 						</configuration>
+					</execution>
+					<execution>
+						<id>regenerate-api-from-spec</id>
+						<phase>verify</phase>
+						<goals><goal>bun</goal></goals>
+						<configuration><arguments>run generate</arguments></configuration>
 					</execution>
 				</executions>
 			</plugin>
