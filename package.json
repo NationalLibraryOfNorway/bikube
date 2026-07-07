@@ -87,7 +87,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "sh -c 'vite build'",
+    "build": "vite build --",
     "generate": "orval --config orval.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
