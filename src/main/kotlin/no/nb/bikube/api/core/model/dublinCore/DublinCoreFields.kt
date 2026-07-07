@@ -5,19 +5,10 @@ data class DublinCoreIdentifier(
     val value: String
 )
 
-// lang should be ISO 639-3 (nob, nnn, eng)
-
 data class DublinCoreValue(
     val value: String,
     val lang: String
 )
-
-// For alternative: The use of the type attribute should be meaningful to the submitter,
-// reflect the metadata catalog or system, and be applied consistently (using a standardized format).
-
-// For date: The type of date and the corresponding year or value must be specified. ISO 8601-2 is the standard to be used.
-// The use of the type attribute should be meaningful for the data provider, reflect the metadata catalog or system,
-// and be applied consistently with a standardized format.
 
 // For language: The type of language representation must be indicated.
 // Examples of language types include subtitles, spoken language, written language, etc.
@@ -41,8 +32,6 @@ data class DublinCoreContributor(
     val authority: DublinCoreAuthority?
 )
 
-// Use ISO 3166-2 for specifying countries.
-// Country codes should be placed in parentheses after the country name (e.g., Norway (NO)).
 data class DublinCoreSpatial(
     val name: String,
     val type: String?,
@@ -52,7 +41,6 @@ data class DublinCoreSpatial(
     val longitude: Double? = null,
 )
 
-// type: conformsTo, hasFormat, hasPart, hasVersion, isFormatOf, isPartOf, isReferencedBy, isReplacedBy, isRequiredBy, isVersionOf, references, replaces, requires
 data class DublinCoreRelation(
     val id: String,
     val type: String,
@@ -61,7 +49,6 @@ data class DublinCoreRelation(
     val uri: String? = null,
 )
 
-// This element records the object(s) the described resource was derived from
 data class DublinCoreSource(
     val identifier: DublinCoreIdentifier,
     val description: String? = null,

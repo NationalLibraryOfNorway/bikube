@@ -5,10 +5,12 @@ import no.nb.bikube.api.catalogue.collections.model.getDate
 import no.nb.bikube.api.catalogue.collections.model.getLanguage
 import no.nb.bikube.api.catalogue.collections.model.getMaterialTypeFromParent
 import no.nb.bikube.api.catalogue.collections.model.getName
+import no.nb.bikube.api.catalogue.collections.model.getPublisher
 import no.nb.bikube.api.catalogue.collections.model.getPublisherPlace
 import no.nb.bikube.api.catalogue.collections.model.getUrn
 import no.nb.bikube.api.core.enum.materialTypeToDublinCoreMaterialType
 import no.nb.bikube.api.core.exception.DublinCoreMissingFieldException
+import no.nb.bikube.api.core.model.dublinCore.DublinCoreContributor
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreIdentifier
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreMetadata
 import no.nb.bikube.api.core.model.dublinCore.DublinCoreRelation
@@ -44,7 +46,6 @@ fun mapCollectionsObjectToDublinCoreMetadata(
 
     val title = itemModel.getName() ?: throw DublinCoreMissingFieldException("Missing title for item object with id ${itemModel.priRef}")
 
-    // Language is technically optional, but should be set for all text values?
     val lang = if (titleModel.getLanguage() != null) {
         mapCollectionsLanguageToDublinCoreLanguage(titleModel.getLanguage()!!)
     } else {
@@ -58,10 +59,17 @@ fun mapCollectionsObjectToDublinCoreMetadata(
             value = title,
             lang = lang
         ),
-        alternative = null, // Not relevant?
-        creator = null, // Not relevant?
-        contributor = null, // Not relevant?
-        publisher = null, // Should exist?
+        alternative = null,
+        creator = null,
+        contributor = null,
+        publisher = if (titleModel.getPublisher() != null) { listOf(
+            DublinCoreContributor(
+                name = titleModel.getPublisher()!!,
+                type = "korporasjon",
+                role = null,
+                authority = null
+            )
+        ) } else null,
         spatial = if (titleModel.getPublisherPlace() != null) { listOf(
             DublinCoreSpatial(
                 name = interpolateCountryCode(titleModel.getPublisherPlace()!!),
@@ -72,7 +80,7 @@ fun mapCollectionsObjectToDublinCoreMetadata(
             type = "Published",
             value = itemModel.getDate()!!.toString(),
             lang = null
-        ) } else null,
+        ) } else null, // Få med digitized
         language = DublinCoreTypedValue(
             type = "written language",
             value = lang,
@@ -86,10 +94,10 @@ fun mapCollectionsObjectToDublinCoreMetadata(
                 lang = lang
             )
         ),
-        source = null,
-        provenance = null, // Not relevant?
-        subject = null, // Not relevant?
-        description = null // Not relevant?
+        source = null, // Mavis typ
+        provenance = null,
+        subject = null,
+        description = null // Pliktavlevert typ
     )
 }
 
