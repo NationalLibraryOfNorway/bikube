@@ -380,7 +380,7 @@
 						<id>install-bun</id>
 						<goals><goal>install-bun</goal></goals>
 						<configuration>
-							<bunVersion>v1.2.0</bunVersion>
+							<bunVersion>v1.3.13</bunVersion>
 						</configuration>
 					</execution>
 					<execution>
