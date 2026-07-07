@@ -386,7 +386,7 @@
 					<execution>
 						<id>bun-install</id>
 						<goals><goal>bun</goal></goals>
-						<configuration><arguments>install</arguments></configuration>
+						<configuration><arguments>install --ignore-scripts</arguments></configuration>
 					</execution>
 					<execution>
 						<id>generate-api</id>
