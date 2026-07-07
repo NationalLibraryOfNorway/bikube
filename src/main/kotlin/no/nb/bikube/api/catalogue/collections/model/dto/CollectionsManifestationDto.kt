@@ -21,7 +21,10 @@ class ManifestationDto (
     val objectNumber: String?,
 
     @SerialName("part_of_reference.lref")
-    val partOfReference: String?,
+    val partOfReference: String? = null,
+
+    @SerialName("series.title.lref")
+    val seriesTitleLref: String? = null,
 
     @SerialName("record_type")
     val recordType: String?,
@@ -68,7 +71,8 @@ fun createManifestationDto(
     notes: String? = null,
     volume: String? = null,
     number: String? = null,
-    version: String? = null
+    version: String? = null,
+    useSeriesManifestation: Boolean = false
 ): ManifestationDto {
     val edition = listOfNotNull(
         volume?.takeIf { it.isNotBlank() } ?: "U",
@@ -78,7 +82,8 @@ fun createManifestationDto(
     return ManifestationDto(
         priRef = id,
         objectNumber = objectNumber,
-        partOfReference = parentCatalogueId,
+        partOfReference = if (!useSeriesManifestation) parentCatalogueId else null,
+        seriesTitleLref = if (useSeriesManifestation) parentCatalogueId else null,
         recordType = CollectionsRecordType.MANIFESTATION.value,
         date = date.toString(),
         edition = edition,

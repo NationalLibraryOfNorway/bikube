@@ -10,15 +10,6 @@
     <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-devtools@.*$</packageUrl>
     <cve>CVE-2022-31691</cve>
   </suppress>
-
-  <!-- Wide suppression for all Kotlin artifacts. CVE-2026-53914 is matched against
-       jetbrains:kotlin CPE which covers kotlin-stdlib, kotlin-reflect, etc.
-       Kotlin 2.2.0 is the latest stable release; no fix available. -->
-  <suppress>
-    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/.*$</packageUrl>
-    <cpe>cpe:/a:jetbrains:kotlin</cpe>
-  </suppress>
-
   <!-- jackson-databind 3.1.0 (tools.jackson.core / Jackson 3.x) — no higher release
        available on Maven Central. CVE-2026-54512 and CVE-2026-54513 are flagged
        against fasterxml:jackson-core CPE which is incorrectly matched to Jackson 3.x. -->
@@ -30,7 +21,6 @@
     <packageUrl regex="true">^pkg:maven/tools\.jackson\.core/jackson-databind@.*$</packageUrl>
     <cve>CVE-2026-54513</cve>
   </suppress>
-
   <!-- Tomcat 11.0.22 — latest stable release; no fix version available yet.
        CVE-2026-53434 and CVE-2026-55276 reported against apache_tomcat CPE. -->
   <suppress>
@@ -40,5 +30,15 @@
   <suppress>
     <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/.*$</packageUrl>
     <cve>CVE-2026-55276</cve>
+  </suppress>
+  <suppress until="2026-12-31">
+    <notes><![CDATA[
+   CVE-2026-53914 (CVSS 9.8): Unsafe deserialization in Kotlin build cache
+   metadata. Fixed in Kotlin 2.4.20, which is not yet available as a stable
+   release (only Beta1 as of 2026-06-29). Suppressed until stable fix ships.
+   Revisit when 2.4.20 stable is released.
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/.*$</packageUrl>
+    <cve>CVE-2026-53914</cve>
   </suppress>
 </suppressions>
