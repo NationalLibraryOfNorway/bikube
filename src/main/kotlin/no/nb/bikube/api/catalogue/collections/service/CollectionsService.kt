@@ -58,7 +58,7 @@ class CollectionsService(
 
     fun getAllSeries(page: Int = 1): Mono<CollectionsSeriesModel> {
         return getRecordsWebClientRequest(
-            null,
+            "all",
             CollectionsDatabase.SERIES,
             limit = 50,
             from = (page - 1) * 50 + 1
@@ -237,10 +237,7 @@ class CollectionsService(
                     .queryParam("output", "json")
                     .queryParam("limit", limit)
                     .queryParam("startfrom", from)
-
-                if (!query.isNullOrEmpty()) {
-                    params.queryParam("search", query)
-                }
+                    .queryParam("search", query ?: "")
 
                 if (fields != null) {
                     params.queryParam("fields", fields)

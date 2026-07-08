@@ -13,6 +13,17 @@ export default defineConfig({
     plugins: [
         react(),
         tailwindcss(),
+        {
+            name: 'base-redirect',
+            configureServer(server) {
+                server.middlewares.use((req, _res, next) => {
+                    if (req.url === '/bikube/hugin') {
+                        req.url = '/bikube/hugin/'
+                    }
+                    next()
+                })
+            },
+        },
     ],
     resolve: {
         alias: {
