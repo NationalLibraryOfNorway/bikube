@@ -47,6 +47,14 @@ class CollectionsService(
         return getRecordsWebClientRequest("priref=${titleCatalogId}", db, fields).bodyToMono<CollectionsModel>()
     }
 
+    fun getAlternativeNumbers(priref: String, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(
+            "priref=$priref",
+            db,
+            fields = "priref and alternative_number and alternative_number.type"
+        ).bodyToMono<CollectionsModel>()
+    }
+
     fun getAllWorks(page: Int = 1, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.WORK}",
