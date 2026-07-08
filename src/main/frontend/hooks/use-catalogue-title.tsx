@@ -36,7 +36,7 @@ export function useCatalogueTitles(query: string) {
 
 export function useCatalogueTitle(id: string) {
     const query = useGetSingleTitle(
-        { catalogueId: id, materialType: GetSingleTitleMaterialType.NEWSPAPER },
+        { catalogueId: id, materialType: GetSingleTitleMaterialType.NEWSPAPER, useSeries: true },
         {
             query: {
                 queryKey: keys.catalogueTitle(id),

@@ -74,23 +74,28 @@ class NewspaperService (
     @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
     fun getSingleTitle(catalogId: String): Mono<Title> {
         return if (seriesManifestationEnabled) {
-            collectionsService.getSingleSeries(catalogId)
-                .handle { model, sink ->
-                    val records = model.getObjects()
-                    if (records.isNullOrEmpty())
-                        sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
-                    else {
-                        if (records.size > 1)
-                            logger().warn("getSingleTitle returned {} series records for id '{}', using first", records.size, catalogId)
-                        sink.next(records.first())
-                    }
-                }
-                .map { mapCollectionsSeriesObjectToGenericTitle(it) }
+            getSingleTitleFromSeries(catalogId)
         } else {
             collectionsService.getSingleCollectionsModelWithoutChildren(catalogId)
                 .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.WORK) }
                 .map { mapCollectionsObjectToGenericTitle(it) }
         }
+    }
+
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
+    fun getSingleTitleFromSeries(catalogId: String): Mono<Title> {
+        return collectionsService.getSingleSeries(catalogId)
+            .handle { model, sink ->
+                val records = model.getObjects()
+                if (records.isNullOrEmpty())
+                    sink.error(CollectionsTitleNotFound("Could not find series in Collections"))
+                else {
+                    if (records.size > 1)
+                        logger().warn("getSingleTitleFromSeries returned {} series records for id '{}', using first", records.size, catalogId)
+                    sink.next(records.first())
+                }
+            }
+            .map { mapCollectionsSeriesObjectToGenericTitle(it) }
     }
 
     fun getLinkToSingleTitle(catalogId: String): URL {

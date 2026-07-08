@@ -73,9 +73,13 @@ class CoreController (
     fun getSingleTitle(
         @RequestParam catalogueId: String,
         @RequestParam materialType: MaterialType,
+        @RequestParam(required = false, defaultValue = "false") useSeries: Boolean,
     ): ResponseEntity<Mono<Title>> {
         return when(materialTypeToCatalogueName(materialType)) {
-            CatalogueName.COLLECTIONS -> ResponseEntity.ok(newspaperService.getSingleTitle(catalogueId))
+            CatalogueName.COLLECTIONS -> ResponseEntity.ok(
+                if (useSeries) newspaperService.getSingleTitleFromSeries(catalogueId)
+                else newspaperService.getSingleTitle(catalogueId)
+            )
             else -> throw NotSupportedException("Material type $materialType is not supported.")
         }
     }
