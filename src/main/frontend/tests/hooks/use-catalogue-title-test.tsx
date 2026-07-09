@@ -1,29 +1,20 @@
 import 'vitest';
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { useCatalogueTitles, useCatalogueTitle } from '@/hooks/use-catalogue-title';
 import { server } from '../setup/server';
-
-const makeWrapper = () => {
-    const queryClient = new QueryClient({
-        defaultOptions: { queries: { retry: false } },
-    });
-    return ({ children }: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
-};
+import { makeWrapper } from '../setup/query-client-wrapper';
 
 describe('useCatalogueTitles', () => {
     it('returns empty array when query is empty — no request made', () => {
-        const { result } = renderHook(() => useCatalogueTitles(''), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles(''), { wrapper: makeWrapper().wrapper });
         expect(result.current.catalogueTitlesList).toEqual([]);
         expect(result.current.isLoading).toBe(false);
     });
 
     it('returns empty array when query is only whitespace — no request made', () => {
-        const { result } = renderHook(() => useCatalogueTitles('   '), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('   '), { wrapper: makeWrapper().wrapper });
         expect(result.current.catalogueTitlesList).toEqual([]);
         expect(result.current.isLoading).toBe(false);
     });
@@ -38,7 +29,7 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => HttpResponse.json(mockTitles))
         );
 
-        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.catalogueTitlesList).toEqual(mockTitles);
@@ -49,7 +40,7 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => HttpResponse.json(null))
         );
 
-        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.catalogueTitlesList).toEqual([]);
@@ -60,7 +51,7 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => HttpResponse.json([]))
         );
 
-        const { result } = renderHook(() => useCatalogueTitles('query'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('query'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(typeof result.current.search).toBe('function');
@@ -71,7 +62,7 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => new HttpResponse(null, { status: 503 }))
         );
 
-        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.isIndexUnavailable).toBe(true);
@@ -83,7 +74,7 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => new HttpResponse(null, { status: 500 }))
         );
 
-        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitles('test'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.isIndexUnavailable).toBe(false);
@@ -94,10 +85,10 @@ describe('useCatalogueTitles', () => {
             http.get('*/api/title/search', () => HttpResponse.json([{ catalogueId: '1', name: 'X' }]))
         );
 
-        const { result: empty } = renderHook(() => useCatalogueTitles(' '), { wrapper: makeWrapper() });
+        const { result: empty } = renderHook(() => useCatalogueTitles(' '), { wrapper: makeWrapper().wrapper });
         expect(empty.current.catalogueTitlesList).toEqual([]);
 
-        const { result: nonEmpty } = renderHook(() => useCatalogueTitles('  test  '), { wrapper: makeWrapper() });
+        const { result: nonEmpty } = renderHook(() => useCatalogueTitles('  test  '), { wrapper: makeWrapper().wrapper });
         await waitFor(() => expect(nonEmpty.current.isLoading).toBe(false));
         expect(nonEmpty.current.catalogueTitlesList).toHaveLength(1);
     });
@@ -111,7 +102,7 @@ describe('useCatalogueTitle', () => {
             http.get('*/api/title', () => HttpResponse.json(mockTitle))
         );
 
-        const { result } = renderHook(() => useCatalogueTitle('123'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitle('123'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.catalogueTitle).toEqual(mockTitle);
@@ -122,7 +113,7 @@ describe('useCatalogueTitle', () => {
             http.get('*/api/title', () => HttpResponse.json(null))
         );
 
-        const { result } = renderHook(() => useCatalogueTitle('456'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitle('456'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.catalogueTitle).toBeUndefined();
@@ -133,7 +124,7 @@ describe('useCatalogueTitle', () => {
             http.get('*/api/title', () => new HttpResponse(null, { status: 404 }))
         );
 
-        const { result } = renderHook(() => useCatalogueTitle('789'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitle('789'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.catalogueTitle).toBeUndefined();
@@ -144,7 +135,7 @@ describe('useCatalogueTitle', () => {
             http.get('*/api/title', () => HttpResponse.json({ catalogueId: '1', name: 'X' }))
         );
 
-        const { result } = renderHook(() => useCatalogueTitle('123'), { wrapper: makeWrapper() });
+        const { result } = renderHook(() => useCatalogueTitle('123'), { wrapper: makeWrapper().wrapper });
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(typeof result.current.search).toBe('function');

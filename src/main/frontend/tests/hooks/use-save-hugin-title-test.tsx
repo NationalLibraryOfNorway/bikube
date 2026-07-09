@@ -1,15 +1,11 @@
 import 'vitest';
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { useSaveHuginTitle } from '@/hooks/use-save-hugin-title';
 import { server } from '../setup/server';
-
-const makeWrapper = (queryClient: QueryClient) =>
-    ({ children }: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
+import { makeWrapper } from '../setup/query-client-wrapper';
 
 describe('useSaveHuginTitle', () => {
     it('sends normalized payload to the API', async () => {
@@ -23,7 +19,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({
             id: 123,
@@ -56,7 +52,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({
             id: 123,
@@ -88,7 +84,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({ id: 456, vendor: '', contactName: '   ', shelf: '', notes: '' });
 
@@ -114,7 +110,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({
             id: 789,
@@ -140,7 +136,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({
             id: 111,
@@ -161,7 +157,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({ id: 222, releasePattern: [1.7, 2.3, 3.9, 4.1, 5.5, 6.6, 7.2] });
 
@@ -176,7 +172,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({ id: 333, vendor: 'Updated Vendor' });
 
@@ -191,7 +187,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await expect(result.current.mutateAsync({ id: 444 })).rejects.toThrow();
     });
@@ -207,7 +203,7 @@ describe('useSaveHuginTitle', () => {
         );
 
         const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient) });
+        const { result } = renderHook(() => useSaveHuginTitle(), { wrapper: makeWrapper(queryClient).wrapper });
 
         await result.current.mutateAsync({ id: 555, vendor: null as any, contactName: null as any });
 

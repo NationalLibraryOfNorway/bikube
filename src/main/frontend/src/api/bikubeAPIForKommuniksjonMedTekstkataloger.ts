@@ -693,7 +693,7 @@ export const useCreateManifestationOnly = <TError = void,
       return useMutation(mutationOptions, queryClient);
     }
     
-export const upsertNewspaper = (
+export const upsertNewspapers = (
     newspaperUpsertDto: NewspaperUpsertDto[],
  signal?: AbortSignal
 ) => {
@@ -709,11 +709,11 @@ export const upsertNewspaper = (
   
 
 
-export const getUpsertNewspaperMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertNewspaper>>, TError,{data: NewspaperUpsertDto[]}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof upsertNewspaper>>, TError,{data: NewspaperUpsertDto[]}, TContext> => {
+export const getUpsertNewspapersMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertNewspapers>>, TError,{data: NewspaperUpsertDto[]}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof upsertNewspapers>>, TError,{data: NewspaperUpsertDto[]}, TContext> => {
 
-const mutationKey = ['upsertNewspaper'];
+const mutationKey = ['upsertNewspapers'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -723,10 +723,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof upsertNewspaper>>, {data: NewspaperUpsertDto[]}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof upsertNewspapers>>, {data: NewspaperUpsertDto[]}> = (props) => {
           const {data} = props ?? {};
 
-          return  upsertNewspaper(data,)
+          return  upsertNewspapers(data,)
         }
 
         
@@ -734,20 +734,20 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpsertNewspaperMutationResult = NonNullable<Awaited<ReturnType<typeof upsertNewspaper>>>
-    export type UpsertNewspaperMutationBody = NewspaperUpsertDto[]
-    export type UpsertNewspaperMutationError = unknown
+    export type UpsertNewspapersMutationResult = NonNullable<Awaited<ReturnType<typeof upsertNewspapers>>>
+    export type UpsertNewspapersMutationBody = NewspaperUpsertDto[]
+    export type UpsertNewspapersMutationError = unknown
 
-    export const useUpsertNewspaper = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertNewspaper>>, TError,{data: NewspaperUpsertDto[]}, TContext>, }
+    export const useUpsertNewspapers = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof upsertNewspapers>>, TError,{data: NewspaperUpsertDto[]}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof upsertNewspaper>>,
+        Awaited<ReturnType<typeof upsertNewspapers>>,
         TError,
         {data: NewspaperUpsertDto[]},
         TContext
       > => {
 
-      const mutationOptions = getUpsertNewspaperMutationOptions(options);
+      const mutationOptions = getUpsertNewspapersMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -759,7 +759,7 @@ export const createBox = (
       
       
       return apiClient<Box>(
-      {url: `/api/hugin/boxes`, method: 'POST',
+      {url: `/api/hugin/box`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: createBoxDto, signal
     },
@@ -2431,7 +2431,7 @@ export const getCreateTitleResponseMock = (): Title => ({...{catalogueId: faker.
 
 export const getCreateManifestationOnlyResponseMock = (): Item => ({...{catalogueId: faker.string.alpha({length: {min: 10, max: 20}}), name: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), materialType: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), titleCatalogueId: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), titleName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), digital: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), urn: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), location: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), parentCatalogueId: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])},})
 
-export const getUpsertNewspaperResponseMock = (): Newspaper[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({edition: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), received: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), username: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), box: faker.helpers.arrayElement([{id: faker.string.alpha({length: {min: 10, max: 20}}), dateFrom: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), active: faker.datatype.boolean(), title: faker.helpers.arrayElement([{id: faker.number.int({min: undefined, max: undefined}), contactName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), vendor: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), releasePattern: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.number.int({min: undefined, max: undefined}))), undefined]), shelf: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), boxes: [], contactInfos: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.uuid(), undefined]), contactType: faker.helpers.arrayElement([faker.helpers.arrayElement(['phone','email'] as const), undefined]), contactValue: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}))}, undefined]), newspapers: []}, undefined]), catalogId: faker.string.alpha({length: {min: 10, max: 20}})})))
+export const getUpsertNewspapersResponseMock = (): Newspaper[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({edition: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), received: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), username: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), box: faker.helpers.arrayElement([{id: faker.string.alpha({length: {min: 10, max: 20}}), dateFrom: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), active: faker.datatype.boolean(), title: faker.helpers.arrayElement([{id: faker.number.int({min: undefined, max: undefined}), contactName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), vendor: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), releasePattern: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.number.int({min: undefined, max: undefined}))), undefined]), shelf: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), boxes: [], contactInfos: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.uuid(), undefined]), contactType: faker.helpers.arrayElement([faker.helpers.arrayElement(['phone','email'] as const), undefined]), contactValue: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}))}, undefined]), newspapers: []}, undefined]), catalogId: faker.string.alpha({length: {min: 10, max: 20}})})))
 
 export const getCreateBoxResponseMock = (overrideResponse: Partial< Box > = {}): Box => ({id: faker.string.alpha({length: {min: 10, max: 20}}), dateFrom: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), active: faker.datatype.boolean(), title: faker.helpers.arrayElement([{id: faker.number.int({min: undefined, max: undefined}), contactName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), vendor: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), releasePattern: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.number.int({min: undefined, max: undefined}))), undefined]), shelf: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), boxes: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.string.alpha({length: {min: 10, max: 20}}), dateFrom: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), active: faker.datatype.boolean(), newspapers: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({edition: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), received: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), username: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), catalogId: faker.string.alpha({length: {min: 10, max: 20}})}))})), contactInfos: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.uuid(), undefined]), contactType: faker.helpers.arrayElement([faker.helpers.arrayElement(['phone','email'] as const), undefined]), contactValue: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}))}, undefined]), newspapers: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({edition: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), date: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), received: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), username: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), box: faker.helpers.arrayElement([{id: faker.string.alpha({length: {min: 10, max: 20}}), dateFrom: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), active: faker.datatype.boolean(), title: faker.helpers.arrayElement([{id: faker.number.int({min: undefined, max: undefined}), contactName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), vendor: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), releasePattern: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.number.int({min: undefined, max: undefined}))), undefined]), shelf: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined]), boxes: [], contactInfos: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.string.uuid(), undefined]), contactType: faker.helpers.arrayElement([faker.helpers.arrayElement(['phone','email'] as const), undefined]), contactValue: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), undefined])}))}, undefined]), newspapers: []}, undefined]), catalogId: faker.string.alpha({length: {min: 10, max: 20}})})), ...overrideResponse})
 
@@ -2544,12 +2544,12 @@ export const getCreateManifestationOnlyMockHandler = (overrideResponse?: Item | 
   }, options)
 }
 
-export const getUpsertNewspaperMockHandler = (overrideResponse?: Newspaper[] | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Newspaper[]> | Newspaper[]), options?: RequestHandlerOptions) => {
+export const getUpsertNewspapersMockHandler = (overrideResponse?: Newspaper[] | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Newspaper[]> | Newspaper[]), options?: RequestHandlerOptions) => {
   return http.post('*/api/hugin/newspapers/batch', async (info) => {await delay(0);
   
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getUpsertNewspaperResponseMock()),
+    : getUpsertNewspapersResponseMock()),
       { status: 200,
         headers: { 'Content-Type': 'application/json' }
       })
@@ -2557,7 +2557,7 @@ export const getUpsertNewspaperMockHandler = (overrideResponse?: Newspaper[] | (
 }
 
 export const getCreateBoxMockHandler = (overrideResponse?: Box | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Box> | Box), options?: RequestHandlerOptions) => {
-  return http.post('*/api/hugin/boxes', async (info) => {await delay(0);
+  return http.post('*/api/hugin/box', async (info) => {await delay(0);
   
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
@@ -2783,7 +2783,7 @@ export const getBikubeAPIForKommuniksjonMedTekstkatalogerMock = () => [
   getUpsertContactInformationMockHandler(),
   getCreateTitleMockHandler(),
   getCreateManifestationOnlyMockHandler(),
-  getUpsertNewspaperMockHandler(),
+  getUpsertNewspapersMockHandler(),
   getCreateBoxMockHandler(),
   getRootMockHandler(),
   getSearchTitleMockHandler(),

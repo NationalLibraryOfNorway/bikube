@@ -1,6 +1,6 @@
 import {useQueryClient} from "@tanstack/react-query";
 import {toast} from "sonner";
-import {useUpsertNewspaper, type NewspaperUpsertDto} from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
+import {useUpsertNewspapers, type NewspaperUpsertDto} from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {keys} from "@/query/keys";
 
 type Args = {
@@ -9,7 +9,7 @@ type Args = {
 
 export function useAddNewspapers() {
     const queryClient = useQueryClient();
-    const mutation = useUpsertNewspaper();
+    const mutation = useUpsertNewspapers();
 
     return {
         ...mutation,

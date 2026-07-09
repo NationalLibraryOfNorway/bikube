@@ -46,7 +46,7 @@ class HuginNewspaperController(
                 ?: ResponseEntity.notFound().build()
         }
 
-    @PostMapping("/boxes")
+    @PostMapping("/box")
     @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
     suspend fun createBox(@RequestBody createBoxDto: CreateBoxDto): Box =
@@ -99,7 +99,7 @@ class HuginNewspaperController(
     @PostMapping("/newspapers/batch")
     @RolesAllowed("T_dimo_admin", "T_dimo_all")
     @Transactional
-    suspend fun upsertNewspaper(
+    suspend fun upsertNewspapers(
         @RequestBody upserts: List<NewspaperUpsertDto>,
         authentication: Authentication,
     ): List<Newspaper> = withContext(Dispatchers.IO) {

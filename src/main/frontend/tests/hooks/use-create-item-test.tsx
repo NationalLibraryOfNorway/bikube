@@ -1,10 +1,10 @@
 import 'vitest';
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { useAddNewspapers } from '@/hooks/use-create-item';
 import { server } from '../setup/server';
+import { makeWrapper } from '../setup/query-client-wrapper';
 
 vi.mock('sonner', () => ({
     toast: {
@@ -14,16 +14,6 @@ vi.mock('sonner', () => ({
 }));
 
 import { toast } from 'sonner';
-
-const makeWrapper = () => {
-    const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
-    return {
-        queryClient,
-        wrapper: ({ children }: { children: React.ReactNode }) => (
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        ),
-    };
-};
 
 describe('useAddNewspapers', () => {
     it('sends newspapers to the batch endpoint', async () => {
