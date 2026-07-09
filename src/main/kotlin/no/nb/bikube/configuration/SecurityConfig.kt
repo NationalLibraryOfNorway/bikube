@@ -11,8 +11,10 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter
@@ -28,6 +30,20 @@ fun realmRoleAuthoritiesConverter(): Converter<Jwt, Collection<GrantedAuthority>
         val realmAccess = (jwt.claims["realm_access"] as? Map<*, *>) ?: emptyMap<String, Any>()
         val roles = (realmAccess["roles"] as? Collection<*>)?.filterIsInstance<String>() ?: emptyList()
         roles.map { SimpleGrantedAuthority(it) }
+    }
+
+// Interactive hugin logins carry DIMO group membership in the "groups" claim (as opposed to
+// the realm_access.roles claim used for Bearer-token/M2M auth). Picked up automatically by
+// ServerHttpSecurity's oauth2Login default authentication manager (OAuth2LoginSpec.createDefault()
+// looks up a GrantedAuthoritiesMapper bean), same as the pre-migration servlet config's
+// userAuthoritiesMapper().
+fun groupsAuthoritiesMapper(): GrantedAuthoritiesMapper =
+    GrantedAuthoritiesMapper { authorities ->
+        authorities.filterIsInstance<OidcUserAuthority>()
+            .flatMap { authority ->
+                val roles = authority.userInfo.getClaim<List<String>>("groups") ?: emptyList()
+                roles.flatMap { role -> listOf(SimpleGrantedAuthority(role), SimpleGrantedAuthority("ROLE_$role")) }
+            }
     }
 
 @Configuration
@@ -51,6 +67,7 @@ class SecurityConfig(
                     ).permitAll()
                     .pathMatchers("/api/hugin/**").authenticated()
                     .pathMatchers(HttpMethod.GET, "/api/**").permitAll()
+                    .pathMatchers("/api/**").hasAuthority("bikube-create")
                     .anyExchange().authenticated()
             }
             .oauth2Login { oauth2 ->
@@ -95,6 +112,9 @@ class SecurityConfig(
     private fun oidcLogoutSuccessHandler() =
         OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository)
             .also { it.setPostLogoutRedirectUri("{baseUrl}/hugin") }
+
+    @Bean
+    fun grantedAuthoritiesMapper(): GrantedAuthoritiesMapper = groupsAuthoritiesMapper()
 }
 
 @Configuration

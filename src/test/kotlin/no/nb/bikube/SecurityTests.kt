@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockOidcLogin
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -124,17 +125,31 @@ class SecurityTests {
     }
 
     @Test
-    fun `should allow access to post endpoints when logged in`() {
+    fun `should allow access to post endpoints when logged in with bikube-create authority`() {
         every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA)
         every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA)
 
-        client.mutateWith(mockJwt())
+        client.mutateWith(mockJwt().authorities(SimpleGrantedAuthority("bikube-create")))
             .post()
             .uri("/api/newspapers/items")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
             .exchange()
             .expectStatus().isCreated
+    }
+
+    // The catalogue write endpoints are for the bikube-create M2M client only. A hugin
+    // admin session (T_dimo_admin/T_dimo_all) must not incidentally get write access here.
+    // Hugin admins authenticate interactively via the SPA (oauth2Login), not Bearer JWT.
+    @Test
+    fun `should deny access to post endpoints for a hugin admin without bikube-create authority`() {
+        client.mutateWith(mockOidcLogin().authorities(SimpleGrantedAuthority("T_dimo_admin")))
+            .post()
+            .uri("/api/newspapers/items")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isForbidden
     }
 
     @Test
@@ -159,22 +174,26 @@ class SecurityTests {
             .expectStatus().isUnauthorized
     }
 
+    // The bikube-create M2M client is for catalogue writes only; it must not incidentally
+    // get access to the hugin admin endpoints, which are reserved for DIMO staff.
     @Test
-    fun `should deny access to hugin endpoints for authenticated users without the required role`() {
+    fun `should deny access to hugin endpoints for the bikube-create M2M client`() {
         every { titleRepository.findById(1) } returns Optional.of(HuginTitle().apply { id = 1 })
 
-        client.mutateWith(mockJwt().authorities(SimpleGrantedAuthority("some-other-role")))
+        client.mutateWith(mockJwt().authorities(SimpleGrantedAuthority("bikube-create")))
             .get()
             .uri("/api/hugin/titles/1")
             .exchange()
             .expectStatus().isForbidden
     }
 
+    // Hugin admins authenticate interactively via the SPA (oauth2Login) with roles
+    // sourced from the "groups" claim - not Bearer JWT, hence mockOidcLogin() here.
     @Test
     fun `should allow access to hugin endpoints for T_dimo_admin`() {
         every { titleRepository.findById(1) } returns Optional.of(HuginTitle().apply { id = 1 })
 
-        client.mutateWith(mockJwt().authorities(SimpleGrantedAuthority("T_dimo_admin")))
+        client.mutateWith(mockOidcLogin().authorities(SimpleGrantedAuthority("T_dimo_admin")))
             .get()
             .uri("/api/hugin/titles/1")
             .exchange()
@@ -185,7 +204,7 @@ class SecurityTests {
     fun `should allow access to hugin endpoints for T_dimo_all`() {
         every { titleRepository.findById(1) } returns Optional.of(HuginTitle().apply { id = 1 })
 
-        client.mutateWith(mockJwt().authorities(SimpleGrantedAuthority("T_dimo_all")))
+        client.mutateWith(mockOidcLogin().authorities(SimpleGrantedAuthority("T_dimo_all")))
             .get()
             .uri("/api/hugin/titles/1")
             .exchange()
@@ -202,14 +221,53 @@ class SecurityTests {
             .header("alg", "none")
             .issuedAt(java.time.Instant.now())
             .expiresAt(java.time.Instant.now().plusSeconds(60))
-            .claim("realm_access", mapOf("roles" to listOf("T_dimo_admin", "some-other-role")))
+            .claim("realm_access", mapOf("roles" to listOf("T_dimo_admin", "bikube-create")))
             .build()
 
         val authorities = no.nb.bikube.configuration.realmRoleAuthoritiesConverter().convert(jwt)
 
         org.junit.jupiter.api.Assertions.assertEquals(
-            setOf(SimpleGrantedAuthority("T_dimo_admin"), SimpleGrantedAuthority("some-other-role")),
+            setOf(SimpleGrantedAuthority("T_dimo_admin"), SimpleGrantedAuthority("bikube-create")),
             authorities?.toSet()
         )
+    }
+
+    // Interactive hugin logins (oauth2Login, not Bearer JWT) get their DIMO group
+    // membership from the "groups" claim via this GrantedAuthoritiesMapper - it's what
+    // ServerHttpSecurity's default oauth2Login authentication manager auto-detects from
+    // the application context (see OAuth2LoginSpec.createDefault() in spring-security-config).
+    // mockOidcLogin() in a WebTestClient test bypasses that manager entirely (it injects a
+    // canned OidcUser directly), so this is verified as a pure unit test of the mapping logic.
+    @Test
+    fun `groups authorities mapper maps groups claim to raw and ROLE_-prefixed authorities`() {
+        val idToken = org.springframework.security.oauth2.core.oidc.OidcIdToken(
+            "id-token-value",
+            java.time.Instant.now(),
+            java.time.Instant.now().plusSeconds(60),
+            mapOf("sub" to "user-1")
+        )
+        val userInfo = org.springframework.security.oauth2.core.oidc.OidcUserInfo(
+            mapOf("sub" to "user-1", "groups" to listOf("T_dimo_admin"))
+        )
+        val oidcUserAuthority = org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority(idToken, userInfo)
+
+        val mapped = no.nb.bikube.configuration.groupsAuthoritiesMapper().mapAuthorities(listOf(oidcUserAuthority))
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+            setOf(SimpleGrantedAuthority("T_dimo_admin"), SimpleGrantedAuthority("ROLE_T_dimo_admin")),
+            mapped.toSet()
+        )
+    }
+
+    // Confirms exactly one GrantedAuthoritiesMapper bean is registered - this is the bean
+    // OAuth2LoginSpec.createDefault() looks up via getBeanOrNull(GrantedAuthoritiesMapper::class)
+    // to wire authority mapping into the reactive oauth2Login authentication manager.
+    @Test
+    fun `exactly one GrantedAuthoritiesMapper bean is registered for oauth2Login to pick up`() {
+        val mapper = applicationContext.getBean(
+            org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper::class.java
+        )
+
+        org.junit.jupiter.api.Assertions.assertNotNull(mapper)
     }
 }
