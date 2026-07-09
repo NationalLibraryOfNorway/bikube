@@ -239,7 +239,7 @@ class SecurityTests {
     // mockOidcLogin() in a WebTestClient test bypasses that manager entirely (it injects a
     // canned OidcUser directly), so this is verified as a pure unit test of the mapping logic.
     @Test
-    fun `groups authorities mapper maps groups claim to raw and ROLE_-prefixed authorities`() {
+    fun `groups authorities mapper maps groups claim directly to authorities`() {
         val idToken = org.springframework.security.oauth2.core.oidc.OidcIdToken(
             "id-token-value",
             java.time.Instant.now(),
@@ -254,7 +254,7 @@ class SecurityTests {
         val mapped = no.nb.bikube.configuration.groupsAuthoritiesMapper().mapAuthorities(listOf(oidcUserAuthority))
 
         org.junit.jupiter.api.Assertions.assertEquals(
-            setOf(SimpleGrantedAuthority("T_dimo_admin"), SimpleGrantedAuthority("ROLE_T_dimo_admin")),
+            setOf(SimpleGrantedAuthority("T_dimo_admin")),
             mapped.toSet()
         )
     }

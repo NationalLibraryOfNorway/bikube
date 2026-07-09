@@ -42,7 +42,7 @@ fun groupsAuthoritiesMapper(): GrantedAuthoritiesMapper =
         authorities.filterIsInstance<OidcUserAuthority>()
             .flatMap { authority ->
                 val roles = authority.userInfo.getClaim<List<String>>("groups") ?: emptyList()
-                roles.flatMap { role -> listOf(SimpleGrantedAuthority(role), SimpleGrantedAuthority("ROLE_$role")) }
+                roles.map { role -> SimpleGrantedAuthority(role) }
             }
     }
 
