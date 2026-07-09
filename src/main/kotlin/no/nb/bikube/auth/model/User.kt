@@ -2,7 +2,8 @@ package no.nb.bikube.auth.model
 
 data class User(
     val username: String,
-    // Nullable: only present in the OIDC token if the profile/email scopes are requested.
+    // Nullable because Spring's OidcUser types these claims as nullable, even though our
+    // Keycloak setup always populates them.
     val firstName: String?,
     val lastName: String?,
     val email: String?,
