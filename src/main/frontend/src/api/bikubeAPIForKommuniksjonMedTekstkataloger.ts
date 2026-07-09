@@ -282,6 +282,7 @@ export const GetCatalogueLinkMaterialType = {
 export type GetSingleTitleParams = {
 catalogueId: string;
 materialType: GetSingleTitleMaterialType;
+useSeries?: boolean;
 };
 
 export type GetSingleTitleMaterialType = typeof GetSingleTitleMaterialType[keyof typeof GetSingleTitleMaterialType];

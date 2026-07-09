@@ -47,6 +47,14 @@ class CollectionsService(
         return getRecordsWebClientRequest("priref=${titleCatalogId}", db, fields).bodyToMono<CollectionsModel>()
     }
 
+    fun getAlternativeNumbers(priref: String, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
+        return getRecordsWebClientRequest(
+            "priref=$priref",
+            db,
+            fields = "priref and alternative_number and alternative_number.type"
+        ).bodyToMono<CollectionsModel>()
+    }
+
     fun getAllWorks(page: Int = 1, db: CollectionsDatabase = collectionsDatabase): Mono<CollectionsModel> {
         return getRecordsWebClientRequest(
             "record_type=${CollectionsRecordType.WORK}",
@@ -58,7 +66,7 @@ class CollectionsService(
 
     fun getAllSeries(page: Int = 1): Mono<CollectionsSeriesModel> {
         return getRecordsWebClientRequest(
-            null,
+            "all",
             CollectionsDatabase.SERIES,
             limit = 50,
             from = (page - 1) * 50 + 1
@@ -237,10 +245,7 @@ class CollectionsService(
                     .queryParam("output", "json")
                     .queryParam("limit", limit)
                     .queryParam("startfrom", from)
-
-                if (!query.isNullOrEmpty()) {
-                    params.queryParam("search", query)
-                }
+                    .queryParam("search", query ?: "")
 
                 if (fields != null) {
                     params.queryParam("fields", fields)

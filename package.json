@@ -88,7 +88,7 @@
     "generate": "orval --config orval.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dev:all": "concurrently -n spring,orval,vite -c blue,yellow,green --kill-others-on-fail \"./mvnw spring-boot:run -Dspring-boot.run.profiles=local\" \"ORVAL_TARGET=http://localhost:9000/bikube/v3/api-docs bun run generate --watch\" \"bun run dev\"",
+    "dev:all": "concurrently -n spring,orval,vite -c blue,yellow,green --kill-others-on-fail \"./mvnw spring-boot:run -Dspring-boot.run.profiles=local\" \"bash -c 'until curl -sf http://localhost:9000/bikube/v3/api-docs > /dev/null 2>&1; do sleep 2; done && ORVAL_TARGET=http://localhost:9000/bikube/v3/api-docs bun run generate'\" \"bun run dev\"",
     "prod:local": "bash scripts/prod-local.sh",
     "lint": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src/main/frontend/ --ext .js,.jsx,.ts,.tsx --fix"

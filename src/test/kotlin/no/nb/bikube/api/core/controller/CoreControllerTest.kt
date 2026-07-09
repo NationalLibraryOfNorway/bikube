@@ -72,7 +72,7 @@ class CoreControllerTest {
     fun `get single title for newspaper should return title in body`() {
         every { newspaperService.getSingleTitle(any()) } returns Mono.just(NewspaperMockData.newspaperTitleMockA.copy())
 
-        coreController.getSingleTitle("1", MaterialType.NEWSPAPER).body!!
+        coreController.getSingleTitle("1", MaterialType.NEWSPAPER, false).body!!
             .test()
             .expectSubscription()
             .assertNext {
@@ -83,17 +83,17 @@ class CoreControllerTest {
 
     @Test
     fun `get single title should throw error when trying to get manuscripts`() {
-        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.MANUSCRIPT) }
+        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.MANUSCRIPT, false) }
     }
 
     @Test
     fun `get single title should throw error when trying to get periodicals`() {
-        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.PERIODICAL) }
+        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.PERIODICAL, false) }
     }
 
     @Test
     fun `get single title should throw error when trying to get monographs`() {
-        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.MONOGRAPH) }
+        assertThrows<NotSupportedException> { coreController.getSingleTitle("1", MaterialType.MONOGRAPH, false) }
     }
 
     @Test

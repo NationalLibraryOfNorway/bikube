@@ -6,7 +6,7 @@ import {toast} from "sonner";
 import {SaveIcon} from "lucide-react";
 import {useParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import { createBox } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
+import { createBox as createBoxApi } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {Calendar} from "@/components/ui/calendar";
 import {format, isValid, parseISO} from "date-fns";
 import {nb} from "date-fns/locale";
@@ -24,9 +24,9 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
     const titleId = Number.parseInt(catalogueTitleId ?? "", 10);
     if (!Number.isFinite(titleId)) return null;
 
-    const createBox = useMutation({
+    const createBoxMutation = useMutation({
         mutationFn: async (payload: CreateBoxFormValues) => {
-            return await createBox({
+            return await createBoxApi({
                 titleId: payload.titleId,
                 id: payload.boxId,
                 dateFrom: payload.dateFrom,
@@ -45,9 +45,9 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
         initialValues: {
             titleId,
             boxId: "",
-            dateFrom: new Date().toISOString().slice(0, 10), // today
+            dateFrom: new Date().toISOString().slice(0, 10),
         },
-        onSubmit: async (values) => createBox.mutateAsync(values),
+        onSubmit: async (values) => createBoxMutation.mutateAsync(values),
     });
 
     return (
@@ -59,8 +59,7 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
                 </div>
 
                 <div className="space-y-1">
-                    <Label htmlFor="startDate">Fra dato</Label>
-
+                    <Label>Fra dato</Label>
                     <Calendar
                         className="border border-1 rounded-md"
                         locale={nb}
@@ -74,24 +73,31 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
                             return d && isValid(d) ? d : undefined;
                         })()}
                         onSelect={(date) => {
-                            // store as string yyyy-MM-dd in Formik
                             const value = date ? format(date, "yyyy-MM-dd") : "";
                             formik.setFieldValue("dateFrom", value);
                             formik.setFieldTouched("dateFrom", true, false);
                         }}
                     />
-
-                    {/* show validation error */}
                     {formik.touched.dateFrom && formik.errors.dateFrom && (
                         <p className="text-sm text-red-600">{formik.errors.dateFrom}</p>
                     )}
                 </div>
 
-                <Button type="submit" disabled={createBox.isPending}>
-                    Lagre <SaveIcon/>
-                </Button>
-                <Button type="button" variant="ghost" className="float-end"
-                        onClick={() => onSuccess?.()}>Avbryt</Button>
+                <div className="flex gap-3">
+                    <Button type="submit" disabled={createBoxMutation.isPending}>
+                        Lagre <SaveIcon/>
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                            formik.resetForm();
+                            onSuccess?.();
+                        }}
+                    >
+                        Avbryt
+                    </Button>
+                </div>
             </Form>
         </FormikProvider>
     );
