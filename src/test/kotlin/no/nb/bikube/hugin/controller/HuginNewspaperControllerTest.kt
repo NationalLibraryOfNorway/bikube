@@ -5,6 +5,7 @@ import no.nb.bikube.api.newspaper.service.NewspaperService
 import no.nb.bikube.configuration.PermissiveSecurityConfig
 import no.nb.bikube.hugin.model.ContactType
 import no.nb.bikube.hugin.model.dbo.Box
+import no.nb.bikube.hugin.model.dbo.ContactInfo
 import no.nb.bikube.hugin.model.dbo.HuginTitle
 import no.nb.bikube.hugin.model.dbo.Newspaper
 import no.nb.bikube.hugin.model.dto.ContactInfoDto
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +29,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockOidcLogin
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -133,6 +136,18 @@ class HuginNewspaperControllerTest {
     }
 
     @Test
+    fun `POST box returns 500 when title does not exist`() {
+        whenever(titleRepository.findById(999)).thenReturn(Optional.empty())
+
+        client.post().uri("/api/hugin/box")
+            .bodyValue(CreateBoxDto(titleId = 999, id = "orphan-box", dateFrom = LocalDate.of(2024, 1, 1)))
+            .exchange()
+            .expectStatus().is5xxServerError
+
+        verify(boxRepository, never()).save(any())
+    }
+
+    @Test
     fun `PUT titles contact creates new title when it does not exist`() {
         whenever(titleRepository.findById(42)).thenReturn(Optional.empty())
         whenever(titleRepository.save(any())).thenAnswer { it.arguments[0] }
@@ -150,6 +165,44 @@ class HuginNewspaperControllerTest {
             .expectBody()
             .jsonPath("$.id").isEqualTo(42)
             .jsonPath("$.vendor").isEqualTo("Acme")
+    }
+
+    @Test
+    fun `PUT titles contact updates fields and replaces contact infos on an existing title`() {
+        val existingTitle = HuginTitle(
+            id = 7,
+            vendor = "OldVendor",
+            contactName = "OldName",
+            shelf = "OldShelf",
+            notes = "OldNotes",
+            releasePattern = arrayOf(1, 1, 1, 1, 1, 1, 1),
+            contactInfos = mutableListOf(ContactInfo(contactType = ContactType.email, contactValue = "old@example.com")),
+        )
+
+        whenever(titleRepository.findById(7)).thenReturn(Optional.of(existingTitle))
+        whenever(titleRepository.save(any())).thenAnswer { it.arguments[0] }
+
+        val dto = ContactUpdateDto(
+            id = 7,
+            vendor = "NewVendor",
+            shelf = "NewShelf",
+            releasePattern = listOf(0, 1, 0, 1, 0, 1, 0),
+            contactInfos = listOf(ContactInfoDto(contactType = ContactType.phone, contactValue = "99999999")),
+        )
+
+        client.put().uri("/api/hugin/titles/contact")
+            .bodyValue(dto)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(7)
+            .jsonPath("$.vendor").isEqualTo("NewVendor")
+            .jsonPath("$.shelf").isEqualTo("NewShelf")
+            .jsonPath("$.contactName").isEqualTo("OldName")
+            .jsonPath("$.releasePattern").isEqualTo(listOf(0, 1, 0, 1, 0, 1, 0))
+            .jsonPath("$.contactInfos.length()").isEqualTo(1)
+            .jsonPath("$.contactInfos[0].contactType").isEqualTo("phone")
+            .jsonPath("$.contactInfos[0].contactValue").isEqualTo("99999999")
     }
 
     @Test
@@ -341,6 +394,64 @@ class HuginNewspaperControllerTest {
     }
 
     @Test
+    fun `POST newspapers batch processes multiple upserts and returns them in order`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.createMissingItem(any()))
+            .thenReturn(
+                Mono.just(
+                    Item(
+                        catalogueId = "cat1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+                        titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = null,
+                    )
+                ),
+                Mono.just(
+                    Item(
+                        catalogueId = "cat2", name = null, date = LocalDate.of(2024, 1, 3), materialType = "NEWSPAPER",
+                        titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = null,
+                    )
+                ),
+            )
+        whenever(newspaperRepository.save(any()))
+            .thenReturn(
+                Newspaper(catalogId = "cat1", box = box, date = LocalDate.of(2024, 1, 2), edition = null, received = false, notes = null),
+                Newspaper(catalogId = "cat2", box = box, date = LocalDate.of(2024, 1, 3), edition = null, received = false, notes = null),
+            )
+
+        val upserts = listOf(
+            NewspaperUpsertDto(titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = false),
+            NewspaperUpsertDto(titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 3), received = false),
+        )
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(upserts)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(2)
+            .jsonPath("$[0].catalogId").isEqualTo("cat1")
+            .jsonPath("$[1].catalogId").isEqualTo("cat2")
+
+        verify(newspaperService, times(2)).createMissingItem(any())
+    }
+
+    @Test
+    fun `POST newspapers batch returns 401 when authenticated principal is not an OIDC user`() {
+        val upsert = NewspaperUpsertDto(titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = false)
+
+        client.mutateWith(mockUser())
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isUnauthorized
+
+        verify(newspaperService, never()).createMissingItem(any())
+        verify(newspaperService, never()).createNewspaperItem(any())
+    }
+
+    @Test
     fun `DELETE newspapers deletes existing newspaper and returns 204`() {
         whenever(newspaperService.deletePhysicalItemByManifestationId("man1", true)).thenReturn(Mono.empty())
         whenever(newspaperRepository.existsById("man1")).thenReturn(true)
@@ -350,5 +461,17 @@ class HuginNewspaperControllerTest {
             .expectStatus().isNoContent
 
         verify(newspaperRepository).deleteById("man1")
+    }
+
+    @Test
+    fun `DELETE newspapers skips local deletion when newspaper is not tracked locally`() {
+        whenever(newspaperService.deletePhysicalItemByManifestationId("man2", true)).thenReturn(Mono.empty())
+        whenever(newspaperRepository.existsById("man2")).thenReturn(false)
+
+        client.delete().uri("/api/hugin/newspapers/man2")
+            .exchange()
+            .expectStatus().isNoContent
+
+        verify(newspaperRepository, never()).deleteById(any())
     }
 }
