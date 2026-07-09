@@ -30,7 +30,7 @@ data class Box(
     @JsonBackReference("title-boxes")
     var title: HuginTitle? = null,
 
-    @OneToMany(mappedBy = "box", cascade = [], orphanRemoval = false, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "box", cascade = [], orphanRemoval = false, fetch = FetchType.EAGER)
     @JsonManagedReference("box-newspapers")
     var newspapers: MutableList<Newspaper> = mutableListOf(),
 )

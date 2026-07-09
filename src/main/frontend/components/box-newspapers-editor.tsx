@@ -6,12 +6,10 @@ import {Switch} from "@/components/ui/switch";
 import {Plus, Save, Trash2} from "lucide-react";
 import {format, addDays, parseISO, isValid} from "date-fns";
 import {nb} from "date-fns/locale";
-import HuginTitle from "@/generated/no/nb/bikube/hugin/model/dbo/HuginTitle";
-import {HuginNewspaperService} from "@/generated/endpoints";
-import Newspaper from "@/generated/no/nb/bikube/hugin/model/dbo/Newspaper";
+import type { HuginTitle, Newspaper, Box } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
+import { useDeleteNewspaper } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useAddNewspapers} from "@/hooks/use-create-item";
-import Box from "@/generated/no/nb/bikube/hugin/model/dbo/Box";
 
 type NewspaperRow = Omit<Newspaper, "date"> & {
     date: string;
@@ -24,6 +22,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
         throw new Error("BoxNewspapersEditor requires a valid title with boxes");
     }
 
+    const deleteNewspaper = useDeleteNewspaper();
     const activeBox = title.boxes.find(b => b.active);
     if (activeBox === undefined) return null;
 
@@ -148,7 +147,7 @@ export default function BoxNewspapersEditor({title}: { title: HuginTitle }) {
 
     const handleDelete = async (tmpId: string) => {
         const catalogueId = rows.find((r) => r._tmpId === tmpId)?.catalogId;
-        await HuginNewspaperService.deleteNewspaper(catalogueId!);
+        await deleteNewspaper.mutateAsync({manifestationId: catalogueId!});
         setRows((rs) => rs.filter((r) => r._tmpId !== tmpId));
     };
 

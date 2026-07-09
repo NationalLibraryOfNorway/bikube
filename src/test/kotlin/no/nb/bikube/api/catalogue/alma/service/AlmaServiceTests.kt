@@ -19,8 +19,11 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.StreamUtils
 import org.xmlunit.matchers.CompareMatcher.isIdenticalTo
 import reactor.test.StepVerifier
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
 @Disabled("Until MockWebServer works again on github runners")
+@Import(TestcontainersConfig::class)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")

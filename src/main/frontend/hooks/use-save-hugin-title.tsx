@@ -1,9 +1,11 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useQueryClient} from '@tanstack/react-query';
 import {keys} from "@/query/keys";
-import {HuginNewspaperService} from "@/generated/endpoints";
-import ContactInfo from "@/generated/no/nb/bikube/hugin/model/dbo/ContactInfo";
-import ContactType from "@/generated/no/nb/bikube/hugin/model/ContactType";
-import ContactUpdateDto from "@/generated/no/nb/bikube/hugin/model/dto/ContactUpdateDto";
+import {
+    useUpsertContactInformation,
+    type ContactUpdateDto,
+    type ContactInfo,
+    type ContactInfoDtoContactType,
+} from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 
 type SavePayload = {
     id: number;
@@ -27,7 +29,7 @@ function normalize(p: SavePayload): ContactUpdateDto {
         contactInfos:
             p.contactInfos?.filter(ci => !!ci.contactType && !!(ci.contactValue ?? "").trim())
             .map(ci => ({
-                contactType: ci.contactType! as ContactType,
+                contactType: ci.contactType! as ContactInfoDtoContactType,
                 contactValue: (ci.contactValue ?? "").trim(),
             })),
         releasePattern: p.releasePattern?.map((v) => Math.trunc(Number(v))),
@@ -36,15 +38,15 @@ function normalize(p: SavePayload): ContactUpdateDto {
 
 export function useSaveHuginTitle() {
     const queryClient = useQueryClient();
+    const mutation = useUpsertContactInformation();
 
-    return useMutation({
-        mutationKey: keys.saveHuginTitle(),
-        mutationFn: async (payload: SavePayload) => {
+    return {
+        ...mutation,
+        mutateAsync: async (payload: SavePayload) => {
             const body = normalize(payload);
-            return await HuginNewspaperService.upsertContactInformation(body);
+            const saved = await mutation.mutateAsync({ data: body });
+            if (saved) queryClient.setQueryData(keys.huginTitle(saved.id!), saved);
+            return saved;
         },
-        onSuccess: (saved) => {
-            queryClient.setQueryData(keys.huginTitle(saved.id), saved);
-        },
-    });
+    };
 }

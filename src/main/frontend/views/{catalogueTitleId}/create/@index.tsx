@@ -1,4 +1,3 @@
-import {ViewConfig} from "@vaadin/hilla-file-router/types.js";
 import {useNavigate, useParams} from "react-router";
 import {useHuginTitle} from "@/hooks/use-hugin-title";
 import {Button} from "@/components/ui/button";
@@ -6,14 +5,6 @@ import {ArrowLeft} from "lucide-react";
 import {useCatalogueTitle} from "@/hooks/use-catalogue-title";
 import ReleasePatternForm from "@/components/release-pattern-form";
 import ContactForm from "@/components/contact-form";
-
-export const config: ViewConfig = {
-    menu: {
-        exclude: true
-    },
-    loginRequired: true,
-    title: "Legg til utgivelsesinformasjon for katalogtittel",
-};
 
 export default function CatalogueTitleCreateView() {
     const {catalogueTitleId} = useParams(); // Item id from url

@@ -16,7 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import reactor.core.publisher.Mono
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,6 +27,9 @@ import reactor.core.publisher.Mono
     properties = [
         "search-index.enabled=true",
         "search-index.path=index-data-test",
+        "search-index.initial-delay=3600000",
+        "search-index.rebuild-index-delay=3600000",
+        "search-index.searcher-refresh-delay=3600000",
     ]
 )
 class TitleIndexServiceTest(

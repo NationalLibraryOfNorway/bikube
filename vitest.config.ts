@@ -1,44 +1,18 @@
-import type { UserConfigFn } from 'vite';
-import { overrideVaadinConfig } from './vite.generated';
-import path from "path";
-import { playwright } from '@vitest/browser-playwright';
+import path from 'path'
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
 
-const customConfig: UserConfigFn = () => ({
-    root: path.resolve(__dirname, "src/main/frontend"),
-    cacheDir: path.resolve(__dirname, "node_modules/.vite-vitest"),
+export default defineConfig({
+    plugins: [react()],
     resolve: {
-        alias: [
-            { find: "@", replacement: path.resolve(__dirname, "src/main/frontend") },
-        ],
-    },
-    optimizeDeps: {
-        include: [
-            'react',
-            'react-dom',
-            'react-router-dom',
-            'react/jsx-runtime',
-            '@testing-library/react',
-            '@preact/signals-react',
-            '@preact/signals-react/runtime'
-        ],
-        force: true,
-    },
-    test: {
-        include: [
-            './tests/**/*.{test,spec}.ts?(x)',
-            './tests/**/*-{test,spec}.ts?(x)'
-        ],
-        globals: true,
-        setupFiles: ['./tests/setup/setup.ts'],
-        browser: {
-            enabled: true,
-            provider: playwright(),
-            instances: [
-                { browser: 'chromium' }
-            ],
-            headless: true,
+        alias: {
+            '@': path.resolve(__dirname, 'src/main/frontend'),
         },
     },
-});
-
-export default overrideVaadinConfig(customConfig);
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        setupFiles: ['src/main/frontend/tests/setup/setup.ts'],
+        include: ['src/main/frontend/tests/**/*-test.{ts,tsx}'],
+    },
+})

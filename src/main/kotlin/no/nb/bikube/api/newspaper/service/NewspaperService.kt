@@ -12,6 +12,7 @@ import no.nb.bikube.api.catalogue.collections.service.CollectionsService
 import no.nb.bikube.api.core.enum.*
 import no.nb.bikube.api.core.exception.*
 import no.nb.bikube.api.core.model.*
+import no.nb.bikube.api.core.util.logger
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
@@ -104,6 +105,7 @@ class NewspaperService (
                 model.getObjects()?.map { mapCollectionsSeriesObjectToGenericTitle(it) }
             }
         return Mono.zip(pageContent, Mono.just(pageNumber))
+            .doOnNext { logger().info("Fetched titles page {} ({} titles)", it.t2, it.t1.size) }
     }
 
     fun getAllTitles(): Mono<List<Title>> {

@@ -28,11 +28,11 @@ data class HuginTitle(
     @Column(name = "notes")
     var notes: String? = null,
 
-    @OneToMany(mappedBy = "title", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "title", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonManagedReference("title-boxes")
     var boxes: MutableList<Box> = mutableListOf(),
 
-    @OneToMany(mappedBy = "title", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "title", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonManagedReference("title-contactInfos")
     var contactInfos: MutableList<ContactInfo> = mutableListOf()
 ) {

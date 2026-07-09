@@ -6,7 +6,7 @@ import {toast} from "sonner";
 import {SaveIcon} from "lucide-react";
 import {useParams} from "react-router";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {HuginNewspaperService} from "@/generated/endpoints";
+import { createBox } from '@/src/api/bikubeAPIForKommuniksjonMedTekstkataloger';
 import {Calendar} from "@/components/ui/calendar";
 import {format, isValid, parseISO} from "date-fns";
 import {nb} from "date-fns/locale";
@@ -26,7 +26,7 @@ export default function BoxCreateForm({onSuccess}: { onSuccess?: () => void }) {
 
     const createBox = useMutation({
         mutationFn: async (payload: CreateBoxFormValues) => {
-            return await HuginNewspaperService.createBox({
+            return await createBox({
                 titleId: payload.titleId,
                 id: payload.boxId,
                 dateFrom: payload.dateFrom,

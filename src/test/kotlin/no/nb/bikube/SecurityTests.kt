@@ -7,62 +7,71 @@ import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import tools.jackson.databind.json.JsonMapper
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestPropertySource( properties = [
-    "server.servlet.context-path=/bikube",
-    "security.enabled=true"
-])
-class SecurityTests(
-    @Autowired private val mockMvc: MockMvc,
-    @Autowired private val jsonMapper: JsonMapper
-) {
+@TestPropertySource(properties = ["security.enabled=true"])
+class SecurityTests {
+
+    @Autowired
+    private lateinit var applicationContext: ApplicationContext
+
+    @Autowired
+    private lateinit var jsonMapper: JsonMapper
+
     @MockkBean
     private lateinit var newspaperService: NewspaperService
 
-    @Test
-    fun `should allow access to get endpoints without login`() {
-        every { newspaperService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA)
+    private lateinit var client: WebTestClient
 
-        mockMvc.perform(
-            get("/api/item")
-                .param("catalogueId", "123")
-                .param("materialType", MaterialType.NEWSPAPER.name)
-        ).andExpect(status().isOk)
+    @BeforeEach
+    fun setup() {
+        client = WebTestClient
+            .bindToApplicationContext(applicationContext)
+            .apply(springSecurity())
+            .configureClient()
+            .build()
     }
 
     @Test
-    fun `should allow access to get api docs without login`() {
-        mockMvc.perform(get("/v3/api-docs"))
-            .andExpect(status().isOk)
+    fun `should not allow access to get endpoints without login`() {
+        client.get()
+            .uri("/api/item?catalogueId=123&materialType=${MaterialType.NEWSPAPER.name}")
+            .exchange()
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `should allow access to api docs without login`() {
+        client.get()
+            .uri("/v3/api-docs")
+            .exchange()
+            .expectStatus().isOk
     }
 
     @Test
     fun `should not allow access to post endpoints without login`() {
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isUnauthorized)
+        client.post()
+            .uri("/api/newspapers/items")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 
     @Test
@@ -70,23 +79,23 @@ class SecurityTests(
         every { newspaperService.getSingleTitle(any()) } returns Mono.just(newspaperTitleMockA)
         every { newspaperService.createNewspaperItem(any()) } returns Mono.just(newspaperItemMockA)
 
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .with(jwt().authorities(SimpleGrantedAuthority("bikube-create")))
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isOk)
+        client.mutateWith(mockJwt())
+            .post()
+            .uri("/api/newspapers/items")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isCreated
     }
 
     @Test
     fun `should return 401 on post for invalid token`() {
-        mockMvc.perform(
-            post("/api/newspapers/items")
-                .header("Authorization", "Bearer eyIkkeEnToken")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
-        ).andExpect(status().isUnauthorized)
+        client.post()
+            .uri("/api/newspapers/items")
+            .header("Authorization", "Bearer eyIkkeEnToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(jsonMapper.writeValueAsBytes(newspaperItemMockCValidForCreation))
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 }

@@ -3,7 +3,10 @@ package no.nb.bikube.api.core.util
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class SearchTermUtilsTests {

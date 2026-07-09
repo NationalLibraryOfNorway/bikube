@@ -20,7 +20,10 @@ import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.time.LocalDate
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class TitleControllerTest {

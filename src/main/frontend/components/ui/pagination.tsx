@@ -7,7 +7,6 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import {key, translate} from "@vaadin/hilla-react-i18n";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -78,7 +77,7 @@ function PaginationPrevious({
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">{translate(key`pagination.previous`)}</span>
+      <span className="hidden sm:block">Forrige</span>
     </PaginationLink>
   )
 }
@@ -94,7 +93,7 @@ function PaginationNext({
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span className="hidden sm:block">{translate(key`pagination.next`)}</span>
+      <span className="hidden sm:block">Neste</span>
       <ChevronRightIcon />
     </PaginationLink>
   )

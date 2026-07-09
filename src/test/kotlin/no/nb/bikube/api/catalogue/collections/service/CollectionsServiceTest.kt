@@ -24,7 +24,10 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import java.net.URI
 import java.util.function.Function
+import org.springframework.context.annotation.Import
+import no.nb.bikube.TestcontainersConfig
 
+@Import(TestcontainersConfig::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class CollectionsServiceTest {
