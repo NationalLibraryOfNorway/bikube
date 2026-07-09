@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,6 +77,20 @@ class HuginNewspaperControllerTest {
     }
 
     @Test
+    fun `GET titles returns the title when it exists`() {
+        val title = HuginTitle(id = 123, vendor = "Acme", shelf = "A-1")
+        whenever(titleRepository.findById(123)).thenReturn(Optional.of(title))
+
+        client.get().uri("/api/hugin/titles/123")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(123)
+            .jsonPath("$.vendor").isEqualTo("Acme")
+            .jsonPath("$.shelf").isEqualTo("A-1")
+    }
+
+    @Test
     fun `POST box deactivates existing boxes and creates a new active box`() {
         val title = HuginTitle(id = 1)
         val existingBox = Box(id = "old-box", dateFrom = LocalDate.of(2023, 1, 1), active = true, title = title)
@@ -95,6 +110,26 @@ class HuginNewspaperControllerTest {
 
         assertFalse(existingBox.active)
         verify(boxRepository).saveAll(any<List<Box>>())
+    }
+
+    @Test
+    fun `POST box creates the first active box when title has none yet`() {
+        val title = HuginTitle(id = 2)
+        val newBox = Box(id = "first-box", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = title)
+
+        whenever(titleRepository.findById(2)).thenReturn(Optional.of(title))
+        whenever(boxRepository.findAllByTitleIdOrderByDateFromAsc(2)).thenReturn(emptyList())
+        whenever(boxRepository.saveAll(any<List<Box>>())).thenReturn(emptyList())
+        whenever(boxRepository.save(any())).thenReturn(newBox)
+
+        client.post().uri("/api/hugin/box")
+            .bodyValue(CreateBoxDto(titleId = 2, id = "first-box", dateFrom = LocalDate.of(2024, 1, 1)))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.id").isEqualTo("first-box")
+
+        verify(boxRepository).saveAll(emptyList())
     }
 
     @Test
@@ -141,6 +176,168 @@ class HuginNewspaperControllerTest {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$[0].catalogId").isEqualTo("cat1")
+    }
+
+    @Test
+    fun `POST newspapers batch creates a physical item when received and no catalogId given`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+        val createdItem = Item(
+            catalogueId = "item1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+            titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = "manifest1",
+        )
+        val savedNewspaper = Newspaper(
+            catalogId = "manifest1", box = box, date = LocalDate.of(2024, 1, 2), edition = null, received = true, notes = null,
+        )
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.createNewspaperItem(any())).thenReturn(Mono.just(createdItem))
+        whenever(newspaperRepository.save(any())).thenReturn(savedNewspaper)
+
+        val upsert = NewspaperUpsertDto(titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = true)
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].catalogId").isEqualTo("manifest1")
+
+        verify(newspaperService).createNewspaperItem(any())
+    }
+
+    @Test
+    fun `POST newspapers batch updates manifestation when received status is unchanged`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+        val catalogueItem = Item(
+            catalogueId = "item1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+            titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = "manifest1",
+        )
+        val existingNewspaper = Newspaper(
+            catalogId = "manifest1", box = box, date = LocalDate.of(2024, 1, 2), edition = "1", received = true, notes = null,
+        )
+        val savedNewspaper = existingNewspaper.copy(notes = "Updated")
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.getSingleManifestationAsItem("item1")).thenReturn(Mono.just(catalogueItem))
+        whenever(newspaperRepository.findById("manifest1")).thenReturn(Optional.of(existingNewspaper))
+        whenever(newspaperService.updatePhysicalNewspaper(any())).thenReturn(Mono.empty())
+        whenever(newspaperRepository.save(any())).thenReturn(savedNewspaper)
+
+        val upsert = NewspaperUpsertDto(
+            titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = true, catalogId = "item1",
+        )
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isOk
+
+        verify(newspaperService).updatePhysicalNewspaper(any())
+        verify(newspaperService, never()).createNewspaperItem(any())
+        verify(newspaperService, never()).deletePhysicalItemByManifestationId(any(), any())
+    }
+
+    @Test
+    fun `POST newspapers batch creates physical item when existing manifestation was not received`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+        val catalogueItem = Item(
+            catalogueId = "item1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+            titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = "manifest1",
+        )
+        val existingNewspaper = Newspaper(
+            catalogId = "manifest1", box = box, date = LocalDate.of(2024, 1, 2), edition = "1", received = false, notes = null,
+        )
+        val createdItem = catalogueItem.copy(catalogueId = "item2")
+        val savedNewspaper = existingNewspaper.copy(received = true)
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.getSingleManifestationAsItem("item1")).thenReturn(Mono.just(catalogueItem))
+        whenever(newspaperRepository.findById("manifest1")).thenReturn(Optional.of(existingNewspaper))
+        whenever(newspaperService.createNewspaperItem(any())).thenReturn(Mono.just(createdItem))
+        whenever(newspaperRepository.save(any())).thenReturn(savedNewspaper)
+
+        val upsert = NewspaperUpsertDto(
+            titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = true, catalogId = "item1",
+        )
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isOk
+
+        verify(newspaperService).createNewspaperItem(any())
+        verify(newspaperService, never()).updatePhysicalNewspaper(any())
+        verify(newspaperService, never()).deletePhysicalItemByManifestationId(any(), any())
+    }
+
+    @Test
+    fun `POST newspapers batch deletes physical item when existing manifestation becomes unreceived`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+        val catalogueItem = Item(
+            catalogueId = "item1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+            titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = "manifest1",
+        )
+        val existingNewspaper = Newspaper(
+            catalogId = "manifest1", box = box, date = LocalDate.of(2024, 1, 2), edition = "1", received = true, notes = null,
+        )
+        val savedNewspaper = existingNewspaper.copy(received = false)
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.getSingleManifestationAsItem("item1")).thenReturn(Mono.just(catalogueItem))
+        whenever(newspaperRepository.findById("manifest1")).thenReturn(Optional.of(existingNewspaper))
+        whenever(newspaperService.deletePhysicalItemByManifestationId("manifest1", false)).thenReturn(Mono.empty())
+        whenever(newspaperRepository.save(any())).thenReturn(savedNewspaper)
+
+        val upsert = NewspaperUpsertDto(
+            titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = false, catalogId = "item1",
+        )
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isOk
+
+        verify(newspaperService).deletePhysicalItemByManifestationId("manifest1", false)
+        verify(newspaperService, never()).createNewspaperItem(any())
+        verify(newspaperService, never()).updatePhysicalNewspaper(any())
+    }
+
+    @Test
+    fun `POST newspapers batch saves without calling collections service when manifestation is not tracked locally`() {
+        val box = Box(id = "box1", dateFrom = LocalDate.of(2024, 1, 1), active = true, title = HuginTitle(id = 1))
+        val catalogueItem = Item(
+            catalogueId = "item1", name = null, date = LocalDate.of(2024, 1, 2), materialType = "NEWSPAPER",
+            titleCatalogueId = "1", titleName = null, digital = false, urn = null, parentCatalogueId = "manifest1",
+        )
+        val savedNewspaper = Newspaper(
+            catalogId = "item1", box = box, date = LocalDate.of(2024, 1, 2), edition = null, received = true, notes = null,
+        )
+
+        whenever(boxRepository.findById("box1")).thenReturn(Optional.of(box))
+        whenever(newspaperService.getSingleManifestationAsItem("item1")).thenReturn(Mono.just(catalogueItem))
+        whenever(newspaperRepository.findById("manifest1")).thenReturn(Optional.empty())
+        whenever(newspaperRepository.findById("item1")).thenReturn(Optional.empty())
+        whenever(newspaperRepository.save(any())).thenReturn(savedNewspaper)
+
+        val upsert = NewspaperUpsertDto(
+            titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = true, catalogId = "item1",
+        )
+
+        client.mutateWith(mockOidcLogin().idToken { it.claim("preferred_username", "testuser") })
+            .post().uri("/api/hugin/newspapers/batch")
+            .bodyValue(listOf(upsert))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].catalogId").isEqualTo("item1")
+
+        verify(newspaperService, never()).createNewspaperItem(any())
+        verify(newspaperService, never()).updatePhysicalNewspaper(any())
+        verify(newspaperService, never()).deletePhysicalItemByManifestationId(any(), any())
     }
 
     @Test
