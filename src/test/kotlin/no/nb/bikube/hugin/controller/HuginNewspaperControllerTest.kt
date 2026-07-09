@@ -14,6 +14,7 @@ import no.nb.bikube.hugin.model.dto.NewspaperUpsertDto
 import no.nb.bikube.hugin.repository.BoxRepository
 import no.nb.bikube.hugin.repository.NewspaperRepository
 import no.nb.bikube.hugin.repository.TitleRepository
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -92,7 +93,8 @@ class HuginNewspaperControllerTest {
             .expectBody()
             .jsonPath("$.id").isEqualTo("new-box")
 
-        verify(boxRepository).saveAll(listOf(existingBox))
+        assertFalse(existingBox.active)
+        verify(boxRepository).saveAll(any<List<Box>>())
     }
 
     @Test
