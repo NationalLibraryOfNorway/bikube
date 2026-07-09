@@ -413,11 +413,9 @@ class HuginNewspaperControllerTest {
                     )
                 ),
             )
-        whenever(newspaperRepository.save(any()))
-            .thenReturn(
-                Newspaper(catalogId = "cat1", box = box, date = LocalDate.of(2024, 1, 2), edition = null, received = false, notes = null),
-                Newspaper(catalogId = "cat2", box = box, date = LocalDate.of(2024, 1, 3), edition = null, received = false, notes = null),
-            )
+        // Echo back the real Newspaper the controller built, so the response reflects which
+        // upsert's own data (date) was actually threaded through — not a canned stub sequence.
+        whenever(newspaperRepository.save(any())).thenAnswer { it.arguments[0] as Newspaper }
 
         val upserts = listOf(
             NewspaperUpsertDto(titleId = 1, boxId = "box1", date = LocalDate.of(2024, 1, 2), received = false),
@@ -432,7 +430,9 @@ class HuginNewspaperControllerTest {
             .expectBody()
             .jsonPath("$.length()").isEqualTo(2)
             .jsonPath("$[0].catalogId").isEqualTo("cat1")
+            .jsonPath("$[0].date").isEqualTo("2024-01-02")
             .jsonPath("$[1].catalogId").isEqualTo("cat2")
+            .jsonPath("$[1].date").isEqualTo("2024-01-03")
 
         verify(newspaperService, times(2)).createMissingItem(any())
     }
