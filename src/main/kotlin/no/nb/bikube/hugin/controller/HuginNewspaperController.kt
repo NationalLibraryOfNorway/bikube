@@ -1,6 +1,5 @@
 package no.nb.bikube.hugin.controller
 
-import jakarta.annotation.security.RolesAllowed
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,6 +21,7 @@ import no.nb.bikube.hugin.repository.TitleRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.annotation.*
@@ -38,7 +38,7 @@ class HuginNewspaperController(
 ) {
 
     @GetMapping("/titles/{titleId}")
-    @RolesAllowed("T_dimo_admin", "T_dimo_all")
+    @PreAuthorize("hasAnyAuthority('T_dimo_admin', 'T_dimo_all')")
     suspend fun getTitle(@PathVariable titleId: Int): ResponseEntity<HuginTitle> =
         withContext(Dispatchers.IO) {
             titleRepository.findById(titleId).orElse(null)
@@ -47,7 +47,7 @@ class HuginNewspaperController(
         }
 
     @PostMapping("/box")
-    @RolesAllowed("T_dimo_admin", "T_dimo_all")
+    @PreAuthorize("hasAnyAuthority('T_dimo_admin', 'T_dimo_all')")
     @Transactional
     suspend fun createBox(@RequestBody createBoxDto: CreateBoxDto): Box =
         withContext(Dispatchers.IO) {
@@ -68,7 +68,7 @@ class HuginNewspaperController(
         }
 
     @PutMapping("/titles/contact")
-    @RolesAllowed("T_dimo_admin", "T_dimo_all")
+    @PreAuthorize("hasAnyAuthority('T_dimo_admin', 'T_dimo_all')")
     @Transactional
     suspend fun upsertContactInformation(@RequestBody contactUpdateDto: ContactUpdateDto): HuginTitle =
         withContext(Dispatchers.IO) {
@@ -97,7 +97,7 @@ class HuginNewspaperController(
         }
 
     @PostMapping("/newspapers/batch")
-    @RolesAllowed("T_dimo_admin", "T_dimo_all")
+    @PreAuthorize("hasAnyAuthority('T_dimo_admin', 'T_dimo_all')")
     @Transactional
     suspend fun upsertNewspapers(
         @RequestBody upserts: List<NewspaperUpsertDto>,
@@ -119,7 +119,7 @@ class HuginNewspaperController(
     }
 
     @DeleteMapping("/newspapers/{manifestationId}")
-    @RolesAllowed("T_dimo_admin", "T_dimo_all")
+    @PreAuthorize("hasAnyAuthority('T_dimo_admin', 'T_dimo_all')")
     suspend fun deleteNewspaper(@PathVariable manifestationId: String): ResponseEntity<Void> =
         withContext(Dispatchers.IO) {
             newspaperService
