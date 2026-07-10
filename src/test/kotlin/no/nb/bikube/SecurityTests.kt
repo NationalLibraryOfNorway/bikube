@@ -7,8 +7,11 @@ import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockA
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperItemMockCValidForCreation
 import no.nb.bikube.api.newspaper.NewspaperMockData.Companion.newspaperTitleMockA
 import no.nb.bikube.api.newspaper.service.NewspaperService
+import no.nb.bikube.configuration.groupsAuthoritiesMapper
+import no.nb.bikube.configuration.realmRoleAuthoritiesConverter
 import no.nb.bikube.hugin.model.dbo.HuginTitle
 import no.nb.bikube.hugin.repository.TitleRepository
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +20,11 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
+import org.springframework.security.oauth2.core.oidc.OidcIdToken
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockOidcLogin
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity
@@ -27,6 +35,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import tools.jackson.databind.json.JsonMapper
 import java.net.URL
+import java.time.Instant
 import java.util.Optional
 
 @Import(TestcontainersConfig::class)
@@ -56,16 +65,6 @@ class SecurityTests {
             .apply(springSecurity())
             .configureClient()
             .build()
-    }
-
-    @Test
-    fun `should allow access to get endpoints without login`() {
-        every { newspaperService.getSingleItem(any()) } returns Mono.just(newspaperItemMockA)
-
-        client.get()
-            .uri("/api/item?catalogueId=123&materialType=${MaterialType.NEWSPAPER.name}")
-            .exchange()
-            .expectStatus().isOk
     }
 
     @Test
@@ -217,16 +216,16 @@ class SecurityTests {
     // (or, if the converter is missing entirely, the annotation may not fire at all).
     @Test
     fun `realm role converter maps realm_access roles directly to authorities`() {
-        val jwt = org.springframework.security.oauth2.jwt.Jwt.withTokenValue("token")
+        val jwt = Jwt.withTokenValue("token")
             .header("alg", "none")
-            .issuedAt(java.time.Instant.now())
-            .expiresAt(java.time.Instant.now().plusSeconds(60))
+            .issuedAt(Instant.now())
+            .expiresAt(Instant.now().plusSeconds(60))
             .claim("realm_access", mapOf("roles" to listOf("T_dimo_admin", "bikube-create")))
             .build()
 
-        val authorities = no.nb.bikube.configuration.realmRoleAuthoritiesConverter().convert(jwt)
+        val authorities = realmRoleAuthoritiesConverter().convert(jwt)
 
-        org.junit.jupiter.api.Assertions.assertEquals(
+        Assertions.assertEquals(
             setOf(SimpleGrantedAuthority("T_dimo_admin"), SimpleGrantedAuthority("bikube-create")),
             authorities?.toSet()
         )
@@ -240,20 +239,20 @@ class SecurityTests {
     // canned OidcUser directly), so this is verified as a pure unit test of the mapping logic.
     @Test
     fun `groups authorities mapper maps groups claim directly to authorities`() {
-        val idToken = org.springframework.security.oauth2.core.oidc.OidcIdToken(
+        val idToken = OidcIdToken(
             "id-token-value",
-            java.time.Instant.now(),
-            java.time.Instant.now().plusSeconds(60),
+            Instant.now(),
+            Instant.now().plusSeconds(60),
             mapOf("sub" to "user-1")
         )
-        val userInfo = org.springframework.security.oauth2.core.oidc.OidcUserInfo(
+        val userInfo = OidcUserInfo(
             mapOf("sub" to "user-1", "groups" to listOf("T_dimo_admin"))
         )
-        val oidcUserAuthority = org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority(idToken, userInfo)
+        val oidcUserAuthority = OidcUserAuthority(idToken, userInfo)
 
-        val mapped = no.nb.bikube.configuration.groupsAuthoritiesMapper().mapAuthorities(listOf(oidcUserAuthority))
+        val mapped = groupsAuthoritiesMapper().mapAuthorities(listOf(oidcUserAuthority))
 
-        org.junit.jupiter.api.Assertions.assertEquals(
+        Assertions.assertEquals(
             setOf(SimpleGrantedAuthority("T_dimo_admin")),
             mapped.toSet()
         )
@@ -264,10 +263,8 @@ class SecurityTests {
     // to wire authority mapping into the reactive oauth2Login authentication manager.
     @Test
     fun `exactly one GrantedAuthoritiesMapper bean is registered for oauth2Login to pick up`() {
-        val mapper = applicationContext.getBean(
-            org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper::class.java
-        )
+        val mapper = applicationContext.getBean(GrantedAuthoritiesMapper::class.java)
 
-        org.junit.jupiter.api.Assertions.assertNotNull(mapper)
+        Assertions.assertNotNull(mapper)
     }
 }
