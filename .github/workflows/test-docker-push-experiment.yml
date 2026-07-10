@@ -1,0 +1,39 @@
+name: TEST - Docker push experiment (single-layer Dockerfile)
+# Manual-only diagnostic workflow to test whether the "blob upload unknown to
+# registry" Harbor push failure is affected by the number of layers pushed.
+# Runs build + Docker push only (no k8s deploy), triggered by hand from any
+# branch/ref via workflow_dispatch. Safe to delete once the diagnosis is done.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/maven-verify-and-upload-artifact.yml@main
+    with:
+      JDK_VERSION: 21
+      MAVEN_VERSION: 3.9
+      USE_MAVEN_SETTINGS_FILE: true
+      ENVIRONMENT: stage
+      NODE_VERSION: '22'
+    secrets:
+      VAULT_URL: ${{ secrets.NB_VAULT_URL }}
+      VAULT_SECRET_PATH: ${{ secrets.TEKST_VAULT_SECRET_PATH }}
+      VAULT_ROLE_ID: ${{ secrets.TEKST_VAULT_ROLE_ID }}
+      VAULT_SECRET_ID: ${{ secrets.TEKST_VAULT_SECRET_ID }}
+      S3_NB_HOST: ${{ secrets.S3_NB_CACHE_HOST }}
+      S3_NB_ACCESS_KEY: ${{ secrets.S3_NB_CACHE_ACCESS_KEY }}
+      S3_NB_SECRET_KEY: ${{ secrets.S3_NB_CACHE_SECRET_KEY }}
+      S3_NB_CACHE_BUCKET: ${{ secrets.S3_NB_CACHE_BUCKET }}
+
+  build-and-publish-docker-image:
+    needs: build-and-test
+    uses: NationalLibraryOfNorway/tekst-workflows/.github/workflows/docker-build-and-push.yml@main
+    with:
+      USE_HARBOR: 'true'
+      ENVIRONMENT: stage
+    secrets:
+      VAULT_URL: ${{ secrets.NB_VAULT_URL }}
+      VAULT_SECRET_PATH: ${{ secrets.TEKST_VAULT_SECRET_PATH }}
+      VAULT_ROLE_ID: ${{ secrets.TEKST_VAULT_ROLE_ID }}
+      VAULT_SECRET_ID: ${{ secrets.TEKST_VAULT_SECRET_ID }}
