@@ -17,4 +17,7 @@ data class CollectionsTermObject(
 
     @JsonProperty("term")
     val term: String,
+
+    @JsonProperty("term.code")
+    val code: List<String>? = null,
 ) : CollectionsGenericObject

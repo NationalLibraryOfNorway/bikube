@@ -102,6 +102,14 @@ fun CollectionsObject.getParentId(): String? {
     return this.getFirstPartOf()?.priRef
 }
 
+fun CollectionsObject.getItemStatus(): String? {
+    return this.itemStatus
+}
+
+fun CollectionsObject.getInputNotes(): List<String>? {
+    return this.inputNotes
+}
+
 // CollectionsPartsReference
 
 fun CollectionsPartsReference.getName(): String? {
@@ -128,6 +136,22 @@ fun CollectionsPartsObject.getDate(): LocalDate? {
 // CollectionsPartOfReference
 fun CollectionsPartOfReference.getName(): String? {
     return this.title?.first()?.title
+}
+
+fun CollectionsPartOfReference.getAlternativeNames(): List<CollectionsTitle> {
+    return this.title?.subList(1, this.title.size) ?: emptyList()
+}
+
+fun CollectionsPartOfReference.getPublisher(): String? {
+    return this.publisherList?.first()?.name
+}
+
+fun CollectionsPartOfReference.getPublisherPlace(): String? {
+    return this.placeOfPublicationList?.first()?.name
+}
+
+fun CollectionsPartOfReference.getLanguage(): String? {
+    return this.languageList?.first()?.language
 }
 
 fun CollectionsPartOfReference.getRecordType(): CollectionsRecordType? {
