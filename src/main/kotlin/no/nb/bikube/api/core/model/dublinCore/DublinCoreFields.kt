@@ -10,9 +10,6 @@ data class DublinCoreValue(
     val lang: String
 )
 
-// For language: The type of language representation must be indicated.
-// Examples of language types include subtitles, spoken language, written language, etc.
-// Ulik dokumentasjon på submission service overview og metadata requirements. Sistnevnte uten lang, med språk i value
 data class DublinCoreTypedValue(
     val type: String,
     val value: String,

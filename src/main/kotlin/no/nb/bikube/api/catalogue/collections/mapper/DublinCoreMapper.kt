@@ -137,16 +137,13 @@ fun getPublisher(titleData: CollectionsPartOfReference): List<DublinCoreContribu
 }
 
 fun getSpatial(titleData: CollectionsPartOfReference): List<DublinCoreSpatial>? {
-    return if (titleData.getPublisherPlace() == null) {
-        null
-    } else {
-        listOf(
-            DublinCoreSpatial(
-                name = interpolateCountryCode(titleData.getPublisherPlace()!!),
-                type = "Place of publication",
-            )
+    val place = titleData.getPublisherPlace() ?: return null
+    return listOf(
+        DublinCoreSpatial(
+            name = interpolateCountryCode(place),
+            type = "Place of publication",
         )
-    }
+    )
 }
 
 fun interpolateCountryCode(publisherPlace: String): String {

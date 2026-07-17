@@ -18,6 +18,5 @@ class DublinCoreMetadata (
     val provenance: List<DublinCoreValue>?,
     val subject: List<DublinCoreValue>?,
     val description: List<DublinCoreValue>?
-
 )
 
