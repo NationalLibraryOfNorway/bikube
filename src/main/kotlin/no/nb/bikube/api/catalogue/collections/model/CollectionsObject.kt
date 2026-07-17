@@ -92,7 +92,10 @@ data class CollectionsObject(
     val notes: List<String>? = emptyList(),
 
     @JsonProperty("edition.date")
-    val date: List<String>? = emptyList()
+    val date: List<String>? = emptyList(),
+
+    @JsonProperty("item_status")
+    val itemStatus: String? = null
 ) : CollectionsGenericObject
 
 data class CollectionsTitle(
@@ -154,7 +157,16 @@ data class CollectionsPartOfReference(
     val subMedium: List<SubMedium>?,
 
     @JsonProperty("edition.date")
-    val date: List<String>? = emptyList()
+    val date: List<String>? = emptyList(),
+
+    @JsonProperty("group:Publisher")
+    val publisherList: List<CollectionsPublisher>?,
+
+    @JsonProperty("group:Language")
+    val languageList: List<CollectionsLanguage>?,
+
+    @JsonProperty("group:AssociationGeo")
+    val placeOfPublicationList: List<CollectionsAssociationGeo>?,
 )
 
 data class SubMedium(

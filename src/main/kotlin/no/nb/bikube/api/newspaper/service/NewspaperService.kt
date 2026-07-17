@@ -12,7 +12,7 @@ import no.nb.bikube.api.catalogue.collections.service.CollectionsService
 import no.nb.bikube.api.core.enum.*
 import no.nb.bikube.api.core.exception.*
 import no.nb.bikube.api.core.model.*
-import no.nb.bikube.api.core.util.logger
+import no.nb.bikube.api.core.model.dublinCore.DublinCoreMetadata
 import no.nb.bikube.api.core.model.inputDto.ItemInputDto
 import no.nb.bikube.api.core.model.inputDto.ItemUpdateDto
 import no.nb.bikube.api.core.model.inputDto.MissingPeriodicalItemDto
@@ -373,6 +373,47 @@ class NewspaperService (
                     Mono.error(CollectionsManifestationNotFound("Manifestation with id $manifestationId not found."))
                 } else {
                     Mono.error(CollectionsException("Error when finding manifestation for deletion: ${manifestation.getError()}"))
+                }
+            }
+    }
+
+    @Throws(CollectionsException::class, CollectionsTitleNotFound::class)
+    fun getItemMetadataForDPS(catalogId: String): Mono<DublinCoreMetadata> {
+        return collectionsService.getSingleCollectionsModel(catalogId)
+            .map { validateAndReturnSingleCollectionsModel(it, CollectionsRecordType.ITEM) }
+            .flatMap { itemCollectionsModel ->
+                val manifestationData = itemCollectionsModel.getFirstPartOf()
+                val manifestationId = manifestationData?.priRef
+                val titleData = manifestationData?.getFirstPartOf()
+                val titleId = titleData?.priRef
+
+                if (manifestationData == null || manifestationId.isNullOrBlank()) {
+                    Mono.error(CollectionsException("Item with id $catalogId does not have a parent manifestation, cannot retrieve metadata for DPS"))
+                } else if (titleData == null || titleId.isNullOrBlank()) {
+                    Mono.error(CollectionsException("Manifestation with id $manifestationId does not have a parent title, cannot retrieve metadata for DPS"))
+                } else {
+                    if (titleData.getLanguage() == null) {
+                        Mono.error(DublinCoreMissingFieldException("Missing language for title object with id $titleId"))
+                    } else {
+                        collectionsService.searchLanguage(titleData.getLanguage()!!)
+                            .flatMap { language ->
+                                val isoLanguage = language.getObjects()?.firstOrNull()?.code?.firstOrNull()
+                                if (isoLanguage.isNullOrBlank()) {
+                                    Mono.error(DublinCoreMissingFieldException("Missing ISO language code for title object with id $titleId"))
+                                } else {
+                                    Mono.just(
+                                        mapCollectionsObjectToDublinCoreMetadata(
+                                            itemCollectionsModel,
+                                            manifestationId,
+                                            manifestationData,
+                                            titleId,
+                                            titleData,
+                                            "nob"
+                                        )
+                                    )
+                                }
+                            }
+                    }
                 }
             }
     }

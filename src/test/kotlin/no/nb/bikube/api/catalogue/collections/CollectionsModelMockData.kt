@@ -175,7 +175,10 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen")),
                 recordType = collectionsRecordTypeListWorkMock,
                 subMedium = listOf(SubMedium(subMedium = MaterialType.NEWSPAPER.norwegian)),
-                date = null
+                date = null,
+                publisherList = listOf(CollectionsPublisher("NB")),
+                languageList = listOf(CollectionsLanguage("nob")),
+                placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
             )
         )
 
@@ -186,7 +189,10 @@ class CollectionsModelMockData {
                 title = listOf(CollectionsTitle(title = "Bikubeavisen 1999.12.24")),
                 recordType = collectionsRecordTypeListManifestMock,
                 subMedium = null,
-                date = null
+                date = null,
+                publisherList = listOf(CollectionsPublisher("NB")),
+                languageList = listOf(CollectionsLanguage("nob")),
+                placeOfPublicationList = listOf(CollectionsAssociationGeo("Mo I Rana")),
             )
         )
 
@@ -356,7 +362,7 @@ class CollectionsModelMockData {
                 recordList = listOf(
                     CollectionsTermObject(
                         priRef = "123",
-                        term = "nob",
+                        term = "Norsk Bokmål",
                     )
                 )
             )
